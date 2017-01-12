@@ -6,11 +6,11 @@ import org.jetbrains.annotations.Contract;
 
 public class Utilities {
     public static void createErrorAlert(String title, String headerText, String message) {
+        System.err.println(message);
         createAlert(Alert.AlertType.ERROR, title, headerText, message, true);
     }
 
     public static void createInformationAlert(String title, String headerText, String message) {
-        System.err.println(message);
         createAlert(Alert.AlertType.INFORMATION, title, headerText, message, false);
     }
 
