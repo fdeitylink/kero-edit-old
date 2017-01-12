@@ -6,16 +6,26 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e217904-e010-4fe6-a354-8fe1baa2af52" name="Default" comment="">
+    <list default="true" id="7e217904-e010-4fe6-a354-8fe1baa2af52" name="Default" comment="Added a MapEdit class (and interior classes) which functions as a Tab for editing a map&#10;Added a TabPane and tabs, which will be where most of the editor's stuff is&#10;Currently a MapEdit tab can be opened but no content really appears as I haven't made a map viewer yet&#10;Renamed PxPackMap class to PxPack&#10;Added LAST_UPDATED_STRING for last date of code update&#10;FileChooser, not DirectoryChooser, is now used to navigate to mod base&#10;Title now incorporates mod path&#10;Added functionality to mapList context menu">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/map/MapEdit.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/map/PxPackMap$Entity.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/map/PxPackMap$Head.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/map/PxPackMap$TileLayer.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/map/PxPackMap.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/util/Utilities$CoordinatePair.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/util/Utilities.class" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPackMap.java" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPack.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/KeroEdit_jar/KeroEdit.jar" afterPath="$PROJECT_DIR$/out/artifacts/KeroEdit_jar/KeroEdit.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$1.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$1.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$2.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$2.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$3.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$3.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$4.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$4.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/util/Utilities.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/util/Utilities.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/gamedata/GameData$1.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/gamedata/GameData$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/gamedata/GameData.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/gamedata/GameData.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/KeroEdit.java" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/KeroEdit.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/gamedata/GameData.java" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/gamedata/GameData.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/util/Utilities.java" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/util/Utilities.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -35,14 +45,22 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="KeroEdit.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="KeroEdit.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/KeroEdit.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="164">
-              <caret line="217" column="33" lean-forward="false" selection-start-line="217" selection-start-column="33" selection-end-line="217" selection-end-column="33" />
+            <state relative-caret-position="313">
+              <caret line="145" column="21" lean-forward="true" selection-start-line="145" selection-start-column="21" selection-end-line="145" selection-end-column="21" />
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="e#0#15681#0" expanded="true" />
                 <element signature="method#start#0;class#KeroEdit#0" expanded="false" />
+                <element signature="class#7199:7795" expanded="false" />
+                <element signature="method#setupMapList#0;class#KeroEdit#0" expanded="false" />
+                <element signature="class#9621:10377" expanded="false" />
+                <element signature="class#10529:11067" expanded="false" />
+                <element signature="class#11805:12079" expanded="false" />
+                <element signature="class#12125:12342" expanded="false" />
+                <element signature="method#handle#0;class#14150:15208" expanded="false" />
+                <element signature="method#setupTabPane#0;class#KeroEdit#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -51,38 +69,60 @@
       <file leaf-file-name="GameData.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/gamedata/GameData.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="30" column="0" lean-forward="true" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+            <state relative-caret-position="211">
+              <caret line="71" column="12" lean-forward="false" selection-start-line="71" selection-start-column="12" selection-end-line="71" selection-end-column="12" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="method#save#0;class#GameData#0" expanded="false" />
-                <element signature="method#fillFileList#0;class#GameData#0" expanded="false" />
+                <element signature="e#1830#1831#0" expanded="true" />
+                <element signature="e#1915#1916#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PxPackMap.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPackMap.java">
+      <file leaf-file-name="MapEdit.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/MapEdit.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1513">
-              <caret line="108" column="0" lean-forward="false" selection-start-line="108" selection-start-column="0" selection-end-line="108" selection-end-column="0" />
+            <state relative-caret-position="132">
+              <caret line="33" column="26" lean-forward="false" selection-start-line="33" selection-start-column="26" selection-end-line="33" selection-end-column="26" />
               <folding>
-                <element signature="method#reset#0;class#PxPackMap#0" expanded="false" />
-                <element signature="method#readString#0;class#PxPackMap#0" expanded="false" />
-                <element signature="class#Head#0;class#PxPackMap#0" expanded="false" />
-                <element signature="method#Head#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-                <element signature="method#Head#1;class#Head#0;class#PxPackMap#0" expanded="false" />
-                <element signature="method#toString#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-                <element signature="class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-                <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-                <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-                <element signature="method#resize#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-                <element signature="method#toString#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-                <element signature="method#setTile#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-                <element signature="class#Entity#0;class#PxPackMap#0" expanded="false" />
-                <element signature="method#Entity#1;class#Entity#0;class#PxPackMap#0" expanded="false" />
-                <element signature="method#toString#0;class#Entity#0;class#PxPackMap#0" expanded="false" />
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PxPack.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPack.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="132">
+              <caret line="178" column="21" lean-forward="false" selection-start-line="178" selection-start-column="21" selection-end-line="178" selection-end-column="21" />
+              <folding>
+                <element signature="method#reset#0;class#PxPack#0" expanded="false" />
+                <element signature="e#6431#6432#0" expanded="true" />
+                <element signature="e#6458#6459#0" expanded="true" />
+                <element signature="e#6487#6488#0" expanded="true" />
+                <element signature="e#6514#6515#0" expanded="true" />
+                <element signature="e#6556#6557#0" expanded="true" />
+                <element signature="e#6589#6590#0" expanded="true" />
+                <element signature="e#6636#6637#0" expanded="true" />
+                <element signature="e#6667#6668#0" expanded="true" />
+                <element signature="method#toString#0;class#PxPack#0" expanded="false" />
+                <element signature="docComment;method#readString#0;class#PxPack#0" expanded="false" />
+                <element signature="method#readString#0;class#PxPack#0" expanded="false" />
+                <element signature="class#Head#0;class#PxPack#0" expanded="false" />
+                <element signature="method#Head#0;class#Head#0;class#PxPack#0" expanded="false" />
+                <element signature="method#Head#1;class#Head#0;class#PxPack#0" expanded="false" />
+                <element signature="method#toString#0;class#Head#0;class#PxPack#0" expanded="false" />
+                <element signature="class#TileLayer#0;class#PxPack#0" expanded="false" />
+                <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+                <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPack#0" expanded="false" />
+                <element signature="method#resize#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+                <element signature="method#toString#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+                <element signature="method#setTile#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+                <element signature="class#Entity#0;class#PxPack#0" expanded="false" />
+                <element signature="method#Entity#1;class#Entity#0;class#PxPack#0" expanded="false" />
+                <element signature="method#toString#0;class#Entity#0;class#PxPack#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -91,8 +131,8 @@
       <file leaf-file-name="Utilities.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/util/Utilities.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
-              <caret line="7" column="47" lean-forward="false" selection-start-line="7" selection-start-column="47" selection-end-line="7" selection-end-column="47" />
+            <state relative-caret-position="170">
+              <caret line="22" column="134" lean-forward="false" selection-start-line="22" selection-start-column="134" selection-end-line="22" selection-end-column="134" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="method#CoordinatePair#0;class#CoordinatePair#0;class#Utilities#0" expanded="false" />
@@ -106,8 +146,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="XSLT Stylesheet" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -150,8 +190,10 @@
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/Main.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/resource/ResourceManager.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPackMap.java" />
-        <option value="$PROJECT_DIR$/src/com/fdl/keroedit/gamedata/GameData.java" />
+        <option value="$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPack.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/util/Utilities.java" />
+        <option value="$PROJECT_DIR$/src/com/fdl/keroedit/map/MapEdit.java" />
+        <option value="$PROJECT_DIR$/src/com/fdl/keroedit/gamedata/GameData.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/KeroEdit.java" />
       </list>
     </option>
@@ -221,8 +263,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -357,7 +398,8 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="Scratches" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -560,7 +602,14 @@
       <option name="presentableId" value="Default" />
       <updated>1483667605832</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="mapList is now a ListView of Files, not Strings&#10;Right-click for mapList now uses array of MenuItems&#10;Enter key to open map&#10;Pop-up window for unimplemented features&#10;Probably other stuff that I forgot&#10;Expect more changes tonight&#10;&#10;Fixed Utilities.java so err.println is in createErrorAlert(), not createInformationAlert()">
+      <created>1484182204428</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1484182204428</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -577,12 +626,12 @@
     <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32937685" sideWeight="0.49707174" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.47657394" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.49707174" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32937685" sideWeight="0.47657394" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.52342606" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329429" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3264095" sideWeight="0.4941435" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.49707174" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -591,7 +640,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24963397" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39910978" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -606,149 +655,65 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="mapList is now a ListView of Files, not Strings&#10;Right-click for mapList now uses array of MenuItems&#10;Enter key to open map&#10;Pop-up window for unimplemented features&#10;Probably other stuff that I forgot&#10;Expect more changes tonight&#10;&#10;Fixed Utilities.java so err.println is in createErrorAlert(), not createInformationAlert()" />
-    <option name="LAST_COMMIT_MESSAGE" value="mapList is now a ListView of Files, not Strings&#10;Right-click for mapList now uses array of MenuItems&#10;Enter key to open map&#10;Pop-up window for unimplemented features&#10;Probably other stuff that I forgot&#10;Expect more changes tonight&#10;&#10;Fixed Utilities.java so err.println is in createErrorAlert(), not createInformationAlert()" />
+    <MESSAGE value="Added a MapEdit class (and interior classes) which functions as a Tab for editing a map&#10;Added a TabPane and tabs, which will be where most of the editor's stuff is&#10;Currently a MapEdit tab can be opened but no content really appears as I haven't made a map viewer yet&#10;Renamed PxPackMap class to PxPack&#10;Added LAST_UPDATED_STRING for last date of code update&#10;FileChooser, not DirectoryChooser, is now used to navigate to mod base&#10;Title now incorporates mod path&#10;Added functionality to mapList context menu" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added a MapEdit class (and interior classes) which functions as a Tab for editing a map&#10;Added a TabPane and tabs, which will be where most of the editor's stuff is&#10;Currently a MapEdit tab can be opened but no content really appears as I haven't made a map viewer yet&#10;Renamed PxPackMap class to PxPack&#10;Added LAST_UPDATED_STRING for last date of code update&#10;FileChooser, not DirectoryChooser, is now used to navigate to mod base&#10;Title now incorporates mod path&#10;Added functionality to mapList context menu" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="34" />
+      <option name="time" value="46" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/util/Utilities.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="0" lean-forward="false" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#CoordinatePair#0;class#CoordinatePair#0;class#Utilities#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/KeroEdit.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="1" lean-forward="false" selection-start-line="13" selection-start-column="1" selection-end-line="13" selection-end-column="1" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#start#0;class#KeroEdit#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPackMap.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="method#reset#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#readString#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#1;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#resize#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#setTile#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Entity#1;class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Entity#0;class#PxPackMap#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/util/Utilities.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="0" lean-forward="false" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#CoordinatePair#0;class#CoordinatePair#0;class#Utilities#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/KeroEdit.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="1" lean-forward="false" selection-start-line="13" selection-start-column="1" selection-end-line="13" selection-end-column="1" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#start#0;class#KeroEdit#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPackMap.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="method#reset#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#readString#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#1;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#resize#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#setTile#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Entity#1;class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Entity#0;class#PxPackMap#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/util/Utilities.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="0" lean-forward="false" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#CoordinatePair#0;class#CoordinatePair#0;class#Utilities#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/KeroEdit.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="221">
           <caret line="13" column="1" lean-forward="true" selection-start-line="13" selection-start-column="1" selection-end-line="13" selection-end-column="1" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#0#15681#0" expanded="true" />
             <element signature="method#start#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#7199:7795" expanded="false" />
+            <element signature="method#setupMapList#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#9621:10377" expanded="false" />
+            <element signature="class#10529:11067" expanded="false" />
+            <element signature="class#11805:12079" expanded="false" />
+            <element signature="class#12125:12342" expanded="false" />
+            <element signature="method#handle#0;class#14150:15208" expanded="false" />
+            <element signature="method#setupTabPane#0;class#KeroEdit#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPackMap.java">
+    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPack.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="method#reset#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#readString#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#1;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#resize#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#setTile#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Entity#1;class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Entity#0;class#PxPackMap#0" expanded="false" />
+            <element signature="method#reset#0;class#PxPack#0" expanded="false" />
+            <element signature="e#6431#6432#0" expanded="true" />
+            <element signature="e#6458#6459#0" expanded="true" />
+            <element signature="e#6487#6488#0" expanded="true" />
+            <element signature="e#6514#6515#0" expanded="true" />
+            <element signature="e#6556#6557#0" expanded="true" />
+            <element signature="e#6589#6590#0" expanded="true" />
+            <element signature="e#6636#6637#0" expanded="true" />
+            <element signature="e#6667#6668#0" expanded="true" />
+            <element signature="method#toString#0;class#PxPack#0" expanded="false" />
+            <element signature="docComment;method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#1;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#resize#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setTile#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Entity#1;class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Entity#0;class#PxPack#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -769,32 +734,50 @@
         <state relative-caret-position="221">
           <caret line="13" column="1" lean-forward="false" selection-start-line="13" selection-start-column="1" selection-end-line="13" selection-end-column="1" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#0#15681#0" expanded="true" />
             <element signature="method#start#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#7199:7795" expanded="false" />
+            <element signature="method#setupMapList#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#9621:10377" expanded="false" />
+            <element signature="class#10529:11067" expanded="false" />
+            <element signature="class#11805:12079" expanded="false" />
+            <element signature="class#12125:12342" expanded="false" />
+            <element signature="method#handle#0;class#14150:15208" expanded="false" />
+            <element signature="method#setupTabPane#0;class#KeroEdit#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPackMap.java">
+    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPack.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="method#reset#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#readString#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#1;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#resize#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#setTile#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Entity#1;class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Entity#0;class#PxPackMap#0" expanded="false" />
+            <element signature="method#reset#0;class#PxPack#0" expanded="false" />
+            <element signature="e#6431#6432#0" expanded="true" />
+            <element signature="e#6458#6459#0" expanded="true" />
+            <element signature="e#6487#6488#0" expanded="true" />
+            <element signature="e#6514#6515#0" expanded="true" />
+            <element signature="e#6556#6557#0" expanded="true" />
+            <element signature="e#6589#6590#0" expanded="true" />
+            <element signature="e#6636#6637#0" expanded="true" />
+            <element signature="e#6667#6668#0" expanded="true" />
+            <element signature="method#toString#0;class#PxPack#0" expanded="false" />
+            <element signature="docComment;method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#1;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#resize#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setTile#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Entity#1;class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Entity#0;class#PxPack#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -815,32 +798,50 @@
         <state relative-caret-position="221">
           <caret line="13" column="1" lean-forward="false" selection-start-line="13" selection-start-column="1" selection-end-line="13" selection-end-column="1" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#0#15681#0" expanded="true" />
             <element signature="method#start#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#7199:7795" expanded="false" />
+            <element signature="method#setupMapList#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#9621:10377" expanded="false" />
+            <element signature="class#10529:11067" expanded="false" />
+            <element signature="class#11805:12079" expanded="false" />
+            <element signature="class#12125:12342" expanded="false" />
+            <element signature="method#handle#0;class#14150:15208" expanded="false" />
+            <element signature="method#setupTabPane#0;class#KeroEdit#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPackMap.java">
+    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPack.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="method#reset#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#readString#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#1;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#resize#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#setTile#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Entity#1;class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Entity#0;class#PxPackMap#0" expanded="false" />
+            <element signature="method#reset#0;class#PxPack#0" expanded="false" />
+            <element signature="e#6431#6432#0" expanded="true" />
+            <element signature="e#6458#6459#0" expanded="true" />
+            <element signature="e#6487#6488#0" expanded="true" />
+            <element signature="e#6514#6515#0" expanded="true" />
+            <element signature="e#6556#6557#0" expanded="true" />
+            <element signature="e#6589#6590#0" expanded="true" />
+            <element signature="e#6636#6637#0" expanded="true" />
+            <element signature="e#6667#6668#0" expanded="true" />
+            <element signature="method#toString#0;class#PxPack#0" expanded="false" />
+            <element signature="docComment;method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#1;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#resize#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setTile#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Entity#1;class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Entity#0;class#PxPack#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -861,32 +862,50 @@
         <state relative-caret-position="221">
           <caret line="13" column="1" lean-forward="true" selection-start-line="13" selection-start-column="1" selection-end-line="13" selection-end-column="1" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#0#15681#0" expanded="true" />
             <element signature="method#start#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#7199:7795" expanded="false" />
+            <element signature="method#setupMapList#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#9621:10377" expanded="false" />
+            <element signature="class#10529:11067" expanded="false" />
+            <element signature="class#11805:12079" expanded="false" />
+            <element signature="class#12125:12342" expanded="false" />
+            <element signature="method#handle#0;class#14150:15208" expanded="false" />
+            <element signature="method#setupTabPane#0;class#KeroEdit#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPackMap.java">
+    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPack.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="method#reset#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#readString#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#1;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#resize#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#setTile#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Entity#1;class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Entity#0;class#PxPackMap#0" expanded="false" />
+            <element signature="method#reset#0;class#PxPack#0" expanded="false" />
+            <element signature="e#6431#6432#0" expanded="true" />
+            <element signature="e#6458#6459#0" expanded="true" />
+            <element signature="e#6487#6488#0" expanded="true" />
+            <element signature="e#6514#6515#0" expanded="true" />
+            <element signature="e#6556#6557#0" expanded="true" />
+            <element signature="e#6589#6590#0" expanded="true" />
+            <element signature="e#6636#6637#0" expanded="true" />
+            <element signature="e#6667#6668#0" expanded="true" />
+            <element signature="method#toString#0;class#PxPack#0" expanded="false" />
+            <element signature="docComment;method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#1;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#resize#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setTile#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Entity#1;class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Entity#0;class#PxPack#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -907,32 +926,50 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#0#15681#0" expanded="true" />
             <element signature="method#start#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#7199:7795" expanded="false" />
+            <element signature="method#setupMapList#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#9621:10377" expanded="false" />
+            <element signature="class#10529:11067" expanded="false" />
+            <element signature="class#11805:12079" expanded="false" />
+            <element signature="class#12125:12342" expanded="false" />
+            <element signature="method#handle#0;class#14150:15208" expanded="false" />
+            <element signature="method#setupTabPane#0;class#KeroEdit#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPackMap.java">
+    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPack.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="357">
           <caret line="21" column="13" lean-forward="false" selection-start-line="21" selection-start-column="13" selection-end-line="21" selection-end-column="13" />
           <folding>
-            <element signature="method#reset#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#readString#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#1;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#resize#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#setTile#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Entity#1;class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Entity#0;class#PxPackMap#0" expanded="false" />
+            <element signature="method#reset#0;class#PxPack#0" expanded="false" />
+            <element signature="e#6431#6432#0" expanded="true" />
+            <element signature="e#6458#6459#0" expanded="true" />
+            <element signature="e#6487#6488#0" expanded="true" />
+            <element signature="e#6514#6515#0" expanded="true" />
+            <element signature="e#6556#6557#0" expanded="true" />
+            <element signature="e#6589#6590#0" expanded="true" />
+            <element signature="e#6636#6637#0" expanded="true" />
+            <element signature="e#6667#6668#0" expanded="true" />
+            <element signature="method#toString#0;class#PxPack#0" expanded="false" />
+            <element signature="docComment;method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#1;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#resize#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setTile#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Entity#1;class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Entity#0;class#PxPack#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -942,32 +979,50 @@
         <state relative-caret-position="272">
           <caret line="16" column="1" lean-forward="true" selection-start-line="16" selection-start-column="1" selection-end-line="16" selection-end-column="1" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#0#15681#0" expanded="true" />
             <element signature="method#start#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#7199:7795" expanded="false" />
+            <element signature="method#setupMapList#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#9621:10377" expanded="false" />
+            <element signature="class#10529:11067" expanded="false" />
+            <element signature="class#11805:12079" expanded="false" />
+            <element signature="class#12125:12342" expanded="false" />
+            <element signature="method#handle#0;class#14150:15208" expanded="false" />
+            <element signature="method#setupTabPane#0;class#KeroEdit#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPackMap.java">
+    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPack.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="method#reset#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#readString#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#1;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#resize#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#setTile#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Entity#1;class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Entity#0;class#PxPackMap#0" expanded="false" />
+            <element signature="method#reset#0;class#PxPack#0" expanded="false" />
+            <element signature="e#6431#6432#0" expanded="true" />
+            <element signature="e#6458#6459#0" expanded="true" />
+            <element signature="e#6487#6488#0" expanded="true" />
+            <element signature="e#6514#6515#0" expanded="true" />
+            <element signature="e#6556#6557#0" expanded="true" />
+            <element signature="e#6589#6590#0" expanded="true" />
+            <element signature="e#6636#6637#0" expanded="true" />
+            <element signature="e#6667#6668#0" expanded="true" />
+            <element signature="method#toString#0;class#PxPack#0" expanded="false" />
+            <element signature="docComment;method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#1;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#resize#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setTile#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Entity#1;class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Entity#0;class#PxPack#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -977,32 +1032,50 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#0#15681#0" expanded="true" />
             <element signature="method#start#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#7199:7795" expanded="false" />
+            <element signature="method#setupMapList#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#9621:10377" expanded="false" />
+            <element signature="class#10529:11067" expanded="false" />
+            <element signature="class#11805:12079" expanded="false" />
+            <element signature="class#12125:12342" expanded="false" />
+            <element signature="method#handle#0;class#14150:15208" expanded="false" />
+            <element signature="method#setupTabPane#0;class#KeroEdit#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPackMap.java">
+    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPack.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3400">
           <caret line="200" column="30" lean-forward="true" selection-start-line="200" selection-start-column="30" selection-end-line="200" selection-end-column="30" />
           <folding>
-            <element signature="method#reset#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#readString#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#1;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#resize#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#setTile#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Entity#1;class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Entity#0;class#PxPackMap#0" expanded="false" />
+            <element signature="method#reset#0;class#PxPack#0" expanded="false" />
+            <element signature="e#6431#6432#0" expanded="true" />
+            <element signature="e#6458#6459#0" expanded="true" />
+            <element signature="e#6487#6488#0" expanded="true" />
+            <element signature="e#6514#6515#0" expanded="true" />
+            <element signature="e#6556#6557#0" expanded="true" />
+            <element signature="e#6589#6590#0" expanded="true" />
+            <element signature="e#6636#6637#0" expanded="true" />
+            <element signature="e#6667#6668#0" expanded="true" />
+            <element signature="method#toString#0;class#PxPack#0" expanded="false" />
+            <element signature="docComment;method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#1;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#resize#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setTile#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Entity#1;class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Entity#0;class#PxPack#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1012,32 +1085,50 @@
         <state relative-caret-position="204">
           <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#0#15681#0" expanded="true" />
             <element signature="method#start#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#7199:7795" expanded="false" />
+            <element signature="method#setupMapList#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#9621:10377" expanded="false" />
+            <element signature="class#10529:11067" expanded="false" />
+            <element signature="class#11805:12079" expanded="false" />
+            <element signature="class#12125:12342" expanded="false" />
+            <element signature="method#handle#0;class#14150:15208" expanded="false" />
+            <element signature="method#setupTabPane#0;class#KeroEdit#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPackMap.java">
+    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPack.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="method#reset#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#readString#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#1;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#resize#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#setTile#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Entity#1;class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Entity#0;class#PxPackMap#0" expanded="false" />
+            <element signature="method#reset#0;class#PxPack#0" expanded="false" />
+            <element signature="e#6431#6432#0" expanded="true" />
+            <element signature="e#6458#6459#0" expanded="true" />
+            <element signature="e#6487#6488#0" expanded="true" />
+            <element signature="e#6514#6515#0" expanded="true" />
+            <element signature="e#6556#6557#0" expanded="true" />
+            <element signature="e#6589#6590#0" expanded="true" />
+            <element signature="e#6636#6637#0" expanded="true" />
+            <element signature="e#6667#6668#0" expanded="true" />
+            <element signature="method#toString#0;class#PxPack#0" expanded="false" />
+            <element signature="docComment;method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#1;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#resize#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setTile#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Entity#1;class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Entity#0;class#PxPack#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1047,32 +1138,50 @@
         <state relative-caret-position="68">
           <caret line="4" column="20" lean-forward="true" selection-start-line="4" selection-start-column="20" selection-end-line="4" selection-end-column="20" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#0#15681#0" expanded="true" />
             <element signature="method#start#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#7199:7795" expanded="false" />
+            <element signature="method#setupMapList#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#9621:10377" expanded="false" />
+            <element signature="class#10529:11067" expanded="false" />
+            <element signature="class#11805:12079" expanded="false" />
+            <element signature="class#12125:12342" expanded="false" />
+            <element signature="method#handle#0;class#14150:15208" expanded="false" />
+            <element signature="method#setupTabPane#0;class#KeroEdit#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPackMap.java">
+    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPack.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="method#reset#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#readString#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#1;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#resize#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#setTile#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Entity#1;class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Entity#0;class#PxPackMap#0" expanded="false" />
+            <element signature="method#reset#0;class#PxPack#0" expanded="false" />
+            <element signature="e#6431#6432#0" expanded="true" />
+            <element signature="e#6458#6459#0" expanded="true" />
+            <element signature="e#6487#6488#0" expanded="true" />
+            <element signature="e#6514#6515#0" expanded="true" />
+            <element signature="e#6556#6557#0" expanded="true" />
+            <element signature="e#6589#6590#0" expanded="true" />
+            <element signature="e#6636#6637#0" expanded="true" />
+            <element signature="e#6667#6668#0" expanded="true" />
+            <element signature="method#toString#0;class#PxPack#0" expanded="false" />
+            <element signature="docComment;method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#1;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#resize#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setTile#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Entity#1;class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Entity#0;class#PxPack#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1082,32 +1191,50 @@
         <state relative-caret-position="170">
           <caret line="10" column="10" lean-forward="false" selection-start-line="10" selection-start-column="10" selection-end-line="10" selection-end-column="10" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#0#15681#0" expanded="true" />
             <element signature="method#start#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#7199:7795" expanded="false" />
+            <element signature="method#setupMapList#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#9621:10377" expanded="false" />
+            <element signature="class#10529:11067" expanded="false" />
+            <element signature="class#11805:12079" expanded="false" />
+            <element signature="class#12125:12342" expanded="false" />
+            <element signature="method#handle#0;class#14150:15208" expanded="false" />
+            <element signature="method#setupTabPane#0;class#KeroEdit#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPackMap.java">
+    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPack.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="method#reset#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#readString#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#1;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#resize#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#setTile#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Entity#1;class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Entity#0;class#PxPackMap#0" expanded="false" />
+            <element signature="method#reset#0;class#PxPack#0" expanded="false" />
+            <element signature="e#6431#6432#0" expanded="true" />
+            <element signature="e#6458#6459#0" expanded="true" />
+            <element signature="e#6487#6488#0" expanded="true" />
+            <element signature="e#6514#6515#0" expanded="true" />
+            <element signature="e#6556#6557#0" expanded="true" />
+            <element signature="e#6589#6590#0" expanded="true" />
+            <element signature="e#6636#6637#0" expanded="true" />
+            <element signature="e#6667#6668#0" expanded="true" />
+            <element signature="method#toString#0;class#PxPack#0" expanded="false" />
+            <element signature="docComment;method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#1;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#resize#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setTile#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Entity#1;class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Entity#0;class#PxPack#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1191,38 +1318,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/src.zip!/java/util/ArrayList.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="176" column="0" lean-forward="false" selection-start-line="176" selection-start-column="0" selection-end-line="176" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPackMap.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1513">
-          <caret line="108" column="0" lean-forward="false" selection-start-line="108" selection-start-column="0" selection-end-line="108" selection-end-column="0" />
-          <folding>
-            <element signature="method#reset#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#readString#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Head#1;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Head#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#resize#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#setTile#0;class#TileLayer#0;class#PxPackMap#0" expanded="false" />
-            <element signature="class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#Entity#1;class#Entity#0;class#PxPackMap#0" expanded="false" />
-            <element signature="method#toString#0;class#Entity#0;class#PxPackMap#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/util/Callback.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="476">
@@ -1241,22 +1336,87 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/gamedata/GameData.java">
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/collections/ListChangeListener.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="30" column="0" lean-forward="true" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+        <state relative-caret-position="270">
+          <caret line="185" column="0" lean-forward="false" selection-start-line="185" selection-start-column="0" selection-end-line="185" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#save#0;class#GameData#0" expanded="false" />
-            <element signature="method#fillFileList#0;class#GameData#0" expanded="false" />
+            <element signature="e#5656#5657#0" expanded="false" />
+            <element signature="e#5696#5697#0" expanded="false" />
+            <element signature="e#7354#7355#0" expanded="false" />
+            <element signature="e#7413#7414#0" expanded="false" />
+            <element signature="e#7759#7760#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/collections/ListChangeBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="117">
+          <caret line="541" column="0" lean-forward="false" selection-start-line="541" selection-start-column="0" selection-end-line="541" selection-end-column="0" />
+          <folding>
+            <element signature="e#19641#19642#0" expanded="false" />
+            <element signature="e#19669#19670#0" expanded="false" />
+            <element signature="e#20957#20958#0" expanded="false" />
+            <element signature="e#20997#20998#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/collections/ObservableListBase.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="117">
+          <caret line="205" column="0" lean-forward="false" selection-start-line="205" selection-start-column="0" selection-end-line="205" selection-end-column="0" />
+          <folding>
+            <element signature="e#7418#7419#0" expanded="false" />
+            <element signature="e#7465#7466#0" expanded="false" />
+            <element signature="e#7869#7870#0" expanded="false" />
+            <element signature="e#7912#7913#0" expanded="false" />
+            <element signature="e#8250#8251#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/scene/control/Tab.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="142">
+          <caret line="344" column="0" lean-forward="false" selection-start-line="344" selection-start-column="0" selection-end-line="344" selection-end-column="0" />
+          <folding>
+            <element signature="e#10118#10119#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/scene/control/TabPane.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="125">
+          <caret line="166" column="0" lean-forward="false" selection-start-line="166" selection-start-column="0" selection-end-line="166" selection-end-column="0" />
+          <folding>
+            <element signature="e#5265#5266#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/collections/ModifiableObservableListBase.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="125">
+          <caret line="150" column="0" lean-forward="false" selection-start-line="150" selection-start-column="0" selection-end-line="150" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/src.zip!/java/util/ArrayList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="142">
+          <caret line="494" column="0" lean-forward="false" selection-start-line="494" selection-start-column="0" selection-end-line="494" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/util/Utilities.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="47" lean-forward="false" selection-start-line="7" selection-start-column="47" selection-end-line="7" selection-end-column="47" />
+        <state relative-caret-position="170">
+          <caret line="22" column="134" lean-forward="false" selection-start-line="22" selection-start-column="134" selection-end-line="22" selection-end-column="134" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#CoordinatePair#0;class#CoordinatePair#0;class#Utilities#0" expanded="false" />
@@ -1264,13 +1424,77 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/KeroEdit.java">
+    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/gamedata/GameData.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="164">
-          <caret line="217" column="33" lean-forward="false" selection-start-line="217" selection-start-column="33" selection-end-line="217" selection-end-column="33" />
+        <state relative-caret-position="211">
+          <caret line="71" column="12" lean-forward="false" selection-start-line="71" selection-start-column="12" selection-end-line="71" selection-end-column="12" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#1830#1831#0" expanded="true" />
+            <element signature="e#1915#1916#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/MapEdit.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="33" column="26" lean-forward="false" selection-start-line="33" selection-start-column="26" selection-end-line="33" selection-end-column="26" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/KeroEdit.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="313">
+          <caret line="145" column="21" lean-forward="true" selection-start-line="145" selection-start-column="21" selection-end-line="145" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#15681#0" expanded="true" />
             <element signature="method#start#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#7199:7795" expanded="false" />
+            <element signature="method#setupMapList#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#9621:10377" expanded="false" />
+            <element signature="class#10529:11067" expanded="false" />
+            <element signature="class#11805:12079" expanded="false" />
+            <element signature="class#12125:12342" expanded="false" />
+            <element signature="method#handle#0;class#14150:15208" expanded="false" />
+            <element signature="method#setupTabPane#0;class#KeroEdit#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPack.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="178" column="21" lean-forward="false" selection-start-line="178" selection-start-column="21" selection-end-line="178" selection-end-column="21" />
+          <folding>
+            <element signature="method#reset#0;class#PxPack#0" expanded="false" />
+            <element signature="e#6431#6432#0" expanded="true" />
+            <element signature="e#6458#6459#0" expanded="true" />
+            <element signature="e#6487#6488#0" expanded="true" />
+            <element signature="e#6514#6515#0" expanded="true" />
+            <element signature="e#6556#6557#0" expanded="true" />
+            <element signature="e#6589#6590#0" expanded="true" />
+            <element signature="e#6636#6637#0" expanded="true" />
+            <element signature="e#6667#6668#0" expanded="true" />
+            <element signature="method#toString#0;class#PxPack#0" expanded="false" />
+            <element signature="docComment;method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#1;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#resize#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setTile#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Entity#1;class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Entity#0;class#PxPack#0" expanded="false" />
           </folding>
         </state>
       </provider>

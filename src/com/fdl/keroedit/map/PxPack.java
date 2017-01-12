@@ -24,13 +24,14 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Object for storing information about a PXPACK file
  */
-final public class PxPackMap {
+final public class PxPack {
     private File file;
     private Head head;
     private TileLayer[] tileLayers;
     private ArrayList <Entity> entities;
 
     //TODO: Copy constructor?
+    //TODO: rename method
 
     /**
      * Constructs a PxPackMap object and parses a given PXPACK file
@@ -38,7 +39,7 @@ final public class PxPackMap {
      *
      * @param inFile A File object pointing to a PXPACK file
      */
-    public PxPackMap(File inFile) throws IOException, ParseException {
+    PxPack(File inFile) throws IOException, ParseException {
         file = inFile;
 
         FileInputStream inStream = null;
@@ -163,7 +164,7 @@ final public class PxPackMap {
         }
         catch (FileNotFoundException except) {
             System.err.println("ERROR: Could not locate PXPACK file " + inFile.getName());
-            //TODO: Create default file
+            //TODO: Create file
         }
         catch (IOException except) {
             reset();
@@ -192,6 +193,22 @@ final public class PxPackMap {
         head = new Head();
         tileLayers = new TileLayer [3];
         entities = new ArrayList <Entity>();
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public Head getHead() {
+        return head;
+    }
+
+    public TileLayer[] getTileLayers() {
+        return tileLayers;
+    }
+
+    public ArrayList <Entity> getEntities() {
+        return entities;
     }
 
     @Override

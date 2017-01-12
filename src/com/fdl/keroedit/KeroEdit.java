@@ -1,6 +1,15 @@
+//TODO: Check Java version compatibility
+//TODO: Think about patching method - similar to Plus Porter
+//TODO: Use switch statements where applicable
+//TODO: Implement equals() for MapEdit?
+//TODO: Put repetitive code into private methods
+//TODO: Make the system friendly for undo/redo (start off by being abl to rollback deletions
+
 package com.fdl.keroedit;
 
 import java.io.File;
+
+import java.util.Arrays;
 
 import javafx.application.Application;
 
@@ -13,12 +22,15 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 
-import javafx.geometry.Orientation;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ListCell;
+import javafx.geometry.Orientation;
 import javafx.collections.FXCollections;
+import javafx.scene.control.ListCell;
 
 import javafx.scene.control.Alert;
+
+import javafx.scene.control.TabPane;
+import javafx.scene.control.Tab;
 
 import javafx.event.EventHandler;
 import javafx.event.ActionEvent;
@@ -33,22 +45,26 @@ import javafx.scene.input.MouseButton;
 
 import javafx.scene.image.ImageView;
 
-import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 
 import javafx.stage.Screen;
 import javafx.geometry.Rectangle2D;
 
 import com.fdl.keroedit.gamedata.GameData;
 
+import com.fdl.keroedit.map.MapEdit;
+
 import com.fdl.keroedit.util.Utilities;
 
 public class KeroEdit extends Application {
     private Stage mainStage;
     private BorderPane mainBorderPane;
+    private TabPane mainTabPane;
 
     private ListView <File> mapList;
 
     private final static String VERSION_STRING = "0.0.1";
+    private final static String LAST_UPDATED_STRING = "2017-01-12";
 
     private GameData gameData;
 
@@ -56,12 +72,12 @@ public class KeroEdit extends Application {
     public void start(Stage stage) {
         mainStage = stage;
 
-        final Rectangle2D display = Screen.getPrimary().getVisualBounds();
-
         mainBorderPane = new BorderPane();
         setupMenuBar();
         setupMapList();
+        setupTabPane();
 
+        Rectangle2D display = Screen.getPrimary().getVisualBounds();
         final Scene scene = new Scene(mainBorderPane, display.getWidth(), display.getHeight());
 
         stage.setScene(scene);
@@ -98,17 +114,40 @@ public class KeroEdit extends Application {
         menuItems[0][0].setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
         menuItems[0][0].setOnAction(new EventHandler <ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) {
-                final DirectoryChooser dChooser = new DirectoryChooser();
-                dChooser.setTitle("Browse to the Kero Blaster or Pink Hour Resource Folder (rsc_x)");
-                final File resourceDirectory = dChooser.showDialog(mainStage);
+            public void handle(final ActionEvent event) {
+                final FileChooser fChooser = new FileChooser();
+                fChooser.setTitle("Browse to a Kero Blaster or Pink Hour executable file");
+                fChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 
-                if (null != resourceDirectory) { //ensure a folder was selected
-                    if (!(resourceDirectory.getName().equals("rsc_p") || resourceDirectory.getName().equals("rsc_k"))) {
-                        Utilities.createErrorAlert("Invalid mod path", null, "Invalid path for mod.\nMust be either rsc_p or rsc_k.");
+                FileChooser.ExtensionFilter[] extensionFilters = {new FileChooser.ExtensionFilter("KB/PH Executable File", "*.exe"),
+                                                                  new FileChooser.ExtensionFilter("All files", "*.*")};
+                fChooser.getExtensionFilters().addAll(extensionFilters);
+                fChooser.setSelectedExtensionFilter(extensionFilters[0]);
+
+                final File executable = fChooser.showOpenDialog(mainStage);
+
+                if (null != executable) { //user didn't close dialog before selection
+                    final File[] directories = executable.getParentFile().listFiles();
+                    if (null == directories) {
+                        Utilities.createErrorAlert("Invalid mod path", null,
+                                                   "Could not locate rsc_p or rsc_k folder");
                         return;
                     }
-                    gameData = new GameData(resourceDirectory);
+
+                    Arrays.sort(directories);
+
+                    String resourceFolder = (0 <= Arrays.binarySearch(directories, new File(executable.getParent() + "/rsc_p"))) ?
+                                            "/rsc_p" : (0 <= Arrays.binarySearch(directories, new File(executable.getParent() + "/rsc_k/"))) ?
+                                                        "/rsc_k/" : null;
+
+                    if (null == resourceFolder) {
+                        Utilities.createErrorAlert("Invalid mod path", null,
+                                                   "Could not locate rsc_p or rsc_k folder");
+                        return;
+                    }
+
+                    gameData = new GameData(executable, resourceFolder);
+                    mainStage.setTitle("KeroEdit v" + VERSION_STRING + " - " + executable.getParent());
 
                     addMapsToList();
 
@@ -123,13 +162,13 @@ public class KeroEdit extends Application {
             }
         });
 
-        menuItems[0][1].setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
-        menuItems[0][1].setOnAction(new EventHandler <ActionEvent>() {
+        menuItems[0][1].setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHIFT_DOWN, KeyCombination.CONTROL_DOWN));
+        /*menuItems[0][1].setOnAction(new EventHandler <ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                gameData.save();
+
             }
-        });
+        });*/
         menuItems[0][1].setDisable(true); //Disable until valid mod folder opened
 
         menuItems[1][0].setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN));
@@ -152,13 +191,13 @@ public class KeroEdit extends Application {
 
         menuItems[2][0].setOnAction(new EventHandler <ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) {
+            public void handle(final ActionEvent event) {
                 final Alert about = new Alert(Alert.AlertType.INFORMATION);
 
                 about.setTitle("About");
                 about.setHeaderText(null);
-                about.setContentText("Created by FDeityLink on 2017-01-11\nVersion v" + VERSION_STRING);
-                about.getDialogPane().setGraphic(new ImageView(this.getClass().getResource("resource/fdl_logo.png").toString()));
+                about.setContentText("Created by FDeityLink on " + LAST_UPDATED_STRING + "\nVersion v" + VERSION_STRING);
+                about.getDialogPane().setGraphic(new ImageView(this.getClass().getResource("/com/fdl/keroedit/resource/fdl_logo.png").toString()));
 
                 about.show();
             }
@@ -174,8 +213,8 @@ public class KeroEdit extends Application {
     private void setupMapList() {
         mapList = new ListView <File>();
 
-        mapList.setPrefWidth(150);
-        mapList.setPrefHeight(700);
+        mapList.setPrefHeight(mainStage.getHeight());
+        mapList.setPrefWidth(125); //TODO: Variable size this
         mapList.setOrientation(Orientation.VERTICAL);
 
         mainBorderPane.setLeft(mapList);
@@ -194,44 +233,151 @@ public class KeroEdit extends Application {
             }
         });
 
-
-        final MenuItem[] contextMenuItems = {new MenuItem("_Open Map"), new MenuItem("_New Map"),
-                                             new MenuItem("_Delete Map"), new MenuItem("Duplicate _Map")};
-        for (MenuItem mItem : contextMenuItems) {
+        final MenuItem[] mapListActions = {new MenuItem("_Open Map"), new MenuItem("_New Map"),
+                                           new MenuItem("_Delete Map"), new MenuItem("Duplicate _Map"),
+                                           new MenuItem("_Rename Map")};
+        for (MenuItem mItem : mapListActions) {
             mItem.setMnemonicParsing(true);
         }
 
-        for (MenuItem mItem : contextMenuItems) { //TODO: Replace this loop with legitimate action binding
-            mItem.setOnAction(new EventHandler <ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    Utilities.createInformationAlert(mItem.getText().replace("_", ""), null, "Not implemented");
-                }
-            });
-        }
-
-        final ContextMenu rtClickMenu = new ContextMenu(contextMenuItems);
-
-        mapList.setOnKeyPressed(new EventHandler <KeyEvent>() { //TODO: After implementing map editor, have this open that
+        /* Accelerators present more so to show key mappings, as the accelerators not triggered
+         * (probably since they're in a context menu). So I have the mapList.setOnKeyPressed
+         * thing below which has the same keys mapped
+         */
+        mapListActions[0].setAccelerator(new KeyCodeCombination(KeyCode.ENTER));
+        mapListActions[0].setOnAction(new EventHandler <ActionEvent>() {
             @Override
-            public void handle(KeyEvent event) {
-                if (KeyCode.ENTER == event.getCode()) {
-                    Utilities.createInformationAlert("Open map", null, "Not implemented");
+            public void handle(final ActionEvent event) {
+                for (Tab tab : mainTabPane.getTabs()) {
+                    if (tab.getText().equals(mapList.getSelectionModel().getSelectedItem().getName().replace(".pxpack", ""))) {
+                        //Not the best way to check but it works
+                        mainTabPane.getSelectionModel().select(tab); //select already open tab
+                        return;
+                    }
+                }
+
+                MapEdit mEdit = new MapEdit(mapList.getSelectionModel().getSelectedItem());
+                mainTabPane.getTabs().add(mEdit);
+                mainTabPane.getSelectionModel().select(mEdit);
+            }
+        });
+
+        mapListActions[1].setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN));
+        mapListActions[1].setOnAction(new EventHandler <ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Utilities.createInformationAlert("New Map", null, "Not implemented");
+
+                /*File f;
+                for (int i = 0; ; ++i) {
+                    f = new File(gameData.getExecutable().getParent() + gameData.getResourceFolder());
+                    if (!f.exists()) {
+                        //create a PxPackMap object with f as parameter
+                    }
+                }*/
+            }
+        });
+
+        mapListActions[2].setAccelerator(new KeyCodeCombination(KeyCode.DELETE));
+        mapListActions[2].setOnAction(new EventHandler <ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                File map = mapList.getSelectionModel().getSelectedItem();
+                gameData.removeMap(map);
+                mapList.getItems().remove(map);
+
+                for (Tab tab : mainTabPane.getTabs()) {
+                    if (tab.getText().equals(map.getName().replace(".pxpack", ""))) {
+                        mainTabPane.getTabs().remove(tab);
+                        break;
+                    }
                 }
             }
         });
 
-        mapList.setOnMouseClicked(new EventHandler <MouseEvent>() { //TODO: After implementing map editor, have this open that
+        mapListActions[3].setOnAction(new EventHandler <ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Utilities.createInformationAlert("Duplicate Map", null, "Not implemented");
+                //TODO: Create prompt for new mapname
+            }
+        });
+
+        mapListActions[4].setOnAction(new EventHandler <ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Utilities.createInformationAlert("Rename Map", null, "Not implemented");
+            }
+        });
+
+        final ContextMenu rtClickMenu = new ContextMenu(mapListActions);
+
+        mapList.setOnKeyPressed(new EventHandler <KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode().equals(KeyCode.ENTER)) {
+                    for (Tab tab : mainTabPane.getTabs()) {
+                        if (tab.getText().equals(mapList.getSelectionModel().getSelectedItem().getName().replace(".pxpack", ""))) {
+                            //Not the best way to check but it works
+                            mainTabPane.getSelectionModel().select(tab); //select already open tab
+                            return;
+                        }
+                    }
+
+                    MapEdit mEdit = new MapEdit(mapList.getSelectionModel().getSelectedItem());
+                    mainTabPane.getTabs().add(mEdit);
+                    mainTabPane.getSelectionModel().select(mEdit);
+                }
+                else if (event.getCode().equals(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN).getCode())) {
+                    Utilities.createInformationAlert("New Map", null, "Not implemented");
+                }
+                else if (event.getCode().equals(KeyCode.DELETE)) {
+                    File map = mapList.getSelectionModel().getSelectedItem();
+                    gameData.removeMap(map);
+                    mapList.getItems().remove(map);
+                    for (Tab tab : mainTabPane.getTabs()) {
+                        if (tab.getText().equals(map.getName().replace(".pxpack", ""))) {
+                            mainTabPane.getTabs().remove(tab);
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+
+        mapList.setOnMouseClicked(new EventHandler <MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 if (event.getClickCount() == 2) {
-                    Utilities.createInformationAlert("Open map", null, "Not implemented");
+                    for (Tab tab : mainTabPane.getTabs()) {
+                        if (tab.getText().equals(mapList.getSelectionModel().getSelectedItem().getName().replace(".pxpack", ""))) {
+                            //Not the best way to check but it works
+                            mainTabPane.getSelectionModel().select(tab); //select already open tab
+                            return;
+                        }
+                    }
+
+                    MapEdit mEdit = new MapEdit(mapList.getSelectionModel().getSelectedItem());
+                    mainTabPane.getTabs().add(mEdit);
+                    mainTabPane.getSelectionModel().select(mEdit);
                 }
                 else if (event.getButton().equals(MouseButton.SECONDARY)) { //right-click
                     rtClickMenu.show(mainBorderPane, event.getScreenX(), event.getScreenY());
                 }
             }
         });
+    }
+
+    private void setupTabPane() {
+        mainTabPane = new TabPane();
+
+        mainTabPane.setPrefHeight(mainStage.getHeight());
+        mainTabPane.setPrefWidth(mainStage.getWidth());
+
+        mainTabPane.tabClosingPolicyProperty().setValue(TabPane.TabClosingPolicy.ALL_TABS);
+        Utilities.addControlWClose(mainTabPane);
+
+        mainBorderPane.setCenter(mainTabPane);
     }
 
     public static void main(final String[] args) {

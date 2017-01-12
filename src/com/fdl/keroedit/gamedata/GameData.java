@@ -6,15 +6,19 @@ import java.io.File;
 import java.io.FileFilter;
 
 public class GameData {
-    private File resourceFolder;
+    private File executable;
+    private String resourceFolder;
+
     private ArrayList <File> bgms;
     private ArrayList <File> maps;
     //TODO: Images (tilesets, spritesheets, and more!)
     private ArrayList <File> soundEffects;
     private ArrayList <File> scripts;
 
-    public GameData(File resourceFolder) {
-        this.resourceFolder = resourceFolder;
+    public GameData(final File executable, final String resourceFolder) {
+        this.executable = executable;
+
+        this.resourceFolder = "/" + resourceFolder + "/";
 
         bgms = new ArrayList <File>();
         fillFileList(bgms, "/bgm/", ".ptcop");
@@ -29,29 +33,38 @@ public class GameData {
         fillFileList(scripts, "/text/", ".pxeve");
     }
 
-    public void save() {
-
+    public File getExecutable() {
+        return executable;
     }
 
-    public File getResourceFolder() {
-        return new File(resourceFolder.getAbsolutePath());
+    public String getResourceFolder() {
+        return resourceFolder;
     }
 
     public ArrayList <File> getMapList() {
         return new ArrayList <File>(maps);
     }
 
+    public void addMap (final File newMap) {
+        insertMap(maps.size(), newMap);
+    }
+
+    public void insertMap(final int index, final File newMap) {
+        maps.add(index, newMap);
+    }
+
+    public void removeMap(final File map) {
+        maps.remove(map);
+    }
+
     private void fillFileList(ArrayList list, String pathFromResource, String filenameExtension) {
         list.clear();
 
-        File baseMapDir = new File(resourceFolder.getAbsolutePath() + pathFromResource);
+        File baseMapDir = new File(executable.getParent() + resourceFolder + pathFromResource);
         File[] fileList = baseMapDir.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
-                if (pathname.getName().endsWith(filenameExtension)) {
-                    return true;
-                }
-                return false;
+                return pathname.getName().endsWith(filenameExtension);
             }
         });
 
@@ -59,7 +72,6 @@ public class GameData {
             for (File f : fileList) {
                 list.add(f);
             }
-            return;
         }
     }
 }

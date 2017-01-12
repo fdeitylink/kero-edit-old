@@ -1,10 +1,31 @@
 package com.fdl.keroedit.util;
 
+import javafx.scene.control.TabPane;
+
 import javafx.scene.control.Alert;
+
+import javafx.event.EventHandler;
+
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 
 import org.jetbrains.annotations.Contract;
 
 public class Utilities {
+    public static void addControlWClose(TabPane tabPane) {
+        tabPane.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(final KeyEvent event) {
+                if (tabPane.isFocused() && event.getCode().equals(new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN).getCode())) {
+                    final int selectedTabIndex = tabPane.getSelectionModel().getSelectedIndex();
+                    tabPane.getTabs().remove(selectedTabIndex); //Seems to throw out of bounds except if you go to fast, though it doesn't halt program
+                }
+            }
+        });
+    }
+
     public static void createErrorAlert(String title, String headerText, String message) {
         System.err.println(message);
         createAlert(Alert.AlertType.ERROR, title, headerText, message, true);
