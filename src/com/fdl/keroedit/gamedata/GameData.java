@@ -1,6 +1,7 @@
 package com.fdl.keroedit.gamedata;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -15,23 +16,27 @@ public class GameData {
     private ArrayList <File> soundEffects;
     private ArrayList <File> scripts;
 
-    public GameData(final File executable, final String resourceFolder) {
+    public GameData(final File executable, String resourceFolder) {
         this.executable = executable;
 
-        this.resourceFolder = "/" + resourceFolder + "/";
+        if (!resourceFolder.startsWith("/")) {
+            resourceFolder = "/" + resourceFolder;
+        }
+        if (!resourceFolder.endsWith("/")) {
+            resourceFolder += "/";
+        }
+        this.resourceFolder = resourceFolder;
 
-        bgms = new ArrayList <File>();
-        fillFileList(bgms, "/bgm/", ".ptcop");
+        bgms = fillFileList("/bgm/", ".ptcop");
 
-        maps = new ArrayList <File>();
-        fillFileList(maps, "/field/", ".pxpack");
+        maps = fillFileList("/field/", ".pxpack");
 
-        soundEffects = new ArrayList <File>();
-        fillFileList(soundEffects, "/se/", ".ptnoise");
+        soundEffects = fillFileList("/se/", ".ptnoise");
 
-        scripts = new ArrayList <File>();
-        fillFileList(scripts, "/text/", ".pxeve");
+        scripts = fillFileList("/text/", ".pxeve");
     }
+
+
 
     public File getExecutable() {
         return executable;
@@ -57,21 +62,18 @@ public class GameData {
         maps.remove(map);
     }
 
-    private void fillFileList(ArrayList list, String pathFromResource, String filenameExtension) {
-        list.clear();
+    //TODO: private ArrayList <PxPack> fillMapList
+
+    private ArrayList <File> fillFileList(final String pathFromResource, final String filenameExtension) {
 
         File baseMapDir = new File(executable.getParent() + resourceFolder + pathFromResource);
         File[] fileList = baseMapDir.listFiles(new FileFilter() {
             @Override
-            public boolean accept(File pathname) {
+            public boolean accept(final File pathname) {
                 return pathname.getName().endsWith(filenameExtension);
             }
         });
 
-        if (null != fileList) {
-            for (File f : fileList) {
-                list.add(f);
-            }
-        }
+        return (fileList != null) ? new ArrayList <File>(Arrays.asList(fileList)) : null;
     }
 }

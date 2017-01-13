@@ -1,4 +1,4 @@
-package com.fdl.keroedit.util;
+package com.fdl.keroedit;
 
 import javafx.scene.control.TabPane;
 
@@ -11,10 +11,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 
-import org.jetbrains.annotations.Contract;
-
 public class Utilities {
-    public static void addControlWClose(TabPane tabPane) {
+    public static void addCtrlWClose(final TabPane tabPane) {
         tabPane.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(final KeyEvent event) {
@@ -58,7 +56,6 @@ public class Utilities {
      *
      * @return The index to use
      */
-    @Contract(pure = true)
     public static long XYToIndex(long x, long y, long width) {
         return (width * y) + x;
     }
@@ -72,7 +69,6 @@ public class Utilities {
      *
      * @return A {@code CoordinatePair} object with the x and y coordinates of the index
      */
-    @Contract("_, _ -> !null")
     public static CoordinatePair indexToXY(long width, long index) {
         return new Utilities().new CoordinatePair(index % width, index / width);
     }

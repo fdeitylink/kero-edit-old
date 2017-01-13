@@ -1,5 +1,7 @@
 package com.fdl.keroedit.map;
 
+import java.util.Objects;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -16,28 +18,30 @@ import java.text.ParseException;
 
 import java.io.UnsupportedEncodingException;
 
-import java.awt.Color;
+import javafx.scene.paint.Color;
 
-import com.fdl.keroedit.util.Utilities;
-import org.jetbrains.annotations.NotNull;
+import com.fdl.keroedit.Utilities;
 
 /**
  * Object for storing information about a PXPACK file
  */
-final public class PxPack {
+public class PxPack {
     private File file;
     private Head head;
     private TileLayer[] tileLayers;
     private ArrayList <Entity> entities;
 
     //TODO: Copy constructor?
-    //TODO: rename method
+    //TODO: rename() method
 
     /**
      * Constructs a PxPackMap object and parses a given PXPACK file
      * to set the fields of the object
      *
      * @param inFile A File object pointing to a PXPACK file
+     *
+     * @throws IOException if there was an error reading the file
+     * @throws ParseException if the file format was somehow incorrect
      */
     PxPack(File inFile) throws IOException, ParseException {
         file = inFile;
@@ -81,7 +85,7 @@ final public class PxPack {
             byte red = buf.get();
             byte green = buf.get();
             byte blue = buf.get();
-            Color bgColor = new Color(red, green, blue);
+            Color bgColor = Color.rgb(red, green, blue);
 
 
             String[] tilesetNames = new String [3];
@@ -115,7 +119,7 @@ final public class PxPack {
                 short width = buf.getShort();
                 short height = buf.getShort();
 
-                if (width * height > 0) {
+                if (width * height > 0) { //Won't work for maps where width * height sets sign bit in integer (thank java for lack of unsigned)
                     chan.position(chan.position() + 1);
                     buf = ByteBuffer.allocate(width * height);
                     chan.read(buf);
@@ -164,7 +168,7 @@ final public class PxPack {
         }
         catch (FileNotFoundException except) {
             System.err.println("ERROR: Could not locate PXPACK file " + inFile.getName());
-            //TODO: Create file
+            //TODO: initialize fields, exit; new file will be made in save method
         }
         catch (IOException except) {
             reset();
@@ -201,7 +205,7 @@ final public class PxPack {
 
     public Head getHead() {
         return head;
-    }
+    } //TODO: Return clones or make the interior classes immutable
 
     public TileLayer[] getTileLayers() {
         return tileLayers;
@@ -209,6 +213,19 @@ final public class PxPack {
 
     public ArrayList <Entity> getEntities() {
         return entities;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        final PxPack pxPack = (PxPack) o;
+        return Objects.equals(file, pxPack.file);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(file);
     }
 
     @Override
@@ -263,7 +280,7 @@ final public class PxPack {
         return result;
     }
 
-    final class Head {
+    class Head {
         static final String HEADER_STRING = "PXPACK121127a**\0";
 
         String description;
@@ -293,7 +310,6 @@ final public class PxPack {
         }
 
         //TODO: Limit string lengths and check if bgColor parameter has opacity set; add reset()
-        @NotNull
         @Override
         public String toString() {
             StringBuilder result = new StringBuilder();
@@ -321,15 +337,18 @@ final public class PxPack {
             result.append("Background Color: \n");
 
             result.append("\tRed: ");
-            result.append(String.format("%02X", bgColor.getRed()));
+            //result.append(String.format("%02X", bgColor.getRed()));
+            result.append(bgColor.getRed());
             result.append('\n');
 
             result.append("\tGreen: ");
-            result.append(String.format("%02X", bgColor.getGreen()));
+            //result.append(String.format("%02X", bgColor.getGreen()));
+            result.append(bgColor.getGreen());
             result.append('\n');
 
             result.append("\tBlue: ");
-            result.append(String.format("%02X", bgColor.getBlue()));
+            //result.append(String.format("%02X", bgColor.getBlue()));
+            result.append(bgColor.getBlue());
             result.append('\n');
 
             for (int i = 0; i < tilesetNames.length; ++i) {
@@ -405,7 +424,7 @@ final public class PxPack {
     }
 
     //TODO: Add reset()
-    final class TileLayer {
+    class TileLayer {
         static final String HEADER_STRING = "pxMAP01\0";
 
         private short width, height;
@@ -444,19 +463,19 @@ final public class PxPack {
                 return;
             }
 
-            final short OLD_WIDTH = this.width;
-            final short OLD_HEIGHT = this.height;
+            final short oldWidth = this.width;
+            final short oldHeight = this.height;
             this.width = width;
             this.height = height;
 
-            final short LOOP_WIDTH = (width < OLD_WIDTH) ? width : OLD_WIDTH;
-            final short LOOP_HEIGHT = (height < OLD_HEIGHT) ? height: OLD_HEIGHT;
+            final short loopWidth = (width < oldWidth) ? width : oldWidth;
+            final short loopHeight = (height < oldHeight) ? height: oldHeight;
 
-            final ArrayList <Byte> OLD_TILES = new ArrayList <Byte>(this.tiles);
+            final ArrayList <Byte> oldTiles = new ArrayList <Byte>(this.tiles);
 
-            for (int i = 0; i < LOOP_HEIGHT; ++i) {
-                for (int j = 0; j < LOOP_WIDTH; ++j) {
-                    tiles.set((width * i) + j, OLD_TILES.get((OLD_WIDTH * i) + j));
+            for (int i = 0; i < loopHeight; ++i) {
+                for (int j = 0; j < loopWidth; ++j) {
+                    tiles.set((width * i) + j, oldTiles.get((oldWidth * i) + j));
                 }
             }
         }
@@ -522,7 +541,7 @@ final public class PxPack {
     }
 
     //TODO: Add reset()
-    final class Entity {
+    class Entity {
         private byte flag, type, unknownByte;
         private short x, y;
         private byte[] data;

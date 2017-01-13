@@ -1,28 +1,32 @@
+//TODO: MapEditTab doesn't store the map - GameData does and MapEdit puts changes into GameData
+
 package com.fdl.keroedit.map;
 
 import java.util.ArrayList;
 
 import java.io.File;
+import java.util.Objects;
 
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tab;
 
-public class MapEdit extends Tab {
+public class MapEditTab extends Tab {
     private TabPane mainTabPane;
 
     private PxPack map;
 
-    public MapEdit(File inFile) {
-        super();
+    public MapEditTab(File inFile) {
+        super(inFile.getName().replaceAll(".pxpack", ""));
+
         try {
             map = new PxPack(inFile);
         }
         catch (Exception except) {
-
+            //TODO: Legitimate exception handling code
             return;
         }
-        setText(map.getFile().getName().replaceAll(".pxpack", ""));
 
         PropertyEdit propertyEdit = new PropertyEdit(map.getHead());
         TileEdit tileEdit = new TileEdit(map.getTileLayers(), map.getEntities());
@@ -34,12 +38,25 @@ public class MapEdit extends Tab {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                mainTabPane.setPrefHeight(getTabPane().getPrefHeight());
+                mainTabPane.setPrefHeight(getTabPane().getPrefHeight()); //null pointer exception - runLater probably happens too soon
                 mainTabPane.setPrefWidth(getTabPane().getPrefWidth());
             }
         });
 
         mainTabPane.tabClosingPolicyProperty().setValue(TabPane.TabClosingPolicy.UNAVAILABLE);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        final MapEditTab that = (MapEditTab) o;
+        return Objects.equals(map, that.map);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(map);
     }
 
     private class PropertyEdit extends Tab {
