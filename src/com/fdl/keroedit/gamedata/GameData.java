@@ -1,73 +1,111 @@
 package com.fdl.keroedit.gamedata;
 
+import com.fdl.keroedit.Messages;
+
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import java.io.File;
 import java.io.FileFilter;
 
+import java.nio.file.NoSuchFileException;
+
+//TODO: Throws errors (or mkdirs()?) if rsc_x is missing necessary folders
+//TODO: Store files in Sets and reimplement equals() for PxPack?
+
+/**
+ * Singleton class for storing about a Kero Blaster game
+ */
 public class GameData {
+    private static GameData gameData;
+
     private File executable;
-    private String resourceFolder;
+    private File resourceFolder;
 
     private ArrayList <File> bgms;
-    private ArrayList <File> maps;
+    private ArrayList <File> maps; //TODO: Make arraylist of PxPack objects
     //TODO: Images (tilesets, spritesheets, and more!)
     private ArrayList <File> soundEffects;
-    private ArrayList <File> scripts;
+    private ArrayList <File> scripts; //TODO: Make arraylist of PxEve objects
 
-    public GameData(final File executable, String resourceFolder) {
-        this.executable = executable;
+    private GameData() {
 
-        if (!resourceFolder.startsWith("/")) {
-            resourceFolder = "/" + resourceFolder;
+    }
+
+    /**
+     * Initializes the singleton GameData object based on the given executable
+     *
+     * @param executable File pointing to the Kero Blaster executable
+     *
+     * @throws NoSuchFileException If the given executable is null
+     */
+    public static void initGameData(final File executable) throws NoSuchFileException {
+        gameData = new GameData();
+
+        if (null == executable) {
+            throw new IllegalArgumentException(Messages.getString("GameData.EXECUTABLE_NULL"));
         }
-        if (!resourceFolder.endsWith("/")) {
-            resourceFolder += "/";
+        else if (!executable.exists()) {
+            throw new NoSuchFileException(MessageFormat.format(Messages.getString("GameData.EXECUTABLE_NONEXISTENT"),
+                                                               executable.getAbsolutePath()));
         }
-        this.resourceFolder = resourceFolder;
+        gameData.executable = executable;
 
-        bgms = fillFileList("/bgm/", ".ptcop");
+        final String[] dirNames = executable.getParentFile().list();
+        if (null == dirNames) {
+            throw new NoSuchFileException(MessageFormat.format(Messages.getString("GameData.MISSING_RSC"),
+                                                               executable.getAbsolutePath()));
+        }
+        final ArrayList <String> directoryNames = new ArrayList <String>(Arrays.asList(dirNames));
 
-        maps = fillFileList("/field/", ".pxpack");
+        if (directoryNames.contains("rsc_p")) {
+            gameData.resourceFolder = new File(gameData.executable.getParent() + File.separatorChar + "rsc_p");
+        }
+        else if (directoryNames.contains("rsc_k")) {
+            gameData.resourceFolder = new File(gameData.executable.getParent() + File.separatorChar + "rsc_k");
+        }
+        else {
+            throw new NoSuchFileException(MessageFormat.format(Messages.getString("GameData.MISSING_RSC"),
+                                                               executable.getAbsolutePath()));
+        }
 
-        soundEffects = fillFileList("/se/", ".ptnoise");
+        gameData.bgms = fillFileList("/bgm/", ".ptcop");
 
-        scripts = fillFileList("/text/", ".pxeve");
+        gameData.maps = fillFileList("/field/", ".pxpack");
+
+        gameData.soundEffects = fillFileList("/se/", ".ptnoise");
+
+        gameData.scripts = fillFileList("/text/", ".pxeve");
     }
 
-
-
-    public File getExecutable() {
-        return executable;
+    public static File getExecutable() {
+        return gameData.executable;
     }
 
-    public String getResourceFolder() {
-        return resourceFolder;
+    public static File getBaseFolder() {
+        return gameData.executable.getParentFile();
     }
 
-    public ArrayList <File> getMapList() {
-        return new ArrayList <File>(maps);
+    public static File getResourceFolder() {
+        return gameData.resourceFolder;
     }
 
-    public void addMap (final File newMap) {
-        insertMap(maps.size(), newMap);
+    public static ArrayList <File> getMapList() {
+        return new ArrayList <File>(gameData.maps);
     }
 
-    public void insertMap(final int index, final File newMap) {
-        maps.add(index, newMap);
+    public static void addMap(final File newMap) {
+        gameData.maps.add(newMap);
     }
 
-    public void removeMap(final File map) {
-        maps.remove(map);
+    public static void removeMap(final File map) {
+        gameData.maps.remove(map);
     }
 
-    //TODO: private ArrayList <PxPack> fillMapList
-
-    private ArrayList <File> fillFileList(final String pathFromResource, final String filenameExtension) {
-
-        File baseMapDir = new File(executable.getParent() + resourceFolder + pathFromResource);
-        File[] fileList = baseMapDir.listFiles(new FileFilter() {
+    private static ArrayList <File> fillFileList(final String pathFromResource, final String filenameExtension) {
+        final File baseMapDir = new File(gameData.resourceFolder.getAbsolutePath() + File.separatorChar + pathFromResource);
+        final File[] fileList = baseMapDir.listFiles(new FileFilter() {
             @Override
             public boolean accept(final File pathname) {
                 return pathname.getName().endsWith(filenameExtension);
