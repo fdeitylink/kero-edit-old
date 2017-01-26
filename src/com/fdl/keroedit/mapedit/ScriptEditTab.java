@@ -35,11 +35,11 @@ public class ScriptEditTab extends Tab {
                                      inFileBaseName + ".pxeve");
         script = inFile;
 
-        String scriptContents = "";
+        final StringBuilder sBuilder = new StringBuilder();
         try {
-            Scanner scan = new Scanner(inFile);
+            final Scanner scan = new Scanner(inFile);
             while (scan.hasNext()) {
-                scriptContents += scan.next();
+                sBuilder.append(scan.next());
             }
         }
         catch (final FileNotFoundException except) {
@@ -47,6 +47,7 @@ public class ScriptEditTab extends Tab {
             System.err.println("ERROR: Could not locate PXEVE file " + inFile.getName());
             return;
         }
+        final String scriptContents = sBuilder.toString();
 
         textEditorArea = new TextArea(scriptContents);
 
@@ -54,15 +55,5 @@ public class ScriptEditTab extends Tab {
         setId(inFile.getName().replace(".pxeve", ""));
 
         setContent(textEditorArea);
-
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                if (null != getTabPane()) {
-                    textEditorArea.setPrefHeight(getTabPane().getPrefHeight());
-                    textEditorArea.setPrefWidth(getTabPane().getPrefWidth());
-                }
-            }
-        });
     }
 }

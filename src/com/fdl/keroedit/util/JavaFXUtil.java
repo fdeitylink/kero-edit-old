@@ -19,25 +19,23 @@ import javafx.util.Callback;
 import javafx.scene.layout.Priority;
 
 import javafx.scene.control.Alert;
-import javafx.scene.control.TabPane;
+
 import javafx.scene.control.TextArea;
 
+import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.image.PixelWriter;
-
-import javafx.event.EventHandler;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
 
 public class JavaFXUtil {
     private JavaFXUtil() {
 
     }
 
+    /**
+     * Returns a {@code String} representation of the Color suitable for {@code Color.web()} or {@code Color.valueOf()}
+     */
     public static String colorToString(final Color color) {
         return String.format("0x%02X%02X%02X",
                              (int)(color.getRed() * 255),
@@ -79,32 +77,6 @@ public class JavaFXUtil {
         }
 
         return dest;
-    }
-
-    /**
-     * Binds Ctrl + W to closing the current {@code Tab} and Ctrl + Shift + W to closing all the {@code Tab}s
-     * in the given {@code TabPane}.
-     * <p>Note: This method completely replaces whatever used to be in the
-     * {@code TabPane}'s {@code setOnKeyPressed()} method</p>
-     *
-     * @param tabPane The {@code TabPane} to add the keybinds to
-     */
-    public static void addCloseTabKeys(final TabPane tabPane) {
-        //TODO: Make this 'append' the keybinds to the already present setOnKeyPressed() method, so they are not removed
-        tabPane.setOnKeyPressed(new EventHandler <KeyEvent>() {
-            @Override
-            public void handle(final KeyEvent event) {
-                if (new KeyCodeCombination(KeyCode.W, KeyCombination.SHIFT_DOWN, KeyCombination.CONTROL_DOWN).match(event)) {
-                    tabPane.getTabs().clear();
-                }
-                else if (new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN).match(event)) {
-                    final int tabIndex = tabPane.getSelectionModel().getSelectedIndex(); //just Ctrl + W
-                    if (-1 != tabIndex) {
-                        tabPane.getTabs().remove(tabIndex); //ArithmeticException (division by zero) thrown if tabs closed too fast
-                    }
-                }
-            }
-        });
     }
 
     /**

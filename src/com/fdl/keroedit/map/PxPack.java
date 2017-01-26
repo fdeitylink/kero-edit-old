@@ -246,7 +246,9 @@ public class PxPack {
         return entities;
     }
 
-    public void setHead(Head head) {
+    //TODO: throw NullPointerExceptions for null values
+
+    public void setHead(final Head head) {
         this.head = new Head(head);
     }
 
@@ -254,12 +256,12 @@ public class PxPack {
         tileLayers[index] = new TileLayer(layer);
     }
 
-    public void addEntity(Entity entity) {
+    public void addEntity(final Entity entity) {
         entities.add(new Entity(entity));
     }
 
-    /*public void setEntity(Entity entity) {
-        entities.add(new Entity(entity));
+    /*public void setEntity(final int index, final Entity entity) {
+        entities.set(index, new Entity(entity));
     }*/
 
     /**

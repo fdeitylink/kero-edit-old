@@ -6,92 +6,23 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e217904-e010-4fe6-a354-8fe1baa2af52" name="Default" comment="Massive changes - I should commit more often&#10;Edits maps (no saving, not for a while)&#10;Loads script files (though this may be broken... - doesn't always show a script in the tab)&#10;Save and save all&#10;Created class for storing methods (for later undo/redo system)&#10;Uses Preferences class to store config options&#10;ResourceBundle for strings&#10;Logging class&#10;Store tiles as 2D int array now instead of 1D byte ArrayList&#10;Removed math utilities, put the javafx-related utilities into JavaFXUtil class&#10;Probably other stuff (it's been almost 2 weeks since the last commit! - I swear I'll be better about it!)&#10;Still a lot more to do - massive TODO comment in KeroEdit class">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/Config.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/Messages.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/MapEditTab.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/ScriptEditTab.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/messages.properties" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/resource/ResourceManager.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/script/PxEve.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/util/JavaFXUtil.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/util/Logger.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/util/MethodStore.java" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/out/artifacts/KeroEdit_jar/KeroEdit.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/Changeable.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/Utilities.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/map/MapEditTab.java" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$1.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$2.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$3.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$3.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$4.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$4.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/gamedata/GameData$1.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/gamedata/GameData$1.class" />
+    <list default="true" id="7e217904-e010-4fe6-a354-8fe1baa2af52" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/gamedata/GameData.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/gamedata/GameData.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/KeroEdit.iml" afterPath="$PROJECT_DIR$/KeroEdit.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/allclasses-frame.html" afterPath="$PROJECT_DIR$/doc/allclasses-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/allclasses-noframe.html" afterPath="$PROJECT_DIR$/doc/allclasses-noframe.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/KeroEdit.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/KeroEdit.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/Main.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/Main.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/class-use/KeroEdit.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/class-use/KeroEdit.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/class-use/Main.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/class-use/Main.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/PxPackMap.Entity.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/PxPackMap.Entity.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/PxPackMap.Head.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/PxPackMap.Head.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/PxPackMap.TileLayer.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/PxPackMap.TileLayer.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/PxPackMap.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/PxPackMap.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/class-use/PxPackMap.Entity.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/class-use/PxPackMap.Entity.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/class-use/PxPackMap.Head.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/class-use/PxPackMap.Head.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/class-use/PxPackMap.TileLayer.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/class-use/PxPackMap.TileLayer.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/class-use/PxPackMap.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/class-use/PxPackMap.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/package-frame.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/package-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/package-summary.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/package-summary.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/package-tree.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/package-tree.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/package-use.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/package-use.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/package-frame.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/package-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/package-summary.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/package-summary.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/package-tree.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/package-tree.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/package-use.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/package-use.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/Utilities.CoordinatePair.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/Utilities.CoordinatePair.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/Utilities.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/Utilities.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/class-use/Utilities.CoordinatePair.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/class-use/Utilities.CoordinatePair.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/class-use/Utilities.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/class-use/Utilities.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/package-frame.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/package-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/package-summary.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/package-summary.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/package-tree.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/package-tree.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/package-use.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/package-use.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/constant-values.html" afterPath="$PROJECT_DIR$/doc/constant-values.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/deprecated-list.html" afterPath="$PROJECT_DIR$/doc/deprecated-list.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/help-doc.html" afterPath="$PROJECT_DIR$/doc/help-doc.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-1.html" afterPath="$PROJECT_DIR$/doc/index-files/index-1.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-10.html" afterPath="$PROJECT_DIR$/doc/index-files/index-10.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-11.html" afterPath="$PROJECT_DIR$/doc/index-files/index-11.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-12.html" afterPath="$PROJECT_DIR$/doc/index-files/index-12.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-13.html" afterPath="$PROJECT_DIR$/doc/index-files/index-13.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-14.html" afterPath="$PROJECT_DIR$/doc/index-files/index-14.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-15.html" afterPath="$PROJECT_DIR$/doc/index-files/index-15.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-16.html" afterPath="$PROJECT_DIR$/doc/index-files/index-16.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-17.html" afterPath="$PROJECT_DIR$/doc/index-files/index-17.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-18.html" afterPath="$PROJECT_DIR$/doc/index-files/index-18.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-19.html" afterPath="$PROJECT_DIR$/doc/index-files/index-19.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-2.html" afterPath="$PROJECT_DIR$/doc/index-files/index-2.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-3.html" afterPath="$PROJECT_DIR$/doc/index-files/index-3.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-4.html" afterPath="$PROJECT_DIR$/doc/index-files/index-4.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-5.html" afterPath="$PROJECT_DIR$/doc/index-files/index-5.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-6.html" afterPath="$PROJECT_DIR$/doc/index-files/index-6.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-7.html" afterPath="$PROJECT_DIR$/doc/index-files/index-7.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-8.html" afterPath="$PROJECT_DIR$/doc/index-files/index-8.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-9.html" afterPath="$PROJECT_DIR$/doc/index-files/index-9.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index.html" afterPath="$PROJECT_DIR$/doc/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/overview-frame.html" afterPath="$PROJECT_DIR$/doc/overview-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/overview-summary.html" afterPath="$PROJECT_DIR$/doc/overview-summary.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/overview-tree.html" afterPath="$PROJECT_DIR$/doc/overview-tree.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/package-list" afterPath="$PROJECT_DIR$/doc/package-list" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/messages.properties" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/messages.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/KeroEdit.java" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/KeroEdit.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$4.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$4.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/ScriptEditTab.java" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/ScriptEditTab.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/gamedata/GameData.java" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/gamedata/GameData.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPack.java" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPack.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/MapEditTab.java" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/MapEditTab.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/util/JavaFXUtil.java" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/util/JavaFXUtil.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$1.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$3.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$3.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$2.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/gamedata/GameData$1.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/gamedata/GameData$1.class" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -113,52 +44,54 @@
       <file leaf-file-name="KeroEdit.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/KeroEdit.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="1190">
+              <caret line="685" column="38" lean-forward="false" selection-start-line="685" selection-start-column="38" selection-end-line="685" selection-end-column="38" />
               <folding>
+                <element signature="e#4222#4223#0" expanded="true" />
+                <element signature="e#4250#4251#0" expanded="true" />
                 <element signature="method#start#0;class#KeroEdit#0" expanded="false" />
                 <element signature="method#loadPreferences#0;class#KeroEdit#0" expanded="false" />
                 <element signature="method#savePreferences#0;class#KeroEdit#0" expanded="false" />
-                <element signature="class#5429:5725" expanded="false" />
+                <element signature="class#5181:5477" expanded="false" />
                 <element signature="method#initStage#0;class#KeroEdit#0" expanded="false" />
+                <element signature="class#5803:6145" expanded="false" />
                 <element signature="method#initMenuBar#0;class#KeroEdit#0" expanded="false" />
-                <element signature="class#11141:14395" expanded="false" />
-                <element signature="class#14775:16972" expanded="false" />
-                <element signature="class#17739:18242" expanded="false" />
-                <element signature="class#18800:19307" expanded="false" />
-                <element signature="class#19843:21112" expanded="false" />
-                <element signature="class#21680:22083" expanded="false" />
-                <element signature="class#22658:22879" expanded="false" />
-                <element signature="e#22783#22784#0" expanded="true" />
-                <element signature="e#22860#22861#0" expanded="true" />
-                <element signature="class#23412:23915" expanded="false" />
-                <element signature="class#24471:24974" expanded="false" />
-                <element signature="class#25385:25891" expanded="false" />
-                <element signature="class#26376:26890" expanded="false" />
-                <element signature="class#27317:28610" expanded="false" />
-                <element signature="e#28339#28345#0" expanded="true" />
-                <element signature="class#28766:29652" expanded="false" />
-                <element signature="class#29808:30312" expanded="false" />
+                <element signature="class#10964:14202" expanded="false" />
+                <element signature="class#14494:16498" expanded="false" />
+                <element signature="class#17133:17636" expanded="false" />
+                <element signature="class#18062:18569" expanded="false" />
+                <element signature="class#18973:20242" expanded="false" />
+                <element signature="class#20678:21081" expanded="false" />
+                <element signature="class#21524:21745" expanded="false" />
+                <element signature="class#22146:22649" expanded="false" />
+                <element signature="class#23073:23576" expanded="false" />
+                <element signature="class#23943:24449" expanded="false" />
+                <element signature="class#24890:25404" expanded="false" />
+                <element signature="class#25743:27036" expanded="false" />
+                <element signature="class#26010:26690" expanded="false" />
+                <element signature="class#27160:27910" expanded="false" />
+                <element signature="class#28144:29165" expanded="false" />
+                <element signature="class#29277:29781" expanded="false" />
                 <element signature="method#createZoomMenu#0;class#KeroEdit#0" expanded="false" />
                 <element signature="method#initMapList#0;class#KeroEdit#0" expanded="false" />
-                <element signature="class#31982:32314" expanded="false" />
+                <element signature="class#31275:31597" expanded="false" />
                 <element signature="method#loadMapList#0;class#KeroEdit#0" expanded="false" />
-                <element signature="method#bindMapListViewActions#0;class#KeroEdit#0" expanded="false" />
-                <element signature="class#34602:35540" expanded="false" />
-                <element signature="class#35868:36804" expanded="false" />
-                <element signature="class#37114:37841" expanded="false" />
-                <element signature="class#37978:38502" expanded="false" />
-                <element signature="class#38642:39231" expanded="false" />
-                <element signature="class#39271:40832" expanded="false" />
-                <element signature="class#40874:41516" expanded="false" />
+                <element signature="method#bindMapListActions#0;class#KeroEdit#0" expanded="false" />
+                <element signature="class#33805:34707" expanded="false" />
+                <element signature="class#34991:35927" expanded="false" />
+                <element signature="class#36193:36942" expanded="false" />
+                <element signature="class#37057:37581" expanded="false" />
+                <element signature="class#37699:38288" expanded="false" />
+                <element signature="class#38328:39582" expanded="false" />
+                <element signature="class#39624:40042" expanded="false" />
                 <element signature="method#initTabPane#0;class#KeroEdit#0" expanded="false" />
-                <element signature="class#MenuBarMenuIndexes#0;class#KeroEdit#0" expanded="false" />
-                <element signature="class#FileMenuItemIndexes#0;class#KeroEdit#0" expanded="false" />
-                <element signature="class#EditMenuItemIndexes#0;class#KeroEdit#0" expanded="false" />
-                <element signature="class#ViewMenuItemIndexes#0;class#KeroEdit#0" expanded="false" />
-                <element signature="class#HelpMenuItemIndexes#0;class#KeroEdit#0" expanded="false" />
-                <element signature="class#MapListContextMenuItemIndexes#0;class#KeroEdit#0" expanded="false" />
-                <marker date="1485319305111" expanded="false" signature="31429:31940" ph="{...}" />
+                <element signature="class#MenuBar#0;class#KeroEdit#0" expanded="false" />
+                <element signature="class#FileMenu#0;class#KeroEdit#0" expanded="false" />
+                <element signature="class#EditMenu#0;class#KeroEdit#0" expanded="false" />
+                <element signature="class#ViewMenu#0;class#KeroEdit#0" expanded="false" />
+                <element signature="class#ActionsMenu#0;class#KeroEdit#0" expanded="false" />
+                <element signature="class#HelpMenu#0;class#KeroEdit#0" expanded="false" />
+                <element signature="class#MapListContextMenu#0;class#KeroEdit#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -167,31 +100,33 @@
       <file leaf-file-name="MapEditTab.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/MapEditTab.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="484">
-              <caret line="465" column="52" lean-forward="false" selection-start-line="465" selection-start-column="52" selection-end-line="465" selection-end-column="52" />
+            <state relative-caret-position="297">
+              <caret line="314" column="0" lean-forward="false" selection-start-line="314" selection-start-column="0" selection-end-line="314" selection-end-column="0" />
               <folding>
                 <element signature="method#MapEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="class#3293:3597" expanded="false" />
                 <element signature="class#PropertyEditTab#0;class#MapEditTab#0" expanded="false" />
                 <element signature="method#TileEditTab#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
                 <element signature="class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
                 <element signature="method#TilesetPane#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="class#7140:7416" expanded="false" />
-                <element signature="class#8044:8903" expanded="false" />
-                <element signature="class#9030:9518" expanded="false" />
-                <element signature="method#fixDisplay#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+                <element signature="class#6545:6824" expanded="false" />
+                <element signature="class#6907:7233" expanded="false" />
+                <element signature="class#7461:8419" expanded="false" />
+                <element signature="class#8546:8862" expanded="false" />
+                <element signature="method#redrawTileset#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
                 <element signature="method#displaySelectedTile#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+                <element signature="method#fillTilesets#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
                 <element signature="class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#MapPane#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="class#12106:12619" expanded="false" />
-                <element signature="class#13560:14428" expanded="false" />
-                <element signature="method#drawLayer#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="class#SettingsPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="class#20496:20919" expanded="false" />
-                <element signature="class#22497:23054" expanded="false" />
-                <element signature="class#23307:27726" expanded="false" />
-                <marker date="1485321232304" expanded="false" signature="17186:17793" ph="{...}" />
-                <marker date="1485321232304" expanded="false" signature="17837:18880" ph="{...}" />
+                <element signature="class#12511:12859" expanded="false" />
+                <element signature="class#12979:13319" expanded="false" />
+                <element signature="class#13482:14393" expanded="false" />
+                <element signature="method#redraw#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+                <element signature="method#fixSize#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+                <element signature="method#SettingsPane#0;class#SettingsPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+                <element signature="method#initDisplayedLayersSetting#0;class#SettingsPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+                <element signature="method#initSelectedLayerSetting#0;class#SettingsPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+                <element signature="class#21688:22123" expanded="false" />
+                <element signature="method#initResizeButton#0;class#SettingsPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+                <element signature="class#22436:26886" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -210,8 +145,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>tabPane.getSelectionModel().getSelectedIndex()</find>
-      <find>new MapEditTab</find>
       <find>Not Implemented</find>
       <find>KeroEdit.BASE_APP_TITLE</find>
       <find>KeroEdit.LAST_UPDATE</find>
@@ -240,6 +173,8 @@
       <find>drawLayers()</find>
       <find>&quot;PxPack.Head.Setter.ERROR_MSG&quot;</find>
       <find>Setter.ERROR_MSG</find>
+      <find>Arrays.copyOf</find>
+      <find>mapPane.re</find>
     </findStrings>
     <replaceStrings>
       <replace>&quot;\n&quot;)</replace>
@@ -294,7 +229,6 @@
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/map/MapEditTab.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/ScriptEdit.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/script/PxEve.java" />
-        <option value="$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/ScriptEditTab.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/util/ByteUtil.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/util/MathUtil.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/util/messages.properties" />
@@ -302,13 +236,14 @@
         <option value="$APPLICATION_CONFIG_DIR$/scratches/ImageScaler.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/MessageStrings.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/KeroEditConfig.java" />
-        <option value="$PROJECT_DIR$/src/com/fdl/keroedit/gamedata/GameData.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/util/Logger.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/Messages.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/Config.java" />
-        <option value="$PROJECT_DIR$/src/com/fdl/keroedit/util/JavaFXUtil.java" />
-        <option value="$PROJECT_DIR$/src/com/fdl/keroedit/messages.properties" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPack.java" />
+        <option value="$PROJECT_DIR$/src/com/fdl/keroedit/gamedata/GameData.java" />
+        <option value="$PROJECT_DIR$/src/com/fdl/keroedit/util/JavaFXUtil.java" />
+        <option value="$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/ScriptEditTab.java" />
+        <option value="$PROJECT_DIR$/src/com/fdl/keroedit/messages.properties" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/KeroEdit.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/MapEditTab.java" />
       </list>
@@ -375,6 +310,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -437,15 +373,14 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="util" />
+              <option name="myItemId" value="resource" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="Scratches" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -693,7 +628,14 @@
       <option name="project" value="LOCAL" />
       <updated>1484296998477</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Massive changes - I should commit more often&#10;Edits maps (no saving, not for a while)&#10;Loads script files (though this may be broken... - doesn't always show a script in the tab)&#10;Save and save all&#10;Created class for storing methods (for later undo/redo system)&#10;Uses Preferences class to store config options&#10;ResourceBundle for strings&#10;Logging class&#10;Store tiles as 2D int array now instead of 1D byte ArrayList&#10;Removed math utilities, put the javafx-related utilities into JavaFXUtil class&#10;Using Java1.8 instead of 1.7 now since I needed the Optional class for the map layer resize dialog (maybe I can find a replacement and switch back)&#10;Probably other stuff (it's been almost 2 weeks since the last commit! - I swear I'll be better about it!)&#10;Still a lot more to do - massive TODO comment in KeroEdit class">
+      <created>1485323036735</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1485323036736</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TodoView">
@@ -709,45 +651,48 @@
     <frame x="-8" y="-8" width="1382" height="784" extended-state="6" />
     <editor active="true" />
     <layout>
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19180088" sideWeight="0.49406528" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.49707174" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.47657394" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.52342606" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329429" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.29228488" sideWeight="0.4941435" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.49707174" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19180088" sideWeight="0.49406528" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.35014838" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24963397" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.49707174" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19180088" sideWeight="0.5059347" order="3" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3264095" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.47657394" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" x="92" y="92" width="1182" height="584" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29228488" sideWeight="0.4941435" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24963397" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.35014838" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3264095" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="mapList is now a ListView of Files, not Strings&#10;Right-click for mapList now uses array of MenuItems&#10;Enter key to open map&#10;Pop-up window for unimplemented features&#10;Probably other stuff that I forgot&#10;Expect more changes tonight&#10;&#10;Fixed Utilities.java so err.println is in createErrorAlert(), not createInformationAlert()" />
     <MESSAGE value="Added a MapEdit class (and interior classes) which functions as a Tab for editing a map&#10;Added a TabPane and tabs, which will be where most of the editor's stuff is&#10;Currently a MapEdit tab can be opened but no content really appears as I haven't made a map viewer yet&#10;Renamed PxPackMap class to PxPack&#10;Added LAST_UPDATED_STRING for last date of code update&#10;FileChooser, not DirectoryChooser, is now used to navigate to mod base&#10;Title now incorporates mod path&#10;Added functionality to mapList context menu" />
     <MESSAGE value="Added Changeable interface&#10;Moved Utilities out of util package&#10;Updated some javadoc&#10;Removed jetbrains annotations&#10;Renamed MapEdit class to MapEditTab&#10;Gave PxPack and MapEditTab equals() and hashCode()&#10;Changed Color in PxPack to use javafx.scene.paint.Color rather than awt.Color&#10;Added enums for menu item indexes in arrays&#10;Now uses Preferences class to store settings, though the JRE can't create a key in the Windows registry due to a bug (that will hopefully be fixed with Java 9)&#10;Map ListView actions are bound in bindActionsToMapListView() now, not addMapsToListView()&#10;Added Reload functionality, which reloads entire mod" />
     <MESSAGE value="Added Changeable interface&#10;Moved Utilities out of util package&#10;Updated some javadoc&#10;Removed jetbrains annotations&#10;Renamed MapEdit class to MapEditTab&#10;Gave PxPack and MapEditTab equals() and hashCode()&#10;Changed Color in PxPack to use javafx.scene.paint.Color rather than awt.Color&#10;Added enums for menu item indexes in arrays&#10;Now uses Preferences class to store settings, though the JRE can't create a key in the Windows registry due to a bug (that will hopefully be fixed with Java 9)&#10;Map ListView actions are bound in bindActionsToMapListView() now, not addMapsToListView()&#10;Added Reload functionality, which reloads entire mod&#10;&#10;Side note - I'll probably start increasing version numbers once it has legitimate functionality, like at least map viewing" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Changeable interface&#10;Moved Utilities out of util package&#10;Updated some javadoc&#10;Removed jetbrains annotations&#10;Renamed MapEdit class to MapEditTab&#10;Gave PxPack and MapEditTab equals() and hashCode()&#10;Changed Color in PxPack to use javafx.scene.paint.Color rather than awt.Color&#10;Added enums for menu item indexes in arrays&#10;Now uses Preferences class to store settings, though the JRE can't create a key in the Windows registry due to a bug (that will hopefully be fixed with Java 9)&#10;Map ListView actions are bound in bindActionsToMapListView() now, not addMapsToListView()&#10;Added Reload functionality, which reloads entire mod&#10;&#10;Side note - I'll probably start increasing version numbers once it has legitimate functionality, like at least map viewing" />
+    <MESSAGE value="Massive changes - I should commit more often&#10;Edits maps (no saving, not for a while)&#10;Loads script files (though this may be broken... - doesn't always show a script in the tab)&#10;Save and save all&#10;Created class for storing methods (for later undo/redo system)&#10;Uses Preferences class to store config options&#10;ResourceBundle for strings&#10;Logging class&#10;Store tiles as 2D int array now instead of 1D byte ArrayList&#10;Removed math utilities, put the javafx-related utilities into JavaFXUtil class&#10;Using Java1.8 instead of 1.7 now since I needed the Optional class for the map layer resize dialog (maybe I can find a replacement and switch back)&#10;Probably other stuff (it's been almost 2 weeks since the last commit! - I swear I'll be better about it!)&#10;Still a lot more to do - massive TODO comment in KeroEdit class" />
+    <option name="LAST_COMMIT_MESSAGE" value="Massive changes - I should commit more often&#10;Edits maps (no saving, not for a while)&#10;Loads script files (though this may be broken... - doesn't always show a script in the tab)&#10;Save and save all&#10;Created class for storing methods (for later undo/redo system)&#10;Uses Preferences class to store config options&#10;ResourceBundle for strings&#10;Logging class&#10;Store tiles as 2D int array now instead of 1D byte ArrayList&#10;Removed math utilities, put the javafx-related utilities into JavaFXUtil class&#10;Using Java1.8 instead of 1.7 now since I needed the Optional class for the map layer resize dialog (maybe I can find a replacement and switch back)&#10;Probably other stuff (it's been almost 2 weeks since the last commit! - I swear I'll be better about it!)&#10;Still a lot more to do - massive TODO comment in KeroEdit class" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="139" />
+      <option name="time" value="146" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -896,24 +841,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/UndoManagement.java" />
     <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/util/Utilities.java" />
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/script/PxEve.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="0" lean-forward="false" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/ScriptEditTab.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="66" column="5" lean-forward="false" selection-start-line="66" selection-start-column="5" selection-end-line="66" selection-end-column="5" />
-          <folding>
-            <element signature="e#0#2129#0" expanded="false" />
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/com/sun/javafx/image/impl/ByteBgraPre.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="143">
@@ -948,19 +875,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-2">
           <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/gamedata/GameData.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="method#initGameData#0;class#GameData#0" expanded="false" />
-            <element signature="method#fillFileList#0;class#GameData#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -968,14 +882,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="340">
           <caret line="132" column="58" lean-forward="true" selection-start-line="132" selection-start-column="58" selection-end-line="132" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/Messages.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="19" column="48" lean-forward="false" selection-start-line="19" selection-start-column="48" selection-end-line="19" selection-end-column="48" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -991,11 +897,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="97">
           <caret line="196" column="0" lean-forward="false" selection-start-line="196" selection-start-column="0" selection-end-line="196" selection-end-column="0" />
-          <folding>
-            <element signature="e#3786#3787#0" expanded="false" />
-            <element signature="e#3842#3843#0" expanded="false" />
-            <element signature="e#4922#4923#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1003,7 +904,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="185">
           <caret line="2341" column="0" lean-forward="false" selection-start-line="2341" selection-start-column="0" selection-end-line="2341" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1011,7 +911,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="97">
           <caret line="1234" column="0" lean-forward="false" selection-start-line="1234" selection-start-column="0" selection-end-line="1234" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1019,7 +918,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="106">
           <caret line="155" column="0" lean-forward="false" selection-start-line="155" selection-start-column="0" selection-end-line="155" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1027,7 +925,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="202">
           <caret line="208" column="0" lean-forward="false" selection-start-line="208" selection-start-column="0" selection-end-line="208" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1035,7 +932,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="296">
           <caret line="64" column="0" lean-forward="false" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1043,7 +939,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="141">
           <caret line="582" column="0" lean-forward="false" selection-start-line="582" selection-start-column="0" selection-end-line="582" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1058,153 +953,139 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/util/JavaFXUtil.java">
+    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/Messages.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="91" column="62" lean-forward="false" selection-start-line="91" selection-start-column="62" selection-end-line="91" selection-end-column="62" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#JavaFXUtil#0;class#JavaFXUtil#0" expanded="false" />
-            <element signature="method#colorToString#0;class#JavaFXUtil#0" expanded="false" />
-            <element signature="method#scaleImage#0;class#JavaFXUtil#0" expanded="false" />
-            <element signature="method#addCloseTabKeys#0;class#JavaFXUtil#0" expanded="false" />
-            <element signature="method#createAlert#0;class#JavaFXUtil#0" expanded="false" />
-            <element signature="method#createAlertWithTextBox#0;class#JavaFXUtil#0" expanded="false" />
-            <element signature="method#createDualTextFieldDialog#0;class#JavaFXUtil#0" expanded="false" />
-            <element signature="e#7237#7260#0" expanded="true" />
-            <element signature="class#7963:8096" expanded="false" />
-            <element signature="class#8138:8491" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/messages.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="65" column="87" lean-forward="true" selection-start-line="65" selection-start-column="87" selection-end-line="65" selection-end-column="87" />
+        <state relative-caret-position="272">
+          <caret line="19" column="48" lean-forward="false" selection-start-line="19" selection-start-column="48" selection-end-line="19" selection-end-column="48" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPack.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="433">
-          <caret line="474" column="5" lean-forward="true" selection-start-line="474" selection-start-column="5" selection-end-line="474" selection-end-column="5" />
-          <folding>
-            <element signature="method#rename#0;class#PxPack#0" expanded="false" />
-            <element signature="method#getTileLayers#0;class#PxPack#0" expanded="false" />
-            <element signature="method#getEntities#0;class#PxPack#0" expanded="false" />
-            <element signature="method#readString#0;class#PxPack#0" expanded="false" />
-            <element signature="method#toString#0;class#PxPack#0" expanded="false" />
-            <element signature="class#Head#0;class#PxPack#0" expanded="false" />
-            <element signature="method#Head#0;class#Head#0;class#PxPack#0" expanded="false" />
-            <element signature="method#Head#1;class#Head#0;class#PxPack#0" expanded="false" />
-            <element signature="method#Head#2;class#Head#0;class#PxPack#0" expanded="false" />
-            <element signature="method#setDescription#0;class#Head#0;class#PxPack#0" expanded="false" />
-            <element signature="method#setScriptName#0;class#Head#0;class#PxPack#0" expanded="false" />
-            <element signature="method#setMapName#0;class#Head#0;class#PxPack#0" expanded="false" />
-            <element signature="method#setSpritesheetName#0;class#Head#0;class#PxPack#0" expanded="false" />
-            <element signature="method#setBgColor#0;class#Head#0;class#PxPack#0" expanded="false" />
-            <element signature="method#setTilesetName#0;class#Head#0;class#PxPack#0" expanded="false" />
-            <element signature="method#toString#0;class#Head#0;class#PxPack#0" expanded="false" />
-            <element signature="class#TileLayer#0;class#PxPack#0" expanded="false" />
-            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
-            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPack#0" expanded="false" />
-            <element signature="method#TileLayer#2;class#TileLayer#0;class#PxPack#0" expanded="false" />
-            <element signature="method#resize#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
-            <element signature="method#getTiles#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
-            <element signature="method#setTile#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
-            <element signature="method#toString#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
-            <element signature="class#Entity#0;class#PxPack#0" expanded="false" />
-            <element signature="method#Entity#1;class#Entity#0;class#PxPack#0" expanded="false" />
-            <element signature="method#Entity#2;class#Entity#0;class#PxPack#0" expanded="false" />
-            <element signature="method#setX#0;class#Entity#0;class#PxPack#0" expanded="false" />
-            <element signature="method#setY#0;class#Entity#0;class#PxPack#0" expanded="false" />
-            <element signature="method#setName#0;class#Entity#0;class#PxPack#0" expanded="false" />
-            <element signature="method#toString#0;class#Entity#0;class#PxPack#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="387">
+          <caret line="257" column="0" lean-forward="true" selection-start-line="257" selection-start-column="0" selection-end-line="257" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/util/JavaFXUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="43" column="5" lean-forward="false" selection-start-line="43" selection-start-column="5" selection-end-line="43" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/gamedata/GameData.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="15" column="0" lean-forward="true" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/script/PxEve.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="0" lean-forward="false" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/ScriptEditTab.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="12" column="33" lean-forward="true" selection-start-line="12" selection-start-column="33" selection-end-line="12" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/messages.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="279">
+          <caret line="43" column="28" lean-forward="false" selection-start-line="43" selection-start-column="28" selection-end-line="43" selection-end-column="28" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/KeroEdit.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="1190">
+          <caret line="685" column="38" lean-forward="false" selection-start-line="685" selection-start-column="38" selection-end-line="685" selection-end-column="38" />
           <folding>
+            <element signature="e#4222#4223#0" expanded="true" />
+            <element signature="e#4250#4251#0" expanded="true" />
             <element signature="method#start#0;class#KeroEdit#0" expanded="false" />
             <element signature="method#loadPreferences#0;class#KeroEdit#0" expanded="false" />
             <element signature="method#savePreferences#0;class#KeroEdit#0" expanded="false" />
-            <element signature="class#5429:5725" expanded="false" />
+            <element signature="class#5181:5477" expanded="false" />
             <element signature="method#initStage#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#5803:6145" expanded="false" />
             <element signature="method#initMenuBar#0;class#KeroEdit#0" expanded="false" />
-            <element signature="class#11141:14395" expanded="false" />
-            <element signature="class#14775:16972" expanded="false" />
-            <element signature="class#17739:18242" expanded="false" />
-            <element signature="class#18800:19307" expanded="false" />
-            <element signature="class#19843:21112" expanded="false" />
-            <element signature="class#21680:22083" expanded="false" />
-            <element signature="class#22658:22879" expanded="false" />
-            <element signature="e#22783#22784#0" expanded="true" />
-            <element signature="e#22860#22861#0" expanded="true" />
-            <element signature="class#23412:23915" expanded="false" />
-            <element signature="class#24471:24974" expanded="false" />
-            <element signature="class#25385:25891" expanded="false" />
-            <element signature="class#26376:26890" expanded="false" />
-            <element signature="class#27317:28610" expanded="false" />
-            <element signature="e#28339#28345#0" expanded="true" />
-            <element signature="class#28766:29652" expanded="false" />
-            <element signature="class#29808:30312" expanded="false" />
+            <element signature="class#10964:14202" expanded="false" />
+            <element signature="class#14494:16498" expanded="false" />
+            <element signature="class#17133:17636" expanded="false" />
+            <element signature="class#18062:18569" expanded="false" />
+            <element signature="class#18973:20242" expanded="false" />
+            <element signature="class#20678:21081" expanded="false" />
+            <element signature="class#21524:21745" expanded="false" />
+            <element signature="class#22146:22649" expanded="false" />
+            <element signature="class#23073:23576" expanded="false" />
+            <element signature="class#23943:24449" expanded="false" />
+            <element signature="class#24890:25404" expanded="false" />
+            <element signature="class#25743:27036" expanded="false" />
+            <element signature="class#26010:26690" expanded="false" />
+            <element signature="class#27160:27910" expanded="false" />
+            <element signature="class#28144:29165" expanded="false" />
+            <element signature="class#29277:29781" expanded="false" />
             <element signature="method#createZoomMenu#0;class#KeroEdit#0" expanded="false" />
             <element signature="method#initMapList#0;class#KeroEdit#0" expanded="false" />
-            <element signature="class#31982:32314" expanded="false" />
+            <element signature="class#31275:31597" expanded="false" />
             <element signature="method#loadMapList#0;class#KeroEdit#0" expanded="false" />
-            <element signature="method#bindMapListViewActions#0;class#KeroEdit#0" expanded="false" />
-            <element signature="class#34602:35540" expanded="false" />
-            <element signature="class#35868:36804" expanded="false" />
-            <element signature="class#37114:37841" expanded="false" />
-            <element signature="class#37978:38502" expanded="false" />
-            <element signature="class#38642:39231" expanded="false" />
-            <element signature="class#39271:40832" expanded="false" />
-            <element signature="class#40874:41516" expanded="false" />
+            <element signature="method#bindMapListActions#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#33805:34707" expanded="false" />
+            <element signature="class#34991:35927" expanded="false" />
+            <element signature="class#36193:36942" expanded="false" />
+            <element signature="class#37057:37581" expanded="false" />
+            <element signature="class#37699:38288" expanded="false" />
+            <element signature="class#38328:39582" expanded="false" />
+            <element signature="class#39624:40042" expanded="false" />
             <element signature="method#initTabPane#0;class#KeroEdit#0" expanded="false" />
-            <element signature="class#MenuBarMenuIndexes#0;class#KeroEdit#0" expanded="false" />
-            <element signature="class#FileMenuItemIndexes#0;class#KeroEdit#0" expanded="false" />
-            <element signature="class#EditMenuItemIndexes#0;class#KeroEdit#0" expanded="false" />
-            <element signature="class#ViewMenuItemIndexes#0;class#KeroEdit#0" expanded="false" />
-            <element signature="class#HelpMenuItemIndexes#0;class#KeroEdit#0" expanded="false" />
-            <element signature="class#MapListContextMenuItemIndexes#0;class#KeroEdit#0" expanded="false" />
-            <marker date="1485319305111" expanded="false" signature="31429:31940" ph="{...}" />
+            <element signature="class#MenuBar#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#FileMenu#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#EditMenu#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#ViewMenu#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#ActionsMenu#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#HelpMenu#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#MapListContextMenu#0;class#KeroEdit#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/MapEditTab.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="484">
-          <caret line="465" column="52" lean-forward="false" selection-start-line="465" selection-start-column="52" selection-end-line="465" selection-end-column="52" />
+        <state relative-caret-position="297">
+          <caret line="314" column="0" lean-forward="false" selection-start-line="314" selection-start-column="0" selection-end-line="314" selection-end-column="0" />
           <folding>
             <element signature="method#MapEditTab#0;class#MapEditTab#0" expanded="false" />
-            <element signature="class#3293:3597" expanded="false" />
             <element signature="class#PropertyEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#TileEditTab#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#TilesetPane#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-            <element signature="class#7140:7416" expanded="false" />
-            <element signature="class#8044:8903" expanded="false" />
-            <element signature="class#9030:9518" expanded="false" />
-            <element signature="method#fixDisplay#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+            <element signature="class#6545:6824" expanded="false" />
+            <element signature="class#6907:7233" expanded="false" />
+            <element signature="class#7461:8419" expanded="false" />
+            <element signature="class#8546:8862" expanded="false" />
+            <element signature="method#redrawTileset#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#displaySelectedTile#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+            <element signature="method#fillTilesets#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-            <element signature="method#MapPane#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-            <element signature="class#12106:12619" expanded="false" />
-            <element signature="class#13560:14428" expanded="false" />
-            <element signature="method#drawLayer#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-            <element signature="class#SettingsPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-            <element signature="class#20496:20919" expanded="false" />
-            <element signature="class#22497:23054" expanded="false" />
-            <element signature="class#23307:27726" expanded="false" />
-            <marker date="1485321232304" expanded="false" signature="17186:17793" ph="{...}" />
-            <marker date="1485321232304" expanded="false" signature="17837:18880" ph="{...}" />
+            <element signature="class#12511:12859" expanded="false" />
+            <element signature="class#12979:13319" expanded="false" />
+            <element signature="class#13482:14393" expanded="false" />
+            <element signature="method#redraw#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+            <element signature="method#fixSize#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+            <element signature="method#SettingsPane#0;class#SettingsPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+            <element signature="method#initDisplayedLayersSetting#0;class#SettingsPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+            <element signature="method#initSelectedLayerSetting#0;class#SettingsPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+            <element signature="class#21688:22123" expanded="false" />
+            <element signature="method#initResizeButton#0;class#SettingsPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+            <element signature="class#22436:26886" expanded="false" />
           </folding>
         </state>
       </provider>

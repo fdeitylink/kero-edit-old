@@ -23,11 +23,11 @@ public class GameData {
     private File executable;
     private File resourceFolder;
 
-    private ArrayList <File> bgms;
-    private ArrayList <File> maps; //TODO: Make arraylist of PxPack objects
+    private ArrayList <String> bgms;
+    private ArrayList <String> maps; //TODO: Make arraylist of PxPack objects
     //TODO: Images (tilesets, spritesheets, and more!)
-    private ArrayList <File> soundEffects;
-    private ArrayList <File> scripts; //TODO: Make arraylist of PxEve objects
+    private ArrayList <String> soundEffects;
+    private ArrayList <String> scripts; //TODO: Make arraylist of PxEve objects
 
     private GameData() {
 
@@ -70,13 +70,13 @@ public class GameData {
                                                                executable.getAbsolutePath()));
         }
 
-        gameData.bgms = fillFileList("/bgm/", ".ptcop");
+        gameData.bgms = fileFilenameList(File.separatorChar + "bgm" + File.separatorChar, ".ptcop");
 
-        gameData.maps = fillFileList("/field/", ".pxpack");
+        gameData.maps = fileFilenameList(File.separatorChar + "field" + File.separatorChar, ".pxpack");
 
-        gameData.soundEffects = fillFileList("/se/", ".ptnoise");
+        gameData.soundEffects = fileFilenameList(File.separatorChar + "se" + File.separatorChar, ".ptnoise");
 
-        gameData.scripts = fillFileList("/text/", ".pxeve");
+        gameData.scripts = fileFilenameList(File.separatorChar + "text" + File.separatorChar, ".pxeve");
     }
 
     public static File getExecutable() {
@@ -91,19 +91,15 @@ public class GameData {
         return gameData.resourceFolder;
     }
 
-    public static ArrayList <File> getMapList() {
-        return new ArrayList <File>(gameData.maps);
+    public static ArrayList <String> getMapList() {
+        return new ArrayList <String>(gameData.maps);
     }
 
-    public static void addMap(final File newMap) {
-        gameData.maps.add(newMap);
+    public static void removeMap(final String mapname) {
+        gameData.maps.remove(mapname);
     }
 
-    public static void removeMap(final File map) {
-        gameData.maps.remove(map);
-    }
-
-    private static ArrayList <File> fillFileList(final String pathFromResource, final String filenameExtension) {
+    private static ArrayList <String> fileFilenameList(final String pathFromResource, final String filenameExtension) {
         final File baseMapDir = new File(gameData.resourceFolder.getAbsolutePath() + File.separatorChar + pathFromResource);
         final File[] fileList = baseMapDir.listFiles(new FileFilter() {
             @Override
@@ -112,6 +108,11 @@ public class GameData {
             }
         });
 
-        return (fileList != null) ? new ArrayList <File>(Arrays.asList(fileList)) : null;
+        final ArrayList <String> nameList = new ArrayList <String>(fileList.length);
+        for (final File file : fileList) {
+            nameList.add(file.getName().replace(filenameExtension, ""));
+        }
+
+        return nameList;
     }
 }

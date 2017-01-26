@@ -1,6 +1,6 @@
 /*
  * TODO:
- * Add save to MapEditTab so it saves no matter what subtab is selected
+ * Add save to MapEditTab
  * Use javafx.concurrent
  *  - Synchronize values
  *  - Use Tasks
@@ -14,7 +14,6 @@
  * Use Tab.setOnCloseRequest() to warn about unsaved changes
  * Resort the map ListView alphabetically when a map is added, and select and open the new map
  * Additional menubar items
- *  - Actions menu for general stuffs
  *  - Open PXEVE not from map (such as an unused one or explain.pxeve)
  *     - Config option for english vs jp
  * Use a build system (Maven, Ant, or Gradle?)
@@ -33,6 +32,7 @@
  * Scaling map down
  * Shorten tertiary statements
  * Lower memory usage and stuffs
+ * Allow changing background color in map editing tab (so it will have to change head properties)
  *
  * Make PxPack interior classes immutable?
  * Create missing directories rather than throw error?
@@ -49,6 +49,7 @@ package com.fdl.keroedit;
 
 import java.io.File;
 
+import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 
 import java.util.EnumMap;
@@ -61,7 +62,6 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.Menu;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -73,9 +73,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.ColorPicker;
 
 import javafx.scene.control.ListView;
-import javafx.scene.control.ListCell;
 import javafx.stage.WindowEvent;
-import javafx.util.Callback;
 import javafx.geometry.Orientation;
 import javafx.collections.FXCollections;
 
@@ -117,9 +115,6 @@ import com.fdl.keroedit.gamedata.GameData;
 import com.fdl.keroedit.mapedit.MapEditTab;
 
 public class KeroEdit extends Application {
-    private final static String VERSION_STRING = Messages.getString("KeroEdit.VERSION");
-    private final static String LAST_UPDATED_STRING = Messages.getString("KeroEdit.LAST_UPDATE");
-
     private ExecutorService mainLogicExecutorService;
     private Phaser mainLogicExecutorPhaser;
 
@@ -127,7 +122,7 @@ public class KeroEdit extends Application {
     private BorderPane mainBorderPane;
     private TabPane mainTabPane;
 
-    private ListView <File> mapList;
+    private ListView <String> mapList;
 
     public static void main(final String[] args) {
         launch(args);
@@ -209,7 +204,8 @@ public class KeroEdit extends Application {
         final Scene scene = new Scene(mainBorderPane, display.getWidth(), display.getHeight());
 
         mainStage.setScene(scene);
-        mainStage.setTitle(MessageFormat.format(Messages.getString("KeroEdit.APP_TITLE"), VERSION_STRING));
+        mainStage.setTitle(MessageFormat.format(Messages.getString("KeroEdit.APP_TITLE"),
+                                                Messages.getString("KeroEdit.VERSION")));
         mainStage.show();
         mainStage.requestFocus();
     }
@@ -218,7 +214,7 @@ public class KeroEdit extends Application {
      * Sets up the menu bar that appears at the top
      */
     private void initMenuBar() {
-        final MenuBar mBar = new MenuBar();
+        final javafx.scene.control.MenuBar mBar = new javafx.scene.control.MenuBar();
         mBar.setPrefWidth(mainStage.getWidth());
 
         /*
@@ -228,6 +224,7 @@ public class KeroEdit extends Application {
         final Menu[] menus = {new Menu(Messages.getString("KeroEdit.FILE_MENU")),
                               new Menu(Messages.getString("KeroEdit.EDIT_MENU")),
                               new Menu(Messages.getString("KeroEdit.VIEW_MENU")),
+                              new Menu(Messages.getString("KeroEdit.ACTIONS_MENU")),
                               new Menu(Messages.getString("KeroEdit.HELP_MENU"))};
         for (final Menu m : menus) {
             mBar.getMenus().add(m);
@@ -248,6 +245,8 @@ public class KeroEdit extends Application {
                                          new Menu(Messages.getString("KeroEdit.ViewMenu.TILESET_ZOOM")),
                                          new MenuItem(Messages.getString("KeroEdit.ViewMenu.TILESET_BG_COLOR"))},
 
+                                        {new MenuItem(Messages.getString("KeroEdit.ActionsMenu.RUN_GAME"))},
+
                                         {new MenuItem(Messages.getString("KeroEdit.HelpMenu.ABOUT")),
                                          new MenuItem(Messages.getString("KeroEdit.HelpMenu.GUIDE"))}};
 
@@ -256,36 +255,41 @@ public class KeroEdit extends Application {
         }
 
         //TODO: Put into task
-        final EnumMap <MenuBarMenuIndexes, Integer> menuBarMenuIndexes = new EnumMap <MenuBarMenuIndexes, Integer>(MenuBarMenuIndexes.class);
-        final EnumMap <FileMenuItemIndexes, Integer> fileMenuItemIndexes = new EnumMap <FileMenuItemIndexes, Integer>(FileMenuItemIndexes.class);
-        final EnumMap <EditMenuItemIndexes, Integer> editMenuItemIndexes = new EnumMap <EditMenuItemIndexes, Integer>(EditMenuItemIndexes.class);
-        final EnumMap <ViewMenuItemIndexes, Integer> viewMenuItemIndexes = new EnumMap <ViewMenuItemIndexes, Integer>(ViewMenuItemIndexes.class);
-        final EnumMap <HelpMenuItemIndexes, Integer> helpMenuItemIndexes = new EnumMap <HelpMenuItemIndexes, Integer>(HelpMenuItemIndexes.class);
+        final EnumMap <MenuBar, Integer> menuBar = new EnumMap <MenuBar, Integer>(MenuBar.class);
+        final EnumMap <FileMenu, Integer> fileMenu = new EnumMap <FileMenu, Integer>(FileMenu.class);
+        final EnumMap <EditMenu, Integer> editMenu = new EnumMap <EditMenu, Integer>(EditMenu.class);
+        final EnumMap <ViewMenu, Integer> viewMenu = new EnumMap <ViewMenu, Integer>(ViewMenu.class);
+        final EnumMap <ActionsMenu, Integer> actionsMenu = new EnumMap <ActionsMenu, Integer>(ActionsMenu.class);
+        final EnumMap <HelpMenu, Integer> helpMenu = new EnumMap <HelpMenu, Integer>(HelpMenu.class);
 
         int i = 0;
-        for (final MenuBarMenuIndexes x : MenuBarMenuIndexes.values()) {
-            menuBarMenuIndexes.put(x, i++);
+        for (final MenuBar x : MenuBar.values()) {
+            menuBar.put(x, i++);
         }
         i = 0;
-        for (final FileMenuItemIndexes x : FileMenuItemIndexes.values()) {
-            fileMenuItemIndexes.put(x, i++);
+        for (final FileMenu x : FileMenu.values()) {
+            fileMenu.put(x, i++);
         }
         i = 0;
-        for (final EditMenuItemIndexes x : EditMenuItemIndexes.values()) {
-            editMenuItemIndexes.put(x, i++);
+        for (final EditMenu x : EditMenu.values()) {
+            editMenu.put(x, i++);
         }
         i = 0;
-        for (final ViewMenuItemIndexes x : ViewMenuItemIndexes.values()) {
-            viewMenuItemIndexes.put(x, i++);
+        for (final ViewMenu x : ViewMenu.values()) {
+            viewMenu.put(x, i++);
         }
         i = 0;
-        for (final HelpMenuItemIndexes x : HelpMenuItemIndexes.values()) {
-            helpMenuItemIndexes.put(x, i++);
+        for (final ActionsMenu x : ActionsMenu.values()) {
+            actionsMenu.put(x, i++);
+        }
+        i = 0;
+        for (final HelpMenu x : HelpMenu.values()) {
+            helpMenu.put(x, i++);
         }
 
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.FILE)][fileMenuItemIndexes.get(FileMenuItemIndexes.OPEN)]
+        menuItems[menuBar.get(MenuBar.FILE)][fileMenu.get(FileMenu.OPEN)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.FILE)][fileMenuItemIndexes.get(FileMenuItemIndexes.OPEN)]
+        menuItems[menuBar.get(MenuBar.FILE)][fileMenu.get(FileMenu.OPEN)]
                 .setOnAction(new EventHandler <ActionEvent>() {
                     @Override
                     public void handle(final ActionEvent event) {
@@ -317,12 +321,12 @@ public class KeroEdit extends Application {
                                 Config.lastExeLoc = executable.getAbsolutePath();
 
                                 mainStage.setTitle(MessageFormat.format(Messages.getString("KeroEdit.OpenFile.NEW_APP_TITLE"),
-                                                                        VERSION_STRING, executable.getParent() +
-                                                                                        File.separatorChar));
+                                                                        Messages.getString("KeroEdit.VERSION")) +
+                                                   executable.getParent() + File.separatorChar);
 
                                 loadMapList();
                                 //TODO: Check if actions already bound?
-                                bindMapListViewActions();
+                                bindMapListActions();
 
                                 for (final MenuItem[] mItems : menuItems) { //Valid mod folder opened, so now allow using these options
                                     for (final MenuItem mItem : mItems) {
@@ -342,9 +346,9 @@ public class KeroEdit extends Application {
                     }
                 });
 
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.FILE)][fileMenuItemIndexes.get(FileMenuItemIndexes.OPEN_LAST)]
+        menuItems[menuBar.get(MenuBar.FILE)][fileMenu.get(FileMenu.OPEN_LAST)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN));
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.FILE)][fileMenuItemIndexes.get(FileMenuItemIndexes.OPEN_LAST)]
+        menuItems[menuBar.get(MenuBar.FILE)][fileMenu.get(FileMenu.OPEN_LAST)]
                 .setOnAction(new EventHandler <ActionEvent>() {
                     @Override
                     public void handle(final ActionEvent event) {
@@ -358,13 +362,11 @@ public class KeroEdit extends Application {
                             GameData.initGameData(new File(Config.lastExeLoc));
 
                             mainStage.setTitle(MessageFormat.format(Messages.getString("KeroEdit.OpenFile.NEW_APP_TITLE"),
-                                                                    VERSION_STRING,
-                                                                    lastExeLoc.substring(0, lastExeLoc
-                                                                                                    .lastIndexOf(File.separatorChar)
-                                                                                            + 1)));
+                                                                    Messages.getString("KeroEdit.VERSION")) +
+                                               lastExeLoc.substring(0, lastExeLoc.lastIndexOf(File.separatorChar) + 1));
 
                             loadMapList();
-                            bindMapListViewActions();
+                            bindMapListActions();
 
                             for (final MenuItem[] mItems : menuItems) { //Valid mod folder opened, so now allow using these options
                                 for (final MenuItem mItem : mItems) {
@@ -385,13 +387,13 @@ public class KeroEdit extends Application {
                 });
 
         mainLogicExecutorPhaser.arriveAndAwaitAdvance();
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.FILE)][fileMenuItemIndexes.get(FileMenuItemIndexes.OPEN_LAST)]
+        menuItems[menuBar.get(MenuBar.FILE)][fileMenu.get(FileMenu.OPEN_LAST)]
                 .setDisable(Config.lastExeLoc.equals(System.getProperty("user.dir")) || !Config.lastExeLoc.endsWith(".exe")); //Disabled if there is no last mod
         mainLogicExecutorPhaser.arriveAndDeregister();
 
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.FILE)][fileMenuItemIndexes.get(FileMenuItemIndexes.SAVE)]
+        menuItems[menuBar.get(MenuBar.FILE)][fileMenu.get(FileMenu.SAVE)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.FILE)][fileMenuItemIndexes.get(FileMenuItemIndexes.SAVE)]
+        menuItems[menuBar.get(MenuBar.FILE)][fileMenu.get(FileMenu.SAVE)]
                 .setOnAction(new EventHandler <ActionEvent>() {
                     @Override
                     public void handle(final ActionEvent event) {
@@ -401,12 +403,12 @@ public class KeroEdit extends Application {
                                   .showAndWait();
                     }
                 });
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.FILE)][fileMenuItemIndexes.get(FileMenuItemIndexes.SAVE)]
+        menuItems[menuBar.get(MenuBar.FILE)][fileMenu.get(FileMenu.SAVE)]
                 .setDisable(true);
 
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.FILE)][fileMenuItemIndexes.get(FileMenuItemIndexes.SAVE_ALL)]
+        menuItems[menuBar.get(MenuBar.FILE)][fileMenu.get(FileMenu.SAVE_ALL)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHIFT_DOWN, KeyCombination.CONTROL_DOWN));
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.FILE)][fileMenuItemIndexes.get(FileMenuItemIndexes.SAVE_ALL)]
+        menuItems[menuBar.get(MenuBar.FILE)][fileMenu.get(FileMenu.SAVE_ALL)]
                 .setOnAction(new EventHandler <ActionEvent>() {
                     @Override
                     public void handle(final ActionEvent event) {
@@ -416,12 +418,12 @@ public class KeroEdit extends Application {
                                   .showAndWait();
                     }
                 });
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.FILE)][fileMenuItemIndexes.get(FileMenuItemIndexes.SAVE_ALL)]
+        menuItems[menuBar.get(MenuBar.FILE)][fileMenu.get(FileMenu.SAVE_ALL)]
                 .setDisable(true); //Disable until valid mod opened
 
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.FILE)][fileMenuItemIndexes.get(FileMenuItemIndexes.RELOAD)]
+        menuItems[menuBar.get(MenuBar.FILE)][fileMenu.get(FileMenu.RELOAD)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.F5));
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.FILE)][fileMenuItemIndexes.get(FileMenuItemIndexes.RELOAD)]
+        menuItems[menuBar.get(MenuBar.FILE)][fileMenu.get(FileMenu.RELOAD)]
                 .setOnAction(new EventHandler <ActionEvent>() {
                     //TODO: Put into Task? (probably not)
 
@@ -445,12 +447,12 @@ public class KeroEdit extends Application {
                         //TODO: Warn about unsaved changes
                     }
                 });
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.FILE)][fileMenuItemIndexes.get(FileMenuItemIndexes.RELOAD)]
+        menuItems[menuBar.get(MenuBar.FILE)][fileMenu.get(FileMenu.RELOAD)]
                 .setDisable(true); //Disable until valid mod opened
 
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.FILE)][fileMenuItemIndexes.get(FileMenuItemIndexes.CLOSE_TAB)]
+        menuItems[menuBar.get(MenuBar.FILE)][fileMenu.get(FileMenu.CLOSE_TAB)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN));
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.FILE)][fileMenuItemIndexes.get(FileMenuItemIndexes.CLOSE_TAB)]
+        menuItems[menuBar.get(MenuBar.FILE)][fileMenu.get(FileMenu.CLOSE_TAB)]
                 .setOnAction(new EventHandler <ActionEvent>() {
                     @Override
                     public void handle(final ActionEvent event) {
@@ -460,24 +462,24 @@ public class KeroEdit extends Application {
                         }
                     }
                 });
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.FILE)][fileMenuItemIndexes.get(FileMenuItemIndexes.CLOSE_TAB)]
+        menuItems[menuBar.get(MenuBar.FILE)][fileMenu.get(FileMenu.CLOSE_TAB)]
                 .setDisable(true);
 
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.FILE)][fileMenuItemIndexes.get(FileMenuItemIndexes.CLOSE_ALL_TABS)]
+        menuItems[menuBar.get(MenuBar.FILE)][fileMenu.get(FileMenu.CLOSE_ALL_TABS)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.SHIFT_DOWN, KeyCombination.CONTROL_DOWN));
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.FILE)][fileMenuItemIndexes.get(FileMenuItemIndexes.CLOSE_ALL_TABS)]
+        menuItems[menuBar.get(MenuBar.FILE)][fileMenu.get(FileMenu.CLOSE_ALL_TABS)]
                 .setOnAction(new EventHandler <ActionEvent>() {
                     @Override
                     public void handle(final ActionEvent event) {
                         mainTabPane.getTabs().clear();
                     }
                 });
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.FILE)][fileMenuItemIndexes.get(FileMenuItemIndexes.CLOSE_ALL_TABS)]
+        menuItems[menuBar.get(MenuBar.FILE)][fileMenu.get(FileMenu.CLOSE_ALL_TABS)]
                 .setDisable(true);
 
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.EDIT)][editMenuItemIndexes.get(EditMenuItemIndexes.UNDO)]
+        menuItems[menuBar.get(MenuBar.EDIT)][editMenu.get(EditMenu.UNDO)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN));
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.EDIT)][editMenuItemIndexes.get(EditMenuItemIndexes.UNDO)]
+        menuItems[menuBar.get(MenuBar.EDIT)][editMenu.get(EditMenu.UNDO)]
                 .setOnAction(new EventHandler <ActionEvent>() {
                     @Override
                     public void handle(final ActionEvent event) {
@@ -487,12 +489,12 @@ public class KeroEdit extends Application {
                                   .showAndWait();
                     }
                 });
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.EDIT)][editMenuItemIndexes.get(EditMenuItemIndexes.UNDO)]
+        menuItems[menuBar.get(MenuBar.EDIT)][editMenu.get(EditMenu.UNDO)]
                 .setDisable(true); //Disable until valid mod opened
 
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.EDIT)][editMenuItemIndexes.get(EditMenuItemIndexes.REDO)]
+        menuItems[menuBar.get(MenuBar.EDIT)][editMenu.get(EditMenu.REDO)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN));
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.EDIT)][editMenuItemIndexes.get(EditMenuItemIndexes.REDO)]
+        menuItems[menuBar.get(MenuBar.EDIT)][editMenu.get(EditMenu.REDO)]
                 .setOnAction(new EventHandler <ActionEvent>() {
                     @Override
                     public void handle(final ActionEvent event) {
@@ -502,7 +504,7 @@ public class KeroEdit extends Application {
                                   .showAndWait();
                     }
                 });
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.EDIT)][editMenuItemIndexes.get(EditMenuItemIndexes.REDO)]
+        menuItems[menuBar.get(MenuBar.EDIT)][editMenu.get(EditMenu.REDO)]
                 .setDisable(true); //Disable until valid mod opened
 
         final RadioMenuItem[] mapZoomMenuItems = createZoomMenu(Config.mapZoom);
@@ -521,8 +523,8 @@ public class KeroEdit extends Application {
                 }
             });
         }
-        final Menu mapZoomSubMenu = (Menu)menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.VIEW)]
-                [viewMenuItemIndexes.get(ViewMenuItemIndexes.MAP_ZOOM)];
+        final Menu mapZoomSubMenu = (Menu)menuItems[menuBar.get(MenuBar.VIEW)]
+                [viewMenu.get(ViewMenu.MAP_ZOOM)];
         mapZoomSubMenu.getItems().addAll(mapZoomMenuItems);
 
         final RadioMenuItem[] tilesetZoomMenuItems = createZoomMenu(Config.tilesetZoom);
@@ -541,11 +543,11 @@ public class KeroEdit extends Application {
                 }
             });
         }
-        final Menu tilesetZoomSubMenu = (Menu)menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.VIEW)]
-                [viewMenuItemIndexes.get(ViewMenuItemIndexes.TILESET_ZOOM)];
+        final Menu tilesetZoomSubMenu = (Menu)menuItems[menuBar.get(MenuBar.VIEW)]
+                [viewMenu.get(ViewMenu.TILESET_ZOOM)];
         tilesetZoomSubMenu.getItems().addAll(tilesetZoomMenuItems);
 
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.VIEW)][viewMenuItemIndexes.get(ViewMenuItemIndexes.TILESET_BG_COLOR)]
+        menuItems[menuBar.get(MenuBar.VIEW)][viewMenu.get(ViewMenu.TILESET_BG_COLOR)]
                 .setOnAction(new EventHandler <ActionEvent>() {
                     @Override
                     public void handle(final ActionEvent event) {
@@ -570,7 +572,25 @@ public class KeroEdit extends Application {
                     }
                 });
 
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.HELP)][helpMenuItemIndexes.get(HelpMenuItemIndexes.ABOUT)]
+        menuItems[menuBar.get(MenuBar.ACTIONS)][actionsMenu.get(ActionsMenu.RUN_GAME)]
+                .setOnAction(new EventHandler <ActionEvent>() {
+                    @Override
+                    public void handle(final ActionEvent event) {
+                        final Runtime run = Runtime.getRuntime();
+                        try {
+                            run.exec(GameData.getExecutable().getAbsolutePath());
+                        }
+                        catch (final IOException except) {
+                            JavaFXUtil.createAlert(Alert.AlertType.ERROR,
+                                                   Messages.getString("KeroEdit.RunGame.IOExcept.TITLE"), null,
+                                                   Messages.getString("KeroEdit.RunGame.IOExcept.MESSAGE"));
+                        }
+                    }
+                });
+        menuItems[menuBar.get(MenuBar.ACTIONS)][actionsMenu.get(ActionsMenu.RUN_GAME)]
+                .setDisable(true);
+
+        menuItems[menuBar.get(MenuBar.HELP)][helpMenu.get(HelpMenu.ABOUT)]
                 .setOnAction(new EventHandler <ActionEvent>() {
                     @Override
                     public void handle(final ActionEvent event) {
@@ -578,14 +598,15 @@ public class KeroEdit extends Application {
                                                                    Messages.getString("KeroEdit.HelpMenu.About.TITLE"),
                                                                    null,
                                                                    MessageFormat.format(Messages.getString("KeroEdit.HelpMenu.About.MESSAGE"),
-                                                                                        LAST_UPDATED_STRING, VERSION_STRING));
+                                                                                        Messages.getString("KeroEdit.LAST_UPDATE"),
+                                                                                        Messages.getString("KeroEdit.VERSION")));
 
                         about.getDialogPane().setGraphic(new ImageView(ResourceManager.getImage("fdl_logo.png")));
                         about.showAndWait();
                     }
                 });
 
-        menuItems[menuBarMenuIndexes.get(MenuBarMenuIndexes.HELP)][helpMenuItemIndexes.get(HelpMenuItemIndexes.GUIDE)]
+        menuItems[menuBar.get(MenuBar.HELP)][helpMenu.get(HelpMenu.GUIDE)]
                 .setOnAction(new EventHandler <ActionEvent>() {
                     @Override
                     public void handle(final ActionEvent event) {
@@ -599,6 +620,15 @@ public class KeroEdit extends Application {
         mainBorderPane.setTop(mBar);
     }
 
+    /**
+     * Used for creating the Map and Tileset zoom submenus
+     *
+     * @param currentZoom The current/default zoom level
+     *
+     * @return An array of {@code RadioMenuItem}s in a {@code ToggleGroup} that can be used
+     * to set a zoom level. None of them are bound to an {@code EventHandler <ActionEvent>},
+     * so that must be done after they are created
+     */
     private RadioMenuItem[] createZoomMenu(final int currentZoom) {
         final ToggleGroup zoomToggleGroup = new ToggleGroup();
         final RadioMenuItem[] zoomMenuItems = new RadioMenuItem[5];
@@ -619,34 +649,23 @@ public class KeroEdit extends Application {
      * but does not put any maps into it, and binds no actions to it.
      */
     private void initMapList() {
-        mapList = new ListView <File>();
+        mapList = new ListView <String>();
 
         mapList.setPrefHeight(mainStage.getHeight());
-        mapList.setPrefWidth(125); //TODO: Variable size this
+
+        mapList.setMinWidth(125); //TODO: Variable size these
+        mapList.setPrefWidth(125);
         mapList.setMaxWidth(250);
 
         mapList.setOrientation(Orientation.VERTICAL);
-
-        mapList.setCellFactory(new Callback <ListView <File>, ListCell <File>>() {
-            @Override
-            public ListCell <File> call(final ListView <File> listView) {
-                return new ListCell <File>() {
-                    @Override
-                    public void updateItem(final File item, final boolean empty) { //Uses just base filename instead of full path
-                        super.updateItem(item, empty);
-                        setText(empty ? null : item.getName().replace(".pxpack", ""));
-                    }
-                };
-            }
-        });
 
         mapList.setOnMouseDragged(new EventHandler <MouseEvent>() { //TODO: Make this work less erratically
             double prevX;
 
             @Override
             public void handle(final MouseEvent event) {
-                mapList.setPrefWidth(mapList.getPrefWidth() + event.getSceneX() - prevX);
-                prevX = event.getSceneX();
+                mapList.setPrefWidth(mapList.getPrefWidth() + event.getX() - prevX);
+                prevX = event.getX();
             }
         });
 
@@ -664,7 +683,7 @@ public class KeroEdit extends Application {
     /**
      * Binds actions to the {@code ListView} for maps that was previously created by {@code setupMapList()}
      */
-    private void bindMapListViewActions() {
+    private void bindMapListActions() {
         final MenuItem[] contextMenuActions = {new MenuItem(Messages.getString("KeroEdit.MapListView.ContextMenu.OPEN_MAP")),
                                                new MenuItem(Messages.getString("KeroEdit.MapListView.ContextMenu.NEW_MAP")),
                                                new MenuItem(Messages.getString("KeroEdit.MapListView.ContextMenu.DELETE_MAP")),
@@ -673,12 +692,13 @@ public class KeroEdit extends Application {
         //TODO: Add save map to context menu?
 
         final ContextMenu contextMenu = new ContextMenu(contextMenuActions);
+        mapList.setContextMenu(contextMenu);
 
-        final EnumMap <MapListContextMenuItemIndexes, Integer> mapListContextMenuItemIndexes
-                = new EnumMap <MapListContextMenuItemIndexes, Integer>(MapListContextMenuItemIndexes.class);
+        final EnumMap <MapListContextMenu, Integer> mapListContextMenu
+                = new EnumMap <MapListContextMenu, Integer>(MapListContextMenu.class);
         int i = 0;
-        for (final MapListContextMenuItemIndexes x : MapListContextMenuItemIndexes.values()) {
-            mapListContextMenuItemIndexes.put(x, i++);
+        for (final MapListContextMenu x : MapListContextMenu.values()) {
+            mapListContextMenu.put(x, i++);
         }
 
         /*
@@ -687,17 +707,18 @@ public class KeroEdit extends Application {
          * thing below which has the same keys mapped
          */
         //TODO: Change accelerator text from an arrow to "Enter"
-        contextMenuActions[mapListContextMenuItemIndexes.get(MapListContextMenuItemIndexes.OPEN)]
+        contextMenuActions[mapListContextMenu.get(MapListContextMenu.OPEN)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.ENTER));
-        contextMenuActions[mapListContextMenuItemIndexes.get(MapListContextMenuItemIndexes.OPEN)]
+        contextMenuActions[mapListContextMenu.get(MapListContextMenu.OPEN)]
                 .setOnAction(new EventHandler <ActionEvent>() {
                     @Override
                     public void handle(final ActionEvent event) {
-                        final File selectedMap = mapList.getSelectionModel().getSelectedItem();
+                        final String filename = mapList.getSelectionModel().getSelectedItem();
 
                         for (final Tab tab : mainTabPane.getTabs()) {
                             if (tab.getClass().equals(MapEditTab.class) &&
-                                tab.getId().equals(selectedMap.getName().replace(".pxpack", ""))) {
+                                tab.getId().equals(filename)) {
+
                                 mainTabPane.getSelectionModel().select(tab);
                                 return;
                             }
@@ -709,9 +730,9 @@ public class KeroEdit extends Application {
                     }
                 });
 
-        contextMenuActions[mapListContextMenuItemIndexes.get(MapListContextMenuItemIndexes.NEW)]
+        contextMenuActions[mapListContextMenu.get(MapListContextMenu.NEW)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN));
-        contextMenuActions[mapListContextMenuItemIndexes.get(MapListContextMenuItemIndexes.NEW)]
+        contextMenuActions[mapListContextMenu.get(MapListContextMenu.NEW)]
                 .setOnAction(new EventHandler <ActionEvent>() {
                     @Override
                     public void handle(final ActionEvent event) {
@@ -730,18 +751,20 @@ public class KeroEdit extends Application {
                     }
                 });
 
-        contextMenuActions[mapListContextMenuItemIndexes.get(MapListContextMenuItemIndexes.DELETE)]
+        contextMenuActions[mapListContextMenu.get(MapListContextMenu.DELETE)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.DELETE));
-        contextMenuActions[mapListContextMenuItemIndexes.get(MapListContextMenuItemIndexes.DELETE)]
+        contextMenuActions[mapListContextMenu.get(MapListContextMenu.DELETE)]
                 .setOnAction(new EventHandler <ActionEvent>() {
                     @Override
                     public void handle(final ActionEvent event) {
-                        final File map = mapList.getSelectionModel().getSelectedItem();
-                        GameData.removeMap(map);
-                        mapList.getItems().remove(map);
+                        final String filename = mapList.getSelectionModel().getSelectedItem();
+                        GameData.removeMap(filename);
+                        mapList.getItems().remove(filename);
 
                         for (final Tab tab : mainTabPane.getTabs()) {
-                            if (tab.getClass().equals(MapEditTab.class) && tab.getId().equals(map.getName().replace(".pxpack", ""))) {
+                            if (tab.getClass().equals(MapEditTab.class) &&
+                                tab.getId().equals(filename)) {
+
                                 mainTabPane.getTabs().remove(tab);
                                 break;
                             }
@@ -749,7 +772,7 @@ public class KeroEdit extends Application {
                     }
                 });
 
-        contextMenuActions[mapListContextMenuItemIndexes.get(MapListContextMenuItemIndexes.RENAME)]
+        contextMenuActions[mapListContextMenu.get(MapListContextMenu.RENAME)]
                 .setOnAction(new EventHandler <ActionEvent>() {
                     @Override
                     public void handle(final ActionEvent event) {
@@ -760,7 +783,7 @@ public class KeroEdit extends Application {
                     }
                 });
 
-        contextMenuActions[mapListContextMenuItemIndexes.get(MapListContextMenuItemIndexes.DUPLICATE)]
+        contextMenuActions[mapListContextMenu.get(MapListContextMenu.DUPLICATE)]
                 .setOnAction(new EventHandler <ActionEvent>() {
                     @Override
                     public void handle(final ActionEvent event) {
@@ -776,22 +799,17 @@ public class KeroEdit extends Application {
             @Override
             public void handle(final KeyEvent event) {
                 //Retrieves the index of the MenuItem in the context menu that the key is tied to
-                if (event.getCode().equals(KeyCode.CONTEXT_MENU)) {
-                    contextMenu.show(mainBorderPane, 0, 0);
-                    return;
-                }
-
-                final int menuItemIndex = contextMenuActions[mapListContextMenuItemIndexes.get(MapListContextMenuItemIndexes.OPEN)]
+                final int menuItemIndex = contextMenuActions[mapListContextMenu.get(MapListContextMenu.OPEN)]
                                                   .getAccelerator().match(event) ?
-                                          mapListContextMenuItemIndexes.get(MapListContextMenuItemIndexes.OPEN) :
+                                          mapListContextMenu.get(MapListContextMenu.OPEN) :
 
-                                          contextMenuActions[mapListContextMenuItemIndexes.get(MapListContextMenuItemIndexes.NEW)]
+                                          contextMenuActions[mapListContextMenu.get(MapListContextMenu.NEW)]
                                                   .getAccelerator().match(event) ?
-                                          mapListContextMenuItemIndexes.get(MapListContextMenuItemIndexes.NEW) :
+                                          mapListContextMenu.get(MapListContextMenu.NEW) :
 
-                                          contextMenuActions[mapListContextMenuItemIndexes.get(MapListContextMenuItemIndexes.DELETE)]
+                                          contextMenuActions[mapListContextMenu.get(MapListContextMenu.DELETE)]
                                                   .getAccelerator().match(event) ?
-                                          mapListContextMenuItemIndexes.get(MapListContextMenuItemIndexes.DELETE) : -1;
+                                          mapListContextMenu.get(MapListContextMenu.DELETE) : -1;
 
                 if (-1 != menuItemIndex) {
                     contextMenu.getItems().get(menuItemIndex).getOnAction().handle(new ActionEvent());
@@ -803,11 +821,8 @@ public class KeroEdit extends Application {
             @Override
             public void handle(final MouseEvent event) {
                 if (event.getButton().equals(MouseButton.PRIMARY) && 2 == event.getClickCount()) {
-                    contextMenu.getItems().get(mapListContextMenuItemIndexes.get(MapListContextMenuItemIndexes.OPEN))
+                    contextMenu.getItems().get(mapListContextMenu.get(MapListContextMenu.OPEN))
                                .getOnAction().handle(new ActionEvent());
-                }
-                else if (event.getButton().equals(MouseButton.SECONDARY)) { //right-click
-                    contextMenu.show(mainBorderPane, event.getScreenX(), event.getScreenY());
                 }
             }
         });
@@ -823,19 +838,19 @@ public class KeroEdit extends Application {
         mainTabPane.setPrefWidth(mainStage.getWidth());
 
         mainTabPane.tabClosingPolicyProperty().setValue(TabPane.TabClosingPolicy.ALL_TABS);
-        JavaFXUtil.addCloseTabKeys(mainTabPane);
 
         mainBorderPane.setCenter(mainTabPane);
     }
 
-    private enum MenuBarMenuIndexes {
+    private enum MenuBar {
         FILE,
         EDIT,
         VIEW,
+        ACTIONS,
         HELP
     }
 
-    private enum FileMenuItemIndexes {
+    private enum FileMenu {
         OPEN,
         OPEN_LAST,
         SAVE,
@@ -845,23 +860,27 @@ public class KeroEdit extends Application {
         CLOSE_ALL_TABS
     }
 
-    private enum EditMenuItemIndexes {
+    private enum EditMenu {
         UNDO,
         REDO
     }
 
-    private enum ViewMenuItemIndexes {
+    private enum ViewMenu {
         MAP_ZOOM,
         TILESET_ZOOM,
         TILESET_BG_COLOR
     }
 
-    private enum HelpMenuItemIndexes {
+    private enum ActionsMenu {
+        RUN_GAME
+    }
+
+    private enum HelpMenu {
         ABOUT,
         GUIDE
     }
 
-    private enum MapListContextMenuItemIndexes {
+    private enum MapListContextMenu {
         OPEN,
         NEW,
         DELETE,
