@@ -1,3 +1,6 @@
+//TODO: Decide if loading should cater to maps like Area* and tilsets like mptArea (could be leftover/unintended)
+// - game glitches if one of those maps is loaded, so probably shouldn't cater to it
+
 package com.fdl.keroedit.mapedit;
 
 import java.io.File;
@@ -8,7 +11,6 @@ import java.text.ParseException;
 import java.text.MessageFormat;
 
 import javafx.application.Platform;
-
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.ScrollPane;
@@ -59,7 +61,10 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritablePixelFormat;
 import javafx.scene.image.PixelFormat;
+
 import java.nio.ByteBuffer;
+
+import javafx.concurrent.Task;
 
 import com.fdl.keroedit.util.JavaFXUtil;
 
@@ -67,9 +72,14 @@ import com.fdl.keroedit.Messages;
 
 import com.fdl.keroedit.Config;
 
+import com.fdl.keroedit.resource.ResourceManager;
+
 import com.fdl.keroedit.gamedata.GameData;
 
+import com.fdl.keroedit.KeroEdit;
+
 import com.fdl.keroedit.map.PxPack;
+import com.fdl.keroedit.map.PxAttr;
 
 public class MapEditTab extends Tab {
     private /*final*/ TabPane mainTabPane;
@@ -140,11 +150,20 @@ public class MapEditTab extends Tab {
         private static final int TILE_WIDTH = 8;
         private static final int TILE_HEIGHT = 8;
 
-        private static final int TILESET_WIDTH = 128;
-        private static final int TILESET_HEIGHT = 128;
+        private static final int TILESET_WIDTH = TILE_WIDTH * 16;
+        private static final int TILESET_HEIGHT = TILE_HEIGHT * 16;
+
+        private static final int PXATTR_TILE_WIDTH = 16;
+        private static final int PXATTR_TILE_HEIGHT = 16;
+
+        private static final int PXATTR_IMAGE_WIDTH = PXATTR_TILE_WIDTH * 16;
+        private static final int PXATTR_IMAGE_HEIGHT = PXATTR_TILE_HEIGHT * 16;
 
         private final PxPack.Head head; //Stores it as some properties are necessary but does not modify it
         //private final ArrayList<PxPack.Entity> entities;
+
+        private final Image pxAttrImg;
+        private PxAttr[] pxAttrs;
 
         private final BorderPane mainBorderPane;
 
@@ -153,6 +172,8 @@ public class MapEditTab extends Tab {
 
         private final SimpleIntegerProperty selectedLayer;
         private final SimpleBooleanProperty[] displayedLayers;
+
+        private final SimpleBooleanProperty displayTileTypes;
 
         //create property for mode - tile or entity
 
@@ -163,6 +184,11 @@ public class MapEditTab extends Tab {
             //entities = map.getEntities();
 
             mainBorderPane = new BorderPane();
+
+            displayTileTypes = new SimpleBooleanProperty(false);
+
+            loadPxAttrs();
+            pxAttrImg = ResourceManager.getImage("assist/attribute.png");
 
             final PxPack.TileLayer[] tileLayers = map.getTileLayers();
             int i;
@@ -181,12 +207,31 @@ public class MapEditTab extends Tab {
             for (i = 0; i < displayedLayers.length; ++i) {
                 displayedLayers[i] = new SimpleBooleanProperty(true);
             }
+
             mapPane = new MapPane();
             mainBorderPane.setCenter(mapPane);
 
             mainBorderPane.setTop(new SettingsPane());
 
             setContent(mainBorderPane);
+        }
+
+        private void loadPxAttrs() {
+            final String[] tilesetNames = head.getTilesetNames();
+            pxAttrs = new PxAttr[tilesetNames.length];
+
+            for (int i = 0; i < tilesetNames.length; ++i) {
+                final File pxAttrFile = new File(GameData.getResourceFolder().getAbsolutePath() +
+                                                 File.separatorChar + "img" + File.separatorChar +
+                                                 tilesetNames[i] + ".pxattr");
+                try {
+                    pxAttrs[i] = new PxAttr(pxAttrFile);
+                }
+                catch (final IOException | ParseException except) {
+                    //TODO: legitimate exception handling code
+                    System.out.println(except.getMessage());
+                }
+            }
         }
 
         private class TilesetPane extends VBox {
@@ -205,18 +250,39 @@ public class MapEditTab extends Tab {
                 zoom = new SimpleIntegerProperty(Config.tilesetZoom);
                 zoom.addListener(new ChangeListener <Number>() {
                     @Override
-                    public void changed(final ObservableValue <? extends Number> observable, final Number oldValue, final Number newValue) {
+                    public void changed(final ObservableValue <? extends Number> observable, final Number oldValue,
+                                        final Number newValue) {
                         redrawTileset();
+                        if (displayTileTypes.get()) {
+                            redrawTileTypes();
+                        }
                     }
                 });
 
-                fillTilesets();
+                loadTilesets();
 
                 selectedLayer.addListener(new ChangeListener <Number>() {
                     @Override
-                    public void changed(final ObservableValue <? extends Number> observable, final Number oldValue, final Number newValue) {
+                    public void changed(final ObservableValue <? extends Number> observable, final Number oldValue,
+                                        final Number newValue) {
                         redrawTileset();
+                        if (displayTileTypes.get()) {
+                            redrawTileTypes();
+                        }
                         displaySelectedTile();
+                    }
+                });
+
+                displayTileTypes.addListener(new ChangeListener <Boolean>() {
+                    @Override
+                    public void changed(final ObservableValue <? extends Boolean> observable, final Boolean oldValue,
+                                        final Boolean newValue) {
+                        if (newValue) {
+                            redrawTileTypes();
+                        }
+                        else {
+                            redrawTileset();
+                        }
                     }
                 });
 
@@ -273,42 +339,69 @@ public class MapEditTab extends Tab {
                 tilesetCanvas.getGraphicsContext2D().setFill(bgColor.get());
                 tilesetCanvas.getGraphicsContext2D().fillRect(0, 0, tilesetCanvas.getWidth(), tilesetCanvas.getHeight());
 
-                tilesetCanvas.getGraphicsContext2D().drawImage(JavaFXUtil.scaleImage(tilesets[selectedLayer.get()], zoom.get()),
+                tilesetCanvas.getGraphicsContext2D().drawImage(JavaFXUtil.scaleImage(tilesets[selectedLayer.get()],
+                                                                                     zoom.get()),
+                                                               0, 0);
+
+                //Since right now I only load the necessary part of the tileset, a simpler drawImage() method can be called (^)
+                /*tilesetCanvas.getGraphicsContext2D().drawImage(JavaFXUtil.scaleImage(tilesets[selectedLayer.get()], zoom.get()),
                                                                0, 0, TILESET_WIDTH * zoom.get(), TILESET_HEIGHT * zoom.get(),
-                                                               0, 0, tilesetCanvas.getWidth(), tilesetCanvas.getHeight());
+                                                               0, 0, tilesetCanvas.getWidth(), tilesetCanvas.getHeight());*/
+            }
+
+            private void redrawTileTypes() {
+                final int[][] attributes = pxAttrs[selectedLayer.get()].getAttributes();
+                if (null != attributes) {
+                    for (int y = 0; y < attributes[0].length; ++y) {
+                        for (int x = 0; x < attributes.length; ++x) {
+                            final int attributesX = attributes[y][x] % (PXATTR_IMAGE_WIDTH / PXATTR_TILE_WIDTH);
+                            final int attributesY = attributes[y][x] / (PXATTR_IMAGE_HEIGHT / PXATTR_TILE_HEIGHT);
+
+                            final WritableImage tileTypeImg = new WritableImage(pxAttrImg.getPixelReader(),
+                                                                                attributesX * PXATTR_TILE_WIDTH,
+                                                                                attributesY * PXATTR_TILE_HEIGHT,
+                                                                                PXATTR_TILE_WIDTH, PXATTR_TILE_HEIGHT);
+
+                            final int scale = zoom.get() / 2;
+
+                            tilesetCanvas.getGraphicsContext2D().drawImage(JavaFXUtil.scaleImage(tileTypeImg, scale),
+                                                                           x * PXATTR_TILE_WIDTH * scale,
+                                                                           y * PXATTR_TILE_HEIGHT * scale);
+                        }
+                    }
+                }
             }
 
             private void displaySelectedTile() {
-                final WritableImage tileImg = new WritableImage(TILE_WIDTH, TILE_HEIGHT);
+                final Image tilesetImg = tilesets[selectedLayer.get()];
 
-                if (0 != tilesets[selectedLayer.get()].getWidth()) { //has any dimension/exists
-                    final PixelWriter tileWriter = tileImg.getPixelWriter();
+                final int tilesetX = selectedTiles[selectedLayer.get()] % (TILESET_WIDTH / TILE_WIDTH);
+                final int tilesetY = selectedTiles[selectedLayer.get()] / (TILESET_HEIGHT / TILE_HEIGHT);
 
-                    final PixelReader tilesetReader = tilesets[selectedLayer.get()].getPixelReader();
-
-                    final WritablePixelFormat <ByteBuffer> pxFormat = PixelFormat.getByteBgraInstance();
-
-                    final int tilesetX = selectedTiles[selectedLayer.get()] % (TILESET_WIDTH / TILE_WIDTH);
-                    final int tilesetY = selectedTiles[selectedLayer.get()] / (TILESET_HEIGHT / TILE_HEIGHT);
-
-                    final byte[] tile = new byte[TILE_WIDTH * TILE_HEIGHT * 4];
-                    tilesetReader.getPixels(tilesetX * TILE_WIDTH, tilesetY * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, pxFormat,
-                                            tile, 0, TILE_WIDTH * 4);
-
-                    tileWriter.setPixels(0, 0, TILE_WIDTH, TILE_HEIGHT, pxFormat, tile, 0, TILE_WIDTH * 4);
-                }
+                final WritableImage tileImg = (0 != tilesetImg.getWidth()) ?
+                                              new WritableImage(tilesetImg.getPixelReader(), tilesetX * TILE_WIDTH,
+                                                                tilesetY * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT) :
+                                              new WritableImage(TILE_WIDTH, TILE_HEIGHT);
 
                 selectedTileImgView.setImage(JavaFXUtil.scaleImage(tileImg, (int)(PANE_WIDTH / tileImg.getWidth())));
             }
 
-            private void fillTilesets() {
+            private void loadTilesets() {
                 final String[] tilesetNames = head.getTilesetNames();
                 tilesets = new Image[tilesetNames.length];
+
                 for (int i = 0; i < tilesets.length; ++i) {
-                    tilesets[i] = new Image("file:///" + GameData.getResourceFolder().getAbsolutePath() +
-                                            File.separatorChar + "img" + File.separatorChar + tilesetNames[i] + ".png");
-                    while (1 != tilesets[i].getProgress()) {
+                    final Image uncroppedTileset = new Image("file:///" + GameData.getResourceFolder().getAbsolutePath() +
+                                                             File.separatorChar + "img" + File.separatorChar + tilesetNames[i] + ".png");
+                    while (1 != uncroppedTileset.getProgress()) {
                     }
+
+                    //TODO: Figure out purpose of the rest of the tileset and see if it's worth storing (doesn't look to be right now)
+                    final Image croppedTileset = (0 != uncroppedTileset.getWidth()) ?
+                                                 new WritableImage(uncroppedTileset.getPixelReader(), 0, 0,
+                                                                   TILESET_WIDTH, TILESET_HEIGHT) : uncroppedTileset;
+
+                    tilesets[i] = croppedTileset;
                 }
             }
         }
@@ -328,7 +421,7 @@ public class MapEditTab extends Tab {
                                         final Number newValue) {
 
                         fixSize();
-                        redraw();
+                        redrawMap();
                     }
                 });
 
@@ -337,10 +430,17 @@ public class MapEditTab extends Tab {
                         @Override
                         public void changed(final ObservableValue <? extends Boolean> observable, final Boolean oldValue,
                                             final Boolean newValue) {
-                            redraw();
+                            redrawMap();
                         }
                     });
                 }
+
+                displayTileTypes.addListener(new ChangeListener <Boolean>() {
+                    @Override
+                    public void changed(final ObservableValue <? extends Boolean> observable, final Boolean oldValue, final Boolean newValue) {
+                        redrawMap();
+                    }
+                });
 
                 tileLayers = map.getTileLayers();
 
@@ -358,14 +458,13 @@ public class MapEditTab extends Tab {
                                 x < tileLayers[selectedLayer.get()].getTiles()[0].length) {
 
                                 tileLayers[selectedLayer.get()].setTile(x, y, tilesetPane.selectedTiles[selectedLayer.get()]);
-                                redraw();
+                                redrawMap();
                             }
                         }
                     }
                 });
-                mapCanvas.setOnMouseDragged(mapCanvas.getOnMouseClicked()); //works, but a bit slowly...
                 fixSize();
-                redraw();
+                redrawMap();
 
                 setPannable(false); //conflicts with drag
 
@@ -378,7 +477,7 @@ public class MapEditTab extends Tab {
             /**
              * Draws the map to the stored canvas
              */
-            private void redraw() {
+            private void redrawMap() {
                 //TODO: Change listener for background color
                 mapCanvas.getGraphicsContext2D().setFill(head.getBgColor());
                 mapCanvas.getGraphicsContext2D().fillRect(0, 0, mapCanvas.getWidth(), mapCanvas.getHeight());
@@ -418,10 +517,37 @@ public class MapEditTab extends Tab {
 
                             tmpLayerImgWriter.setPixels(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, pxFormat,
                                                         tile, 0, TILE_WIDTH * 4);
+
                         }
                     }
-
                     mapCanvas.getGraphicsContext2D().drawImage(JavaFXUtil.scaleImage(tmpLayerImg, zoom.get()), 0, 0);
+
+                    if (displayTileTypes.get()) {
+                        final int[][] attributes = pxAttrs[selectedLayer.get()].getAttributes();
+
+                        if (null != attributes) {
+                            for (int y = 0; y < layerData.length; ++y) {
+                                for (int x = 0; x < layerData[0].length; ++x) {
+                                    final int tilesetX = layerData[y][x] % (TILESET_WIDTH / TILE_WIDTH);
+                                    final int tilesetY = layerData[y][x] / (TILESET_WIDTH / TILE_WIDTH);
+
+                                    final int attributesX = attributes[tilesetY][tilesetX] % (PXATTR_IMAGE_WIDTH / PXATTR_TILE_WIDTH);
+                                    final int attributesY = attributes[tilesetY][tilesetX] / (PXATTR_IMAGE_HEIGHT / PXATTR_TILE_HEIGHT);
+
+                                    final WritableImage tileTypeImg = new WritableImage(pxAttrImg.getPixelReader(),
+                                                                                        attributesX * PXATTR_TILE_WIDTH,
+                                                                                        attributesY * PXATTR_TILE_HEIGHT,
+                                                                                        PXATTR_TILE_WIDTH, PXATTR_TILE_HEIGHT);
+
+                                    final int scale = zoom.get() / 2;
+
+                                    mapCanvas.getGraphicsContext2D().drawImage(JavaFXUtil.scaleImage(tileTypeImg, scale),
+                                                                               x * PXATTR_TILE_WIDTH * scale,
+                                                                               y * PXATTR_TILE_HEIGHT * scale);
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -457,15 +583,17 @@ public class MapEditTab extends Tab {
                 setVgap(10);
                 setHgap(20);
 
-                initDisplayedLayersSetting();
-                initSelectedLayerSetting();
-                initResizeButton();
+                int x = 0;
+                initDisplayedLayersSetting(x++);
+                initSelectedLayerSetting(x++);
+                initResizeButton(x++);
+                initDrawTileTypesSetting(x++);
             }
 
-            private void initDisplayedLayersSetting() {
+            private void initDisplayedLayersSetting(final int x) {
                 final Text displayedLayersLabel = new Text(Messages.getString("MapEditTab.TileEditTab.DISPLAYED_LAYERS"));
                 displayedLayersLabel.setFont(Font.font(null, FontWeight.BOLD, 15));
-                add(displayedLayersLabel, 0, 0);
+                add(displayedLayersLabel, x, 0);
 
                 final CheckBox[] displayedLayersCheckboxes = new CheckBox[mapPane.tileLayers.length];
                 for (int i = 0; i < displayedLayersCheckboxes.length; ++i) {
@@ -478,14 +606,14 @@ public class MapEditTab extends Tab {
                     displayedLayersCheckboxes[i].setSelected(true);
                     displayedLayers[i].bind(displayedLayersCheckboxes[i].selectedProperty());
 
-                    add(displayedLayersCheckboxes[i], 0, i + 1);
+                    add(displayedLayersCheckboxes[i], x, i + 1);
                 }
             }
 
-            private void initSelectedLayerSetting() {
+            private void initSelectedLayerSetting(final int x) {
                 final Text selectedLayerLabel = new Text(Messages.getString("MapEditTab.TileEditTab.SELECTED_LAYER"));
                 selectedLayerLabel.setFont(Font.font(null, FontWeight.BOLD, 15));
-                add(selectedLayerLabel, 1, 0);
+                add(selectedLayerLabel, x, 0);
 
                 final ToggleGroup selectedLayerToggleGroup = new ToggleGroup();
                 final RadioButton[] selectedLayerRadioButtons = new RadioButton[mapPane.tileLayers.length];
@@ -513,11 +641,11 @@ public class MapEditTab extends Tab {
                             }
                         }
                     });
-                    add(selectedLayerRadioButtons[i], 1, i + 1);
+                    add(selectedLayerRadioButtons[i], x, i + 1);
                 }
             }
 
-            private void initResizeButton() {
+            private void initResizeButton(final int x) {
                 final Button resizeButton = new Button(Messages.getString("MapEditTab.TileEditTab.Resize.BUTTON_TEXT"));
                 resizeButton.setOnAction(new EventHandler <ActionEvent>() {
                     @Override
@@ -573,13 +701,21 @@ public class MapEditTab extends Tab {
                                 mapPane.tileLayers[selectedLayer.get()].resize(newWidth, newHeight);
 
                                 mapPane.fixSize();
-                                mapPane.redraw();
+                                mapPane.redrawMap();
                             }
                         }
 
                     }
                 });
-                add(resizeButton, 2, 0);
+                add(resizeButton, x, 0);
+            }
+
+            private void initDrawTileTypesSetting(final int x) {
+                final CheckBox toggle = new CheckBox(Messages.getString("MapEditTab.TileEditTab.SHOW_TILE_TYPES_TEXT"));
+                toggle.setSelected(false);
+                displayTileTypes.bind(toggle.selectedProperty());
+
+                add(toggle, x, 0);
             }
         }
     }

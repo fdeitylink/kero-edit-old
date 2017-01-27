@@ -33,6 +33,11 @@
  * Shorten tertiary statements
  * Lower memory usage and stuffs
  * Allow changing background color in map editing tab (so it will have to change head properties)
+ * Allow changing tilesets in map edit tab (so it will have to change head properties)
+ * Find most efficient way to read files
+ * Play pxtone files
+ * Set layer on save or have PxPack give direct access?
+ * Switch back to three canvas & stackpane system? (slow...could try tasks)
  *
  * Make PxPack interior classes immutable?
  * Create missing directories rather than throw error?
@@ -115,7 +120,7 @@ import com.fdl.keroedit.gamedata.GameData;
 import com.fdl.keroedit.mapedit.MapEditTab;
 
 public class KeroEdit extends Application {
-    private ExecutorService mainLogicExecutorService;
+    private static ExecutorService mainLogicExecutorService;
     private Phaser mainLogicExecutorPhaser;
 
     private Stage mainStage;
@@ -141,6 +146,10 @@ public class KeroEdit extends Application {
         loadPreferences();
 
         initStage(stage);
+    }
+
+    public static ExecutorService getExecService() {
+        return mainLogicExecutorService;
     }
 
     private void loadPreferences() {
@@ -321,8 +330,8 @@ public class KeroEdit extends Application {
                                 Config.lastExeLoc = executable.getAbsolutePath();
 
                                 mainStage.setTitle(MessageFormat.format(Messages.getString("KeroEdit.OpenFile.NEW_APP_TITLE"),
-                                                                        Messages.getString("KeroEdit.VERSION")) +
-                                                   executable.getParent() + File.separatorChar);
+                                                                        Messages.getString("KeroEdit.VERSION"),
+                                                                        executable.getParent() + File.separatorChar));
 
                                 loadMapList();
                                 //TODO: Check if actions already bound?
@@ -362,8 +371,8 @@ public class KeroEdit extends Application {
                             GameData.initGameData(new File(Config.lastExeLoc));
 
                             mainStage.setTitle(MessageFormat.format(Messages.getString("KeroEdit.OpenFile.NEW_APP_TITLE"),
-                                                                    Messages.getString("KeroEdit.VERSION")) +
-                                               lastExeLoc.substring(0, lastExeLoc.lastIndexOf(File.separatorChar) + 1));
+                                                                    Messages.getString("KeroEdit.VERSION"),
+                                                                    lastExeLoc.substring(0, lastExeLoc.lastIndexOf(File.separatorChar) + 1)));
 
                             loadMapList();
                             bindMapListActions();
@@ -508,40 +517,44 @@ public class KeroEdit extends Application {
                 .setDisable(true); //Disable until valid mod opened
 
         final RadioMenuItem[] mapZoomMenuItems = createZoomMenu(Config.mapZoom);
+        int zoom = 2;
         for (i = 0; i < mapZoomMenuItems.length; ++i) {
-            final int zoom = i + 1;
+            final int z = zoom;
             mapZoomMenuItems[i].setOnAction(new EventHandler <ActionEvent>() {
                 @Override
                 public void handle(final ActionEvent event) {
-                    Config.mapZoom = zoom;
+                    Config.mapZoom = z;
                     for (final Tab tab : mainTabPane.getTabs()) {
                         if (tab.getClass().equals(MapEditTab.class)) {
                             final MapEditTab mEditTab = (MapEditTab)tab;
-                            mEditTab.setMapZoom(zoom);
+                            mEditTab.setMapZoom(z);
                         }
                     }
                 }
             });
+            zoom += 2;
         }
         final Menu mapZoomSubMenu = (Menu)menuItems[menuBar.get(MenuBar.VIEW)]
                 [viewMenu.get(ViewMenu.MAP_ZOOM)];
         mapZoomSubMenu.getItems().addAll(mapZoomMenuItems);
 
         final RadioMenuItem[] tilesetZoomMenuItems = createZoomMenu(Config.tilesetZoom);
+        zoom = 2;
         for (i = 0; i < tilesetZoomMenuItems.length; ++i) {
-            final int zoom = i + 1;
+            final int z = zoom;
             tilesetZoomMenuItems[i].setOnAction(new EventHandler <ActionEvent>() {
                 @Override
                 public void handle(final ActionEvent event) {
-                    Config.tilesetZoom = zoom;
+                    Config.tilesetZoom = z;
                     for (final Tab tab : mainTabPane.getTabs()) {
                         if (tab.getClass().equals(MapEditTab.class)) {
                             final MapEditTab mEditTab = (MapEditTab)tab;
-                            mEditTab.setTilesetZoom(zoom);
+                            mEditTab.setTilesetZoom(z);
                         }
                     }
                 }
             });
+            zoom += 2;
         }
         final Menu tilesetZoomSubMenu = (Menu)menuItems[menuBar.get(MenuBar.VIEW)]
                 [viewMenu.get(ViewMenu.TILESET_ZOOM)];
@@ -631,14 +644,19 @@ public class KeroEdit extends Application {
      */
     private RadioMenuItem[] createZoomMenu(final int currentZoom) {
         final ToggleGroup zoomToggleGroup = new ToggleGroup();
-        final RadioMenuItem[] zoomMenuItems = new RadioMenuItem[5];
+        final RadioMenuItem[] zoomMenuItems = new RadioMenuItem[3];
+
+        //from 200, 400, 600% since attribute.png and unittype.png are are 16px by 16px but tiles are 8px by 8px
+        //and I don't have a half-scale image scaler yet
+        int zoom = 2;
         for (int i = 0; i < zoomMenuItems.length; ++i) {
-            zoomMenuItems[i] = new RadioMenuItem(String.valueOf((i + 1) * 100) + '%');
+            zoomMenuItems[i] = new RadioMenuItem(String.valueOf(zoom * 100) + '%');
 
             zoomMenuItems[i].setToggleGroup(zoomToggleGroup);
-            if (currentZoom == (i + 1)) {
+            if (currentZoom == zoom) {
                 zoomMenuItems[i].setSelected(true);
             }
+            zoom += 2;
         }
 
         return zoomMenuItems;

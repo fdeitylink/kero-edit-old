@@ -9,6 +9,7 @@
  *  - same for tilesets and tile layers
  *  - Do I even need entity & layer to store numbers?
  * Change use of short to int for entity type?
+ * Check extension
  */
 package com.fdl.keroedit.map;
 
@@ -64,7 +65,7 @@ public class PxPack {
             inStream = new FileInputStream(inFile);
             chan = inStream.getChannel();
 
-            ByteBuffer buf = ByteBuffer.allocate(16);
+            ByteBuffer buf = ByteBuffer.allocate(Head.HEADER_STRING.length());
             buf.order(ByteOrder.BIG_ENDIAN);
             chan.read(buf);
 
@@ -142,7 +143,7 @@ public class PxPack {
                     final int[][] tiles = new int[height][width];
                     for (int y = 0; y < tiles.length; ++y) {
                         for (int x = 0; x < tiles[y].length; ++x) {
-                            tiles[y][x] = (buf.get((width * y) + x)) & 0xFF; //& 0xFF treats it as unsigned byte when converted to int
+                            tiles[y][x] = buf.get() & 0xFF; //& 0xFF treats it as unsigned byte when converted to int
                         }
                     }
 

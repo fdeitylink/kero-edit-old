@@ -36,23 +36,28 @@ public class Logger {
         }
     }
 
-    public static void logException(final String additionalMessage, final Exception except) {
+    public static void logException(final String message, final Exception except) {
         final String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
-        String message = currentTime + ": " + additionalMessage + except.getMessage();
+        final StringBuilder sBuilder = new StringBuilder(currentTime);
+        sBuilder.append(": ");
+        sBuilder.append(message);
+        sBuilder.append(except.getMessage());
         for (final StackTraceElement element : except.getStackTrace()) {
-            message += "\n\t" + element;
+            sBuilder.append("\n\t");
+            sBuilder.append(element);
         }
+        final String finalMessage = sBuilder.toString();
 
         try {
             logFile = new FileHandler("error.log");
-            logFile.publish(new LogRecord(Level.ALL, message));
+            logFile.publish(new LogRecord(Level.ALL, finalMessage));
             logFile.close();
         }
         catch (final IOException ioExcept) {
             JavaFXUtil.createAlertWithTextBox(Alert.AlertType.ERROR, Messages.getString("Logger.Alert.TITLE"),
                                               null, Messages.getString("Logger.Alert.MESSAGE"),
-                                              message, false).showAndWait();
+                                              finalMessage, false).showAndWait();
         }
     }
 }
