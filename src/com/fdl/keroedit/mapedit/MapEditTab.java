@@ -1,26 +1,20 @@
 //TODO: Try using resize() instead of setWidth() and setHeight()
-//TODO: Resizing map/tileset is slightly slow...
+//TODO: Resizing map & tileset is slightly slow...
 
 package com.fdl.keroedit.mapedit;
 
 import java.io.File;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 
 import java.text.MessageFormat;
 
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.control.SplitPane;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -29,8 +23,6 @@ import javafx.geometry.Insets;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
-
-import javafx.scene.control.TextArea;
 
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -71,7 +63,6 @@ import javafx.scene.image.WritablePixelFormat;
 import javafx.scene.image.PixelFormat;
 
 import java.nio.ByteBuffer;
-import java.util.Scanner;
 
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -89,6 +80,8 @@ import com.fdl.keroedit.gamedata.GameData;
 
 import com.fdl.keroedit.map.PxPack;
 import com.fdl.keroedit.map.PxAttr;
+
+import com.fdl.keroedit.script.ScriptEditTab;
 
 public class MapEditTab extends Tab {
     //Used only in TileEditTab but I wanted it static so there's only one instance of it
@@ -125,7 +118,7 @@ public class MapEditTab extends Tab {
 
         //TODO: Context menu? close and rename
 
-        final TabPane tPane = new TabPane(new PropertyEditTab(), new TileEditTab(), new ScriptEditTab());
+        final TabPane tPane = new TabPane(new PropertyEditTab(), new TileEditTab(), new ScriptEditTab(map.getName()));
         tPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
         setContent(tPane);
@@ -188,7 +181,7 @@ public class MapEditTab extends Tab {
         private static final int PXATTR_IMAGE_WIDTH = PXATTR_TILE_WIDTH * 16;
         private static final int PXATTR_IMAGE_HEIGHT = PXATTR_TILE_HEIGHT * 16;
 
-        private final PxPack.Head head; //Stores it as some properties are necessary but does not modify it
+        private final PxPack.Head head;
         //private final ArrayList<PxPack.Entity> entities;
 
         private final MapPane mapPane;
@@ -410,9 +403,8 @@ public class MapEditTab extends Tab {
                 });
 
                 tileTypeCanvas = new Canvas();
-                tileTypeCanvas.setVisible(false);
+                tileTypeCanvas.visibleProperty().bind(showTileTypes);
                 tileTypeCanvas.setOnMouseClicked(tilesetCanvas::fireEvent);
-                showTileTypes.addListener((observable, oldValue, newValue) -> tileTypeCanvas.setVisible(newValue));
 
                 final StackPane stackPane = new StackPane(tilesetCanvas, tileTypeCanvas);
 
@@ -770,39 +762,6 @@ public class MapEditTab extends Tab {
                 });
                 add(bgColorButton, x, y);
             }
-        }
-    }
-
-    private class ScriptEditTab extends Tab {
-        private final File script;
-
-        ScriptEditTab() {
-            final File inFile = new File(GameData.getResourceFolder().getAbsolutePath() +
-                                         File.separatorChar + "text" + File.separatorChar +
-                                         map.getName() + ".pxeve");
-            script = inFile;
-
-            final StringBuilder sBuilder = new StringBuilder();
-            try {
-                final Scanner scan = new Scanner(inFile);
-                while (scan.hasNext()) {
-                    sBuilder.append(scan.next());
-                    sBuilder.append("\r\n");
-                }
-            }
-            catch (final FileNotFoundException except) {
-                //TODO: Create new script file
-                System.err.println("ERROR: Could not locate PXEVE file " + inFile.getName());
-            }
-
-            final TextArea textArea = new TextArea(sBuilder.toString());
-            textArea.requestFocus();
-            textArea.setFont(new Font("Consolas", 12));
-
-            setText(Messages.getString("MapEditTab.ScriptEditTab.TITLE"));
-            setId(map.getName());
-
-            setContent(textArea);
         }
     }
 }

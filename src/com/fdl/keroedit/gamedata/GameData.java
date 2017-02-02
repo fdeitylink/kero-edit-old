@@ -46,7 +46,7 @@ public class GameData {
         gameData = new GameData();
 
         if (null == executable) {
-            throw new IllegalArgumentException(Messages.getString("GameData.EXECUTABLE_NULL"));
+            throw new NullPointerException(Messages.getString("GameData.EXECUTABLE_NULL"));
         }
         else if (!executable.exists()) {
             throw new NoSuchFileException(MessageFormat.format(Messages.getString("GameData.EXECUTABLE_NONEXISTENT"),
