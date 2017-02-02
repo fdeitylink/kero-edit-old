@@ -22,11 +22,23 @@ import com.fdl.keroedit.Messages;
 import com.fdl.keroedit.util.Logger;
 
 public class PxAttr {
-    private static String HEADER_STRING = "pxMAP01\0";
+    private static final String HEADER_STRING = "pxMAP01\0";
+
+    private final File file;
+    //when saving, check if file doesn't exist (meaning we used mpt00.pxattr) - create new one if so
 
     private int[][] attributes;
 
-    public PxAttr(final File inFile) throws IOException, ParseException {
+    public PxAttr(File inFile) throws IOException, ParseException {
+        file = inFile;
+
+        if (!inFile.exists()) {
+            inFile = new File(inFile.getParent() + File.separatorChar + "mpt00.pxattr");
+            if (!inFile.exists()) {
+                throw new FileNotFoundException(Messages.getString("PxAttr.DEFAULT_MISSING"));
+            }
+        }
+
         FileInputStream inStream = null;
         FileChannel chan = null;
 
@@ -69,10 +81,6 @@ public class PxAttr {
             else {
                 attributes = null;
             }
-        }
-        catch (final FileNotFoundException except) {
-            System.err.println("ERROR: Could not locate PXATTR file " + inFile.getName());
-            //TODO: Open mpt00.pxattr
         }
         catch (final IOException except) {
             throw new IOException(MessageFormat.format(Messages.getString("PxAttr.IOEXCEPT"),

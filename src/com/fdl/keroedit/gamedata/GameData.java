@@ -20,6 +20,8 @@ import java.nio.file.NoSuchFileException;
 public class GameData {
     private static GameData gameData;
 
+    private MOD_TYPE modType;
+
     private File executable;
     private File resourceFolder;
 
@@ -61,9 +63,11 @@ public class GameData {
 
         if (directoryNames.contains("rsc_p")) {
             gameData.resourceFolder = new File(gameData.executable.getParent() + File.separatorChar + "rsc_p");
+            gameData.modType = MOD_TYPE.PH;
         }
         else if (directoryNames.contains("rsc_k")) {
             gameData.resourceFolder = new File(gameData.executable.getParent() + File.separatorChar + "rsc_k");
+            gameData.modType = MOD_TYPE.KB;
         }
         else {
             throw new NoSuchFileException(MessageFormat.format(Messages.getString("GameData.MISSING_RSC"),
@@ -81,10 +85,6 @@ public class GameData {
 
     public static File getExecutable() {
         return gameData.executable;
-    }
-
-    public static File getBaseFolder() {
-        return gameData.executable.getParentFile();
     }
 
     public static File getResourceFolder() {
@@ -114,5 +114,10 @@ public class GameData {
         }
 
         return nameList;
+    }
+
+    public enum MOD_TYPE {
+        PH,
+        KB
     }
 }

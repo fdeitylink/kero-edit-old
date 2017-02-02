@@ -1,7 +1,12 @@
 package com.fdl.keroedit.util;
 
+import javafx.geometry.Insets;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 
+import javafx.scene.layout.Region;
 import javafx.scene.control.Dialog;
 import javafx.util.Pair;
 
@@ -22,7 +27,6 @@ import javafx.scene.control.Alert;
 
 import javafx.scene.control.TextArea;
 
-import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
@@ -34,13 +38,29 @@ public class JavaFXUtil {
     }
 
     /**
-     * Returns a {@code String} representation of the Color suitable for {@code Color.web()} or {@code Color.valueOf()}
+     * Sets the background color of a given {@code Region}
+     *
+     * @param color The color of the background
+     * @param region The region to apply the background color to
+     */
+    public static void setBackgroundColor(final Color color, final Region region) {
+        region.setBackground(new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
+    }
+
+    /**
+     * Returns a {@code String} representation of the Color suitable for {@code Color.web()} or {@code Color.valueOf()}.
+     * Note that it disregards opacity
+     *
+     * @param color The {@code Color} to convert to a web string
+     *
+     * @return A web string representing the given {@code Color}
      */
     public static String colorToString(final Color color) {
         return String.format("0x%02X%02X%02X",
                              (int)(color.getRed() * 255),
                              (int)(color.getGreen() * 255),
                              (int)(color.getBlue() * 255));
+        //TODO: opacity? (int)(color.getOpacity() * 255)
     }
 
     /**
@@ -52,6 +72,10 @@ public class JavaFXUtil {
      * @return The result of scaling the given image by the given scale factor
      */
     public static Image scaleImage(final Image src, final int scale) {
+        if (null == src) {
+            return null;
+        }
+
         final int srcWidth = (int)src.getWidth();
         final int srcHeight = (int)src.getHeight();
 

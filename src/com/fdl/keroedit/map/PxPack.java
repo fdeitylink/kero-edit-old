@@ -10,6 +10,8 @@
  *  - Do I even need entity & layer to store numbers?
  * Change use of short to int for entity type?
  * Check extension
+ * Read in scroll types (second byte after tileset name)
+ * scriptName is actually the first mapname (so the script actually shares the map's name)
  */
 package com.fdl.keroedit.map;
 
@@ -41,6 +43,8 @@ import com.fdl.keroedit.Messages;
  * Object for storing information about a PXPACK file
  */
 public class PxPack {
+    public static final int NUM_LAYERS = 3;
+
     private File file;
     private /*final*/ Head head;
     private /*final*/ TileLayer[] tileLayers;
@@ -76,9 +80,8 @@ public class PxPack {
             }
 
             final String description = readString(chan);
-            final String scriptName = readString(chan);
 
-            final String[] mapNames = new String[3];
+            final String[] mapNames = new String[4];
             for (int i = 0; i < mapNames.length; ++i) {
                 mapNames[i] = readString(chan);
             }
@@ -101,7 +104,7 @@ public class PxPack {
             byte blue = buf.get();
             final Color bgColor = Color.rgb(red, green, blue);
 
-            final String[] tilesetNames = new String[3];
+            final String[] tilesetNames = new String[NUM_LAYERS];
             for (int i = 0; i < tilesetNames.length; ++i) {
                 tilesetNames[i] = readString(chan);
                 chan.position(chan.position() + 2); //skip 2 bytes after each tileset name
@@ -110,11 +113,11 @@ public class PxPack {
                 //Second may relate to parallax but idk
             }
 
-            head = new Head(description, scriptName, mapNames, spritesheetName, bgColor, tilesetNames);
+            head = new Head(description, mapNames, spritesheetName, bgColor, tilesetNames);
 
-            tileLayers = new TileLayer[3];
+            tileLayers = new TileLayer[NUM_LAYERS];
 
-            for (int i = 0; i < 3; ++i) {
+            for (int i = 0; i < tileLayers.length; ++i) {
                 buf = ByteBuffer.allocate(8);
                 buf.order(ByteOrder.BIG_ENDIAN);
                 chan.read(buf);
@@ -161,7 +164,7 @@ public class PxPack {
 
             final int numEntities = buf.getShort();
 
-            entities = new ArrayList <Entity>(numEntities);
+            entities = new ArrayList <>(numEntities);
 
             for (int i = 0; i < numEntities; ++i) {
                 buf = ByteBuffer.allocate(9);
@@ -318,17 +321,13 @@ public class PxPack {
     }
 
     public class Head {
-        static final String HEADER_STRING = "PXPACK121127a**\0";
+        private static final String HEADER_STRING = "PXPACK121127a**\0";
 
-        private String description;
-
-        private String scriptName;
         private final String[] mapNames;
-        private String spritesheetName;
-
-        private Color bgColor;
-
         private final String[] tilesetNames;
+        private String description;
+        private String spritesheetName;
+        private Color bgColor;
 
         //TODO: Limit string lengths and check if bgColor parameter has opacity set; add reset()
 
@@ -336,46 +335,37 @@ public class PxPack {
         public Head() {
             mapNames = new String[3];
             tilesetNames = new String[3];
+            description = "";
+            spritesheetName = "";
+            bgColor = Color.BLACK;
         }
 
         public Head(final Head head) {
             this.description = head.description;
-            this.scriptName = head.scriptName;
             this.mapNames = Arrays.copyOf(head.mapNames, head.mapNames.length);
             this.spritesheetName = head.spritesheetName;
             this.bgColor = head.bgColor;
             this.tilesetNames = Arrays.copyOf(head.tilesetNames, head.tilesetNames.length);
         }
 
-        public Head(final String description, final String scriptName, final String[] mapNames, final String spritesheetName,
+        public Head(final String description, final String[] mapNames, final String spritesheetName,
                     final Color bgColor, final String[] tilesetNames) {
-
             //TODO: check if these method calls are bad practice
             setDescription(description);
-            setScriptName(scriptName);
 
             this.mapNames = new String[3];
-            for (int i = 0; i < 3; ++i) {
-                setMapName(i, mapNames[i]);
-            }
+            System.arraycopy(mapNames, 0, this.mapNames, 0, this.mapNames.length);
 
             setSpritesheetName(spritesheetName);
             this.bgColor = bgColor;
 
             this.tilesetNames = new String[3];
-            for (int i = 0; i < 3; ++i) {
-                setTilesetName(i, tilesetNames[i]);
-            }
+            System.arraycopy(tilesetNames, 0, this.tilesetNames, 0, this.tilesetNames.length);
         }
 
         @SuppressWarnings("unused")
         public String getDescription() {
             return description;
-        }
-
-        @SuppressWarnings("unused")
-        public String getScriptName() {
-            return scriptName;
         }
 
         @SuppressWarnings("unused")
@@ -402,18 +392,9 @@ public class PxPack {
         public void setDescription(final String description) {
             if (description.length() > 31) {
                 throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.Head.Setter.ERROR_MSG"),
-                                                   "description text", 31));
+                                                                        "description text", 31));
             }
             this.description = description;
-        }
-
-        @SuppressWarnings("unused")
-        public void setScriptName(final String scriptName) {
-            if (scriptName.length() > 15) {
-                throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.Head.Setter.ERROR_MSG"),
-                                                                        "scriptname", 15));
-            }
-            this.scriptName = scriptName;
         }
 
         @SuppressWarnings("unused")
@@ -458,8 +439,6 @@ public class PxPack {
 
             result.append(MessageFormat.format(Messages.getString("PxPack.Head.ToString.DESCRIPTION"), description));
 
-            result.append(MessageFormat.format(Messages.getString("PxPack.Head.ToString.SCRIPT_NAME"), scriptName));
-
             for (int i = 0; i < mapNames.length; ++i) {
                 result.append(MessageFormat.format(Messages.getString("PxPack.Head.ToString.MAPNAME"), i, mapNames[i]));
             }
@@ -478,7 +457,7 @@ public class PxPack {
     }
 
     public class TileLayer {
-        static final String HEADER_STRING = "pxMAP01\0";
+        private static final String HEADER_STRING = "pxMAP01\0";
 
         private int[][] tiles;
 
@@ -490,22 +469,21 @@ public class PxPack {
             if (null != layer.tiles) {
                 tiles = new int[layer.tiles.length][layer.tiles[0].length];
                 for (int y = 0; y < layer.tiles.length; ++y) {
-                    /*for (int x = 0; x < layer.tiles[y].length; ++x) {
-                        tiles[y][x] = layer.tiles[y][x];
-                    }*/
                     System.arraycopy(layer.tiles[y], 0, tiles[y], 0, layer.tiles[y].length);
                 }
             }
         }
 
         public TileLayer(final int[][] tiles) {
-            if (tiles.length > 0xFFFF || tiles[0].length > 0xFFFF) {
-                throw new IllegalArgumentException(Messages.getString("PxPack.TileLayer.ARR_CONSTRUCTOR_ERROR_MSG"));
-            }
+            if (null != tiles) {
+                if (tiles.length > 0xFFFF || tiles[0].length > 0xFFFF) {
+                    throw new IllegalArgumentException(Messages.getString("PxPack.TileLayer.ARR_CONSTRUCTOR_ERROR_MSG"));
+                }
 
-            this.tiles = new int[tiles.length][tiles[0].length];
-            for (int y = 0; y < tiles.length; ++y) {
-                System.arraycopy(tiles[y], 0, this.tiles[y], 0, tiles[y].length);
+                this.tiles = new int[tiles.length][tiles[0].length];
+                for (int y = 0; y < tiles.length; ++y) {
+                    System.arraycopy(tiles[y], 0, this.tiles[y], 0, tiles[y].length);
+                }
             }
         }
 
@@ -555,9 +533,7 @@ public class PxPack {
                 }
                 return tilesCopy;
             }
-            else {
-                return null;
-            }
+            return null;
         }
 
         public void setTile(final int x, final int y, final int tile) {
@@ -572,15 +548,21 @@ public class PxPack {
         public String toString() {
             final StringBuilder result = new StringBuilder();
 
-            result.append(MessageFormat.format(Messages.getString("PxPack.TileLayer.ToString.WIDTH"),
-                                               String.format("%02X", tiles[0].length)));
-            result.append(MessageFormat.format(Messages.getString("PxPack.TileLayer.ToString.HEIGHT"),
-                                               String.format("%02X", tiles.length)));
+            if (null == tiles) {
+                result.append(MessageFormat.format(Messages.getString("PxPack.TileLayer.ToString.WIDTH"), "00"));
+                result.append(MessageFormat.format(Messages.getString("PxPack.TileLayer.ToString.HEIGHT"), "00"));
+            }
+            else {
+                result.append(MessageFormat.format(Messages.getString("PxPack.TileLayer.ToString.WIDTH"),
+                                                   String.format("%02X", tiles[0].length)));
+                result.append(MessageFormat.format(Messages.getString("PxPack.TileLayer.ToString.HEIGHT"),
+                                                   String.format("%02X", tiles.length)));
+            }
 
-            for (final int[] tile : tiles) {
+            for (final int[] row : tiles) {
                 result.append('\t');
-                for (int j = 0; j < tile.length; ++j) {
-                    result.append(String.format("%02X", tile[j]));
+                for (final int tile : row) {
+                    result.append(String.format("%02X", tile));
                     result.append(' ');
                 }
                 result.append('\n');
@@ -598,6 +580,7 @@ public class PxPack {
         @SuppressWarnings("unused")
         public Entity() {
             unknownData = new byte[2];
+            name = "";
         }
 
         public Entity(Entity entity) {
