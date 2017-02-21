@@ -152,8 +152,7 @@ public class JavaFXUtil {
     /**
      * Creates and returns an {@code Alert} with a text box to be displayed
      *
-     * @param type The {@code Alert.AlertType} of the alert. If this is {@code Alert.AlertType.ERROR}, then
-     * {@code message} is printed to {@code System.err}
+     * @param type The {@code Alert.AlertType} of the alert
      * @param title The title text of the {@code Alert}
      * @param headerText The header text of the {@code Alert}
      * @param message The message of the {@code Alert}
@@ -162,8 +161,8 @@ public class JavaFXUtil {
      *
      * @return The created {@code Alert}
      */
-    public static Alert createAlertWithTextBox(final Alert.AlertType type, final String title, final String headerText,
-                                               final String message, final String textAreaContent, final boolean editable) {
+    public static Alert createTextboxAlert(final Alert.AlertType type, final String title, final String headerText,
+                                           final String message, final String textAreaContent, final boolean editable) {
 
         final Alert alert = createAlert(type, title, headerText, message);
 
@@ -188,7 +187,7 @@ public class JavaFXUtil {
     }
 
     /**
-     * Creates and returns an {@code Dialog <Pair <String, String>>} with two {@code TextField}s to be displayed
+     * Creates and returns an {@code Dialog <Tuple <String, String>>} with two {@code TextField}s to be displayed
      *
      * @param title The title text of the {@code Dialog}
      * @param headerText The header text of the {@code Dialog}

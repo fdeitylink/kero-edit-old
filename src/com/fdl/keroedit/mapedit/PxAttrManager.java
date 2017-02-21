@@ -69,7 +69,7 @@ class PxAttrManager {
             if (!inFile.exists()) {
                 inFile = new File(inFile.getParent() + File.separatorChar + "mpt00.pxattr");
                 if (!inFile.exists()) {
-                    throw new FileNotFoundException(Messages.getString("PxAttr.DEFAULT_MISSING"));
+                    throw new FileNotFoundException(Messages.getString("PxAttrManager.PxAttr.DEFAULT_MISSING"));
                 }
             }
 
@@ -85,7 +85,7 @@ class PxAttrManager {
                 chan.read(buf);
 
                 if (!(new String(buf.array()).equals(HEADER_STRING))) {
-                    throw new ParseException(MessageFormat.format(Messages.getString("PxAttr.INCORRECT_HEADER"),
+                    throw new ParseException(MessageFormat.format(Messages.getString("PxAttrManager.PxAttr.INCORRECT_HEADER"),
                                                                   inFile.getName()),
                                              (int)chan.position());
                 }
@@ -117,7 +117,7 @@ class PxAttrManager {
                 }
             }
             catch (final IOException except) {
-                throw new IOException(MessageFormat.format(Messages.getString("PxAttr.IOEXCEPT"),
+                throw new IOException(MessageFormat.format(Messages.getString("PxAttrManager.PxAttr.IOEXCEPT"),
                                                            inFile.getName()), except);
             }
             finally {
@@ -130,7 +130,8 @@ class PxAttrManager {
                     }
                 }
                 catch (final IOException except) {
-                    Logger.logException(MessageFormat.format(Messages.getString("PxAttr.CLOSE_FAIL"), inFile.getName()),
+                    Logger.logException(MessageFormat.format(Messages.getString("PxAttrManager.PxAttr.CLOSE_FAIL"),
+                                                             inFile.getName()),
                                         except);
                     //TODO: Probably something should be done if the file can't be closed
                 }

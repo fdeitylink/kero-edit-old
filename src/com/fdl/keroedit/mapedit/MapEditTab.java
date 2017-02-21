@@ -6,7 +6,6 @@
  * For map - draw tile types on separate layer just like with the tileset pane
  * Find workaround for NPE with large Canvas (19tunnel maps in KB); current workaround is minimal map zoom
  * - https://bugs.openjdk.java.net/browse/JDK-8089835
- * Figure out shared PXATTR managing system
  */
 
 package com.fdl.keroedit.mapedit;
@@ -18,7 +17,7 @@ import java.text.ParseException;
 
 import java.text.MessageFormat;
 
-import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.scene.Scene;
@@ -44,6 +43,10 @@ import javafx.scene.text.Text;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Button;
 
+
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 
@@ -56,6 +59,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 
 import javafx.scene.input.MouseButton;
 
@@ -75,6 +79,7 @@ import javafx.scene.image.PixelFormat;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.EnumMap;
 
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -577,6 +582,42 @@ public class MapEditTab extends FileEditTab {
             private final StackPane mapStackPane;
 
             MapPane() {
+                tileLayers = map.getTileLayers();
+
+                mapCanvases = new Canvas[tileLayers.length];
+                for (int i = 0; i < mapCanvases.length; ++i) {
+                    mapCanvases[i] = new Canvas();
+                    mapCanvases[i].visibleProperty().bind(displayedLayers[i]);
+                }
+
+                cursorCanvas = new Canvas();
+                cursorCanvas.getGraphicsContext2D().setStroke(Color.WHITE);
+                cursorCanvas.getGraphicsContext2D().setLineWidth(2.0);
+
+                fixCanvasSizes();
+
+                mapStackPane = new StackPane();
+                mapStackPane.setAlignment(Pos.TOP_LEFT);
+                for (int i = mapCanvases.length - 1; i > -1; --i) {
+                    mapStackPane.getChildren().add(mapCanvases[i]);
+                }
+                mapStackPane.getChildren().add(cursorCanvas);
+
+                bgColor = new SimpleObjectProperty <>(head.getBgColor());
+                bgColor.addListener((observable, oldValue, newValue) -> JavaFXUtil.setBackgroundColor(newValue, mapStackPane));
+                JavaFXUtil.setBackgroundColor(bgColor.get(), mapStackPane);
+
+                bindEventHandlers();
+                setPannable(false);
+                setContextMenu(initContextMenu());
+                setContent(mapStackPane);
+            }
+
+            /**
+             * Binds {@code EventHandler}s to all the {@code Pane}s and
+             * {@code Canvas}es in this {@code ScrollPane}
+             */
+            private void bindEventHandlers() {
                 selectedLayer.addListener((observable, oldValue, newValue) -> {
                     if (showTileTypes.get()) {
                         redrawLayer(oldValue.intValue()); //"undraw" tiletypes from previously selected layer
@@ -586,13 +627,6 @@ public class MapEditTab extends FileEditTab {
 
                 showTileTypes.addListener((observable, oldValue, newValue) -> redrawLayer(selectedLayer.get()));
 
-                tileLayers = map.getTileLayers();
-
-                mapCanvases = new Canvas[tileLayers.length];
-                for (int i = 0; i < mapCanvases.length; ++i) {
-                    mapCanvases[i] = new Canvas();
-                    mapCanvases[i].visibleProperty().bind(displayedLayers[i]);
-                }
                 mapZoom.addListener((observable, oldValue, newValue) -> {
                     fixCanvasSizes();
                     for (int i = 0; i < mapCanvases.length; ++i) {
@@ -600,10 +634,6 @@ public class MapEditTab extends FileEditTab {
                         //TODO: redraw cursor so it fixes size immediately
                     }
                 });
-
-                cursorCanvas = new Canvas();
-                cursorCanvas.getGraphicsContext2D().setStroke(Color.WHITE);
-                cursorCanvas.getGraphicsContext2D().setLineWidth(2.0);
 
                 cursorCanvas.setOnMouseMoved(new EventHandler <MouseEvent>() {
                     private int prevX;
@@ -629,15 +659,6 @@ public class MapEditTab extends FileEditTab {
                 });
                 cursorCanvas.setOnMouseDragged(cursorCanvas.getOnMouseMoved());
 
-                fixCanvasSizes();
-
-                mapStackPane = new StackPane();
-                mapStackPane.setAlignment(Pos.TOP_LEFT);
-                for (int i = mapCanvases.length - 1; i > -1; --i) {
-                    mapStackPane.getChildren().add(mapCanvases[i]);
-                }
-                mapStackPane.getChildren().add(cursorCanvas);
-
                 mapStackPane.setOnMouseClicked(event -> {
                     try {
                         new Task <Void>() {
@@ -645,42 +666,42 @@ public class MapEditTab extends FileEditTab {
                             protected Void call() throws Exception {
                                 final int layer = selectedLayer.get();
 
-                                if (event.getButton().equals(MouseButton.PRIMARY) &&
-                                    null != tileLayers[layer].getTiles() &&
-                                    mapCanvases[layer].isVisible()) {
+                                if (mapCanvases[layer].isVisible()) {
+                                    if (event.getButton().equals(MouseButton.PRIMARY) &&
+                                        null != tileLayers[layer].getTiles()) {
 
-                                    final int x = (int)(event.getX() / mapZoom.get() / TILE_WIDTH);
-                                    final int y = (int)(event.getY() / mapZoom.get() / TILE_HEIGHT);
+                                        final int x = (int)(event.getX() / mapZoom.get() / TILE_WIDTH);
+                                        final int y = (int)(event.getY() / mapZoom.get() / TILE_HEIGHT);
 
-                                    final int oldTile = tileLayers[layer].getTiles()[y][x];
-                                    final int newTile = tilesetPane.selectedTiles[layer];
+                                        final int oldTile = tileLayers[layer].getTiles()[y][x];
+                                        final int newTile = tilesetPane.selectedTiles[layer];
 
-                                    if (y < tileLayers[layer].getTiles().length &&
-                                        x < tileLayers[layer].getTiles()[y].length &&
-                                        oldTile != newTile) {
+                                        if (y < tileLayers[layer].getTiles().length &&
+                                            x < tileLayers[layer].getTiles()[y].length &&
+                                            oldTile != newTile) {
 
-                                        tileLayers[layer].setTile(x, y, newTile);
-                                        redrawTile(layer, x, y);
+                                            tileLayers[layer].setTile(x, y, newTile);
+                                            redrawTile(layer, x, y);
 
-                                        setChanged(true);
+                                            setChanged(true);
 
-                                        getRedoStack().clear();
-                                        getUndoStack().addFirst(new UndoableEdit() {
-                                            @Override
-                                            public void undo() {
-                                                tileLayers[layer].setTile(x, y, oldTile);
-                                                redrawTile(layer, x, y);
-                                            }
+                                            getRedoStack().clear();
+                                            getUndoStack().addFirst(new UndoableEdit() {
+                                                @Override
+                                                public void undo() {
+                                                    tileLayers[layer].setTile(x, y, oldTile);
+                                                    redrawTile(layer, x, y);
+                                                }
 
-                                            @Override
-                                            public void redo() {
-                                                tileLayers[layer].setTile(x, y, newTile);
-                                                redrawTile(layer, x, y);
-                                            }
-                                        });
+                                                @Override
+                                                public void redo() {
+                                                    tileLayers[layer].setTile(x, y, newTile);
+                                                    redrawTile(layer, x, y);
+                                                }
+                                            });
+                                        }
                                     }
                                 }
-
                                 return null;
                             }
                         }.call();
@@ -691,14 +712,118 @@ public class MapEditTab extends FileEditTab {
                 });
                 //TODO: mouse drag has its own separate handler as it will definitely need one
                 mapStackPane.setOnMouseDragged(mapStackPane.getOnMouseClicked());
+            }
 
-                bgColor = new SimpleObjectProperty <>(head.getBgColor());
-                bgColor.addListener((observable, oldValue, newValue) -> JavaFXUtil.setBackgroundColor(newValue, mapStackPane));
-                JavaFXUtil.setBackgroundColor(bgColor.get(), mapStackPane);
+            /**
+             * Initializes the {@code ContextMenu} for this {@code ScrollPane}
+             *
+             * @return The created {@code ContextMenu}
+             */
+            private ContextMenu initContextMenu() {
+                final MenuItem[] menuItems = {new MenuItem(Messages.getString("MapEditTab.TileEditTab.Resize.MENU_TEXT")),
+                                              new MenuItem(Messages.getString("MapEditTab.TileEditTab.BgColor.MENU_TEXT"))};
 
-                setPannable(false);
+                final EnumMap <MapPaneMenuItems, Integer> mapPaneMenuItems = new EnumMap <>(MapPaneMenuItems.class);
+                int i = 0;
+                for (final MapPaneMenuItems x : MapPaneMenuItems.values()) {
+                    mapPaneMenuItems.put(x, i++);
+                }
 
-                setContent(mapStackPane);
+                menuItems[mapPaneMenuItems.get(MapPaneMenuItems.RESIZE)].setOnAction(event -> {
+                    final String layerName;
+                    switch (selectedLayer.get()) {
+                        case 0:
+                            layerName = Messages.getString("MapEditTab.TileEditTab.Layers.FOREGROUND");
+                            break;
+                        case 1:
+                            layerName = Messages.getString("MapEditTab.TileEditTab.Layers.MIDDLEGROUND");
+                            break;
+                        case 2:
+                        default:
+                            layerName = Messages.getString("MapEditTab.TileEditTab.Layers.BACKGROUND");
+                    }
+
+                    final String title = MessageFormat.format(Messages.getString("MapEditTab.TileEditTab.Resize.TITLE"),
+                                                              layerName);
+
+                    final int width = null == mapPane.tileLayers[selectedLayer.get()].getTiles() ? 0 :
+                                      mapPane.tileLayers[selectedLayer.get()].getTiles()[0].length;
+                    final int height = null == mapPane.tileLayers[selectedLayer.get()].getTiles() ? 0 :
+                                       mapPane.tileLayers[selectedLayer.get()].getTiles().length;
+
+                    final String currentSizeStr = MessageFormat.format(Messages.getString("MapEditTab.TileEditTab.Resize.CURRENT_SIZE"),
+                                                                       width, height);
+
+                    //final Optional <Pair <String, String>> result =
+                    //TODO: Check that I did this right
+                    JavaFXUtil.createDualTextFieldDialog(title, currentSizeStr,
+                                                         Messages.getString("MapEditTab.TileEditTab.Resize.NEW_WIDTH"),
+                                                         Messages.getString("MapEditTab.TileEditTab.Resize.NEW_HEIGHT"),
+                                                         Messages.getString("MapEditTab.TileEditTab.Resize.DIALOG_OK"))
+                              .showAndWait().ifPresent(result -> {
+                        final String widthStr = result.x;
+                        final String heightStr = result.y;
+
+                        if (0 < widthStr.length() && 0 < heightStr.length()) {
+                            int newWidth;
+                            int newHeight;
+                            try {
+                                newWidth = Integer.parseInt(widthStr);
+                                newHeight = Integer.parseInt(heightStr);
+                            }
+                            catch (final NumberFormatException except) {
+                                JavaFXUtil.createAlert(Alert.AlertType.ERROR,
+                                                       Messages.getString("MapEditTab.TileEditTab.Resize.NumFormatExcept.TITLE"),
+                                                       null,
+                                                       Messages.getString("MapEditTab.TileEditTab.Resize.NumFormatExcept.MESSAGE"))
+                                          .showAndWait();
+                                return;
+                            }
+
+                            if (newWidth > 0xFFFF || newHeight > 0xFFFF) {
+                                JavaFXUtil.createAlert(Alert.AlertType.ERROR,
+                                                       Messages.getString("MapEditTab.TileEditTab.Resize.InvalidDimensions.TITLE"),
+                                                       null,
+                                                       Messages.getString("MapEditTab.TileEditTab.Resize.InvalidDimensions.MESSAGE"))
+                                          .showAndWait();
+                                return;
+                            }
+
+                            tileLayers[selectedLayer.get()].resize(newWidth, newHeight);
+
+                            fixCanvasSizes();
+                            redrawLayer(selectedLayer.get());
+
+                            setChanged(true);
+                        }
+                    });
+                });
+
+                menuItems[mapPaneMenuItems.get(MapPaneMenuItems.BG_COLOR)].setOnAction(event -> {
+                    final ColorPicker cPicker = new ColorPicker(mapPane.bgColor.get());
+                    cPicker.setOnAction(ev -> {
+                        if (!cPicker.getValue().isOpaque()) {
+                            JavaFXUtil.createAlert(Alert.AlertType.ERROR,
+                                                   Messages.getString("MapEditTab.TileEditTab.BgColor.OpacityError.TITLE"),
+                                                   null,
+                                                   Messages.getString("MapEditTab.TileEditTab.BgColor.OpacityError.MESSAGE"))
+                                      .showAndWait();
+                        }
+                        else {
+                            head.setBgColor(cPicker.getValue());
+                            mapPane.bgColor.set(cPicker.getValue());
+                            setChanged(true);
+                        }
+                    });
+
+                    final Dialog <Void> cPickerDialog = new Dialog <>();
+                    cPickerDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+                    cPickerDialog.initModality(Modality.WINDOW_MODAL);
+                    cPickerDialog.getDialogPane().setContent(cPicker);
+                    cPickerDialog.showAndWait();
+                });
+
+                return new ContextMenu(menuItems);
             }
 
             /**
@@ -781,6 +906,11 @@ public class MapEditTab extends FileEditTab {
                 }
             }
 
+            /**
+             * Redraws an entire given layer, including tile types if they are set to be visible
+             *
+             * @param layer The layer to redraw
+             */
             private void redrawLayer(final int layer) {
                 try {
                     new Task <Void>() {
@@ -913,164 +1043,14 @@ public class MapEditTab extends FileEditTab {
                 cursorCanvas.setHeight(maxHeight);
             }
         }
-
-        private class SettingsPane extends GridPane {
-            SettingsPane() {
-                setPadding(new Insets(10, 10, 10, 10));
-                setVgap(10);
-                setHgap(20);
-
-                int x = 0;
-                final Text mapSettingsLabel = new Text(Messages.getString("MapEditTab.TileEditTab.MAP_SETTINGS"));
-                mapSettingsLabel.setFont(Font.font(null, FontWeight.BOLD, 15));
-                add(mapSettingsLabel, x, 0);
-
-                initResizeButton(x, 1);
-                initBgColorButton(x, 2);
-            }
-
-            private void initResizeButton(final int x, final int y) {
-                final Button resizeButton = new Button(Messages.getString("MapEditTab.TileEditTab.Resize.BUTTON_TEXT"));
-                resizeButton.setOnAction(event -> {
-                    final String layerName;
-                    switch (selectedLayer.get()) {
-                        case 0:
-                            layerName = Messages.getString("MapEditTab.TileEditTab.Layers.FOREGROUND");
-                            break;
-                        case 1:
-                            layerName = Messages.getString("MapEditTab.TileEditTab.Layers.MIDDLEGROUND");
-                            break;
-                        case 2:
-                        default:
-                            layerName = Messages.getString("MapEditTab.TileEditTab.Layers.BACKGROUND");
-                    }
-
-                    final String title = MessageFormat.format(Messages.getString("MapEditTab.TileEditTab.Resize.TITLE"),
-                                                              layerName);
-
-                    final int width = null == mapPane.tileLayers[selectedLayer.get()].getTiles() ? 0 :
-                                      mapPane.tileLayers[selectedLayer.get()].getTiles()[0].length;
-                    final int height = null == mapPane.tileLayers[selectedLayer.get()].getTiles() ? 0 :
-                                       mapPane.tileLayers[selectedLayer.get()].getTiles().length;
-
-                    final String currentSizeStr = MessageFormat.format(Messages.getString("MapEditTab.TileEditTab.Resize.CURRENT_SIZE"),
-                                                                       width, height);
-
-                    //final Optional <Pair <String, String>> result =
-                    //TODO: Check that I did this right
-                    JavaFXUtil.createDualTextFieldDialog(title, currentSizeStr,
-                                                         Messages.getString("MapEditTab.TileEditTab.Resize.NEW_WIDTH"),
-                                                         Messages.getString("MapEditTab.TileEditTab.Resize.NEW_HEIGHT"),
-                                                         Messages.getString("MapEditTab.TileEditTab.Resize.DIALOG_OK"))
-                              .showAndWait().ifPresent(result -> {
-                        final String widthStr = result.x;
-                        final String heightStr = result.y;
-
-                        if (0 < widthStr.length() && 0 < heightStr.length()) {
-                            int newWidth;
-                            int newHeight;
-                            try {
-                                newWidth = Integer.parseInt(widthStr);
-                                newHeight = Integer.parseInt(heightStr);
-                            }
-                            catch (final NumberFormatException except) {
-                                JavaFXUtil.createAlert(Alert.AlertType.ERROR,
-                                                       Messages.getString("MapEditTab.TileEditTab.Resize.NumFormatExcept.TITLE"),
-                                                       null,
-                                                       Messages.getString("MapEditTab.TileEditTab.Resize.NumFormatExcept.MESSAGE"))
-                                          .showAndWait();
-                                return;
-                            }
-
-                            if (newWidth > 0xFFFF || newHeight > 0xFFFF) {
-                                JavaFXUtil.createAlert(Alert.AlertType.ERROR,
-                                                       Messages.getString("MapEditTab.TileEditTab.Resize.InvalidDimensions.TITLE"),
-                                                       null,
-                                                       Messages.getString("MapEditTab.TileEditTab.Resize.InvalidDimensions.MESSAGE"))
-                                          .showAndWait();
-                                return;
-                            }
-
-                            mapPane.tileLayers[selectedLayer.get()].resize(newWidth, newHeight);
-
-                            mapPane.fixCanvasSizes();
-                            mapPane.redrawLayer(selectedLayer.get());
-
-                            setChanged(true);
-                        }
-                    });
-
-                    /*if (result.isPresent()) {
-                        final String widthStr = result.get().getKey();
-                        final String heightStr = result.get().getValue();
-
-                        if (0 < widthStr.length() && 0 < heightStr.length()) {
-                            int newWidth;
-                            int newHeight;
-                            try {
-                                newWidth = Integer.parseInt(widthStr);
-                                newHeight = Integer.parseInt(heightStr);
-                            }
-                            catch (final NumberFormatException except) {
-                                JavaFXUtil.createAlert(Alert.AlertType.ERROR,
-                                                       Messages.getString("MapEditTab.TileEditTab.Resize.NumFormatExcept.TITLE"),
-                                                       null,
-                                                       Messages.getString("MapEditTab.TileEditTab.Resize.NumFormatExcept.MESSAGE"))
-                                          .showAndWait();
-                                return;
-                            }
-
-                            if (newWidth > 0xFFFF || newHeight > 0xFFFF) {
-                                JavaFXUtil.createAlert(Alert.AlertType.ERROR,
-                                                       Messages.getString("MapEditTab.TileEditTab.Resize.InvalidDimensions.TITLE"),
-                                                       null,
-                                                       Messages.getString("MapEditTab.TileEditTab.Resize.InvalidDimensions.MESSAGE"))
-                                          .showAndWait();
-                                return;
-                            }
-
-                            mapPane.tileLayers[selectedLayer.get()].resize(newWidth, newHeight);
-
-                            mapPane.fixSize();
-                            mapPane.redrawLayer(selectedLayer.get());
-
-                            setChanged(true);
-                        }
-                    }*/
-                });
-                add(resizeButton, x, y);
-            }
-
-            private void initBgColorButton(final int x, final int y) {
-                final Button bgColorButton = new Button(Messages.getString("MapEditTab.TileEditTab.BgColor.BUTTON_TEXT"));
-                bgColorButton.setOnAction(event -> {
-                    final ColorPicker cPicker = new ColorPicker(mapPane.bgColor.get());
-                    cPicker.setOnAction(ev -> {
-                        if (!cPicker.getValue().isOpaque()) {
-                            JavaFXUtil.createAlert(Alert.AlertType.ERROR,
-                                                   Messages.getString("MapEditTab.TileEditTab.BgColor.OpacityError.TITLE"), null,
-                                                   Messages.getString("MapEditTab.TileEditTab.BgColor.OpacityError.MESSAGE"))
-                                      .showAndWait();
-                        }
-                        else {
-                            mapPane.bgColor.set(cPicker.getValue());
-                            setChanged(true);
-                        }
-                    });
-
-                    final Dialog <Void> cPickerDialog = new Dialog <>();
-                    cPickerDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-                    cPickerDialog.getDialogPane().setContent(cPicker);
-                    cPickerDialog.showAndWait();
-
-                    //TODO: check opacity
-                });
-                add(bgColorButton, x, y);
-            }
-        }
     }
 
     //TODO: Make this extend FileEditTab?
+    private enum MapPaneMenuItems {
+        RESIZE,
+        BG_COLOR
+    }
+
     private class PropertyEditTab extends Tab {
         private final GridPane mainGridPane;
 
