@@ -6,123 +6,9 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e217904-e010-4fe6-a354-8fe1baa2af52" name="Default" comment="Moved ScriptEditTab out of MapEditTab&#10;Added support for opening fix.pxeve and island.pxeve (and an option for explain.pxeve that doesn't yet do anything)&#10;Refactoring and reorganization">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/resource/assist/attribute.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/resource/assist/unittype.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/resource/purple_check.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/xtextAutoBuilderState.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/LICENSE" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/readme.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/eclipsesource/json/Json.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/eclipsesource/json/JsonArray.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/eclipsesource/json/JsonHandler.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/eclipsesource/json/JsonLiteral.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/eclipsesource/json/JsonNumber.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/eclipsesource/json/JsonObject.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/eclipsesource/json/JsonParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/eclipsesource/json/JsonString.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/eclipsesource/json/JsonValue.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/eclipsesource/json/JsonWriter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/eclipsesource/json/LICENSE" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/eclipsesource/json/Location.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/eclipsesource/json/ParseException.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/eclipsesource/json/PrettyPrint.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/eclipsesource/json/WriterConfig.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/eclipsesource/json/WritingBuffer.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/hack/HackTab.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/PxAttrManager.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/resource/LICENSE" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/resource/assist/flags.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/resource/assist/heaven_strings.json" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/resource/assist/hour_strings.json" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/resource/assist/kero_strings.json" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/resource/assist/pxeve.json" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/resource/assist/pxeve_args.json" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/resource/assist/scroll.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/resource/assist/unittype.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/util/FileEditTab.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/util/Tuple.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/util/UndoableEdit.java" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/encodings.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/out/artifacts/KeroEdit_jar/KeroEdit.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$2.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/gamedata/GameData$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/map/PxAttr.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/util/MethodStore.java" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$1.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/KeroEdit.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/gamedata/GameData.class" afterPath="$PROJECT_DIR$/out/production/KeroEdit/com/fdl/keroedit/gamedata/GameData.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/KeroEdit_jar.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/KeroEdit_jar.xml" />
+    <list default="true" id="7e217904-e010-4fe6-a354-8fe1baa2af52" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/allclasses-frame.html" afterPath="$PROJECT_DIR$/doc/allclasses-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/allclasses-noframe.html" afterPath="$PROJECT_DIR$/doc/allclasses-noframe.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/KeroEdit.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/KeroEdit.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/Main.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/Main.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/class-use/KeroEdit.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/class-use/KeroEdit.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/class-use/Main.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/class-use/Main.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/PxPackMap.Entity.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/PxPackMap.Entity.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/PxPackMap.Head.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/PxPackMap.Head.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/PxPackMap.TileLayer.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/PxPackMap.TileLayer.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/PxPackMap.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/PxPackMap.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/class-use/PxPackMap.Entity.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/class-use/PxPackMap.Entity.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/class-use/PxPackMap.Head.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/class-use/PxPackMap.Head.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/class-use/PxPackMap.TileLayer.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/class-use/PxPackMap.TileLayer.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/class-use/PxPackMap.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/class-use/PxPackMap.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/package-frame.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/package-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/package-summary.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/package-summary.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/package-tree.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/package-tree.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/package-use.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/map/package-use.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/package-frame.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/package-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/package-summary.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/package-summary.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/package-tree.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/package-tree.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/package-use.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/package-use.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/Utilities.CoordinatePair.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/Utilities.CoordinatePair.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/Utilities.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/Utilities.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/class-use/Utilities.CoordinatePair.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/class-use/Utilities.CoordinatePair.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/class-use/Utilities.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/class-use/Utilities.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/package-frame.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/package-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/package-summary.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/package-summary.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/package-tree.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/package-tree.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/package-use.html" afterPath="$PROJECT_DIR$/doc/com/fdl/keroedit/util/package-use.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/constant-values.html" afterPath="$PROJECT_DIR$/doc/constant-values.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/deprecated-list.html" afterPath="$PROJECT_DIR$/doc/deprecated-list.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/help-doc.html" afterPath="$PROJECT_DIR$/doc/help-doc.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-1.html" afterPath="$PROJECT_DIR$/doc/index-files/index-1.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-10.html" afterPath="$PROJECT_DIR$/doc/index-files/index-10.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-11.html" afterPath="$PROJECT_DIR$/doc/index-files/index-11.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-12.html" afterPath="$PROJECT_DIR$/doc/index-files/index-12.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-13.html" afterPath="$PROJECT_DIR$/doc/index-files/index-13.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-14.html" afterPath="$PROJECT_DIR$/doc/index-files/index-14.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-15.html" afterPath="$PROJECT_DIR$/doc/index-files/index-15.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-16.html" afterPath="$PROJECT_DIR$/doc/index-files/index-16.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-17.html" afterPath="$PROJECT_DIR$/doc/index-files/index-17.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-18.html" afterPath="$PROJECT_DIR$/doc/index-files/index-18.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-19.html" afterPath="$PROJECT_DIR$/doc/index-files/index-19.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-2.html" afterPath="$PROJECT_DIR$/doc/index-files/index-2.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-3.html" afterPath="$PROJECT_DIR$/doc/index-files/index-3.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-4.html" afterPath="$PROJECT_DIR$/doc/index-files/index-4.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-5.html" afterPath="$PROJECT_DIR$/doc/index-files/index-5.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-6.html" afterPath="$PROJECT_DIR$/doc/index-files/index-6.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-7.html" afterPath="$PROJECT_DIR$/doc/index-files/index-7.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-8.html" afterPath="$PROJECT_DIR$/doc/index-files/index-8.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-9.html" afterPath="$PROJECT_DIR$/doc/index-files/index-9.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index.html" afterPath="$PROJECT_DIR$/doc/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/overview-frame.html" afterPath="$PROJECT_DIR$/doc/overview-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/overview-summary.html" afterPath="$PROJECT_DIR$/doc/overview-summary.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/overview-tree.html" afterPath="$PROJECT_DIR$/doc/overview-tree.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KeroEdit/META-INF/MANIFEST.MF" afterPath="$PROJECT_DIR$/out/production/KeroEdit/META-INF/MANIFEST.MF" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/Config.java" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/Config.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/KeroEdit.java" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/KeroEdit.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/gamedata/GameData.java" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/gamedata/GameData.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPack.java" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/map/PxPack.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/MapEditTab.java" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/MapEditTab.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/messages.properties" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/messages.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/resource/ResourceManager.java" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/resource/ResourceManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/script/ScriptEditTab.java" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/script/ScriptEditTab.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fdl/keroedit/util/JavaFXUtil.java" afterPath="$PROJECT_DIR$/src/com/fdl/keroedit/util/JavaFXUtil.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/readme.txt" afterPath="$PROJECT_DIR$/readme.txt" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -222,11 +108,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PxAttrManager.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="PxAttrManager.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/PxAttrManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="313">
-              <caret line="148" column="8" lean-forward="false" selection-start-line="148" selection-start-column="8" selection-end-line="148" selection-end-column="8" />
+            <state relative-caret-position="330">
+              <caret line="151" column="5" lean-forward="true" selection-start-line="151" selection-start-column="5" selection-end-line="151" selection-end-column="5" />
               <folding>
                 <element signature="method#PxAttrManager#0;class#PxAttrManager#0" expanded="false" />
                 <element signature="method#PxAttr#0;class#PxAttr#0;class#PxAttrManager#0" expanded="false" />
@@ -235,6 +121,16 @@
                 <element signature="e#5677#5678#0" expanded="true" />
                 <element signature="e#5714#5715#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="readme.txt" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/readme.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="51">
+              <caret line="3" column="23" lean-forward="false" selection-start-line="3" selection-start-column="23" selection-end-line="3" selection-end-column="23" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -393,7 +289,6 @@
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/util/ChangeAction.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/util/QueueImpl.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/util/ChangeableTab.java" />
-        <option value="$PROJECT_DIR$/readme.txt" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/PNGEditTab.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/ImageEditTab.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/util/Tuple.java" />
@@ -418,6 +313,7 @@
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/messages.properties" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/MapEditTab.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/PxAttrManager.java" />
+        <option value="$PROJECT_DIR$/readme.txt" />
       </list>
     </option>
   </component>
@@ -833,7 +729,14 @@
       <option name="project" value="LOCAL" />
       <updated>1486017595116</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Tons more stuff and I need to commit more often&#10;Undo/redo system &amp; basic framework for saving files&#10;Created PxAttr management system as they are shared among maps so updates in one map need to be reflected in others&#10;Refactoring&#10;Can pop out tileset (double click) - still needs some improvements&#10;Basics of an executable patcher&#10;JSON files for strings located in executables and pxeve commands + args&#10;JSON parser&#10;Licensed under Apache 2.0&#10;Creates an assist folder when a new mod is loaded (disabled for now as there was a bug with invalid paths)&#10;License prompt when the program starts if the user hasn't already agreed to it (disabled for now as for some reason program would immediately exit w/o prompt)&#10;Proper Shift-JIS encoding">
+      <created>1487660121240</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1487660121240</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TodoView">
@@ -847,7 +750,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="784" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.49707174" order="6" side_tool="false" content_ui="tabs" />
@@ -859,7 +762,7 @@
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3041543" sideWeight="0.4795022" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31305638" sideWeight="0.49707174" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18374817" sideWeight="0.49406528" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18374817" sideWeight="0.49406528" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Memory View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329429" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24963397" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -920,7 +823,8 @@
     <MESSAGE value="TileEditTab improvements&#10;&#10;Can display tile types/attributes&#10;Removed drag to add tiles since it was slow - need to use Tasks more or something (or maybe switch back to StackPane + 3 canvas)&#10;Seems to have high memory usage so I'll look into that" />
     <MESSAGE value="Primarily more changes to MapEditTab&#10;SplitPanes in the tile editing tab (between map and tileset and tileset and selected tile)&#10;Singular settings pane for selected layer, displayed layers, and tile type display (above the main tab pane)&#10;Tile types are on separate canvas with visibility toggled&#10;Refactoring for speed and ease of use&#10;Individual map settings pane temporarily disabled as I figure out where to put it&#10;Updated specs/parsing on PXPACK" />
     <MESSAGE value="Moved ScriptEditTab out of MapEditTab&#10;Added support for opening fix.pxeve and island.pxeve (and an option for explain.pxeve that doesn't yet do anything)&#10;Refactoring and reorganization" />
-    <option name="LAST_COMMIT_MESSAGE" value="Moved ScriptEditTab out of MapEditTab&#10;Added support for opening fix.pxeve and island.pxeve (and an option for explain.pxeve that doesn't yet do anything)&#10;Refactoring and reorganization" />
+    <MESSAGE value="Tons more stuff and I need to commit more often&#10;Undo/redo system &amp; basic framework for saving files&#10;Created PxAttr management system as they are shared among maps so updates in one map need to be reflected in others&#10;Refactoring&#10;Can pop out tileset (double click) - still needs some improvements&#10;Basics of an executable patcher&#10;JSON files for strings located in executables and pxeve commands + args&#10;JSON parser&#10;Licensed under Apache 2.0&#10;Creates an assist folder when a new mod is loaded (disabled for now as there was a bug with invalid paths)&#10;License prompt when the program starts if the user hasn't already agreed to it (disabled for now as for some reason program would immediately exit w/o prompt)&#10;Proper Shift-JIS encoding" />
+    <option name="LAST_COMMIT_MESSAGE" value="Tons more stuff and I need to commit more often&#10;Undo/redo system &amp; basic framework for saving files&#10;Created PxAttr management system as they are shared among maps so updates in one map need to be reflected in others&#10;Refactoring&#10;Can pop out tileset (double click) - still needs some improvements&#10;Basics of an executable patcher&#10;JSON files for strings located in executables and pxeve commands + args&#10;JSON parser&#10;Licensed under Apache 2.0&#10;Creates an assist folder when a new mod is loaded (disabled for now as there was a bug with invalid paths)&#10;License prompt when the program starts if the user hasn't already agreed to it (disabled for now as for some reason program would immediately exit w/o prompt)&#10;Proper Shift-JIS encoding" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1048,13 +952,6 @@
     <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/util/ChangeAction.java" />
     <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/util/ChangeAction.java" />
     <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/util/QueueImpl.java" />
-    <entry file="file://$PROJECT_DIR$/readme.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="35" lean-forward="true" selection-start-line="0" selection-start-column="35" selection-end-line="0" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/ImageEditTab.java" />
     <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/util/Tuple.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -1378,8 +1275,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/PxAttrManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="313">
-          <caret line="148" column="8" lean-forward="false" selection-start-line="148" selection-start-column="8" selection-end-line="148" selection-end-column="8" />
+        <state relative-caret-position="330">
+          <caret line="151" column="5" lean-forward="true" selection-start-line="151" selection-start-column="5" selection-end-line="151" selection-end-column="5" />
           <folding>
             <element signature="method#PxAttrManager#0;class#PxAttrManager#0" expanded="false" />
             <element signature="method#PxAttr#0;class#PxAttr#0;class#PxAttrManager#0" expanded="false" />
@@ -1388,6 +1285,14 @@
             <element signature="e#5677#5678#0" expanded="true" />
             <element signature="e#5714#5715#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/readme.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="23" lean-forward="false" selection-start-line="3" selection-start-column="23" selection-end-line="3" selection-end-column="23" />
+          <folding />
         </state>
       </provider>
     </entry>
