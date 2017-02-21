@@ -1,50 +1,108 @@
 package com.fdl.keroedit.script;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
+import java.text.MessageFormat;
 
-import javafx.scene.control.Tab;
+import java.io.File;
+
+import java.io.FileInputStream;
+import java.nio.channels.FileChannel;
+import java.nio.ByteBuffer;
+
+import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
+
+import javafx.scene.control.Alert;
+
+import javafx.scene.control.Tooltip;
 
 import javafx.scene.control.TextArea;
-import javafx.scene.control.Tooltip;
 import javafx.scene.text.Font;
 
 import com.fdl.keroedit.Messages;
 
-import com.fdl.keroedit.gamedata.GameData;
+import com.fdl.keroedit.util.Logger;
 
-public class ScriptEditTab extends Tab {
-    private final File script;
+import com.fdl.keroedit.util.JavaFXUtil;
 
-    public ScriptEditTab(final String scriptName) {
-        //TODO: Make friendly for fix.pxeve, island.pxeve, and explain.pxeve
-        final File inFile = new File(GameData.getResourceFolder().getAbsolutePath() +
-                                     File.separatorChar + "text" + File.separatorChar + scriptName + ".pxeve");
-        script = inFile;
+import com.fdl.keroedit.util.FileEditTab;
 
-        final StringBuilder sBuilder = new StringBuilder();
+public class ScriptEditTab extends FileEditTab {
+    private final File scriptFile;
+
+    private final TextArea textArea;
+
+    public ScriptEditTab(final File inFile, final boolean global) {
+        scriptFile = inFile;
+
+        String scriptText = "";
+
+        FileInputStream inStream = null;
+        FileChannel chan = null;
+
+        //TODO: Use Reader?
         try {
-            final Scanner scan = new Scanner(inFile);
-            while (scan.hasNext()) {
-                sBuilder.append(scan.next());
-                sBuilder.append("\r\n");
-            }
+            inStream = new FileInputStream(inFile);
+            chan = inStream.getChannel();
+            final ByteBuffer buf = ByteBuffer.allocate((int)inFile.length());
+            chan.read(buf);
+            scriptText = new String(buf.array(), "SJIS");
+        }
+        catch (final UnsupportedEncodingException except) {
+            //TODO: throw error/show message?
+            System.err.println(Messages.getString("UNSUPPORTED_SJIS_ENCODING"));
         }
         catch (final FileNotFoundException except) {
             //TODO: Create new script file
             System.err.println("ERROR: Could not locate PXEVE file " + inFile.getName());
         }
+        catch (final IOException except) {
+            JavaFXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("ScriptEditTab.IOExcept.TITLE"), null,
+                                   MessageFormat.format(Messages.getString("ScriptEditTab.IOExcept.MESSAGE"), inFile.getName(),
+                                                        except.getMessage())).showAndWait();
+            getTabPane().getTabs().remove(this);
+        }
+        finally {
+            try {
+                if (null != inStream) {
+                    inStream.close();
+                }
+                if (null != chan) {
+                    chan.close();
+                }
+            }
+            catch (final IOException except) {
+                Logger.logException(MessageFormat.format(Messages.getString("PxPack.CLOSE_FAIL"), inFile.getName()),
+                                    except);
+                //TODO: Probably something should be done if the script file can't be closed
+            }
+        }
 
-        setTooltip(new Tooltip(inFile.getAbsolutePath()));
-
-        final TextArea textArea = new TextArea(sBuilder.toString());
+        textArea = new TextArea(scriptText);
         textArea.requestFocus();
         textArea.setFont(new Font("Consolas", 12));
+        textArea.textProperty().addListener(((observable, oldValue, newValue) -> setChanged(true)));
 
-        setText(Messages.getString("MapEditTab.ScriptEditTab.TITLE"));
-        setId(scriptName);
+        setText(global ? inFile.getName() : Messages.getString("ScriptEditTab.TITLE"));
+        setTooltip(new Tooltip(inFile.getAbsolutePath()));
+        setId(inFile.getAbsolutePath());
 
         setContent(textArea);
+    }
+
+    @Override
+    public void undo() {
+        textArea.undo();
+    }
+
+    @Override
+    public void redo() {
+        textArea.redo();
+    }
+
+    @Override
+    public void save() {
+        setChanged(false);
+        //TODO: save
     }
 }

@@ -1,6 +1,5 @@
 /*
  * TODO:
- * Make this (or at least the interior classes) immutable?
  * Allow direct modification of a TileLayer? (in relation to PxPack object)
  * Default initialize strings as empty? (files known to pre-exist for filenames?)
  * Store all unknown bytes in header of file
@@ -11,7 +10,7 @@
  * Change use of short to int for entity type?
  * Check extension
  * Read in scroll types (second byte after tileset name)
- * scriptName is actually the first mapname (so the script actually shares the map's name)
+ * Copy constructor and new map constructor
  */
 package com.fdl.keroedit.map;
 
@@ -40,27 +39,28 @@ import com.fdl.keroedit.util.Logger;
 import com.fdl.keroedit.Messages;
 
 /**
- * Object for storing information about a PXPACK file
+ * Object for storing information about a PXPACK map file
  */
 public class PxPack {
     public static final int NUM_LAYERS = 3;
 
-    private File file;
+    private File mapFile;
+
     private /*final*/ Head head;
     private /*final*/ TileLayer[] tileLayers;
     private /*final*/ ArrayList <Entity> entities;
 
     /**
-     * Constructs a PxPackMap object and parses a given PXPACK file
+     * Constructs a PxPackMap object and parses a given PXPACK mapFile
      * to set the fields of the object
      *
-     * @param inFile A File object pointing to a PXPACK file
+     * @param inFile A File object pointing to a PXPACK mapFile
      *
-     * @throws IOException    if there was an error reading the file
-     * @throws ParseException if the file format was somehow incorrect
+     * @throws IOException if there was an error reading the mapFile
+     * @throws ParseException if the mapFile format was somehow incorrect
      */
     public PxPack(final File inFile) throws IOException, ParseException {
-        file = inFile;
+        mapFile = inFile;
 
         FileInputStream inStream = null;
         FileChannel chan = null;
@@ -70,7 +70,6 @@ public class PxPack {
             chan = inStream.getChannel();
 
             ByteBuffer buf = ByteBuffer.allocate(Head.HEADER_STRING.length());
-            buf.order(ByteOrder.BIG_ENDIAN);
             chan.read(buf);
 
             if (!(new String(buf.array()).equals(Head.HEADER_STRING))) {
@@ -87,42 +86,40 @@ public class PxPack {
             }
 
             final String spritesheetName = readString(chan);
-            chan.position(chan.position() + 5); //skip 8 bytes
-            /*
-             * TODO:
-             * 5 Unknown Byte Structure
-             * Four Unknown Bytes
-             * An Unknown Byte that has purpose
-             */
-            buf = ByteBuffer.allocate(3);
+
+            buf = ByteBuffer.allocate(8);
             buf.order(ByteOrder.LITTLE_ENDIAN);
             chan.read(buf);
             buf.flip();
 
-            byte red = buf.get();
-            byte green = buf.get();
-            byte blue = buf.get();
+            final byte[] unknownBytes = new byte[5];
+            for (int i = 0; i < unknownBytes.length; ++i) {
+                unknownBytes[i] = buf.get();
+            }
+
+            final int red = buf.get() & 0xFF;
+            final int green = buf.get() & 0xFF;
+            final int blue = buf.get() & 0xFF;
             final Color bgColor = Color.rgb(red, green, blue);
 
             final String[] tilesetNames = new String[NUM_LAYERS];
             for (int i = 0; i < tilesetNames.length; ++i) {
                 tilesetNames[i] = readString(chan);
                 chan.position(chan.position() + 2); //skip 2 bytes after each tileset name
-                //First seems to always be 0x02
-                //First makes it offset the tiles or something - pulls wrong tiles but from same set if modified
-                //Second may relate to parallax but idk
+                //First byte is a sort of visibility toggle
+                //0 = invisible; 2 = visible;
+                //1 || >= 3 = pulls wrong tiles but from same tileset (offset?);
+                //> 32 = game crashes
+                //Second is scroll type (scroll.txt)
             }
 
-            head = new Head(description, mapNames, spritesheetName, bgColor, tilesetNames);
+            head = new Head(description, mapNames, spritesheetName, unknownBytes, bgColor, tilesetNames);
 
             tileLayers = new TileLayer[NUM_LAYERS];
 
             for (int i = 0; i < tileLayers.length; ++i) {
                 buf = ByteBuffer.allocate(8);
-                buf.order(ByteOrder.BIG_ENDIAN);
                 chan.read(buf);
-                buf.flip();
-
                 if (!(new String(buf.array()).equals(TileLayer.HEADER_STRING))) {
                     throw new ParseException(MessageFormat.format(Messages.getString("PxPack.INCORRECT_LAYER_HEADER"),
                                                                   i, inFile.getName()),
@@ -133,9 +130,9 @@ public class PxPack {
                 buf.order(ByteOrder.LITTLE_ENDIAN);
                 chan.read(buf);
                 buf.flip();
-                final int width = buf.getShort();
-                final int height = buf.getShort();
 
+                final int width = buf.getShort() & 0xFFFF;
+                final int height = buf.getShort() & 0xFFFF;
                 if (width * height > 0) {
                     chan.position(chan.position() + 1);
 
@@ -149,7 +146,6 @@ public class PxPack {
                             tiles[y][x] = buf.get() & 0xFF; //& 0xFF treats it as unsigned byte when converted to int
                         }
                     }
-
                     tileLayers[i] = new TileLayer(tiles);
                 }
                 else {
@@ -173,10 +169,10 @@ public class PxPack {
                 buf.flip();
 
                 final byte flag = buf.get();
-                final byte type = buf.get();
-                final byte unknownByte = buf.get();
-                final int x = buf.getShort();
-                final int y = buf.getShort();
+                final int type = buf.get() & 0xFF;
+                final byte unknownByte = buf.get(); //index from tileset? subtype?
+                final int x = buf.getShort() & 0xFFFF;
+                final int y = buf.getShort() & 0xFFFF;
                 final byte[] data = new byte[2];
                 buf.get(data);
                 final String name = readString(chan);
@@ -185,12 +181,11 @@ public class PxPack {
             }
         }
         catch (final FileNotFoundException except) {
-            System.err.println("ERROR: Could not locate PXPACK file " + inFile.getName() + ".pxpack");
-            //TODO: initialize fields, exit; new file will be made in save() method
+            System.err.println("ERROR: Could not locate PXPACK map file " + inFile.getName() + ".pxpack");
+            //TODO: initialize fields, exit; new mapFile will be made in save() method
         }
         catch (final IOException except) {
-            throw new IOException(MessageFormat.format(Messages.getString("PxPack.IOEXCEPT"),
-                                                       inFile.getName()), except);
+            throw new IOException(MessageFormat.format(Messages.getString("PxPack.IOEXCEPT"), inFile.getName()), except);
         }
         finally {
             try {
@@ -210,40 +205,37 @@ public class PxPack {
     }
 
     public String getName() {
-        return file.getName().replace(".pxpack", "");
+        return mapFile.getName().substring(0, mapFile.getName().lastIndexOf(".pxpack"));
     }
 
-    //TODO: Make this undo/redo friendly
+    //TODO: Make this undo/redo friendly?
     public void rename(final String newName) throws IOException {
-        final File renamedFile = new File(file.getAbsolutePath() + File.separatorChar + newName + ".pxpack");
+        final File renamedFile = new File(mapFile.getParent() + File.separatorChar + newName + ".pxpack");
         if (renamedFile.exists()) {
-            throw new IOException("Attempt to rename " + file.getName() + ".pxpack" + " to " + renamedFile.getName() + ".pxpack" +
-                                  " failed because that file already exists!");
+            throw new IOException("Attempt to rename " + mapFile.getName() + ".pxpack to " +
+                                  renamedFile.getName() + ".pxpack" +
+                                  " failed because that mapFile already exists!");
         }
 
-        if (!file.renameTo(renamedFile)) {
-            throw new IOException("Attempt to rename " + file.getName() + ".pxpack" + " to " + renamedFile.getName() + ".pxpack" +
+        if (!mapFile.renameTo(renamedFile)) {
+            throw new IOException("Attempt to rename " + mapFile.getName() + ".pxpack" + " to " + renamedFile.getName() + ".pxpack" +
                                   " failed for an unknown reason");
         }
 
-        //file.delete();
-        file = renamedFile;
+        //mapFile.delete();
+        mapFile = renamedFile;
     }
 
     public Head getHead() {
-        return new Head(head);
-    } //TODO: Return clones or make the interior classes immutable
+        return head;
+    }
 
     public TileLayer[] getTileLayers() {
-        final TileLayer[] tileLayers = new TileLayer[this.tileLayers.length];
-        for (int i = 0; i < tileLayers.length; ++i) {
-            tileLayers[i] = new TileLayer(this.tileLayers[i]);
-        }
         return tileLayers;
     }
 
     public ArrayList <Entity> getEntities() {
-        ArrayList <Entity> entities = new ArrayList <Entity>(this.entities.size());
+        ArrayList <Entity> entities = new ArrayList <>(this.entities.size());
         for (final Entity e : this.entities) {
             entities.add(new Entity(e));
         }
@@ -252,16 +244,8 @@ public class PxPack {
 
     //TODO: throw NullPointerExceptions for null values
 
-    public void setHead(final Head head) {
-        this.head = new Head(head);
-    }
-
-    public void setTileLayer(final int index, final TileLayer layer) {
-        tileLayers[index] = new TileLayer(layer);
-    }
-
     public void addEntity(final Entity entity) {
-        entities.add(new Entity(entity));
+        entities.add(entity);
     }
 
     /*public void setEntity(final int index, final Entity entity) {
@@ -269,13 +253,13 @@ public class PxPack {
     }*/
 
     /**
-     * Reads a string from a file tied to a given FileChannel
+     * Reads a string from a mapFile tied to a given FileChannel
      *
      * @param chan The FileChannel object to read from
      *
      * @return The String that was read
      *
-     * @throws IOException if there was an error reading the string from the file
+     * @throws IOException if there was an error reading the string from the mapFile
      */
     private String readString(FileChannel chan) throws IOException {
         String result = null;
@@ -288,14 +272,13 @@ public class PxPack {
             byte strLen = buf.get();
 
             buf = ByteBuffer.allocate(strLen);
-            buf.order(ByteOrder.BIG_ENDIAN);
             chan.read(buf);
-            buf.flip();
 
-            result = new String(buf.array(), "UTF-8");
+            result = new String(buf.array(), "SJIS");
         }
         catch (final UnsupportedEncodingException except) {
-            System.err.println(Messages.getString("PxPack.ReadString.UNSUPPORTED_ENCODING"));
+            //TODO: throw error/show message?
+            System.err.println(Messages.getString("UNSUPPORTED_ENCODING"));
         }
         return result;
     }
@@ -304,7 +287,7 @@ public class PxPack {
     public String toString() {
         StringBuilder result = new StringBuilder();
 
-        result.append(MessageFormat.format(Messages.getString("PxPack.ToString.NAME"), file.getName()));
+        result.append(MessageFormat.format(Messages.getString("PxPack.ToString.NAME"), mapFile.getName()));
 
         result.append(head);
         result.append('\n');
@@ -327,31 +310,35 @@ public class PxPack {
         private final String[] tilesetNames;
         private String description;
         private String spritesheetName;
+        private final byte[] unknownBytes; //TODO: Make int[]?
         private Color bgColor;
 
-        //TODO: Limit string lengths and check if bgColor parameter has opacity set; add reset()
+        //TODO: add reset()?
 
-        @SuppressWarnings("unused")
-        public Head() {
-            mapNames = new String[3];
-            tilesetNames = new String[3];
+        Head() {
+            mapNames = new String[4];
+            tilesetNames = new String[NUM_LAYERS];
             description = "";
             spritesheetName = "";
+            unknownBytes = new byte[5];
             bgColor = Color.BLACK;
         }
 
-        public Head(final Head head) {
+        Head(final Head head) {
             this.description = head.description;
             this.mapNames = Arrays.copyOf(head.mapNames, head.mapNames.length);
             this.spritesheetName = head.spritesheetName;
+            this.unknownBytes = Arrays.copyOf(head.unknownBytes, head.unknownBytes.length);
             this.bgColor = head.bgColor;
             this.tilesetNames = Arrays.copyOf(head.tilesetNames, head.tilesetNames.length);
         }
 
-        public Head(final String description, final String[] mapNames, final String spritesheetName,
-                    final Color bgColor, final String[] tilesetNames) {
+        Head(final String description, final String[] mapNames, final String spritesheetName,
+             final byte[] unknownBytes, final Color bgColor, final String[] tilesetNames) {
             //TODO: check if these method calls are bad practice
             setDescription(description);
+
+            //TODO: Use Arrays.copyOf instead of System.arraycopy?
 
             this.mapNames = new String[3];
             System.arraycopy(mapNames, 0, this.mapNames, 0, this.mapNames.length);
@@ -359,36 +346,37 @@ public class PxPack {
             setSpritesheetName(spritesheetName);
             this.bgColor = bgColor;
 
+            this.unknownBytes = new byte[5];
+            System.arraycopy(unknownBytes, 0, this.unknownBytes, 0, this.unknownBytes.length);
+
             this.tilesetNames = new String[3];
             System.arraycopy(tilesetNames, 0, this.tilesetNames, 0, this.tilesetNames.length);
         }
 
-        @SuppressWarnings("unused")
         public String getDescription() {
             return description;
         }
 
-        @SuppressWarnings("unused")
         public String[] getMapNames() {
             return Arrays.copyOf(mapNames, mapNames.length);
         }
 
-        @SuppressWarnings("unused")
         public String getSpritesheetName() {
             return spritesheetName;
         }
 
-        @SuppressWarnings("unused")
+        public byte[] getUnknownBytes() {
+            return Arrays.copyOf(unknownBytes, unknownBytes.length);
+        }
+
         public Color getBgColor() {
             return bgColor;
         }
 
-        @SuppressWarnings("unused")
         public String[] getTilesetNames() {
             return Arrays.copyOf(tilesetNames, tilesetNames.length);
         }
 
-        @SuppressWarnings("unused")
         public void setDescription(final String description) {
             if (description.length() > 31) {
                 throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.Head.Setter.ERROR_MSG"),
@@ -397,8 +385,7 @@ public class PxPack {
             this.description = description;
         }
 
-        @SuppressWarnings("unused")
-        public void setMapName(final int index, String mapName) {
+        public void setMapName(final int index, final String mapName) {
             if (mapName.length() > 15) {
                 throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.Head.NAME_SETTER_ERROR_MSG"),
                                                                         "mapname", 15));
@@ -406,7 +393,6 @@ public class PxPack {
             this.mapNames[index] = mapName;
         }
 
-        @SuppressWarnings("unused")
         public void setSpritesheetName(final String spritesheetName) {
             if (spritesheetName.length() > 15) {
                 throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.Head.NAME_SETTER_ERROR_MSG"),
@@ -415,7 +401,10 @@ public class PxPack {
             this.spritesheetName = spritesheetName;
         }
 
-        @SuppressWarnings("unused")
+        public void setUnknownByte(final int index, final byte unknownByte) {
+            unknownBytes[index] = unknownByte;
+        }
+
         public void setBgColor(final Color color) {
             //TODO: verify kero blaster doesn't support bg opacity
             if (!color.isOpaque()) {
@@ -424,7 +413,6 @@ public class PxPack {
             bgColor = color;
         }
 
-        @SuppressWarnings("unused")
         public void setTilesetName(final int index, String tilesetName) {
             if (tilesetName.length() > 15) {
                 throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.Head.NAME_SETTER_ERROR_MSG"),
@@ -445,11 +433,18 @@ public class PxPack {
 
             result.append(MessageFormat.format(Messages.getString("PxPack.Head.ToString.SPRITESHEET_NAME"), spritesheetName));
 
+            for (int i = 0; i < unknownBytes.length; ++i) {
+                result.append(MessageFormat.format(Messages.getString("PxPack.Head.ToString.UNKNOWN_BYTES"), i,
+                                                   String.format("%02X", unknownBytes[i])));
+            }
+
             //TODO: Format as hex
             result.append(MessageFormat.format(Messages.getString("PxPack.Head.ToString.BACKGROUND_COLOR"),
                                                bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue()));
+
             for (int i = 0; i < tilesetNames.length; ++i) {
-                result.append(MessageFormat.format(Messages.getString("PxPack.Head.ToString.TILESET_NAME"), i, tilesetNames[i]));
+                result.append(MessageFormat.format(Messages.getString("PxPack.Head.ToString.TILESET_NAME"), i,
+                                                   tilesetNames[i]));
             }
 
             return result.toString();
@@ -461,11 +456,11 @@ public class PxPack {
 
         private int[][] tiles;
 
-        public TileLayer() {
+        TileLayer() {
 
         }
 
-        public TileLayer(final TileLayer layer) {
+        TileLayer(final TileLayer layer) {
             if (null != layer.tiles) {
                 tiles = new int[layer.tiles.length][layer.tiles[0].length];
                 for (int y = 0; y < layer.tiles.length; ++y) {
@@ -474,7 +469,7 @@ public class PxPack {
             }
         }
 
-        public TileLayer(final int[][] tiles) {
+        TileLayer(final int[][] tiles) {
             if (null != tiles) {
                 if (tiles.length > 0xFFFF || tiles[0].length > 0xFFFF) {
                     throw new IllegalArgumentException(Messages.getString("PxPack.TileLayer.ARR_CONSTRUCTOR_ERROR_MSG"));
@@ -490,7 +485,7 @@ public class PxPack {
         /**
          * Resize the tile layer's dimensions
          *
-         * @param width  The new width for the layer
+         * @param width The new width for the layer
          * @param height The new height for the layer
          */
         public void resize(final int width, final int height) {
@@ -557,33 +552,32 @@ public class PxPack {
                                                    String.format("%02X", tiles[0].length)));
                 result.append(MessageFormat.format(Messages.getString("PxPack.TileLayer.ToString.HEIGHT"),
                                                    String.format("%02X", tiles.length)));
-            }
-
-            for (final int[] row : tiles) {
-                result.append('\t');
-                for (final int tile : row) {
-                    result.append(String.format("%02X", tile));
-                    result.append(' ');
+                for (final int[] row : tiles) {
+                    result.append('\t');
+                    for (final int tile : row) {
+                        result.append(String.format("%02X", tile));
+                        result.append(' ');
+                    }
+                    result.append('\n');
                 }
-                result.append('\n');
             }
             return result.toString();
         }
     }
 
     public class Entity {
-        private byte flag, type, unknownByte;
+        private int type;
+        private byte flag, unknownByte; //TODO: make ints?
         private int x, y;
         private byte[] unknownData;
         private String name;
 
-        @SuppressWarnings("unused")
-        public Entity() {
+        Entity() {
             unknownData = new byte[2];
             name = "";
         }
 
-        public Entity(Entity entity) {
+        Entity(Entity entity) {
             this.flag = entity.flag;
             this.x = entity.x;
             this.y = entity.y;
@@ -591,8 +585,8 @@ public class PxPack {
             this.name = entity.name;
         }
 
-        public Entity(final byte flag, final byte type, final byte unknownByte, final int x, final int y,
-                      final byte[] unknownData, final String name) {
+        Entity(final byte flag, final int type, final byte unknownByte, final int x, final int y,
+               final byte[] unknownData, final String name) {
 
             //TODO: call x and y setters instead of this?
             if (x > 0xFFFF || y > 0xFFFF) {
@@ -607,57 +601,46 @@ public class PxPack {
             this.name = name;
         }
 
-        @SuppressWarnings("unused")
         public byte getFlag() {
             return flag;
         }
 
-        @SuppressWarnings("unused")
-        public byte getType() {
+        public int getType() {
             return type;
         }
 
-        @SuppressWarnings("unused")
         public byte getUnknownByte() {
             return unknownByte;
         }
 
-        @SuppressWarnings("unused")
         public int getX() {
             return x;
         }
 
-        @SuppressWarnings("unused")
         public int getY() {
             return y;
         }
 
-        @SuppressWarnings("unused")
         public byte[] getUnknownData() {
             return Arrays.copyOf(unknownData, unknownData.length);
         }
 
-        @SuppressWarnings("unused")
         public String getName() {
             return name;
         }
 
-        @SuppressWarnings("unused")
         public void setFlag(final byte flag) {
             this.flag = flag;
         }
 
-        @SuppressWarnings("unused")
-        public void setType(final byte type) {
+        public void setType(final int type) {
             this.type = type;
         }
 
-        @SuppressWarnings("unused")
         public void setUnknownByte(final byte unknownByte) {
             this.unknownByte = unknownByte;
         }
 
-        @SuppressWarnings("unused")
         public void setX(final int x) {
             if (x < 0 || x > 0xFFFF) {
                 throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.Entity.COORDINATE_SETTER_ERROR_MSG"),
@@ -666,7 +649,6 @@ public class PxPack {
             this.x = x;
         }
 
-        @SuppressWarnings("unused")
         public void setY(final int y) {
             if (x < 0 || y > 0xFFFF) {
                 throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.Entity.COORDINATE_SETTER_ERROR_MSG"),
@@ -675,12 +657,10 @@ public class PxPack {
             this.y = y;
         }
 
-        @SuppressWarnings("unused")
         public void setUnknownData(final int index, final byte data) {
             this.unknownData[index] = data;
         }
 
-        @SuppressWarnings("unused")
         public void setName(final String name) {
             if (name.length() > 15) {
                 throw new IllegalArgumentException(Messages.getString("PxPack.Entity.NAME_SETTER_ERROR_MSG"));
@@ -707,6 +687,7 @@ public class PxPack {
                                                    i, String.format("%02X", unknownData[i])));
             }
             result.append(MessageFormat.format(Messages.getString("PxPack.Entity.ToString.NAME"), name));
+            result.append('\n');
 
             return result.toString();
         }

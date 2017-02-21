@@ -7,7 +7,9 @@ import javafx.scene.image.Image;
 
 public class ResourceManager {
     public static File getFile(final String filename) {
-        return new File(ResourceManager.class.getResource(filename).toString());
+        //TODO: Have the file have a normal path rather than url-based
+        final String path = ResourceManager.class.getResource(filename).toString();
+        return new File(path.replaceFirst("file:/", ""));
     }
 
     public static InputStream getFileAsInputStream(final String filename) {

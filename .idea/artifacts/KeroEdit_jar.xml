@@ -3,7 +3,6 @@
     <output-path>$PROJECT_DIR$/out/artifacts/KeroEdit_jar</output-path>
     <root id="archive" name="KeroEdit.jar">
       <element id="module-output" name="KeroEdit" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/lib/annotations-java8.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

@@ -3,29 +3,25 @@ package com.fdl.keroedit.util;
 import javafx.geometry.Insets;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 
-import javafx.scene.layout.Region;
 import javafx.scene.control.Dialog;
-import javafx.util.Pair;
-
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ButtonBar;
-
-import javafx.scene.control.TextField;
-
-import javafx.scene.layout.GridPane;
+import javafx.scene.control.Alert;
 
 import javafx.application.Platform;
 
-import javafx.util.Callback;
+import javafx.scene.layout.Region;
+
+import javafx.scene.layout.GridPane;
+
+import javafx.scene.control.ButtonType;
+
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 
 import javafx.scene.layout.Priority;
-
-import javafx.scene.control.Alert;
-
-import javafx.scene.control.TextArea;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
@@ -38,10 +34,34 @@ public class JavaFXUtil {
     }
 
     /**
+     * Sets the maximum length of the text in a {@code TextField}
+     *
+     * @param field The {@code TextField} to apply a length limit to
+     * @param length The maximum length of the string inside the given {@code TextField}
+     */
+    public static void setTextFieldLength(final TextField field, final int length) {
+        field.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > length) {
+                field.textProperty().set(newValue.substring(0, length));
+            }
+        });
+    }
+
+    /**
+     * Sets the background image of a given {@code Region}
+     *
+     * @param image The image of the background
+     * @param region The {@code Region} to apply the background image to
+     */
+    public static void setBackgroundImage(final Image image, final Region region) {
+        region.setBackground(new Background(new BackgroundImage(image, null, null, null, null)));
+    }
+
+    /**
      * Sets the background color of a given {@code Region}
      *
      * @param color The color of the background
-     * @param region The region to apply the background color to
+     * @param region The {@code Region} to apply the background color to
      */
     public static void setBackgroundColor(final Color color, final Region region) {
         region.setBackground(new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -66,10 +86,12 @@ public class JavaFXUtil {
     /**
      * Scales a given image by a given scale factor
      *
-     * @param src   The image to scale
+     * @param src The image to scale
      * @param scale The scale factor to scale the image by
      *
-     * @return The result of scaling the given image by the given scale factor
+     * @return The result of scaling the given image by the given scale factor.
+     * If src is null, then null is returned, and if the scale is 1,
+     * src is returned.
      */
     public static Image scaleImage(final Image src, final int scale) {
         if (null == src) {
@@ -81,6 +103,10 @@ public class JavaFXUtil {
 
         if (0 == srcWidth || 0 == srcHeight) {
             return null;
+        }
+
+        if (1 == scale) {
+            return src;
         }
 
         final WritableImage dest = new WritableImage(srcWidth * scale, srcHeight * scale);
@@ -106,14 +132,15 @@ public class JavaFXUtil {
     /**
      * Creates and returns an {@code Alert} window to be displayed.
      *
-     * @param type       The {@code Alert.AlertType} of the alert.
-     * @param title      The title text of the {@code Alert}
+     * @param type The {@code Alert.AlertType} of the alert.
+     * @param title The title text of the {@code Alert}
      * @param headerText The header text of the {@code Alert}
-     * @param message    The message of the {@code Alert}
+     * @param message The message of the {@code Alert}
      *
      * @return The created {@code Alert}
      */
-    public static Alert createAlert(final Alert.AlertType type, final String title, final String headerText, final String message) {
+    public static Alert createAlert(final Alert.AlertType type, final String title, final String headerText,
+                                    final String message) {
         final Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(headerText);
@@ -125,13 +152,13 @@ public class JavaFXUtil {
     /**
      * Creates and returns an {@code Alert} with a text box to be displayed
      *
-     * @param type            The {@code Alert.AlertType} of the alert. If this is {@code Alert.AlertType.ERROR}, then
-     *                        {@code message} is printed to {@code System.err}
-     * @param title           The title text of the {@code Alert}
-     * @param headerText      The header text of the {@code Alert}
-     * @param message         The message of the {@code Alert}
+     * @param type The {@code Alert.AlertType} of the alert. If this is {@code Alert.AlertType.ERROR}, then
+     * {@code message} is printed to {@code System.err}
+     * @param title The title text of the {@code Alert}
+     * @param headerText The header text of the {@code Alert}
+     * @param message The message of the {@code Alert}
      * @param textAreaContent The content of the {@code TextArea} in the {@code Alert}
-     * @param editable        Whether or not the user should be able to edit the text in the {@code TextArea}
+     * @param editable Whether or not the user should be able to edit the text in the {@code TextArea}
      *
      * @return The created {@code Alert}
      */
@@ -163,25 +190,24 @@ public class JavaFXUtil {
     /**
      * Creates and returns an {@code Dialog <Pair <String, String>>} with two {@code TextField}s to be displayed
      *
-     * @param title             The title text of the {@code Dialog}
-     * @param headerText        The header text of the {@code Dialog}
-     * @param firstLabelString  The label for the first {@code TextField}
+     * @param title The title text of the {@code Dialog}
+     * @param headerText The header text of the {@code Dialog}
+     * @param firstLabelString The label for the first {@code TextField}
      * @param secondLabelString The label for the second {@code TextField}
-     * @param okButtonText      The text for the OK button
+     * @param okButtonText The text for the OK button
      *
      * @return The created {@code Dialog <Pair <String, String>>}
      */
-    public static Dialog <Pair <String, String>> createDualTextFieldDialog(final String title, final String headerText,
-                                                                           final String firstLabelString,
-                                                                           final String secondLabelString,
-                                                                           final String okButtonText) {
-
-        final Dialog <Pair <String, String>> dialog = new Dialog <Pair <String, String>>();
+    public static Dialog <Tuple <String, String>> createDualTextFieldDialog(final String title, final String headerText,
+                                                                            final String firstLabelString,
+                                                                            final String secondLabelString,
+                                                                            final String okButtonText) {
+        final Dialog <Tuple <String, String>> dialog = new Dialog <>();
         dialog.setTitle(title);
         dialog.setHeaderText(headerText);
 
-        final ButtonType okButton = new ButtonType(okButtonText, ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(okButton, ButtonType.CANCEL);
+        //final ButtonType okButton = new ButtonType(okButtonText, ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
         final TextField firstField = new TextField();
         firstField.setPromptText(firstLabelString);
@@ -196,22 +222,10 @@ public class JavaFXUtil {
 
         dialog.getDialogPane().setContent(dialogPane);
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                firstField.requestFocus();
-            }
-        });
+        Platform.runLater(firstField::requestFocus);
 
-        dialog.setResultConverter(new Callback <ButtonType, Pair <String, String>>() {
-            @Override
-            public Pair <String, String> call(final ButtonType param) {
-                if (param == okButton) {
-                    return new Pair <String, String>(firstField.getText(), secondField.getText());
-                }
-                return null;
-            }
-        });
+        dialog.setResultConverter(param -> ButtonType.OK == param ? new Tuple <>(firstField.getText(), secondField.getText()) :
+                                           null);
 
         return dialog;
     }

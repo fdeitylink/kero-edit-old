@@ -1,0 +1,278 @@
+{
+    "sects": [
+        {
+            "name": "Global Flags",
+            "items": [
+                {
+                    "default": "phSkipPrlg",
+                    "len": 11,
+                    "offset": 1121524,
+                    "label": "Flag 0"
+                },
+                {
+                    "default": "phEndHvnH",
+                    "len": 11,
+                    "offset": 1121536,
+                    "label": "Flag 1"
+                },
+                {
+                    "default": "phEndHvnN",
+                    "len": 11,
+                    "offset": 1121548,
+                    "label": "Flag 2"
+                },
+                {
+                    "default": "phEndHard",
+                    "len": 11,
+                    "offset": 1121560,
+                    "label": "Flag 3"
+                },
+                {
+                    "default": "phEndNormal",
+                    "len": 11,
+                    "offset": 1121572,
+                    "label": "Flag 4"
+                }
+            ]
+        },
+        {
+            "name": "Weapons",
+            "items": [
+                {
+                    "default": "ArmsX",
+                    "len": 7,
+                    "offset": 1017120,
+                    "label": "Weapon 0"
+                },
+                {
+                    "default": "Kurob",
+                    "len": 7,
+                    "offset": 1017128,
+                    "label": "Weapon 1"
+                },
+                {
+                    "default": "Fire",
+                    "len": 7,
+                    "offset": 1017136,
+                    "label": "Weapon 2"
+                },
+                {
+                    "default": "Bubble",
+                    "len": 7,
+                    "offset": 1017144,
+                    "label": "Weapon 3"
+                },
+                {
+                    "default": "Wide",
+                    "len": 7,
+                    "offset": 1017152,
+                    "label": "Weapon 4"
+                },
+                {
+                    "default": "Bean",
+                    "len": 7,
+                    "offset": 1017160,
+                    "label": "Weapon 5"
+                }
+            ]
+        },
+        {
+            "name": "Special Entities",
+            "items": [
+                {
+                    "default": "mpc",
+                    "len": 3,
+                    "offset": 1121156,
+                    "label": "Player entity"
+                },
+                {
+                    "default": "none",
+                    "len": 7,
+                    "offset": 1121160,
+                    "label": "No entity"
+                }
+            ]
+        },
+        {
+            "name": "Special Entity Types",
+            "items": [
+                {
+                    "default": "Relay",
+                    "len": 7,
+                    "offset": 1121452,
+                    "label": "Relay entity"
+                },
+                {
+                    "default": "toL2",
+                    "len": 7,
+                    "offset": 1121460,
+                    "label": "Left Exit"
+                },
+                {
+                    "default": "toR2",
+                    "len": 7,
+                    "offset": 1121468,
+                    "label": "Right exit"
+                },
+                {
+                    "default": "toU2",
+                    "len": 7,
+                    "offset": 1121476,
+                    "label": "Up exit"
+                },
+                {
+                    "default": "toD2",
+                    "len": 7,
+                    "offset": 1121484,
+                    "label": "Down exit"
+                }
+            ]
+        },
+        {
+            "name": "Folders",
+            "items": [
+                {
+                    "default": "localize",
+                    "len": 8,
+                    "offset": 1017220,
+                    "label": "Localization"
+                },
+                {
+                    "default": "profile",
+                    "len": 7,
+                    "offset": 1121584,
+                    "label": "Config and save"
+                }
+            ]
+        },
+        {
+            "name": "Filenames",
+            "items": [
+                {
+                    "default": "gameprofile",
+                    "ext": "",
+                    "len": 11,
+                    "offset": 1121600,
+                    "label": "gameprofile"
+                },
+                {
+                    "default": "timelast",
+                    "ext": "",
+                    "len": 8,
+                    "offset": 1121612,
+                    "label": "Time record"
+                },
+                {
+                    "default": "menuback",
+                    "ext": ".png",
+                    "len": 11,
+                    "offset": 1122044,
+                    "label": "Menu background image"
+                },
+                {
+                    "default": "keyconfig",
+                    "ext": ".png",
+                    "len": 11,
+                    "offset": 1122056,
+                    "label": "Keybind configuration image"
+                },
+                {
+                    "default": "menulabel",
+                    "ext": ".png",
+                    "len": 11,
+                    "offset": 1122068,
+                    "label": "Menu labels image"
+                },
+                {
+                    "__COMMENT__": "File not present, but string present in the executable",
+                    "default": "fuAchievements",
+                    "ext": ".png",
+                    "len": 14,
+                    "offset": 1122080,
+                    "label": "Achievements image"
+                },
+                {
+                    "__COMMENT__": "Potentially unused in Pink Hour, though there may be a 'pre-scripted' event or something that uses it",
+                    "default": "kb_fanf_safe",
+                    "ext": ".ptcop",
+                    "len": 12,
+                    "offset": 1122096,
+                    "label": "Song - purpose here unknown"
+                },
+                {
+                    "__COMMENT__": "File not present, but string present in the executable",
+                    "default": "bosses",
+                    "ext": ".png",
+                    "len": 6,
+                    "offset": 1122112,
+                    "label": "Bosses image"
+                },
+                {
+                    "default": "gameover",
+                    "ext": ".png",
+                    "len": 11,
+                    "offset": 1122120,
+                    "label": "Game Over image"
+                },
+                {
+                    "default": "logo",
+                    "ext": ".png",
+                    "len": 7,
+                    "offset": 1122132,
+                    "label": "Logo image"
+                },
+                {
+                    "default": "ph_gameover",
+                    "ext": ".ptcop",
+                    "len": 11,
+                    "offset": 1122140,
+                    "label": "Song - purpose here unknown"
+                },
+                {
+                    "default": "fuChapter",
+                    "ext": ".png",
+                    "len": 11,
+                    "offset": 1122152,
+                    "label": "Image - purpose here unknown"
+                },
+                {
+                    "default": "manual.txt",
+                    "ext": "",
+                    "len": 11,
+                    "offset": 1122180,
+                    "label": "Text file used for manual"
+                },
+                {
+                    "default": "fuManual",
+                    "ext": ".png",
+                    "len": 11,
+                    "offset": 1122224,
+                    "label": "Image used for manual"
+                }
+            ]
+        },
+        {
+            "name": "Items",
+            "items": [
+                {
+                    "default": "Jacket",
+                    "len": 7,
+                    "offset": 1122260,
+                    "label": "Item 0"
+                },
+                {
+                    "default": "Lifepot",
+                    "len": 7,
+                    "offset": 1122268,
+                    "label": "Item 1"
+                },
+                {
+                    "default": "Jetpack",
+                    "len": 7,
+                    "offset": 1122276,
+                    "label": "Item 2"
+                }
+            ]
+        }
+    ]
+}
