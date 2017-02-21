@@ -17,10 +17,7 @@ public class ResourceManager {
     }
 
     public static Image getImage(final String filename) {
-        final Image result = new Image(getFileAsInputStream(filename));
-        while (1 != result.getProgress()) {
-
-        }
+        final Image result = new Image(ResourceManager.class.getResource(filename).toString(), false);
         return result;
     }
 }

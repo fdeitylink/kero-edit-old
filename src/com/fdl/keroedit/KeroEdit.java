@@ -45,6 +45,8 @@ import java.text.MessageFormat;
 import javafx.application.Application;
 import javafx.application.Platform;
 
+import javafx.print.PrinterJob;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.geometry.Rectangle2D;
@@ -187,14 +189,14 @@ public class KeroEdit extends Application {
         mainStage.setMaximized(true);
         mainStage.requestFocus();
 
-        if (!Config.licenseRead) {
+        /*if (!Config.licenseRead) {
             showLicense();
             if (!Config.licenseRead) {
                 mainStage.close();
                 Platform.exit();
                 System.exit(0);
             }
-        }
+        }*/
     }
 
     /**
@@ -379,7 +381,7 @@ public class KeroEdit extends Application {
                                            Messages.getString("KeroEdit.LoadMod.ReadOnly.MESSAGE"));
                 }
 
-                createAssistFolder();
+                //createAssistFolder();
 
                 loadMapList();
             }
@@ -597,7 +599,8 @@ public class KeroEdit extends Application {
 
         final MenuItem[] menuItems = {new MenuItem(Messages.getString("KeroEdit.ActionsMenu.RUN_GAME")),
                                       new MenuItem(Messages.getString("KeroEdit.ActionsMenu.EDIT_GLOBAL_SCRIPT")),
-                                      new MenuItem(Messages.getString("KeroEdit.ActionsMenu.HACK_EXECUTABLE"))};
+                                      new MenuItem(Messages.getString("KeroEdit.ActionsMenu.HACK_EXECUTABLE")),
+                                      new MenuItem(Messages.getString("KeroEdit.ActionsMenu.WAFFLE"))};
         actionsMenu.getItems().addAll(menuItems);
 
         final EnumMap <ActionsMenuItems, Integer> actionsMenuItems = new EnumMap <>(ActionsMenuItems.class);
@@ -669,6 +672,24 @@ public class KeroEdit extends Application {
         });
         menuItems[actionsMenuItems.get(ActionsMenuItems.HACK_EXECUTABLE)].setDisable(true);
         enableOnLoadItems.add(menuItems[actionsMenuItems.get(ActionsMenuItems.HACK_EXECUTABLE)]);
+
+        menuItems[actionsMenuItems.get(ActionsMenuItems.WAFFLE)].setOnAction(event -> {
+            final Image waffleImg = JavaFXUtil.scaleImage(ResourceManager.getImage("waffle.png"), 16);
+            final PrinterJob printJob = PrinterJob.createPrinterJob();
+            if (null != printJob) {
+                if (printJob.showPrintDialog(mainStage)) {
+                    final boolean success = printJob.printPage(new ImageView(waffleImg));
+                    if (success) {
+                        printJob.endJob();
+                    }
+                    else {
+                        JavaFXUtil.createAlert(Alert.AlertType.ERROR,
+                                               Messages.getString("KeroEdit.WaffleError.TITLE"), null,
+                                               Messages.getString("KeroEdit.WaffleError.MESSAGE"));
+                    }
+                }
+            }
+        });
 
         return actionsMenu;
     }
@@ -1017,7 +1038,8 @@ public class KeroEdit extends Application {
     private enum ActionsMenuItems {
         RUN_GAME,
         EDIT_GLOBAL_SCRIPT,
-        HACK_EXECUTABLE
+        HACK_EXECUTABLE,
+        WAFFLE
     }
 
     private enum HelpMenuItems {
