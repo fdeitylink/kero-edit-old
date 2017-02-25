@@ -34,7 +34,7 @@ import com.eclipsesource.json.JsonValue;
 
 public class HackTab extends FileEditTab {
     private final SplitPane sPane;
-    private TreeView <String> hacksTree;
+    private final TreeView <String> hacksTree;
 
     public HackTab() {
         final String stringsFname;

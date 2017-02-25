@@ -6,6 +6,7 @@
  * For map - draw tile types on separate layer just like with the tileset pane
  * Find workaround for NPE with large Canvas (19tunnel maps in KB); current workaround is minimal map zoom
  * - https://bugs.openjdk.java.net/browse/JDK-8089835
+ * throw error on tilesetload for 0 dimension?
  */
 
 package com.fdl.keroedit.mapedit;
@@ -17,6 +18,7 @@ import java.text.ParseException;
 
 import java.text.MessageFormat;
 
+import javafx.geometry.Rectangle2D;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -30,19 +32,12 @@ import javafx.scene.layout.StackPane;
 
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.geometry.Insets;
 
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
 
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Button;
-
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -85,6 +80,8 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.application.Platform;
 
+import com.fdl.keroedit.KeroEdit;
+
 import com.fdl.keroedit.util.JavaFXUtil;
 
 import com.fdl.keroedit.util.FileEditTab;
@@ -113,6 +110,9 @@ public class MapEditTab extends FileEditTab {
                                                                     new SimpleBooleanProperty(true),
                                                                     new SimpleBooleanProperty(true)};
     private static final SimpleIntegerProperty selectedLayer = new SimpleIntegerProperty();
+
+    private static final SimpleObjectProperty <KeroEdit.DrawSettingsItems> drawMode =
+            new SimpleObjectProperty <>(KeroEdit.DrawSettingsItems.DRAW);
 
     //TODO: Single view flags property?
     private static final SimpleBooleanProperty showTileTypes = new SimpleBooleanProperty(false);
@@ -195,6 +195,10 @@ public class MapEditTab extends FileEditTab {
         selectedLayer.set(layer);
     }
 
+    public static void setDrawMode(final KeroEdit.DrawSettingsItems mode) {
+        drawMode.set(mode);
+    }
+
     public static void bindShowTileTypes(final BooleanProperty property) {
         showTileTypes.bind(property);
     }
@@ -241,11 +245,15 @@ public class MapEditTab extends FileEditTab {
         private final MapPane mapPane;
         private final TilesetPane tilesetPane;
 
+        private final int[][][] selectedTiles;
+
         //private final MapEditTab parent;
 
         TileEditTab(final MapEditTab parent) {
             super(Messages.getString("MapEditTab.TileEditTab.TITLE"));
             //this.parent = parent;
+
+            selectedTiles = new int[map.getTileLayers().length][1][1];
 
             head = map.getHead(); //TODO: Store same head as properties tab in order to automatically update properties
             //entities = map.getEntities();
@@ -330,29 +338,71 @@ public class MapEditTab extends FileEditTab {
         private class TilesetPane extends SplitPane {
             private final Canvas tilesetCanvas;
             private final Canvas tileTypeCanvas;
+            private final Canvas selectedRectCanvas;
             private final ImageView selectedTileImgView;
-            //private final Image selectedTileRect;
+
+            private final Rectangle2D[] selectedRegions;
 
             private Image[] tilesets;
             private ArrayList <ReadOnlyObjectProperty <PxAttrManager.PxAttr>> pxAttrs; //put this up in TileEditTab?
-            private int[] selectedTiles;
 
-            private final Service <Void> redrawTileTypes;
-            private final Service <Void> displaySelectedTile;
-            private final Service <Void> loadTilesets;
-            private final Service <Void> loadPxAttrs;
+            private Service <Void> redrawTileTypes;
+            private Service <Void> drawSelectedTiles;
+            private Service <Void> loadTilesets;
+            private Service <Void> loadPxAttrs;
 
             TilesetPane() {
+                initServices();
+
+                loadTilesets.start();
+                loadPxAttrs.start();
+
+                tilesetCanvas = new Canvas();
+
+                tileTypeCanvas = new Canvas();
+                tileTypeCanvas.widthProperty().bind(tilesetCanvas.widthProperty());
+                tileTypeCanvas.heightProperty().bind(tilesetCanvas.heightProperty());
+
+                tileTypeCanvas.visibleProperty().bind(showTileTypes);
+                tileTypeCanvas.setOnMouseClicked(tilesetCanvas::fireEvent);
+
+                selectedRectCanvas = new Canvas();
+                selectedRectCanvas.widthProperty().bind(tilesetCanvas.widthProperty());
+                selectedRectCanvas.heightProperty().bind(tilesetCanvas.heightProperty());
+
+                final GraphicsContext selectedRectGContext = selectedRectCanvas.getGraphicsContext2D();
+                selectedRectGContext.setStroke(Color.WHITE);
+                selectedRectGContext.setLineWidth(2.0);
+
+                selectedRegions = new Rectangle2D[PxPack.NUM_LAYERS];
+                for (int i = 0; i < selectedRegions.length; ++i) {
+                    selectedRegions[i] = new Rectangle2D(0, 0, 1, 1);
+                }
+                redrawSelectedRect();
+
+                final StackPane stackPane = new StackPane(tilesetCanvas, tileTypeCanvas, selectedRectCanvas);
+
+                final ScrollPane tilesetScrollPane = new ScrollPane(stackPane);
+                tilesetScrollPane.setPannable(false);
+
+                selectedTileImgView = new ImageView();
+
+                initEventHandlers();
+
+                getItems().addAll(tilesetScrollPane, new Pane(selectedTileImgView));
+            }
+
+            private void initServices() {
                 redrawTileTypes = new Service <Void>() {
                     @Override
                     protected Task <Void> createTask() {
                         return new Task <Void>() {
                             @Override
                             protected Void call() throws Exception {
-                                Platform.runLater(() -> tileTypeCanvas.getGraphicsContext2D()
-                                                                      .clearRect(0, 0,
-                                                                                 tileTypeCanvas.getWidth(),
-                                                                                 tileTypeCanvas.getHeight()));
+                                Platform.runLater(() -> tileTypeCanvas
+                                        .getGraphicsContext2D().clearRect(0, 0,
+                                                                          tileTypeCanvas.getWidth(),
+                                                                          tileTypeCanvas.getHeight()));
 
                                 final int[][] attributes = pxAttrs.get(selectedLayer.get()).get().getAttributes();
                                 if (null != attributes) {
@@ -397,24 +447,45 @@ public class MapEditTab extends FileEditTab {
                     }
                 };
 
-                displaySelectedTile = new Service <Void>() {
+                drawSelectedTiles = new Service <Void>() {
                     @Override
                     protected Task <Void> createTask() {
                         return new Task <Void>() {
                             @Override
                             protected Void call() throws Exception {
-                                final int x = selectedTiles[selectedLayer.get()] % (TILESET_WIDTH / TILE_WIDTH);
-                                final int y = selectedTiles[selectedLayer.get()] / (TILESET_HEIGHT / TILE_HEIGHT);
+                                final int layer = selectedLayer.get();
 
-                                final Image tilesetImg = tilesets[selectedLayer.get()];
-                                final WritableImage tileImg = 0 < tilesetImg.getWidth() ?
-                                                              new WritableImage(tilesetImg.getPixelReader(), x * TILE_WIDTH,
-                                                                                y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT) :
-                                                              new WritableImage(TILE_WIDTH, TILE_HEIGHT);
+                                final int[][] selectedTilesRect = selectedTiles[layer];
+                                /*if (null == selectedTilesRect || null == head.getTilesetNames()[layer]) {
+                                    return null;
+                                }*/
 
+                                final WritablePixelFormat <ByteBuffer> pxFormat = PixelFormat.getByteBgraInstance();
+
+                                final PixelReader tilesetReader = tilesetPane.tilesets[layer].getPixelReader();
+
+                                final WritableImage tilesImg = new WritableImage(selectedTilesRect[0].length * TILE_WIDTH,
+                                                                                 selectedTilesRect.length * TILE_HEIGHT);
+                                final PixelWriter tilesImgWriter = tilesImg.getPixelWriter();
+
+                                final byte[] tile = new byte[TILE_WIDTH * TILE_HEIGHT * 4];
+
+                                for (int y = 0; y < selectedTilesRect.length; ++y) {
+                                    for (int x = 0; x < selectedTilesRect[y].length; ++x) {
+                                        final int tilesetX = selectedTilesRect[y][x] % (TILESET_WIDTH / TILE_WIDTH);
+                                        final int tilesetY = selectedTilesRect[y][x] / (TILESET_HEIGHT / TILE_HEIGHT);
+
+                                        tilesetReader.getPixels(tilesetX * TILE_WIDTH, tilesetY * TILE_HEIGHT, TILE_WIDTH,
+                                                                TILE_HEIGHT, pxFormat, tile, 0, TILE_WIDTH * 4);
+
+                                        tilesImgWriter.setPixels(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT,
+                                                                 pxFormat, tile, 0, TILE_WIDTH * 4);
+                                    }
+                                }
+
+                                //TODO: Change selectedTiles view to a Canvas?
                                 Platform.runLater(() -> selectedTileImgView
-                                        .setImage(JavaFXUtil.scaleImage(tileImg, TILESET_WIDTH / TILE_WIDTH / 2)));
-
+                                        .setImage(JavaFXUtil.scaleImage(tilesImg, tilesetZoom.get())));
                                 return null;
                             }
                         };
@@ -456,7 +527,7 @@ public class MapEditTab extends FileEditTab {
                     redrawTileset();
                     redrawTileTypes.start();
 
-                    displaySelectedTile.start();
+                    drawSelectedTiles.start();
 
                     for (int i = 0; i < mapPane.tileLayers.length; ++i) {
                         mapPane.redrawLayer(i);
@@ -497,57 +568,118 @@ public class MapEditTab extends FileEditTab {
                     }
                 };
 
-                loadTilesets.start();
-                loadPxAttrs.start();
+            }
 
+            private void initEventHandlers() {
                 selectedLayer.addListener((observable, oldValue, newValue) -> {
                     redrawTileset();
                     redrawTileTypes.restart();
-                    displaySelectedTile.restart();
+                    redrawSelectedRect();
+                    drawSelectedTiles.restart();
                 });
 
                 tilesetZoom.addListener((observable, oldValue, newValue) -> {
                     fixSize();
                     redrawTileset();
                     redrawTileTypes.restart();
+                    redrawSelectedRect();
+                    drawSelectedTiles.restart();
                 });
 
                 tilesetBgColor.addListener((observable, oldValue, newValue) -> redrawTileset());
 
-                selectedTiles = new int[PxPack.NUM_LAYERS];
-                tilesetCanvas = new Canvas();
-                tilesetCanvas.setOnMouseClicked(event -> {
+                tilesetCanvas.setOnMousePressed(event -> {
                     if (event.getButton().equals(MouseButton.PRIMARY)) {
                         if (0 == tilesets[selectedLayer.get()].getWidth() ||
                             0 == tilesets[selectedLayer.get()].getHeight()) {
-                            selectedTiles[selectedLayer.get()] = 0;
+                            selectedTiles[selectedLayer.get()] = new int[][]{{0}}; //TODO: make array empty?
+                            redrawSelectedRect();
                             return;
                         }
+
                         final int x = (int)(event.getX() / tilesetZoom.get() / TILE_WIDTH);
                         final int y = (int)(event.getY() / tilesetZoom.get() / TILE_HEIGHT);
                         final int width = TILESET_WIDTH /* * tilesetZoom.get() / tilesetZoom.get()*/ / TILE_WIDTH;
 
-                        selectedTiles[selectedLayer.get()] = (y * width) + x;
+                        selectedTiles[selectedLayer.get()] = new int[][]{{(y * width) + x}};
 
-                        displaySelectedTile.restart();
+                        selectedRegions[selectedLayer.get()] = new Rectangle2D(x, y, 1, 1);
+
+                        drawSelectedTiles.restart();
+                        redrawSelectedRect();
                     }
                 });
 
-                tileTypeCanvas = new Canvas();
-                tileTypeCanvas.widthProperty().bind(tilesetCanvas.widthProperty());
-                tileTypeCanvas.heightProperty().bind(tilesetCanvas.heightProperty());
+                tilesetCanvas.setOnMouseDragged(new EventHandler <MouseEvent>() {
+                    private int prevX;
+                    private int prevY;
 
-                tileTypeCanvas.visibleProperty().bind(showTileTypes);
-                tileTypeCanvas.setOnMouseClicked(tilesetCanvas::fireEvent);
+                    @Override
+                    public void handle(final MouseEvent event) {
+                        if (event.getButton().equals(MouseButton.PRIMARY)) {
+                            /*
+                             * Math.max() && Math.min() force (x,y) to be within bounds of tileset canvas
+                             * Still might need some fixing for some reason since sometimes left edge of
+                             * drawn rect doesn't show if you drag very quickly
+                             */
+                            final int x = (int)(Math.max(0, Math.min(event.getX(), tilesetCanvas.getWidth() - 1)) /
+                                                tilesetZoom.get() / TILE_WIDTH);
+                            final int y = (int)(Math.max(0, Math.min(event.getY(), tilesetCanvas.getHeight() - 1)) /
+                                                tilesetZoom.get() / TILE_HEIGHT);
 
-                final StackPane stackPane = new StackPane(tilesetCanvas, tileTypeCanvas);
+                            if (x != prevX || y != prevY) {
+                                prevX = x;
+                                prevY = y;
 
-                final ScrollPane tilesetScrollPane = new ScrollPane(stackPane);
-                tilesetScrollPane.setPannable(true);
+                                if (0 == tilesets[selectedLayer.get()].getWidth() ||
+                                    0 == tilesets[selectedLayer.get()].getHeight()) {
+                                    selectedRegions[selectedLayer.get()] = new Rectangle2D(0, 0, 1, 1);
+                                    selectedTiles[selectedLayer.get()] = new int[][]{{0}}; //TODO: make array empty?
+                                    redrawSelectedRect();
+                                    return;
+                                }
 
-                selectedTileImgView = new ImageView();
+                                final Rectangle2D selectedRect = selectedRegions[selectedLayer.get()];
 
-                getItems().addAll(tilesetScrollPane, new Pane(selectedTileImgView));
+                                final int xDiff = (int)(x - (selectedRect.getMaxX() - 1));
+                                final int yDiff = (int)(y - (selectedRect.getMaxY() - 1));
+
+                                //TODO: Make dragging into relative negatives work better
+                                int minX = (int)selectedRect.getMinX();
+                                int minY = (int)selectedRect.getMinY();
+                                int width = (int)(selectedRect.getWidth() + xDiff);
+                                int height = (int)(selectedRect.getHeight() + yDiff);
+
+                                if (x < minX) {
+                                    minX = x;
+                                    width = (int)(selectedRect.getMaxX() - x);
+                                }
+                                if (y < minY) {
+                                    minY = y;
+                                    height = (int)(selectedRect.getMaxY() - y);
+                                }
+
+                                selectedRegions[selectedLayer.get()] = new Rectangle2D(minX, minY, width, height);
+
+                                final int[][] tiles = new int[height][width];
+                                final int tilesetWidth = TILESET_WIDTH /* * tilesetZoom.get() / tilesetZoom.get()*/ / TILE_WIDTH;
+
+                                for (int tilesY = minY; tilesY < minY + height; ++tilesY) {
+                                    for (int tilesX = minX; tilesX < minX + width; ++tilesX) {
+                                        tiles[tilesY - minY][tilesX - minX] = (tilesY * tilesetWidth) + tilesX;
+                                    }
+                                }
+                                selectedTiles[selectedLayer.get()] = tiles;
+                                drawSelectedTiles.restart();
+
+                                redrawSelectedRect();
+                            }
+                        }
+                    }
+                });
+
+                selectedRectCanvas.setOnMousePressed(tilesetCanvas::fireEvent);
+                selectedRectCanvas.setOnMouseDragged(tilesetCanvas::fireEvent);
             }
 
             private void redrawTileset() {
@@ -556,18 +688,29 @@ public class MapEditTab extends FileEditTab {
                 tilesetGContext.setFill(tilesetBgColor.get());
                 tilesetGContext.fillRect(0, 0, tilesetCanvas.getWidth(), tilesetCanvas.getHeight());
 
-                tilesetGContext.drawImage(JavaFXUtil.scaleImage(tilesets[selectedLayer.get()],
-                                                                tilesetZoom.get()), 0, 0);
+                tilesetGContext.drawImage(JavaFXUtil.scaleImage(tilesets[selectedLayer.get()], tilesetZoom.get()), 0, 0);
 
                 //Since right now I only load the necessary part of the tileset, a simpler drawImage() method can be called (^)
-                                /*tilesetGContext.drawImage(JavaFXUtil.scaleImage(tilesets[selectedLayer.get()], zoom.get()),
-                                                            0, 0, TILESET_WIDTH * zoom.get(), TILESET_HEIGHT * zoom.get(),
-                                                            0, 0, tilesetCanvas.getWidth(), tilesetCanvas.getHeight());*/
+                /*tilesetGContext.drawImage(JavaFXUtil.scaleImage(tilesets[selectedLayer.get()], zoom.get()),
+                                            0, 0, TILESET_WIDTH * zoom.get(), TILESET_HEIGHT * zoom.get(),
+                                            0, 0, tilesetCanvas.getWidth(), tilesetCanvas.getHeight());*/
             }
 
             private void fixSize() {
                 tilesetCanvas.setWidth(TILESET_WIDTH * tilesetZoom.get());
                 tilesetCanvas.setHeight(TILESET_HEIGHT * tilesetZoom.get());
+            }
+
+            private void redrawSelectedRect() {
+                final GraphicsContext selectedRectGContext = selectedRectCanvas.getGraphicsContext2D();
+                selectedRectGContext.clearRect(0, 0, selectedRectCanvas.getWidth(), selectedRectCanvas.getHeight());
+
+                final Rectangle2D selectedRect = selectedRegions[selectedLayer.get()];
+                selectedRectGContext.strokeRoundRect(selectedRect.getMinX() * TILE_WIDTH * tilesetZoom.get(),
+                                                     selectedRect.getMinY() * TILE_HEIGHT * tilesetZoom.get(),
+                                                     TILE_WIDTH * selectedRect.getWidth() * tilesetZoom.get(),
+                                                     TILE_HEIGHT * selectedRect.getHeight() * tilesetZoom.get(),
+                                                     10, 10);
             }
         }
 
@@ -607,7 +750,7 @@ public class MapEditTab extends FileEditTab {
                 bgColor.addListener((observable, oldValue, newValue) -> JavaFXUtil.setBackgroundColor(newValue, mapStackPane));
                 JavaFXUtil.setBackgroundColor(bgColor.get(), mapStackPane);
 
-                bindEventHandlers();
+                initEventHandlers();
                 setPannable(false);
                 setContextMenu(initContextMenu());
                 setContent(mapStackPane);
@@ -617,7 +760,7 @@ public class MapEditTab extends FileEditTab {
              * Binds {@code EventHandler}s to all the {@code Pane}s and
              * {@code Canvas}es in this {@code ScrollPane}
              */
-            private void bindEventHandlers() {
+            private void initEventHandlers() {
                 selectedLayer.addListener((observable, oldValue, newValue) -> {
                     if (showTileTypes.get()) {
                         redrawLayer(oldValue.intValue()); //"undraw" tiletypes from previously selected layer
@@ -649,12 +792,18 @@ public class MapEditTab extends FileEditTab {
                             prevY = y;
 
                             final GraphicsContext cursorGContext = cursorCanvas.getGraphicsContext2D();
-
                             cursorGContext.clearRect(0, 0, cursorCanvas.getWidth(), cursorCanvas.getHeight());
-                            cursorGContext.strokeRoundRect(x * TILE_WIDTH * mapZoom.get(), y * TILE_HEIGHT * mapZoom.get(),
-                                                           TILE_WIDTH * mapZoom.get(), TILE_HEIGHT * mapZoom.get(), 10, 10);
+                            switch (drawMode.get()) {
+                                case DRAW:
+                                    //TODO: account for rects of seleced tiles
+                                    final int[][] tilesRect = selectedTiles[selectedLayer.get()];
+                                    cursorGContext.strokeRoundRect(x * TILE_WIDTH * mapZoom.get(),
+                                                                   y * TILE_HEIGHT * mapZoom.get(),
+                                                                   TILE_WIDTH * tilesRect[0].length * mapZoom.get(),
+                                                                   TILE_HEIGHT * tilesRect.length * mapZoom.get(),
+                                                                   10, 10);
+                            }
                         }
-
                     }
                 });
                 cursorCanvas.setOnMouseDragged(cursorCanvas.getOnMouseMoved());
@@ -673,32 +822,29 @@ public class MapEditTab extends FileEditTab {
                                         final int x = (int)(event.getX() / mapZoom.get() / TILE_WIDTH);
                                         final int y = (int)(event.getY() / mapZoom.get() / TILE_HEIGHT);
 
-                                        final int oldTile = tileLayers[layer].getTiles()[y][x];
-                                        final int newTile = tilesetPane.selectedTiles[layer];
-
                                         if (y < tileLayers[layer].getTiles().length &&
-                                            x < tileLayers[layer].getTiles()[y].length &&
-                                            oldTile != newTile) {
+                                            x < tileLayers[layer].getTiles()[y].length) {
 
-                                            tileLayers[layer].setTile(x, y, newTile);
-                                            redrawTile(layer, x, y);
+                                            final int[][] newTiles = selectedTiles[layer];
 
+                                            final int[][] oldTiles = new int[newTiles.length][newTiles[0].length];
+                                            for (int r = y; r < y + newTiles.length; ++r) {
+                                                System.arraycopy(tileLayers[layer].getTiles()[r], x,
+                                                                 oldTiles[r - y], 0, oldTiles[r - y].length);
+                                            }
+
+                                            for (int r = y; r < y + newTiles.length; ++r) {
+                                                for (int c = x; c < x + newTiles[r - y].length; ++c) {
+                                                    tileLayers[layer].setTile(c, r, newTiles[r - y][c - x]);
+                                                    redrawTile(layer, c, r);
+                                                }
+                                            }
+
+                                            //TODO: call setChanged() in parent
                                             setChanged(true);
 
                                             getRedoStack().clear();
-                                            getUndoStack().addFirst(new UndoableEdit() {
-                                                @Override
-                                                public void undo() {
-                                                    tileLayers[layer].setTile(x, y, oldTile);
-                                                    redrawTile(layer, x, y);
-                                                }
-
-                                                @Override
-                                                public void redo() {
-                                                    tileLayers[layer].setTile(x, y, newTile);
-                                                    redrawTile(layer, x, y);
-                                                }
-                                            });
+                                            getUndoStack().addFirst(new UndoableMapEdit(layer, x, y, oldTiles, newTiles));
                                         }
                                     }
                                 }
@@ -710,6 +856,7 @@ public class MapEditTab extends FileEditTab {
 
                     }
                 });
+
                 //TODO: mouse drag has its own separate handler as it will definitely need one
                 mapStackPane.setOnMouseDragged(mapStackPane.getOnMouseClicked());
             }
@@ -733,14 +880,14 @@ public class MapEditTab extends FileEditTab {
                     final String layerName;
                     switch (selectedLayer.get()) {
                         case 0:
-                            layerName = Messages.getString("MapEditTab.TileEditTab.Layers.FOREGROUND");
+                            layerName = Messages.getString("LayerNames.FOREGROUND");
                             break;
                         case 1:
-                            layerName = Messages.getString("MapEditTab.TileEditTab.Layers.MIDDLEGROUND");
+                            layerName = Messages.getString("LayerNames.MIDDLEGROUND");
                             break;
                         case 2:
                         default:
-                            layerName = Messages.getString("MapEditTab.TileEditTab.Layers.BACKGROUND");
+                            layerName = Messages.getString("LayerNames.BACKGROUND");
                     }
 
                     final String title = MessageFormat.format(Messages.getString("MapEditTab.TileEditTab.Resize.TITLE"),
@@ -848,15 +995,15 @@ public class MapEditTab extends FileEditTab {
 
                             final Image tileTypeImg;
                             final int[][] attributes;
-                            final boolean dispTileTypes;
+                            final boolean drawTileType;
 
                             if (showTileTypes.get() && selectedLayer.get() == layer) {
                                 attributes = tilesetPane.pxAttrs.get(selectedLayer.get()).get().getAttributes();
-                                dispTileTypes = null != attributes;
+                                drawTileType = null != attributes;
                             }
                             else {
                                 attributes = null;
-                                dispTileTypes = false;
+                                drawTileType = false;
                             }
 
                             final int tilesetX = tileIndex % (TILESET_WIDTH / TILE_WIDTH);
@@ -866,7 +1013,7 @@ public class MapEditTab extends FileEditTab {
                                                                               tilesetX * TILE_WIDTH, tilesetY * TILE_HEIGHT,
                                                                               TILE_WIDTH, TILE_HEIGHT),
                                                             mapZoom.get());
-                            if (dispTileTypes) {
+                            if (drawTileType) {
                                 final int attributesX = attributes[tilesetY][tilesetX] %
                                                         (PXATTR_IMAGE_WIDTH / PXATTR_TILE_WIDTH);
                                 final int attributesY = attributes[tilesetY][tilesetX] /
@@ -937,7 +1084,7 @@ public class MapEditTab extends FileEditTab {
                             final int[][] attributes;
                             final byte[] attrTile;
 
-                            final boolean dispTileTypes;
+                            final boolean drawTileTypes;
 
                             if (showTileTypes.get() && selectedLayer.get() == layer) {
                                 pxAttrImgReader = pxAttrImg.getPixelReader();
@@ -948,7 +1095,7 @@ public class MapEditTab extends FileEditTab {
                                 attributes = tilesetPane.pxAttrs.get(selectedLayer.get()).get().getAttributes();
                                 attrTile = new byte[PXATTR_TILE_WIDTH * PXATTR_TILE_HEIGHT * 4];
 
-                                dispTileTypes = null != attributes;
+                                drawTileTypes = null != attributes;
                             }
                             else {
                                 pxAttrImgReader = null;
@@ -957,7 +1104,7 @@ public class MapEditTab extends FileEditTab {
                                 attributes = null;
                                 attrTile = null;
 
-                                dispTileTypes = false;
+                                drawTileTypes = false;
                             }
                             ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -975,7 +1122,7 @@ public class MapEditTab extends FileEditTab {
                                                                 pxFormat, tile, 0, TILE_WIDTH * 4);
 
                                     ////////////////////////////////////////////////////////////////////////////////////
-                                    if (dispTileTypes) {
+                                    if (drawTileTypes) {
                                         final int attributesX = attributes[tilesetY][tilesetX] %
                                                                 (PXATTR_IMAGE_WIDTH / PXATTR_TILE_WIDTH);
                                         final int attributesY = attributes[tilesetY][tilesetX] /
@@ -1042,15 +1189,63 @@ public class MapEditTab extends FileEditTab {
                 cursorCanvas.setWidth(maxWidth);
                 cursorCanvas.setHeight(maxHeight);
             }
+
+            private class UndoableMapEdit implements UndoableEdit {
+                private final int layer;
+                private final int x;
+                private final int y;
+                private final int[][] oldTiles;
+                private final int[][] newTiles;
+
+                UndoableMapEdit(final int layer, final int x, final int y, final int[][] oldTiles, final int[][] newTiles) {
+                    if (oldTiles.length != newTiles.length || oldTiles[0].length != newTiles[0].length) {
+                        throw new IllegalArgumentException("oldTiles & newTiles dimensions must be equal");
+                    }
+
+                    this.layer = layer;
+                    this.x = x;
+                    this.y = y;
+
+                    this.oldTiles = new int[oldTiles.length][oldTiles[0].length];
+                    for (int i = 0; i < oldTiles.length; ++i) {
+                        System.arraycopy(oldTiles[i], 0, this.oldTiles[i], 0, oldTiles[i].length);
+                    }
+
+                    this.newTiles = new int[newTiles.length][newTiles[0].length];
+                    for (int i = 0; i < newTiles.length; ++i) {
+                        System.arraycopy(newTiles[i], 0, this.newTiles[i], 0, newTiles[i].length);
+                    }
+                }
+
+                @Override
+                public void undo() {
+                    for (int y = this.y; y < this.y + oldTiles.length; ++y) {
+                        for (int x = this.x; x < this.x + oldTiles[y - this.y].length; ++x) {
+                            tileLayers[layer].setTile(x, y, oldTiles[y - this.y][x - this.x]);
+                            redrawTile(layer, x, y);
+                        }
+                    }
+                }
+
+                @Override
+                public void redo() {
+                    for (int y = this.y; y < this.y + newTiles.length; ++y) {
+                        for (int x = this.x; x < this.x + newTiles[y - this.y].length; ++x) {
+                            tileLayers[layer].setTile(x, y, newTiles[y - this.y][x - this.x]);
+                            redrawTile(layer, x, y);
+                        }
+                    }
+                }
+            }
         }
     }
 
-    //TODO: Make this extend FileEditTab?
     private enum MapPaneMenuItems {
         RESIZE,
         BG_COLOR
     }
 
+    //TODO: Make this extend FileEditTab?
     private class PropertyEditTab extends Tab {
         private final GridPane mainGridPane;
 

@@ -11,9 +11,11 @@
  * Check extension
  * Read in scroll types (second byte after tileset name)
  * Copy constructor and new map constructor
+ * Throw except for missing tileset names
  */
 package com.fdl.keroedit.map;
 
+import java.io.FileOutputStream;
 import java.text.MessageFormat;
 
 import java.util.ArrayList;
@@ -202,6 +204,70 @@ public class PxPack {
                 //TODO: Probably something should be done if the file can't be closed
             }
         }
+
+        //save();
+    }
+
+    /**
+     * Saves the PXPACK file
+     */
+    public void save() {
+        FileOutputStream outStream = null;
+        FileChannel chan = null;
+
+        try {
+            outStream = new FileOutputStream(mapFile);
+            chan = outStream.getChannel();
+
+            ByteBuffer buf = ByteBuffer.wrap(Head.HEADER_STRING.getBytes());
+            chan.write(buf);
+
+            writeString(head.getDescription(), chan);
+
+            for (final String referencedMap : head.getMapNames()) {
+                writeString(referencedMap, chan);
+            }
+
+            writeString(head.getSpritesheetName(), chan);
+
+            buf = ByteBuffer.wrap(head.getUnknownBytes());
+            chan.write(buf);
+
+            final byte[] bgColor = {(byte)(head.getBgColor().getRed() * 255),
+                                    (byte)(head.getBgColor().getGreen() * 255),
+                                    (byte)(head.getBgColor().getBlue() * 255)};
+
+            buf = ByteBuffer.wrap(bgColor);
+            chan.write(buf);
+
+            for (final String tilesetName : head.getTilesetNames()) {
+                writeString(tilesetName, chan);
+                buf = ByteBuffer.wrap(new byte[]{0, 0});
+            }
+
+            /*buf = ByteBuffer.wrap(TileLayer.HEADER_STRING.getBytes());
+            chan.write(buf);*/
+        }
+        catch (final FileNotFoundException except) {
+
+        }
+        catch (final IOException except) {
+        }
+        finally {
+            try {
+                if (null != chan) {
+                    chan.close();
+                }
+                if (null != outStream) {
+                    outStream.close();
+                }
+            }
+            catch (final IOException except) {
+                Logger.logException(MessageFormat.format(Messages.getString("PxPack.CLOSE_FAIL"), mapFile.getName()),
+                                    except);
+                //TODO: Probably something should be done if the file can't be closed
+            }
+        }
     }
 
     public String getName() {
@@ -261,11 +327,10 @@ public class PxPack {
      *
      * @throws IOException if there was an error reading the string from the mapFile
      */
-    private String readString(FileChannel chan) throws IOException {
+    private String readString(final FileChannel chan) throws IOException {
         String result = null;
         try {
             ByteBuffer buf = ByteBuffer.allocate(1);
-            buf.order(ByteOrder.LITTLE_ENDIAN);
             chan.read(buf);
             buf.flip();
 
@@ -281,6 +346,15 @@ public class PxPack {
             System.err.println(Messages.getString("UNSUPPORTED_ENCODING"));
         }
         return result;
+    }
+
+    private void writeString(final String str, final FileChannel chan) throws IOException {
+        final byte[] strAsBytes = str.getBytes("SJIS");
+        final ByteBuffer buf = ByteBuffer.allocate(1 + strAsBytes.length);
+
+        buf.put((byte)strAsBytes.length);
+        buf.put(strAsBytes);
+        chan.write(buf);
     }
 
     @Override
@@ -535,6 +609,10 @@ public class PxPack {
             if (tile < 0 || tile > 0xFF) {
                 throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.TileLayer.SET_TILE_ERROR_MSG"),
                                                                         x, y));
+            }
+
+            if (x >= tiles[0].length || y >= tiles.length) { //do nothing if out of bounds
+                return;
             }
             tiles[y][x] = tile;
         }

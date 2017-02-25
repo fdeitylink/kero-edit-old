@@ -31,7 +31,7 @@ import com.fdl.keroedit.gamedata.GameData;
  * inside a PXATTR object will be reflected in all maps depending upon it.
  */
 class PxAttrManager {
-    private static HashMap <String, ReadOnlyPxAttrWrapper> pxAttrs = new HashMap <>();
+    private static final HashMap <String, ReadOnlyPxAttrWrapper> pxAttrs = new HashMap <>();
 
     private PxAttrManager() {
 

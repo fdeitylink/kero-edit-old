@@ -32,6 +32,7 @@ package com.fdl.keroedit;
 
 import java.io.File;
 import java.io.FileReader;
+
 import java.nio.file.Files;
 
 import java.io.IOException;
@@ -45,8 +46,6 @@ import java.text.MessageFormat;
 import javafx.application.Application;
 import javafx.application.Platform;
 
-import javafx.print.PrinterJob;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.geometry.Rectangle2D;
@@ -92,11 +91,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-import javafx.scene.image.ImageView;
-
 import javafx.scene.control.TextArea;
 
 import javafx.stage.FileChooser;
+
+import javafx.print.PrinterJob;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import com.fdl.keroedit.util.JavaFXUtil;
 
@@ -172,10 +173,10 @@ public class KeroEdit extends Application {
 
         //Note to self - keep these as BorderPanes - while a VBox may conceptually seem more fit for this
         //it does not resize well and there's a whole load of sizing issues
-        final BorderPane rightSidePane = new BorderPane(initTabPane());
-        rightSidePane.setTop(initSettingsPane());
+        final BorderPane right = new BorderPane(initTabPane());
+        right.setTop(/*initSettingsPane()*/new SettingsPane());
 
-        final SplitPane sPane = new SplitPane(initMapList(), rightSidePane);
+        final SplitPane sPane = new SplitPane(initMapList(), right);
         sPane.setDividerPositions(0.1);
 
         final BorderPane root = new BorderPane(sPane);
@@ -189,14 +190,14 @@ public class KeroEdit extends Application {
         mainStage.setMaximized(true);
         mainStage.requestFocus();
 
-        /*if (!Config.licenseRead) {
+        if (!Config.licenseRead) {
             showLicense();
             if (!Config.licenseRead) {
                 mainStage.close();
                 Platform.exit();
                 System.exit(0);
             }
-        }*/
+        }
     }
 
     /**
@@ -732,93 +733,6 @@ public class KeroEdit extends Application {
     }
 
     /**
-     * Initializes the settings {@code GridPane}
-     *
-     * @return The created {@code GridPane}
-     */
-    private GridPane initSettingsPane() {
-        final GridPane settingsPane = new GridPane();
-        settingsPane.setPadding(new Insets(10, 10, 10, 10));
-        settingsPane.setVgap(10);
-        settingsPane.setHgap(20);
-
-        int x = 0, y = 0;
-
-        final Text displayedLayersLabel = new Text(Messages.getString("KeroEdit.DISPLAYED_LAYERS"));
-        displayedLayersLabel.setFont(Font.font(null, FontWeight.BOLD, 15));
-        settingsPane.add(displayedLayersLabel, x, y);
-
-        final CheckBox[] displayedLayersCheckboxes = new CheckBox[PxPack.NUM_LAYERS];
-        for (int i = 0; i < displayedLayersCheckboxes.length; ++i) {
-            final String layerName;
-            switch (i) {
-                case 0:
-                    layerName = Messages.getString("MapEditTab.TileEditTab.Layers.FOREGROUND");
-                    break;
-                case 1:
-                    layerName = Messages.getString("MapEditTab.TileEditTab.Layers.MIDDLEGROUND");
-                    break;
-                default:
-                    layerName = Messages.getString("MapEditTab.TileEditTab.Layers.BACKGROUND");
-            }
-            displayedLayersCheckboxes[i] = new CheckBox(layerName);
-
-            displayedLayersCheckboxes[i].setAllowIndeterminate(false);
-            displayedLayersCheckboxes[i].setSelected(true);
-            MapEditTab.bindDisplayedLayer(i, displayedLayersCheckboxes[i].selectedProperty());
-
-            settingsPane.add(displayedLayersCheckboxes[i], x, y + i + 1);
-        }
-
-        final Text selectedLayerLabel = new Text(Messages.getString("KeroEdit.SELECTED_LAYER"));
-        selectedLayerLabel.setFont(Font.font(null, FontWeight.BOLD, 15));
-        settingsPane.add(selectedLayerLabel, ++x, y);
-
-        final ToggleGroup selectedLayerToggleGroup = new ToggleGroup();
-        final RadioButton[] selectedLayerRadioButtons = new RadioButton[PxPack.NUM_LAYERS];
-        for (int i = 0; i < selectedLayerRadioButtons.length; ++i) {
-            final String layerName;
-            switch (i) {
-                case 0:
-                    layerName = Messages.getString("MapEditTab.TileEditTab.Layers.FOREGROUND");
-                    break;
-                case 1:
-                    layerName = Messages.getString("MapEditTab.TileEditTab.Layers.MIDDLEGROUND");
-                    break;
-                default:
-                    layerName = Messages.getString("MapEditTab.TileEditTab.Layers.BACKGROUND");
-            }
-            selectedLayerRadioButtons[i] = new RadioButton(layerName);
-
-            selectedLayerRadioButtons[i].setToggleGroup(selectedLayerToggleGroup);
-
-            if (0 == i) {
-                selectedLayerRadioButtons[i].setSelected(true);
-            }
-
-            final int layer = i;
-            selectedLayerRadioButtons[i].selectedProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
-                    MapEditTab.setSelectedLayer(layer);
-                }
-            });
-            settingsPane.add(selectedLayerRadioButtons[i], x, y + i + 1);
-        }
-
-        final Text viewSettingsLabel = new Text(Messages.getString("MapEditTab.TileEditTab.VIEW_SETTINGS"));
-        viewSettingsLabel.setFont(Font.font(null, FontWeight.BOLD, 15));
-        settingsPane.add(viewSettingsLabel, ++x, 0);
-
-        final CheckBox toggle = new CheckBox(Messages.getString("MapEditTab.TileEditTab.SHOW_TILE_TYPES_TEXT"));
-        toggle.setSelected(false);
-        MapEditTab.bindShowTileTypes(toggle.selectedProperty());
-
-        settingsPane.add(toggle, x, y + 1);
-
-        return settingsPane;
-    }
-
-    /**
      * Creates the map list {@code ListView}, but does not put any maps into it.
      *
      * @return The created {@code ListView}
@@ -1014,6 +928,126 @@ public class KeroEdit extends Application {
                                Messages.getString("KeroEdit.ReadLicense.UnableToShow.MESSAGE")).showAndWait();
     }
 
+    private static class SettingsPane extends GridPane {
+        SettingsPane() {
+            setPadding(new Insets(10, 10, 10, 10));
+            setVgap(10);
+            setHgap(20);
+
+            int x = 0;
+            initDisplayedLayers(x++, 0);
+            initSelectedLayer(x++, 0);
+            initDrawModes(x++, 0);
+            initViewSettings(x++, 0);
+        }
+
+        private void initDisplayedLayers(int x, int y) {
+            final Text label = new Text(Messages.getString("KeroEdit.SettingsPane.DISPLAYED_LAYERS"));
+            label.setFont(Font.font(null, FontWeight.BOLD, 15));
+            add(label, x, y++);
+
+            final CheckBox[] checkboxes = new CheckBox[PxPack.NUM_LAYERS];
+            for (int i = 0; i < checkboxes.length; ++i) {
+                final String layerName;
+                switch (i) {
+                    case 0:
+                        layerName = Messages.getString("LayerNames.FOREGROUND");
+                        break;
+                    case 1:
+                        layerName = Messages.getString("LayerNames.MIDDLEGROUND");
+                        break;
+                    default:
+                        layerName = Messages.getString("LayerNames.BACKGROUND");
+                }
+                checkboxes[i] = new CheckBox(layerName);
+
+                checkboxes[i].setAllowIndeterminate(false);
+                checkboxes[i].setSelected(true);
+                MapEditTab.bindDisplayedLayer(i, checkboxes[i].selectedProperty());
+
+                add(checkboxes[i], x, y++);
+            }
+        }
+
+        private void initSelectedLayer(int x, int y) {
+            final Text label = new Text(Messages.getString("KeroEdit.SettingsPane.SELECTED_LAYER"));
+            label.setFont(Font.font(null, FontWeight.BOLD, 15));
+            add(label, x, y++);
+
+            final ToggleGroup toggleGroup = new ToggleGroup();
+            final RadioButton[] radioButtons = new RadioButton[PxPack.NUM_LAYERS];
+
+            final String[] layerNames = {Messages.getString("LayerNames.FOREGROUND"),
+                                         Messages.getString("LayerNames.MIDDLEGROUND"),
+                                         Messages.getString("LayerNames.BACKGROUND")};
+
+            for (int i = 0; i < radioButtons.length; ++i) {
+                radioButtons[i] = new RadioButton(layerNames[i]);
+
+                radioButtons[i].setToggleGroup(toggleGroup);
+
+                if (0 == i) {
+                    radioButtons[i].setSelected(true);
+                }
+
+                final int layer = i;
+                radioButtons[i].selectedProperty().addListener((observable, oldValue, newValue) -> {
+                    if (newValue) {
+                        MapEditTab.setSelectedLayer(layer);
+                    }
+                });
+
+                add(radioButtons[i], x, y++);
+            }
+        }
+
+        private void initDrawModes(int x, int y) {
+            final Text label = new Text(Messages.getString("KeroEdit.SettingsPane.DRAW_MODES"));
+            label.setFont(Font.font(null, FontWeight.BOLD, 15));
+            add(label, x, y++);
+
+            final ToggleGroup toggleGroup = new ToggleGroup();
+            final RadioButton[] radioButtons = {new RadioButton(Messages.getString("KeroEdit.SettingsPane.DRAW"))};
+
+            final EnumMap <DrawSettingsItems, Integer> drawSettingsItems = new EnumMap <>(DrawSettingsItems.class);
+            int i = 0;
+            for (final DrawSettingsItems k : DrawSettingsItems.values()) {
+                drawSettingsItems.put(k, i++);
+            }
+
+            radioButtons[drawSettingsItems.get(DrawSettingsItems.DRAW)].setSelected(true);
+
+            for (i = 0; i < radioButtons.length; ++i) {
+                final int mode = i;
+                radioButtons[i].setOnAction(event -> MapEditTab.setDrawMode(DrawSettingsItems.values()[mode]));
+                radioButtons[i].setToggleGroup(toggleGroup);
+                add(radioButtons[i], x, y++);
+            }
+        }
+
+        private void initViewSettings(int x, int y) {
+            final Text label = new Text(Messages.getString("KeroEdit.SettingsPane.VIEW_SETTINGS"));
+            label.setFont(Font.font(null, FontWeight.BOLD, 15));
+            add(label, x, y++);
+
+            final CheckBox[] toggles = {new CheckBox(Messages.getString("KeroEdit.SettingsPane.SHOW_TILE_TYPES"))};
+
+            final EnumMap <ViewSettingsItems, Integer> viewSettingsItems = new EnumMap <>(ViewSettingsItems.class);
+            int i = 0;
+            for (final ViewSettingsItems k : ViewSettingsItems.values()) {
+                viewSettingsItems.put(k, i++);
+            }
+
+            toggles[viewSettingsItems.get(ViewSettingsItems.TILE_TYPES)].setSelected(false);
+            MapEditTab.bindShowTileTypes(toggles[viewSettingsItems.get(ViewSettingsItems.TILE_TYPES)].selectedProperty());
+
+            for (final CheckBox toggle : toggles) {
+                add(toggle, x, y++);
+            }
+
+        }
+    }
+
     private enum FileMenuItems {
         OPEN,
         OPEN_LAST,
@@ -1053,5 +1087,17 @@ public class KeroEdit extends Application {
         DELETE,
         DUPLICATE,
         RENAME
+    }
+
+    public enum DrawSettingsItems {
+        DRAW,
+        RECT,
+        COPY,
+        FILL,
+        REPLACE
+    }
+
+    private enum ViewSettingsItems {
+        TILE_TYPES
     }
 }
