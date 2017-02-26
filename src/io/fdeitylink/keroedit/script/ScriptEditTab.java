@@ -1,4 +1,4 @@
-package com.fdl.keroedit.script;
+package io.fdeitylink.keroedit.script;
 
 import java.text.MessageFormat;
 
@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 
+import io.fdeitylink.keroedit.Messages;
+import io.fdeitylink.keroedit.util.FileEditTab;
+import io.fdeitylink.keroedit.util.JavaFXUtil;
 import javafx.scene.control.Alert;
 
 import javafx.scene.control.Tooltip;
@@ -19,13 +22,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
 
-import com.fdl.keroedit.Messages;
-
-import com.fdl.keroedit.util.Logger;
-
-import com.fdl.keroedit.util.JavaFXUtil;
-
-import com.fdl.keroedit.util.FileEditTab;
+import io.fdeitylink.keroedit.util.Logger;
 
 public class ScriptEditTab extends FileEditTab {
     private final File scriptFile;

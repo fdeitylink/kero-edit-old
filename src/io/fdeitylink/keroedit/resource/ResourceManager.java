@@ -1,4 +1,4 @@
-package com.fdl.keroedit.resource;
+package io.fdeitylink.keroedit.resource;
 
 import java.io.File;
 import java.io.InputStream;

@@ -1,10 +1,13 @@
-package com.fdl.keroedit.hack;
+package io.fdeitylink.keroedit.hack;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import com.fdl.keroedit.util.JavaFXUtil;
+import io.fdeitylink.keroedit.Messages;
+import io.fdeitylink.keroedit.resource.ResourceManager;
+import io.fdeitylink.keroedit.util.FileEditTab;
+import io.fdeitylink.keroedit.util.JavaFXUtil;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -20,13 +23,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 
-import com.fdl.keroedit.util.FileEditTab;
-
-import com.fdl.keroedit.Messages;
-
-import com.fdl.keroedit.resource.ResourceManager;
-
-import com.fdl.keroedit.gamedata.GameData;
+import io.fdeitylink.keroedit.gamedata.GameData;
 
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonArray;

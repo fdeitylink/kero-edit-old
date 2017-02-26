@@ -1,4 +1,4 @@
-package com.fdl.keroedit.mapedit;
+package io.fdeitylink.keroedit.mapedit;
 
 import java.util.Arrays;
 
@@ -16,13 +16,13 @@ import java.io.FileNotFoundException;
 
 import java.text.MessageFormat;
 
+import io.fdeitylink.keroedit.Messages;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
-import com.fdl.keroedit.Messages;
-import com.fdl.keroedit.util.Logger;
+import io.fdeitylink.keroedit.util.Logger;
 
-import com.fdl.keroedit.gamedata.GameData;
+import io.fdeitylink.keroedit.gamedata.GameData;
 
 /**
  * Class for managing PXATTR files as they belong to tilesets

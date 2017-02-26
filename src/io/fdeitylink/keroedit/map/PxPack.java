@@ -13,7 +13,7 @@
  * Copy constructor and new map constructor
  * Throw except for missing tileset names
  */
-package com.fdl.keroedit.map;
+package io.fdeitylink.keroedit.map;
 
 import java.io.FileOutputStream;
 import java.text.MessageFormat;
@@ -34,11 +34,10 @@ import java.text.ParseException;
 
 import java.io.UnsupportedEncodingException;
 
+import io.fdeitylink.keroedit.Messages;
 import javafx.scene.paint.Color;
 
-import com.fdl.keroedit.util.Logger;
-
-import com.fdl.keroedit.Messages;
+import io.fdeitylink.keroedit.util.Logger;
 
 /**
  * Object for storing information about a PXPACK map file

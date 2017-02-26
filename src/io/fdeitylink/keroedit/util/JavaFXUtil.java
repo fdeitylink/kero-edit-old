@@ -1,4 +1,4 @@
-package com.fdl.keroedit.util;
+package io.fdeitylink.keroedit.util;
 
 import javafx.geometry.Insets;
 import javafx.scene.layout.Background;

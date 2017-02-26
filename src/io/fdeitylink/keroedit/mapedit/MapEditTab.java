@@ -9,7 +9,7 @@
  * throw error on tilesetload for 0 dimension?
  */
 
-package com.fdl.keroedit.mapedit;
+package io.fdeitylink.keroedit.mapedit;
 
 import java.io.File;
 
@@ -18,6 +18,8 @@ import java.text.ParseException;
 
 import java.text.MessageFormat;
 
+import io.fdeitylink.keroedit.util.FileEditTab;
+import io.fdeitylink.keroedit.util.JavaFXUtil;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -80,24 +82,21 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.application.Platform;
 
-import com.fdl.keroedit.KeroEdit;
+import io.fdeitylink.keroedit.KeroEdit;
 
-import com.fdl.keroedit.util.JavaFXUtil;
+import io.fdeitylink.keroedit.util.UndoableEdit;
 
-import com.fdl.keroedit.util.FileEditTab;
-import com.fdl.keroedit.util.UndoableEdit;
+import io.fdeitylink.keroedit.Messages;
 
-import com.fdl.keroedit.Messages;
+import io.fdeitylink.keroedit.Config;
 
-import com.fdl.keroedit.Config;
+import io.fdeitylink.keroedit.resource.ResourceManager;
 
-import com.fdl.keroedit.resource.ResourceManager;
+import io.fdeitylink.keroedit.gamedata.GameData;
 
-import com.fdl.keroedit.gamedata.GameData;
+import io.fdeitylink.keroedit.map.PxPack;
 
-import com.fdl.keroedit.map.PxPack;
-
-import com.fdl.keroedit.script.ScriptEditTab;
+import io.fdeitylink.keroedit.script.ScriptEditTab;
 
 public class MapEditTab extends FileEditTab {
     private static final Image pxAttrImg = ResourceManager.getImage("assist/attribute.png");
@@ -276,6 +275,10 @@ public class MapEditTab extends FileEditTab {
         /**
          * Adds all the {@code EventHandler}s and other things
          * for setting up the tileset {@code Stage}
+         *
+         * @param sPane The {@code SplitPane} containing the {@code TilesetPane} to be swapped
+         * between the main {@code Stage} and a secondary {@code Stage}
+         * @param parent The {@code MapEditTab} that holds this {@code TileEditTab}
          */
         private void initTilesetStage(final SplitPane sPane, final MapEditTab parent) {
             //tilesetPane of TileEditTab in EVERY MapEditTab will be removed when tilesetStage is shown

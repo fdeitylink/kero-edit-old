@@ -1,4 +1,4 @@
-package com.fdl.keroedit.util;
+package io.fdeitylink.keroedit.util;
 
 public class Tuple <X, Y> {
     public X x;

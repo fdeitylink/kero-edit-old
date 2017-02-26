@@ -1,4 +1,4 @@
-package com.fdl.keroedit.gamedata;
+package io.fdeitylink.keroedit.gamedata;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,7 +8,7 @@ import java.nio.file.NoSuchFileException;
 
 import java.text.MessageFormat;
 
-import com.fdl.keroedit.Messages;
+import io.fdeitylink.keroedit.Messages;
 
 //TODO: Throws errors (or mkdirs()?) if rsc_x is missing necessary folders
 

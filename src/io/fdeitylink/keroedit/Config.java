@@ -1,15 +1,13 @@
-package com.fdl.keroedit;
+package io.fdeitylink.keroedit;
 
 import java.text.MessageFormat;
 
 import java.util.prefs.Preferences;
 import java.util.prefs.BackingStoreException;
 
+import io.fdeitylink.keroedit.util.JavaFXUtil;
+import io.fdeitylink.keroedit.util.Logger;
 import javafx.scene.paint.Color;
-
-import com.fdl.keroedit.util.Logger;
-
-import com.fdl.keroedit.util.JavaFXUtil;
 
 /**
  * Stores configuration options

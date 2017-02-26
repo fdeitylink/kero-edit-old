@@ -1,6 +1,6 @@
-package com.fdl.keroedit;
+package io.fdeitylink.keroedit;
 
-import com.fdl.keroedit.util.Logger;
+import io.fdeitylink.keroedit.util.Logger;
 
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;

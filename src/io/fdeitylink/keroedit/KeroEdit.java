@@ -28,7 +28,7 @@
  * Find OS-dependent stylesheets?
  */
 
-package com.fdl.keroedit;
+package io.fdeitylink.keroedit;
 
 import java.io.File;
 import java.io.FileReader;
@@ -43,6 +43,13 @@ import java.util.EnumMap;
 
 import java.text.MessageFormat;
 
+import io.fdeitylink.keroedit.hack.HackTab;
+import io.fdeitylink.keroedit.map.PxPack;
+import io.fdeitylink.keroedit.mapedit.MapEditTab;
+import io.fdeitylink.keroedit.resource.ResourceManager;
+import io.fdeitylink.keroedit.script.ScriptEditTab;
+import io.fdeitylink.keroedit.util.FileEditTab;
+import io.fdeitylink.keroedit.util.JavaFXUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
 
@@ -99,19 +106,7 @@ import javafx.print.PrinterJob;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import com.fdl.keroedit.util.JavaFXUtil;
-
-import com.fdl.keroedit.hack.HackTab;
-import com.fdl.keroedit.util.FileEditTab;
-
-import com.fdl.keroedit.resource.ResourceManager;
-
-import com.fdl.keroedit.gamedata.GameData;
-
-import com.fdl.keroedit.mapedit.MapEditTab;
-import com.fdl.keroedit.script.ScriptEditTab;
-
-import com.fdl.keroedit.map.PxPack;
+import io.fdeitylink.keroedit.gamedata.GameData;
 
 public class KeroEdit extends Application {
     private ArrayList <MenuItem> enableOnLoadItems;
@@ -171,10 +166,12 @@ public class KeroEdit extends Application {
 
         enableOnLoadItems = new ArrayList <>();
 
-        //Note to self - keep these as BorderPanes - while a VBox may conceptually seem more fit for this
-        //it does not resize well and there's a whole load of sizing issues
+        /*
+         * Note to self - keep these as BorderPanes - while a VBox may conceptually seem more fit for this
+         * it does not resize well and there's a whole load of sizing issues
+         */
         final BorderPane right = new BorderPane(initTabPane());
-        right.setTop(/*initSettingsPane()*/new SettingsPane());
+        right.setTop(new SettingsPane());
 
         final SplitPane sPane = new SplitPane(initMapList(), right);
         sPane.setDividerPositions(0.1);

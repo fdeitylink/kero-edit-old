@@ -1,4 +1,4 @@
-package com.fdl.keroedit.util;
+package io.fdeitylink.keroedit.util;
 
 import java.util.logging.LogRecord;
 import java.util.logging.FileHandler;
@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
-import com.fdl.keroedit.Messages;
+import io.fdeitylink.keroedit.Messages;
 import javafx.scene.control.Alert;
 
 //TODO: Specify log Levels?
