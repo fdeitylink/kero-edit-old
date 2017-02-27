@@ -22,26 +22,22 @@ public class Logger {
     }
 
     public static void logMessage(final String message) {
-        final String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-
         try {
             logFile = new FileHandler("error.log");
-            logFile.publish(new LogRecord(Level.ALL, currentTime + ": " + message));
+            logFile.publish(new LogRecord(Level.ALL, message));
             logFile.close();
         }
         catch (final IOException except) {
             JavaFXUtil.createTextboxAlert(Alert.AlertType.ERROR, Messages.getString("Logger.Alert.TITLE"),
-                                          null, Messages.getString("Logger.Alert.MESSAGE"),
-                                              currentTime + ": " + message, false).showAndWait();
+                                          null, Messages.getString("Logger.Alert.MESSAGE"), message, false).showAndWait();
         }
     }
 
     public static void logException(final String message, final Exception except) {
-        final String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-
-        final StringBuilder sBuilder = new StringBuilder(currentTime);
+        final StringBuilder sBuilder = new StringBuilder(message);
+        sBuilder.append('\n');
+        sBuilder.append(except.getClass().getName());
         sBuilder.append(": ");
-        sBuilder.append(message);
         sBuilder.append(except.getMessage());
         for (final StackTraceElement element : except.getStackTrace()) {
             sBuilder.append("\n\t");

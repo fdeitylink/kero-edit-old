@@ -6,7 +6,7 @@ import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 
 public class Messages {
-    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("com.fdl.keroedit.messages");
+    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("io.fdeitylink.keroedit.messages");
 
     private Messages() {
 

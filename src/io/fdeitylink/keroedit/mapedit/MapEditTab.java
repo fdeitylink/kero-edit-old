@@ -7,6 +7,8 @@
  * Find workaround for NPE with large Canvas (19tunnel maps in KB); current workaround is minimal map zoom
  * - https://bugs.openjdk.java.net/browse/JDK-8089835
  * throw error on tilesetload for 0 dimension?
+ * Make method for redrawing subset/region of map
+ * Improve multiple selection in tileset
  */
 
 package io.fdeitylink.keroedit.mapedit;
@@ -18,11 +20,9 @@ import java.text.ParseException;
 
 import java.text.MessageFormat;
 
-import io.fdeitylink.keroedit.util.FileEditTab;
-import io.fdeitylink.keroedit.util.JavaFXUtil;
-import javafx.geometry.Rectangle2D;
-import javafx.stage.Modality;
+
 import javafx.stage.Stage;
+import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
 import javafx.scene.Scene;
 
@@ -76,19 +76,27 @@ import javafx.scene.image.PixelFormat;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.application.Platform;
 
-import io.fdeitylink.keroedit.KeroEdit;
+import javafx.geometry.Rectangle2D;
 
+import io.fdeitylink.keroedit.KeroEdit;
+import io.fdeitylink.keroedit.Config;
+
+import io.fdeitylink.keroedit.util.FileEditTab;
 import io.fdeitylink.keroedit.util.UndoableEdit;
 
 import io.fdeitylink.keroedit.Messages;
 
-import io.fdeitylink.keroedit.Config;
+import io.fdeitylink.keroedit.util.Logger;
+
+import io.fdeitylink.keroedit.util.MathUtil;
+import io.fdeitylink.keroedit.util.JavaFXUtil;
 
 import io.fdeitylink.keroedit.resource.ResourceManager;
 
@@ -105,9 +113,15 @@ public class MapEditTab extends FileEditTab {
     private static final SimpleIntegerProperty tilesetZoom = new SimpleIntegerProperty(Config.tilesetZoom);
     private static final SimpleObjectProperty <Color> tilesetBgColor = new SimpleObjectProperty <>(Config.tilesetBgColor);
 
-    private static final SimpleBooleanProperty[] displayedLayers = {new SimpleBooleanProperty(true),
-                                                                    new SimpleBooleanProperty(true),
-                                                                    new SimpleBooleanProperty(true)};
+    private static final SimpleBooleanProperty[] displayedLayers;
+
+    static {
+        displayedLayers = new SimpleBooleanProperty[PxPack.NUM_LAYERS];
+        for (int i = 0; i < displayedLayers.length; ++i) {
+            displayedLayers[i] = new SimpleBooleanProperty(true);
+        }
+    }
+
     private static final SimpleIntegerProperty selectedLayer = new SimpleIntegerProperty();
 
     private static final SimpleObjectProperty <KeroEdit.DrawSettingsItems> drawMode =
@@ -249,6 +263,7 @@ public class MapEditTab extends FileEditTab {
         //private final MapEditTab parent;
 
         TileEditTab(final MapEditTab parent) {
+            //TODO: background on map pane
             super(Messages.getString("MapEditTab.TileEditTab.TITLE"));
             //this.parent = parent;
 
@@ -570,7 +585,6 @@ public class MapEditTab extends FileEditTab {
                         };
                     }
                 };
-
             }
 
             private void initEventHandlers() {
@@ -620,15 +634,10 @@ public class MapEditTab extends FileEditTab {
                     @Override
                     public void handle(final MouseEvent event) {
                         if (event.getButton().equals(MouseButton.PRIMARY)) {
-                            /*
-                             * Math.max() && Math.min() force (x,y) to be within bounds of tileset canvas
-                             * Still might need some fixing for some reason since sometimes left edge of
-                             * drawn rect doesn't show if you drag very quickly
-                             */
-                            final int x = (int)(Math.max(0, Math.min(event.getX(), tilesetCanvas.getWidth() - 1)) /
-                                                tilesetZoom.get() / TILE_WIDTH);
-                            final int y = (int)(Math.max(0, Math.min(event.getY(), tilesetCanvas.getHeight() - 1)) /
-                                                tilesetZoom.get() / TILE_HEIGHT);
+                            final int x = MathUtil.boundInt((int)event.getX(), 0, (int)(tilesetCanvas.getWidth() - 1)) /
+                                          tilesetZoom.get() / TILE_WIDTH;
+                            final int y = MathUtil.boundInt((int)event.getY(), 0, (int)(tilesetCanvas.getHeight() - 1)) /
+                                          tilesetZoom.get() / TILE_HEIGHT;
 
                             if (x != prevX || y != prevY) {
                                 prevX = x;
@@ -781,6 +790,7 @@ public class MapEditTab extends FileEditTab {
                     }
                 });
 
+                //TODO: cap x & y to be within map
                 cursorCanvas.setOnMouseMoved(new EventHandler <MouseEvent>() {
                     private int prevX;
                     private int prevY;
@@ -818,36 +828,51 @@ public class MapEditTab extends FileEditTab {
                             protected Void call() throws Exception {
                                 final int layer = selectedLayer.get();
 
-                                if (mapCanvases[layer].isVisible()) {
-                                    if (event.getButton().equals(MouseButton.PRIMARY) &&
-                                        null != tileLayers[layer].getTiles()) {
+                                if (mapCanvases[layer].isVisible() &&
+                                    event.getButton().equals(MouseButton.PRIMARY)) {
+                                    final int[][] tiles = tileLayers[layer].getTiles();
 
-                                        final int x = (int)(event.getX() / mapZoom.get() / TILE_WIDTH);
-                                        final int y = (int)(event.getY() / mapZoom.get() / TILE_HEIGHT);
+                                    if (null != tiles) {
+                                        final int x = MathUtil.boundInt((int)event.getX(), 0,
+                                                                        (int)(mapCanvases[layer].getWidth() - 1)) /
+                                                      mapZoom.get() / TILE_WIDTH;
+                                        final int y = MathUtil.boundInt((int)event.getY(), 0,
+                                                                        (int)(mapCanvases[layer].getHeight() - 1)) /
+                                                      mapZoom.get() / TILE_HEIGHT;
 
                                         if (y < tileLayers[layer].getTiles().length &&
                                             x < tileLayers[layer].getTiles()[y].length) {
 
-                                            final int[][] newTiles = selectedTiles[layer];
+                                            //caps lengths in the event x or y is close to map edge such that selected tiles go off edge
+                                            final int hLen = Math.min(tiles[0].length - x, selectedTiles[layer][0].length);
+                                            final int vLen = Math.min(tiles.length - y, selectedTiles[layer].length);
 
-                                            final int[][] oldTiles = new int[newTiles.length][newTiles[0].length];
-                                            for (int r = y; r < y + newTiles.length; ++r) {
-                                                System.arraycopy(tileLayers[layer].getTiles()[r], x,
-                                                                 oldTiles[r - y], 0, oldTiles[r - y].length);
+                                            final int[][] newTiles = new int[vLen][hLen];
+                                            //newTiles potentially smaller in either dimension than selectedTiles, as per hLen & vLen
+                                            for (int r = 0; r < newTiles.length; ++r) {
+                                                System.arraycopy(selectedTiles[layer][r], 0, newTiles[r], 0, newTiles[r].length);
                                             }
 
-                                            for (int r = y; r < y + newTiles.length; ++r) {
-                                                for (int c = x; c < x + newTiles[r - y].length; ++c) {
-                                                    tileLayers[layer].setTile(c, r, newTiles[r - y][c - x]);
-                                                    redrawTile(layer, c, r);
+                                            final int[][] oldTiles = new int[newTiles.length][newTiles[0].length];
+
+                                            for (int r = y; r < y + newTiles.length && r < tiles.length; ++r) {
+                                                System.arraycopy(tiles[r], x, oldTiles[r - y], 0, oldTiles[r - y].length);
+
+                                                for (int c = x; c < x + newTiles[r - y].length && c < tiles[r].length; ++c) {
+                                                    if (oldTiles[r - y][c - x] != newTiles[r - y][c - x]) {
+                                                        tileLayers[layer].setTile(c, r, newTiles[r - y][c - x]);
+                                                        redrawTile(layer, c, r);
+                                                    }
                                                 }
                                             }
 
-                                            //TODO: call setChanged() in parent
-                                            setChanged(true);
+                                            if (!Arrays.deepEquals(oldTiles, newTiles)) {
+                                                //TODO: call setChanged() in parent
+                                                setChanged(true);
 
-                                            getRedoStack().clear();
-                                            getUndoStack().addFirst(new UndoableMapEdit(layer, x, y, oldTiles, newTiles));
+                                                getRedoStack().clear();
+                                                getUndoStack().addFirst(new UndoableMapEdit(layer, x, y, oldTiles, newTiles));
+                                            }
                                         }
                                     }
                                 }
@@ -855,8 +880,8 @@ public class MapEditTab extends FileEditTab {
                             }
                         }.call();
                     }
-                    catch (final Exception exception) {
-
+                    catch (final Exception except) {
+                        Logger.logException("Exception in mapStackPane.setOnMouseClicked()", except);
                     }
                 });
 
@@ -1052,7 +1077,7 @@ public class MapEditTab extends FileEditTab {
                     }.call();
                 }
                 catch (final Exception except) {
-
+                    Logger.logException("Exception in redrawTile(" + layer + ", " + x + ", " + y + ", " + ")", except);
                 }
             }
 
@@ -1160,7 +1185,7 @@ public class MapEditTab extends FileEditTab {
                     }.call();
                 }
                 catch (final Exception except) {
-
+                    Logger.logException("Exception in redrawLayer(" + layer + ")", except);
                 }
             }
 
