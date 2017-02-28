@@ -3,8 +3,8 @@ package io.fdeitylink.keroedit.util;
 public class MathUtil {
     /**
      * Returns either the given number or
-     * the lower limit if it is less than the lower limit or
-     * the higher limit if itis greater than the higher limit
+     * the lower limit if the number is less than the lower limit or
+     * the higher limit if the number is greater than the higher limit.
      *
      * @param num The number to put within the given bounds
      * @param lower The inclusive lower limit of the number

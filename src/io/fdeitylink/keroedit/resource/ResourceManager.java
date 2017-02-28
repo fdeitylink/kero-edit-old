@@ -7,17 +7,15 @@ import javafx.scene.image.Image;
 
 public class ResourceManager {
     public static File getFile(final String filename) {
-        //TODO: Have the file have a normal path rather than url-based
-        final String path = ResourceManager.class.getResource(filename).toString();
-        return new File(path.replaceFirst("file:/", ""));
+        //replaceFirst() should turn path into a normal file path rather than URL/URI/etc.
+        return new File(ResourceManager.class.getResource(filename).toString().replaceFirst("file:/", ""));
     }
 
-    public static InputStream getFileAsInputStream(final String filename) {
+    public static InputStream getInputStream(final String filename) {
         return ResourceManager.class.getResourceAsStream(filename);
     }
 
     public static Image getImage(final String filename) {
-        final Image result = new Image(ResourceManager.class.getResource(filename).toString(), false);
-        return result;
+        return new Image(ResourceManager.class.getResource(filename).toString(), false);
     }
 }

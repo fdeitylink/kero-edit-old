@@ -193,14 +193,11 @@ public class JavaFXUtil {
      * @param headerText The header text of the {@code Dialog}
      * @param firstLabelString The label for the first {@code TextField}
      * @param secondLabelString The label for the second {@code TextField}
-     * @param okButtonText The text for the OK button
-     *
      * @return The created {@code Dialog <Pair <String, String>>}
      */
     public static Dialog <Tuple <String, String>> createDualTextFieldDialog(final String title, final String headerText,
                                                                             final String firstLabelString,
-                                                                            final String secondLabelString,
-                                                                            final String okButtonText) {
+                                                                            final String secondLabelString) {
         final Dialog <Tuple <String, String>> dialog = new Dialog <>();
         dialog.setTitle(title);
         dialog.setHeaderText(headerText);

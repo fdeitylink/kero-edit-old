@@ -26,6 +26,7 @@
  *
  * Create missing directories rather than throw error?
  * Find OS-dependent stylesheets?
+ * Use the JavaFX API for prefs (get/setUserData())?
  */
 
 package io.fdeitylink.keroedit;

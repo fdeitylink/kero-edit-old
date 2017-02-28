@@ -20,7 +20,6 @@ import java.text.ParseException;
 
 import java.text.MessageFormat;
 
-
 import javafx.stage.Stage;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
@@ -135,7 +134,7 @@ public class MapEditTab extends FileEditTab {
 
     static {
         tilesetStage = new Stage();
-        tilesetStage.setAlwaysOnTop(true);
+        tilesetStage.setAlwaysOnTop(true); //TODO: minimize or hide when KeroEdit program not focused
         tilesetStage.setTitle(Messages.getString("MapEditTab.TileEditTab.TILESET_WINDOW_TITLE"));
         tilesetStage.setScene(new Scene(new Pane()));
 
@@ -357,7 +356,7 @@ public class MapEditTab extends FileEditTab {
             private final Canvas tilesetCanvas;
             private final Canvas tileTypeCanvas;
             private final Canvas selectedRectCanvas;
-            private final ImageView selectedTileImgView;
+            private final ImageView selectedTilesImgView;
 
             private final Rectangle2D[] selectedRegions;
 
@@ -403,11 +402,11 @@ public class MapEditTab extends FileEditTab {
                 final ScrollPane tilesetScrollPane = new ScrollPane(stackPane);
                 tilesetScrollPane.setPannable(false);
 
-                selectedTileImgView = new ImageView();
+                selectedTilesImgView = new ImageView();
 
                 initEventHandlers();
 
-                getItems().addAll(tilesetScrollPane, new Pane(selectedTileImgView));
+                getItems().addAll(tilesetScrollPane, new Pane(selectedTilesImgView));
             }
 
             private void initServices() {
@@ -502,7 +501,7 @@ public class MapEditTab extends FileEditTab {
                                 }
 
                                 //TODO: Change selectedTiles view to a Canvas?
-                                Platform.runLater(() -> selectedTileImgView
+                                Platform.runLater(() -> selectedTilesImgView
                                         .setImage(JavaFXUtil.scaleImage(tilesImg, tilesetZoom.get())));
                                 return null;
                             }
@@ -933,8 +932,7 @@ public class MapEditTab extends FileEditTab {
                     //TODO: Check that I did this right
                     JavaFXUtil.createDualTextFieldDialog(title, currentSizeStr,
                                                          Messages.getString("MapEditTab.TileEditTab.Resize.NEW_WIDTH"),
-                                                         Messages.getString("MapEditTab.TileEditTab.Resize.NEW_HEIGHT"),
-                                                         Messages.getString("MapEditTab.TileEditTab.Resize.DIALOG_OK"))
+                                                         Messages.getString("MapEditTab.TileEditTab.Resize.NEW_HEIGHT"))
                               .showAndWait().ifPresent(result -> {
                         final String widthStr = result.x;
                         final String heightStr = result.y;
