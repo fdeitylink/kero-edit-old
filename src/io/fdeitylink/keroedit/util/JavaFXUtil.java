@@ -18,6 +18,7 @@ import javafx.scene.layout.GridPane;
 
 import javafx.scene.control.ButtonType;
 
+import javafx.scene.control.TextInputControl;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextArea;
 
@@ -34,15 +35,15 @@ public class JavaFXUtil {
     }
 
     /**
-     * Sets the maximum length of the text in a {@code TextField}
+     * Sets the maximum length of the text in a {@code TextInputControl}
      *
-     * @param field The {@code TextField} to apply a length limit to
-     * @param length The maximum length of the string inside the given {@code TextField}
+     * @param input The {@code TextInputConrol} to apply a length limit to
+     * @param len The maximum length of the string inside the given {@code TextInputControl}
      */
-    public static void setTextFieldLength(final TextField field, final int length) {
-        field.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.length() > length) {
-                field.textProperty().set(newValue.substring(0, length));
+    public static void setTextFieldLength(final TextInputControl input, final int len) {
+        input.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > len) {
+                input.textProperty().set(newValue.substring(0, len));
             }
         });
     }
@@ -94,8 +95,8 @@ public class JavaFXUtil {
      * src is returned.
      */
     public static Image scaleImage(final Image src, final int scale) {
-        if (null == src) {
-            return null;
+        if (null == src || 1 == scale) {
+            return src;
         }
 
         final int srcWidth = (int)src.getWidth();
@@ -103,10 +104,6 @@ public class JavaFXUtil {
 
         if (0 == srcWidth || 0 == srcHeight) {
             return null;
-        }
-
-        if (1 == scale) {
-            return src;
         }
 
         final WritableImage dest = new WritableImage(srcWidth * scale, srcHeight * scale);
@@ -191,13 +188,13 @@ public class JavaFXUtil {
      *
      * @param title The title text of the {@code Dialog}
      * @param headerText The header text of the {@code Dialog}
-     * @param firstLabelString The label for the first {@code TextField}
-     * @param secondLabelString The label for the second {@code TextField}
+     * @param firstLabel The label for the first {@code TextField}
+     * @param secondLabel The label for the second {@code TextField}
+     *
      * @return The created {@code Dialog <Pair <String, String>>}
      */
     public static Dialog <Tuple <String, String>> createDualTextFieldDialog(final String title, final String headerText,
-                                                                            final String firstLabelString,
-                                                                            final String secondLabelString) {
+                                                                            final String firstLabel, final String secondLabel) {
         final Dialog <Tuple <String, String>> dialog = new Dialog <>();
         dialog.setTitle(title);
         dialog.setHeaderText(headerText);
@@ -206,10 +203,10 @@ public class JavaFXUtil {
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
         final TextField firstField = new TextField();
-        firstField.setPromptText(firstLabelString);
+        firstField.setPromptText(firstLabel);
 
         final TextField secondField = new TextField();
-        secondField.setPromptText(secondLabelString);
+        secondField.setPromptText(secondLabel);
 
         final GridPane dialogPane = new GridPane();
 

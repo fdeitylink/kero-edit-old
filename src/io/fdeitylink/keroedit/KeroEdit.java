@@ -115,7 +115,7 @@ public class KeroEdit extends Application {
     private Stage mainStage;
     private TabPane mainTabPane;
 
-    private Tab notepadTab;
+    private NotepadTab notepadTab;
 
     private ListView <String> mapList;
 
@@ -154,7 +154,7 @@ public class KeroEdit extends Application {
         mainStage = stage;
 
         mainStage.setOnCloseRequest(event -> {
-            Config.notepadText = ((TextArea)notepadTab.getContent()).getText();
+            Config.notepadText = notepadTab.notepad.getText();
             Config.savePreferences();
 
             mainStage.close();
@@ -888,12 +888,13 @@ public class KeroEdit extends Application {
 
         mainTabPane.tabClosingPolicyProperty().setValue(TabPane.TabClosingPolicy.ALL_TABS);
 
-        notepadTab = new Tab(Messages.getString("KeroEdit.NOTEPAD_TITLE"));
+        /*notepadTab = new Tab(Messages.getString("KeroEdit.NOTEPAD_TITLE"));
         notepadTab.setId(Messages.getString("KeroEdit.NOTEPAD_TITLE"));
 
         notepadTab.setContent(new TextArea(Config.notepadText));
 
-        notepadTab.setClosable(false);
+        notepadTab.setClosable(false);*/
+        notepadTab = new NotepadTab();
         mainTabPane.getTabs().add(notepadTab);
 
         return mainTabPane;
@@ -1043,6 +1044,19 @@ public class KeroEdit extends Application {
                 add(toggle, x, y++);
             }
 
+        }
+    }
+
+    private static class NotepadTab extends Tab {
+        private final TextArea notepad;
+
+        NotepadTab() {
+            super(Messages.getString("KeroEdit.NOTEPAD_TITLE"));
+            setId(Messages.getString("KeroEdit.NOTEPAD_TITLE"));
+
+            setClosable(false);
+
+            setContent(notepad = new TextArea(Config.notepadText));
         }
     }
 

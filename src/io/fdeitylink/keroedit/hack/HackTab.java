@@ -19,6 +19,7 @@ import javafx.scene.control.TreeItem;
 
 import javafx.geometry.Insets;
 
+import javafx.scene.layout.HBox;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
@@ -31,7 +32,6 @@ import com.eclipsesource.json.JsonValue;
 
 public class HackTab extends FileEditTab {
     private final SplitPane sPane;
-    private final TreeView <String> hacksTree;
 
     public HackTab() {
         final String stringsFname;
@@ -58,7 +58,7 @@ public class HackTab extends FileEditTab {
         final HackTreeItem root = new HackTreeItem();
         root.setExpanded(true);
 
-        hacksTree = new TreeView <>(root);
+        final TreeView <String> hacksTree = new TreeView <>(root);
         hacksTree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.isLeaf()) {
                 sPane.getItems().set(1, ((HackTreeItem)newValue).hackPane);
@@ -98,36 +98,33 @@ public class HackTab extends FileEditTab {
 
     @Override
     protected void setChanged(final boolean changed) {
-        //no good way to track if something was modified (well not yet - can put change listener on text fields)
-        this.changed = changed;
+
     }
 
     private HackTreeItem parseHackFile(final File hackFile, final String name) {
+        FileReader hackFileReader = null;
         HackTreeItem[] hTreeItems = null;
+
         try {
-            final JsonArray sects = Json.parse(new FileReader(hackFile)).asObject().get("sects").asArray();
+            final JsonArray sects = Json.parse(hackFileReader = new FileReader(hackFile)).asObject().get("sects").asArray();
             hTreeItems = new HackTreeItem[sects.size()];
 
             int i = 0;
             for (final JsonValue sect : sects) {
-                final GridPane hackPane = new GridPane();
+                final GridPane hackPane = new GridPane(); //TODO: VBox
                 hackPane.setPadding(new Insets(10, 10, 10, 10));
                 hackPane.setVgap(10);
                 hackPane.setHgap(10);
 
                 int y = 0;
                 for (final JsonValue item : sect.asObject().get("items").asArray()) {
-                    final Text label = new Text(item.asObject().getString("label", null));
-                    label.setFont(Font.font(null, FontWeight.NORMAL, 12));
-                    hackPane.add(label, 0, y);
+                    final String label = item.asObject().getString("label", "<label missing>");
+                    final String currVal = item.asObject().getString("default", ""); //change to read str from exe; strip null terminators
+                    final String defVal = item.asObject().getString("default", "<default missing>");
+                    final int len = item.asObject().getInt("len", -1);
+                    final int offset = item.asObject().getInt("offset", -1);
 
-                    final String currentVal = item.asObject().getString("default", ""); //change to read str from exe
-                    final TextField field = new TextField(currentVal);
-                    field.setTooltip(new Tooltip("Default: " + item.asObject().getString("default", null)));
-                    JavaFXUtil.setTextFieldLength(field, item.asObject().getInt("len", currentVal.length()));
-                    hackPane.add(field, 1, y++);
-
-                    //TODO: Store offsets
+                    hackPane.add(new HackField(label, currVal, defVal, len, offset), 0, y++);
                 }
 
                 hTreeItems[i++] = new HackTreeItem(sect.asObject().getString("name", null), hackPane);
@@ -137,6 +134,16 @@ public class HackTab extends FileEditTab {
 
         }
         //TODO: Catch ParseException for invalid JSON
+        finally {
+            try {
+                if (null != hackFileReader) {
+                    hackFileReader.close();
+                }
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         final HackTreeItem subroot = new HackTreeItem(name);
         subroot.setExpanded(true);
@@ -145,7 +152,7 @@ public class HackTab extends FileEditTab {
         return subroot;
     }
 
-    private class HackTreeItem extends TreeItem <String> {
+    private static class HackTreeItem extends TreeItem <String> {
         private final GridPane hackPane;
 
         HackTreeItem() {
@@ -162,6 +169,29 @@ public class HackTab extends FileEditTab {
         HackTreeItem(final String name, final GridPane hackPane) {
             super(name);
             this.hackPane = hackPane;
+        }
+    }
+
+    private static class HackField extends HBox {
+        private final Text label;
+        private final TextField field;
+        private final int offset;
+
+        HackField(final String labelText, final String currentVal, final String defaultVal, final int len, final int offset) {
+            //TODO: align text and fields in rows and columns (have this extend GridPane?
+            super(10);
+
+            this.offset = offset;
+
+            label = new Text(labelText);
+            label.setFont(Font.font(null, FontWeight.NORMAL, 12));
+
+            field = new TextField(currentVal);
+            field.setDisable(-1 == len || -1 == offset);
+            field.setTooltip(new Tooltip("Default: " + defaultVal));
+            JavaFXUtil.setTextFieldLength(field, len);
+
+            getChildren().addAll(label, field);
         }
     }
 }

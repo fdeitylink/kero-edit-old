@@ -9,6 +9,7 @@
  * throw error on tilesetload for 0 dimension?
  * Make method for redrawing subset/region of map
  * Improve multiple selection in tileset
+ * Put exception strs in messages.properties
  */
 
 package io.fdeitylink.keroedit.mapedit;
@@ -107,6 +108,7 @@ import io.fdeitylink.keroedit.script.ScriptEditTab;
 
 public class MapEditTab extends FileEditTab {
     private static final Image pxAttrImg = ResourceManager.getImage("assist/attribute.png");
+    private static final Image entityImg = ResourceManager.getImage("assist/unittype.png"); //TODO: use file from mod-specific assist folder
 
     private static final SimpleIntegerProperty mapZoom = new SimpleIntegerProperty(Config.mapZoom);
     private static final SimpleIntegerProperty tilesetZoom = new SimpleIntegerProperty(Config.tilesetZoom);
@@ -252,7 +254,7 @@ public class MapEditTab extends FileEditTab {
         private static final int PXATTR_IMAGE_HEIGHT = PXATTR_TILE_HEIGHT * 16;
 
         private final PxPack.Head head;
-        //private final ArrayList<PxPack.Entity> entities;
+        private final ArrayList <PxPack.Entity> entities;
 
         private final MapPane mapPane;
         private final TilesetPane tilesetPane;
@@ -262,15 +264,15 @@ public class MapEditTab extends FileEditTab {
         //private final MapEditTab parent;
 
         TileEditTab(final MapEditTab parent) {
-            //TODO: background on map pane
             super(Messages.getString("MapEditTab.TileEditTab.TITLE"));
             //this.parent = parent;
 
             selectedTiles = new int[map.getTileLayers().length][1][1];
 
             head = map.getHead(); //TODO: Store same head as properties tab in order to automatically update properties
-            //entities = map.getEntities();
+            entities = map.getEntities();
 
+            //TODO: background on map pane
             final SplitPane sPane = new SplitPane(tilesetPane = new TilesetPane(), mapPane = new MapPane());
             sPane.setOrientation(Orientation.VERTICAL);
             sPane.setDividerPositions(0.1);
@@ -732,6 +734,7 @@ public class MapEditTab extends FileEditTab {
             private final PxPack.TileLayer[] tileLayers;
 
             private final Canvas[] mapCanvases;
+            private final Canvas entityCanvas;
             private final Canvas cursorCanvas;
             private final StackPane mapStackPane;
 
@@ -744,6 +747,8 @@ public class MapEditTab extends FileEditTab {
                     mapCanvases[i].visibleProperty().bind(displayedLayers[i]);
                 }
 
+                entityCanvas = new Canvas();
+
                 cursorCanvas = new Canvas();
                 cursorCanvas.getGraphicsContext2D().setStroke(Color.WHITE);
                 cursorCanvas.getGraphicsContext2D().setLineWidth(2.0);
@@ -755,7 +760,7 @@ public class MapEditTab extends FileEditTab {
                 for (int i = mapCanvases.length - 1; i > -1; --i) {
                     mapStackPane.getChildren().add(mapCanvases[i]);
                 }
-                mapStackPane.getChildren().add(cursorCanvas);
+                mapStackPane.getChildren().addAll(entityCanvas, cursorCanvas);
 
                 bgColor = new SimpleObjectProperty <>(head.getBgColor());
                 bgColor.addListener((observable, oldValue, newValue) -> JavaFXUtil.setBackgroundColor(newValue, mapStackPane));
@@ -765,6 +770,8 @@ public class MapEditTab extends FileEditTab {
                 setPannable(false);
                 setContextMenu(initContextMenu());
                 setContent(mapStackPane);
+
+                //redrawEntities();
             }
 
             /**
@@ -1187,6 +1194,31 @@ public class MapEditTab extends FileEditTab {
                 }
             }
 
+            private void redrawEntities() {
+                try {
+                    new Task <Void>() {
+                        @Override
+                        protected Void call() {
+                            final PixelReader entitiesReader = entityImg.getPixelReader();
+                            for (final PxPack.Entity entity: entities) {
+                                //pull sprite
+                            }
+                            return null;
+                        }
+                    }.call();
+                }
+                catch (final Exception except) {
+                    Logger.logException("Exception in redrawEntities()", except);
+                }
+
+                entityCanvas.getGraphicsContext2D().setStroke(Color.BLACK);
+                for (final PxPack.Entity e : entities) {
+                    entityCanvas.getGraphicsContext2D().strokeRect(e.getX() * TILE_WIDTH * mapZoom.get(),
+                                                                   e.getY() * TILE_WIDTH * mapZoom.get(),
+                                                                   TILE_WIDTH * mapZoom.get(), TILE_HEIGHT * mapZoom.get());
+                }
+            }
+
             /**
              * Fixes the sizes of the {@code Canvas}es
              */
@@ -1214,6 +1246,9 @@ public class MapEditTab extends FileEditTab {
 
                 cursorCanvas.setWidth(maxWidth);
                 cursorCanvas.setHeight(maxHeight);
+
+                entityCanvas.setWidth(maxWidth);
+                entityCanvas.setHeight(maxHeight);
             }
 
             private class UndoableMapEdit implements UndoableEdit {
