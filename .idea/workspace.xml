@@ -6,17 +6,9 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e217904-e010-4fe6-a354-8fe1baa2af52" name="Default" comment="Cleanup&#10;Code efficiency&#10;Regenerated JavaDoc&#10;Rebuilt class files &amp; jar&#10;Renamed &quot;purple_check.png&quot; to &quot;purple_checkerboard.png&quot;">
+    <list default="true" id="7e217904-e010-4fe6-a354-8fe1baa2af52" name="Default" comment="Stopped ignoring out directory">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/KeroEdit.iml" afterPath="$PROJECT_DIR$/KeroEdit.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/readme.txt" afterPath="$PROJECT_DIR$/readme.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.java" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/hack/HackTab.java" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/hack/HackTab.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/util/JavaFXUtil.java" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/util/JavaFXUtil.java" />
     </list>
-    <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -78,8 +70,8 @@
       <file leaf-file-name="HackTab.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/hack/HackTab.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="33" column="34" lean-forward="true" selection-start-line="33" selection-start-column="34" selection-end-line="33" selection-end-column="34" />
+            <state relative-caret-position="170">
+              <caret line="84" column="3" lean-forward="false" selection-start-line="84" selection-start-column="3" selection-end-line="84" selection-end-column="3" />
               <folding>
                 <element signature="method#HackTab#0;class#HackTab#0" expanded="false" />
                 <element signature="method#undo#0;class#HackTab#0" expanded="false" />
@@ -109,8 +101,18 @@
             <state relative-caret-position="5151">
               <caret line="616" column="0" lean-forward="false" selection-start-line="616" selection-start-column="0" selection-end-line="616" selection-end-column="0" />
               <folding>
+                <element signature="e#0#28130#0" expanded="false" />
+                <element signature="imports" expanded="false" />
+                <element signature="e#9668#9669#0" expanded="false" />
+                <element signature="e#9763#9764#0" expanded="false" />
                 <element signature="method#rename#0;class#PxPack#0" expanded="false" />
+                <element signature="e#10625#10626#0" expanded="false" />
+                <element signature="e#10652#10653#0" expanded="false" />
+                <element signature="e#10694#10695#0" expanded="false" />
+                <element signature="e#10727#10728#0" expanded="false" />
                 <element signature="method#getEntities#0;class#PxPack#0" expanded="false" />
+                <element signature="e#11088#11089#0" expanded="false" />
+                <element signature="e#11124#11125#0" expanded="false" />
                 <element signature="method#readString#0;class#PxPack#0" expanded="false" />
                 <element signature="method#writeString#0;class#PxPack#0" expanded="false" />
                 <element signature="method#toString#0;class#PxPack#0" expanded="false" />
@@ -118,9 +120,23 @@
                 <element signature="method#Head#0;class#Head#0;class#PxPack#0" expanded="false" />
                 <element signature="method#Head#1;class#Head#0;class#PxPack#0" expanded="false" />
                 <element signature="method#Head#2;class#Head#0;class#PxPack#0" expanded="false" />
+                <element signature="e#15005#15006#0" expanded="false" />
+                <element signature="e#15047#15048#0" expanded="false" />
+                <element signature="e#15088#15089#0" expanded="false" />
+                <element signature="e#15159#15160#0" expanded="false" />
+                <element signature="e#15205#15206#0" expanded="false" />
+                <element signature="e#15251#15252#0" expanded="false" />
+                <element signature="e#15294#15295#0" expanded="false" />
+                <element signature="e#15373#15374#0" expanded="false" />
+                <element signature="e#15410#15411#0" expanded="false" />
+                <element signature="e#15448#15449#0" expanded="false" />
+                <element signature="e#15493#15494#0" expanded="false" />
+                <element signature="e#15572#15573#0" expanded="false" />
                 <element signature="method#setDescription#0;class#Head#0;class#PxPack#0" expanded="false" />
                 <element signature="method#setMapName#0;class#Head#0;class#PxPack#0" expanded="false" />
                 <element signature="method#setSpritesheetName#0;class#Head#0;class#PxPack#0" expanded="false" />
+                <element signature="e#16874#16875#0" expanded="false" />
+                <element signature="e#16931#16932#0" expanded="false" />
                 <element signature="method#setBgColor#0;class#Head#0;class#PxPack#0" expanded="false" />
                 <element signature="method#setTilesetName#0;class#Head#0;class#PxPack#0" expanded="false" />
                 <element signature="method#toString#0;class#Head#0;class#PxPack#0" expanded="false" />
@@ -134,8 +150,30 @@
                 <element signature="method#Entity#0;class#Entity#0;class#PxPack#0" expanded="false" />
                 <element signature="method#Entity#1;class#Entity#0;class#PxPack#0" expanded="false" />
                 <element signature="method#Entity#2;class#Entity#0;class#PxPack#0" expanded="false" />
+                <element signature="e#24788#24789#0" expanded="false" />
+                <element signature="e#24823#24824#0" expanded="false" />
+                <element signature="e#24855#24856#0" expanded="false" />
+                <element signature="e#24890#24891#0" expanded="false" />
+                <element signature="e#24930#24931#0" expanded="false" />
+                <element signature="e#24972#24973#0" expanded="false" />
+                <element signature="e#25001#25002#0" expanded="false" />
+                <element signature="e#25033#25034#0" expanded="false" />
+                <element signature="e#25062#25063#0" expanded="false" />
+                <element signature="e#25094#25095#0" expanded="false" />
+                <element signature="e#25136#25137#0" expanded="false" />
+                <element signature="e#25213#25214#0" expanded="false" />
+                <element signature="e#25248#25249#0" expanded="false" />
+                <element signature="e#25283#25284#0" expanded="false" />
+                <element signature="e#25331#25332#0" expanded="false" />
+                <element signature="e#25371#25372#0" expanded="false" />
+                <element signature="e#25418#25419#0" expanded="false" />
+                <element signature="e#25458#25459#0" expanded="false" />
+                <element signature="e#25520#25521#0" expanded="false" />
+                <element signature="e#25574#25575#0" expanded="false" />
                 <element signature="method#setX#0;class#Entity#0;class#PxPack#0" expanded="false" />
                 <element signature="method#setY#0;class#Entity#0;class#PxPack#0" expanded="false" />
+                <element signature="e#26334#26335#0" expanded="false" />
+                <element signature="e#26388#26389#0" expanded="false" />
                 <element signature="method#setName#0;class#Entity#0;class#PxPack#0" expanded="false" />
               </folding>
             </state>
@@ -199,7 +237,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>assist</find>
       <find>Relay</find>
       <find>mpc</find>
       <find>&quot;x</find>
@@ -229,6 +266,7 @@
       <find>catch (final Except</find>
       <find>Math.max</find>
       <find>notepadTab</find>
+      <find>out</find>
     </findStrings>
     <replaceStrings>
       <replace>&quot;\n&quot;)</replace>
@@ -276,7 +314,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/com/fdl/keroedit/resource/assist/heaven_strings.json" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/resource/assist/hour_strings.json" />
         <option value="$PROJECT_DIR$/../../Test.java" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_1.java" />
@@ -327,6 +364,7 @@
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/hack/HackTab.java" />
         <option value="$PROJECT_DIR$/readme.txt" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties" />
+        <option value="$PROJECT_DIR$/.idea/workspace.xml" />
       </list>
     </option>
   </component>
@@ -414,47 +452,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="KeroEdit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="KeroEdit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="keroedit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="KeroEdit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="KeroEdit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="keroedit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="hack" />
+              <option name="myItemId" value=".idea" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -803,7 +801,14 @@
       <option name="project" value="LOCAL" />
       <updated>1488248817370</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="Updated HackTab&#10;Disables invalid fields&#10;Private HackField class to better manage each item's attributes and editing&#10;Also NotepadTab class in KeroEdit now">
+      <created>1488412531421</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1488412531421</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TodoView">
@@ -821,10 +826,12 @@
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.49707174" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.47657394" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31602374" sideWeight="0.5322108" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329429" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31602374" sideWeight="0.46778917" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31305638" sideWeight="0.49707174" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21815519" sideWeight="0.49406528" order="0" side_tool="false" content_ui="combo" />
@@ -832,17 +839,15 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24963397" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19180088" sideWeight="0.5059347" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3768546" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24963397" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.35014838" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3768546" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.47657394" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" x="92" y="92" width="1182" height="584" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31602374" sideWeight="0.46778917" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
@@ -898,7 +903,8 @@
     <MESSAGE value="Renamed com.fdl to io.fdeitylink to more closely match my website domain" />
     <MESSAGE value="Improved tile placing on map&#10;Faster &amp; more efficient&#10;Set bounds on x &amp; y to avoid indexoutofboundsexceptions&#10;Fixed bug where if selected tiles would go off edge of map (eg horizontal len of 2 and click on last tile) no tiles would be placed" />
     <MESSAGE value="Cleanup&#10;Code efficiency&#10;Regenerated JavaDoc&#10;Rebuilt class files &amp; jar&#10;Renamed &quot;purple_check.png&quot; to &quot;purple_checkerboard.png&quot;" />
-    <option name="LAST_COMMIT_MESSAGE" value="Cleanup&#10;Code efficiency&#10;Regenerated JavaDoc&#10;Rebuilt class files &amp; jar&#10;Renamed &quot;purple_check.png&quot; to &quot;purple_checkerboard.png&quot;" />
+    <MESSAGE value="Updated HackTab&#10;Disables invalid fields&#10;Private HackField class to better manage each item's attributes and editing&#10;Also NotepadTab class in KeroEdit now" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated HackTab&#10;Disables invalid fields&#10;Private HackField class to better manage each item's attributes and editing&#10;Also NotepadTab class in KeroEdit now" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -920,15 +926,6 @@
     <module2generated>rO0ABXNyABFqYXZhLnV0aWwuSGFzaE1hcAUH2sHDFmDRAwACRgAKbG9hZEZhY3RvckkACXRocmVzaG9sZHhwP0AAAAAAAAF3CAAAAAIAAAABdAAIS2Vyb0VkaXRzcgAvb3JnLmVjbGlwc2UueHRleHQuYnVpbGQuU291cmNlMkdlbmVyYXRlZE1hcHBpbmdgwc1G7ZGGygwAAHhwdwQAAAAAeHg=</module2generated>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/util/QueueImpl.java" />
-    <entry file="file://$PROJECT_DIR$/src/com/fdl/keroedit/mapedit/ImageEditTab.java" />
-    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/util/Tuple.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="5" lean-forward="false" selection-start-line="9" selection-start-column="5" selection-end-line="9" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/eclipsesource/json/LICENSE">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
@@ -1222,8 +1219,18 @@
         <state relative-caret-position="5151">
           <caret line="616" column="0" lean-forward="false" selection-start-line="616" selection-start-column="0" selection-end-line="616" selection-end-column="0" />
           <folding>
+            <element signature="e#0#28130#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#9668#9669#0" expanded="false" />
+            <element signature="e#9763#9764#0" expanded="false" />
             <element signature="method#rename#0;class#PxPack#0" expanded="false" />
+            <element signature="e#10625#10626#0" expanded="false" />
+            <element signature="e#10652#10653#0" expanded="false" />
+            <element signature="e#10694#10695#0" expanded="false" />
+            <element signature="e#10727#10728#0" expanded="false" />
             <element signature="method#getEntities#0;class#PxPack#0" expanded="false" />
+            <element signature="e#11088#11089#0" expanded="false" />
+            <element signature="e#11124#11125#0" expanded="false" />
             <element signature="method#readString#0;class#PxPack#0" expanded="false" />
             <element signature="method#writeString#0;class#PxPack#0" expanded="false" />
             <element signature="method#toString#0;class#PxPack#0" expanded="false" />
@@ -1231,9 +1238,23 @@
             <element signature="method#Head#0;class#Head#0;class#PxPack#0" expanded="false" />
             <element signature="method#Head#1;class#Head#0;class#PxPack#0" expanded="false" />
             <element signature="method#Head#2;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="e#15005#15006#0" expanded="false" />
+            <element signature="e#15047#15048#0" expanded="false" />
+            <element signature="e#15088#15089#0" expanded="false" />
+            <element signature="e#15159#15160#0" expanded="false" />
+            <element signature="e#15205#15206#0" expanded="false" />
+            <element signature="e#15251#15252#0" expanded="false" />
+            <element signature="e#15294#15295#0" expanded="false" />
+            <element signature="e#15373#15374#0" expanded="false" />
+            <element signature="e#15410#15411#0" expanded="false" />
+            <element signature="e#15448#15449#0" expanded="false" />
+            <element signature="e#15493#15494#0" expanded="false" />
+            <element signature="e#15572#15573#0" expanded="false" />
             <element signature="method#setDescription#0;class#Head#0;class#PxPack#0" expanded="false" />
             <element signature="method#setMapName#0;class#Head#0;class#PxPack#0" expanded="false" />
             <element signature="method#setSpritesheetName#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="e#16874#16875#0" expanded="false" />
+            <element signature="e#16931#16932#0" expanded="false" />
             <element signature="method#setBgColor#0;class#Head#0;class#PxPack#0" expanded="false" />
             <element signature="method#setTilesetName#0;class#Head#0;class#PxPack#0" expanded="false" />
             <element signature="method#toString#0;class#Head#0;class#PxPack#0" expanded="false" />
@@ -1247,8 +1268,30 @@
             <element signature="method#Entity#0;class#Entity#0;class#PxPack#0" expanded="false" />
             <element signature="method#Entity#1;class#Entity#0;class#PxPack#0" expanded="false" />
             <element signature="method#Entity#2;class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="e#24788#24789#0" expanded="false" />
+            <element signature="e#24823#24824#0" expanded="false" />
+            <element signature="e#24855#24856#0" expanded="false" />
+            <element signature="e#24890#24891#0" expanded="false" />
+            <element signature="e#24930#24931#0" expanded="false" />
+            <element signature="e#24972#24973#0" expanded="false" />
+            <element signature="e#25001#25002#0" expanded="false" />
+            <element signature="e#25033#25034#0" expanded="false" />
+            <element signature="e#25062#25063#0" expanded="false" />
+            <element signature="e#25094#25095#0" expanded="false" />
+            <element signature="e#25136#25137#0" expanded="false" />
+            <element signature="e#25213#25214#0" expanded="false" />
+            <element signature="e#25248#25249#0" expanded="false" />
+            <element signature="e#25283#25284#0" expanded="false" />
+            <element signature="e#25331#25332#0" expanded="false" />
+            <element signature="e#25371#25372#0" expanded="false" />
+            <element signature="e#25418#25419#0" expanded="false" />
+            <element signature="e#25458#25459#0" expanded="false" />
+            <element signature="e#25520#25521#0" expanded="false" />
+            <element signature="e#25574#25575#0" expanded="false" />
             <element signature="method#setX#0;class#Entity#0;class#PxPack#0" expanded="false" />
             <element signature="method#setY#0;class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="e#26334#26335#0" expanded="false" />
+            <element signature="e#26388#26389#0" expanded="false" />
             <element signature="method#setName#0;class#Entity#0;class#PxPack#0" expanded="false" />
           </folding>
         </state>
@@ -1316,10 +1359,84 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="197">
+          <caret line="442" column="36" lean-forward="false" selection-start-line="442" selection-start-column="33" selection-end-line="442" selection-end-column="36" />
+          <folding>
+            <element signature="e#18946#18952#0" expanded="false" />
+            <element signature="e#19172#19178#0" expanded="false" />
+            <element signature="e#19184#19190#0" expanded="false" />
+            <element signature="e#19952#19958#0" expanded="true" />
+            <element signature="e#19960#19966#0" expanded="true" />
+            <element signature="e#19993#19999#0" expanded="true" />
+            <element signature="e#20001#20007#0" expanded="true" />
+            <element signature="e#20322#20328#0" expanded="true" />
+            <element signature="e#20361#20367#0" expanded="true" />
+            <element signature="e#20613#20619#0" expanded="true" />
+            <element signature="e#20627#20633#0" expanded="true" />
+            <element signature="e#20650#20656#0" expanded="true" />
+            <element signature="e#20660#20666#0" expanded="true" />
+            <element signature="e#20668#20674#0" expanded="true" />
+            <element signature="e#20674#20680#0" expanded="true" />
+            <element signature="e#20706#20712#0" expanded="true" />
+            <element signature="e#20720#20726#0" expanded="true" />
+            <element signature="e#20745#20751#0" expanded="true" />
+            <element signature="e#20755#20761#0" expanded="true" />
+            <element signature="e#20763#20769#0" expanded="true" />
+            <element signature="e#20769#20775#0" expanded="true" />
+            <element signature="e#20801#20807#0" expanded="true" />
+            <element signature="e#20814#20820#0" expanded="true" />
+            <element signature="e#20879#20885#0" expanded="true" />
+            <element signature="e#20889#20895#0" expanded="true" />
+            <element signature="e#20897#20903#0" expanded="true" />
+            <element signature="e#20907#20913#0" expanded="true" />
+            <element signature="e#20928#20934#0" expanded="true" />
+            <element signature="e#20942#20948#0" expanded="true" />
+            <element signature="e#20950#20956#0" expanded="true" />
+            <element signature="e#20956#20962#0" expanded="true" />
+            <element signature="e#20989#20995#0" expanded="true" />
+            <element signature="e#21003#21009#0" expanded="true" />
+            <element signature="e#21011#21017#0" expanded="true" />
+            <element signature="e#21017#21023#0" expanded="true" />
+            <element signature="e#21038#21044#0" expanded="true" />
+            <element signature="e#21046#21052#0" expanded="true" />
+            <element signature="e#21078#21084#0" expanded="true" />
+            <element signature="e#21092#21098#0" expanded="true" />
+            <element signature="e#21100#21106#0" expanded="true" />
+            <element signature="e#21106#21112#0" expanded="true" />
+            <element signature="e#21127#21133#0" expanded="true" />
+            <element signature="e#21135#21141#0" expanded="true" />
+            <element signature="e#21168#21174#0" expanded="true" />
+            <element signature="e#21182#21188#0" expanded="true" />
+            <element signature="e#21207#21213#0" expanded="true" />
+            <element signature="e#21217#21223#0" expanded="true" />
+            <element signature="e#21250#21256#0" expanded="true" />
+            <element signature="e#21261#21267#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/vcs.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="38" lean-forward="true" selection-start-line="0" selection-start-column="38" selection-end-line="0" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/misc.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="121">
+          <caret line="51" column="44" lean-forward="true" selection-start-line="51" selection-start-column="44" selection-end-line="51" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/hack/HackTab.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="33" column="34" lean-forward="true" selection-start-line="33" selection-start-column="34" selection-end-line="33" selection-end-column="34" />
+        <state relative-caret-position="170">
+          <caret line="84" column="3" lean-forward="false" selection-start-line="84" selection-start-column="3" selection-end-line="84" selection-end-column="3" />
           <folding>
             <element signature="method#HackTab#0;class#HackTab#0" expanded="false" />
             <element signature="method#undo#0;class#HackTab#0" expanded="false" />
