@@ -1,0 +1,11 @@
+//Scroll types for the maps - there is one per layer and it is the second byte after each tileset name
+Normal
+3/4
+Half
+Quarter
+Eighth
+Zero
+H 3/4
+H Half
+H Quater
+V0 Half

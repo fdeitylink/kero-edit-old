@@ -1,0 +1,89 @@
+//IDK but this might be for the profile/save files
+//seems kero blaster specific as it references maps not present in pink hour/heaven
+*-- Game Profile Flags (0~255)---------------
+
+000: off
+001: on 
+
+002: cleared.
+003: title uzo complete.
+004: new game.
+
+
+*-- User Profile Flags (16384(2048byte))-----
+
+* : ON  when game  start
+*2  on  when round 2.
++ : ON  when stage start
+- : OFF when stage start
+\ : KuroBlaster
+
+
+
+0000: off
+0001: on 
+
+0010: core..
+
+	--10 title mode      (system!)
+	--11 debug mode      (system!)
+	--12 cleared-credits (system!)
+	--13 skipable.       (system!)
+	--14 gero black      (system!)
+	--15 time attack     (system!)
+	--16 no damage       (system!)
+
+0020 - 0039: all stage.
+
+	--21 show time attack(system!)
+	--22 boss rush       (system!)
+	--25 jacket          (SYSYEM!)
+	--26 hospice         (system!)
+	--27 heart price hike(system!)
+	--28 coin 1 -> 10    (system!)
+	--29 kiosk           (system!)
+
+*-- title  stage -------------
+
+0050: phone.
+
+*-- normal stage -------------
+
+
+0050 : Area00
+
+	--51 First hospital         00hospital
+
+	--60 flower vase
+	--61
+	--62                   00hospital
+
+
+
+0900-: Area09
+
+	--01 tire              09PBtaiya
+	--02 tire              09PBtaiya
+	--03 document.         09PBboss
+	--04 frog warp         09last
+
+
+
+
+
+
+---------------------------------
+skip schedule..
+
+stage	skip-map	skpE-map	skip-to		less-item
+
+1	00office1	00clinic1	gSkipToStage
+2	00office2	00clinic1	gSkipLifepotGo	lifepot
+2       explain         00clinic1       gSkipLifepotGo
+3	00office3	00clinic1	gSkipToStage
+4	00office4	00clinic1	gSkipToStage
+5	00clinic1	00clinic1	gSkipJacketGo	jacket
+5       explain         00clinic1       gSkipJacketGo
+5	00clinic1	00clinic1	_scene05_last
+6	none..
+7	00clinic1	07okujouzo	gSkipToStage
