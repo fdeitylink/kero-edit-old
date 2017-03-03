@@ -1,4 +1,4 @@
-package io.fdeitylink.keroedit.mapedit;
+package io.fdeitylink.keroedit.map;
 
 import java.util.Arrays;
 
@@ -16,9 +16,10 @@ import java.io.FileNotFoundException;
 
 import java.text.MessageFormat;
 
-import io.fdeitylink.keroedit.Messages;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+
+import io.fdeitylink.keroedit.Messages;
 
 import io.fdeitylink.keroedit.util.Logger;
 
@@ -30,32 +31,32 @@ import io.fdeitylink.keroedit.gamedata.GameData;
  * repository of them must be kept so that updates to an attribute
  * inside a PXATTR object will be reflected in all maps depending upon it.
  */
-class PxAttrManager {
-    private static final HashMap <String, ReadOnlyPxAttrWrapper> pxAttrs = new HashMap <>();
+public class PxAttrManager {
+    private static final HashMap <String, ReadOnlyPxAttrWrapper> pxAttrsMap = new HashMap <>();
 
     private PxAttrManager() {
 
     }
 
-    static ReadOnlyObjectProperty <PxAttr> getPxAttr(final String tilesetName) throws IOException, ParseException {
-        if (pxAttrs.containsKey(tilesetName)) {
-            return pxAttrs.get(tilesetName).getReadOnlyProperty();
+    public static ReadOnlyObjectProperty <PxAttr> getPxAttr(final String tilesetName) throws IOException, ParseException {
+        if (pxAttrsMap.containsKey(tilesetName)) {
+            return pxAttrsMap.get(tilesetName).getReadOnlyProperty();
         }
         final PxAttr pxAttr = new PxAttr(new File(GameData.getResourceFolder().getAbsolutePath() +
                                                   File.separatorChar + "img" + File.separatorChar +
                                                   tilesetName + ".pxattr"));
 
         final ReadOnlyPxAttrWrapper pxAttrProp = new ReadOnlyPxAttrWrapper(pxAttr);
-        pxAttrs.put(tilesetName, pxAttrProp);
+        pxAttrsMap.put(tilesetName, pxAttrProp);
 
         return pxAttrProp.getReadOnlyProperty();
     }
 
-    static void setAttribute(final String pxAttrName, final int x, final int y, final int attribute) {
-        pxAttrs.get(pxAttrName).setAttribute(x, y, attribute);
+    public static void setAttribute(final String pxAttrName, final int x, final int y, final int attribute) {
+        pxAttrsMap.get(pxAttrName).setAttribute(x, y, attribute);
     }
 
-    static class PxAttr {
+    public static class PxAttr {
         private static final String HEADER_STRING = "pxMAP01\0";
 
         private final File file;
@@ -138,7 +139,7 @@ class PxAttrManager {
             }
         }
 
-        int[][] getAttributes() {
+        public int[][] getAttributes() {
             return null == attributes ? null : Arrays.copyOf(attributes, attributes.length);
         }
 
@@ -147,7 +148,7 @@ class PxAttrManager {
             attributes[y][x] = attribute;
         }
 
-        void save() {
+        private void save() {
             System.out.println("pxattr " + file.getName() + " saved");
         }
     }

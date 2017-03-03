@@ -21,6 +21,7 @@ import java.text.ParseException;
 
 import java.text.MessageFormat;
 
+import io.fdeitylink.keroedit.map.PxAttrManager;
 import javafx.stage.Stage;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
