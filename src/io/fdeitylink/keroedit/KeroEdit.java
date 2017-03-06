@@ -2,7 +2,7 @@
  * TODO:
  * Barebones png editor (color picker and canvas) and reload tilesets in open maps on save (or on edit?)
  * Ctrl +/- and scrollwheel for zoom
- * figure out url bug with assist folder (file:/)
+ * figure out url bug with assist folder (file:/); fixed?
  * Use switch statements where applicable
  * Undoable map delete?
  * Put enum filler into method in util package
@@ -10,7 +10,7 @@
  * Resort the map ListView alphabetically when a map is added, and select and open the new map
  * Draggable tabs (and allow popping out into a window)
  * Pass object constructors Files still or move to strings relative to GameData?
- * Use nio.Files and nio.Path instead of io.File?
+ * Use nio.Files and nio.Path instead of io.File
  * Allow opening multiple maps at once (multiple selection)
  * Allow configuring tile size?
  * Use iterators where possible
@@ -44,13 +44,6 @@ import java.util.EnumMap;
 
 import java.text.MessageFormat;
 
-import io.fdeitylink.keroedit.hack.HackTab;
-import io.fdeitylink.keroedit.map.PxPack;
-import io.fdeitylink.keroedit.mapedit.MapEditTab;
-import io.fdeitylink.keroedit.resource.ResourceManager;
-import io.fdeitylink.keroedit.script.ScriptEditTab;
-import io.fdeitylink.keroedit.util.FileEditTab;
-import io.fdeitylink.keroedit.util.JavaFXUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
 
@@ -107,7 +100,19 @@ import javafx.print.PrinterJob;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import io.fdeitylink.keroedit.resource.ResourceManager;
+
+import io.fdeitylink.keroedit.util.JavaFXUtil;
+
+import io.fdeitylink.keroedit.util.FileEditTab;
+
+import io.fdeitylink.keroedit.map.PxPack;
+
 import io.fdeitylink.keroedit.gamedata.GameData;
+
+import io.fdeitylink.keroedit.hack.HackTab;
+import io.fdeitylink.keroedit.mapedit.MapEditTab;
+import io.fdeitylink.keroedit.script.ScriptEditTab;
 
 public class KeroEdit extends Application {
     private ArrayList <MenuItem> enableOnLoadItems;
@@ -131,28 +136,8 @@ public class KeroEdit extends Application {
     @Override
     public void start(final Stage stage) {
         Config.loadPreferences();
-        initStage(stage);
-    }
 
-    /**
-     * Appends a given string to the base title of the program's {@code Stage}
-     *
-     * @param str The string to append to the title
-     */
-    public void setTitle(final String str) {
-        mainStage.setTitle(MessageFormat.format(Messages.getString("KeroEdit.APP_TITLE"),
-                                                Messages.getString("KeroEdit.VERSION")) + " " + str);
-    }
-
-    /**
-     * Initializes the {@code Stage}, including its
-     * components by calling the other init methods
-     *
-     * @param stage The stage to run the Kero Edit program in
-     */
-    private void initStage(final Stage stage) {
         mainStage = stage;
-
         mainStage.setOnCloseRequest(event -> {
             Config.notepadText = notepadTab.notepad.getText();
             Config.savePreferences();
@@ -166,12 +151,11 @@ public class KeroEdit extends Application {
         });
 
         enableOnLoadItems = new ArrayList <>();
-
         /*
          * Note to self - keep these as BorderPanes - while a VBox may conceptually seem more fit for this
          * it does not resize well and there's a whole load of sizing issues
          */
-        final BorderPane right = new BorderPane(initTabPane());
+        final BorderPane right = new BorderPane(mainTabPane = initTabPane());
         right.setTop(new SettingsPane());
 
         final SplitPane sPane = new SplitPane(initMapList(), right);
@@ -188,14 +172,17 @@ public class KeroEdit extends Application {
         mainStage.setMaximized(true);
         mainStage.requestFocus();
 
-        if (!Config.licenseRead) {
-            showLicense();
-            if (!Config.licenseRead) {
-                mainStage.close();
-                Platform.exit();
-                System.exit(0);
-            }
-        }
+        showLicense();
+    }
+
+    /**
+     * Appends a given string to the base title of the program's {@code Stage}
+     *
+     * @param str The string to append to the title
+     */
+    public void setTitle(final String str) {
+        mainStage.setTitle(MessageFormat.format(Messages.getString("KeroEdit.APP_TITLE"),
+                                                Messages.getString("KeroEdit.VERSION")) + " " + str);
     }
 
     /**
@@ -884,20 +871,13 @@ public class KeroEdit extends Application {
      * @return The created {@code TabPane}
      */
     private TabPane initTabPane() {
-        mainTabPane = new TabPane();
+        final TabPane tabPane = new TabPane();
+        tabPane.tabClosingPolicyProperty().setValue(TabPane.TabClosingPolicy.ALL_TABS);
 
-        mainTabPane.tabClosingPolicyProperty().setValue(TabPane.TabClosingPolicy.ALL_TABS);
-
-        /*notepadTab = new Tab(Messages.getString("KeroEdit.NOTEPAD_TITLE"));
-        notepadTab.setId(Messages.getString("KeroEdit.NOTEPAD_TITLE"));
-
-        notepadTab.setContent(new TextArea(Config.notepadText));
-
-        notepadTab.setClosable(false);*/
         notepadTab = new NotepadTab();
-        mainTabPane.getTabs().add(notepadTab);
+        tabPane.getTabs().add(notepadTab);
 
-        return mainTabPane;
+        return tabPane;
     }
 
     /**
@@ -905,6 +885,10 @@ public class KeroEdit extends Application {
      * Also sets {@code Config.licenseRead}.
      */
     private void showLicense() {
+        if (Config.licenseRead) {
+            return;
+        }
+
         final File licenseFile = ResourceManager.getFile("LICENSE");
         final char[] chars = new char[(int)licenseFile.length()];
         try {
@@ -915,7 +899,14 @@ public class KeroEdit extends Application {
                                                                          null,
                                                                          Messages.getString("KeroEdit.ReadLicense.MESSAGE"),
                                                                          licenseText, false);
-                licenseAlert.showAndWait().ifPresent(result -> Config.licenseRead = ButtonType.OK == result);
+                licenseAlert.showAndWait().ifPresent(result -> {
+                    Config.licenseRead = ButtonType.OK == result;
+                    if (!Config.licenseRead) {
+                        mainStage.close();
+                        Platform.exit();
+                        System.exit(0);
+                    }
+                });
                 return;
             }
         }
@@ -925,6 +916,7 @@ public class KeroEdit extends Application {
         JavaFXUtil.createAlert(Alert.AlertType.INFORMATION,
                                Messages.getString("KeroEdit.ReadLicense.UnableToShow.TITLE"), null,
                                Messages.getString("KeroEdit.ReadLicense.UnableToShow.MESSAGE")).showAndWait();
+        Config.licenseRead = true; //allow program use, assuming they read it I guess
     }
 
     private static class SettingsPane extends GridPane {
@@ -1001,7 +993,7 @@ public class KeroEdit extends Application {
         }
 
         private void initDrawModes(int x, int y) {
-            final Text label = new Text(Messages.getString("KeroEdit.SettingsPane.DRAW_MODES"));
+            final Text label = new Text(Messages.getString("KeroEdit.SettingsPane.DRAW_MODE"));
             label.setFont(Font.font(null, FontWeight.BOLD, 15));
             add(label, x, y++);
 

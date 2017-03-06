@@ -251,6 +251,7 @@ public class PxPack {
 
         }
         catch (final IOException except) {
+
         }
         finally {
             try {

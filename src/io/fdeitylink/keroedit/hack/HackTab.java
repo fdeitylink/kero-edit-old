@@ -4,10 +4,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import io.fdeitylink.keroedit.Messages;
-import io.fdeitylink.keroedit.resource.ResourceManager;
-import io.fdeitylink.keroedit.util.FileEditTab;
-import io.fdeitylink.keroedit.util.JavaFXUtil;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -24,11 +20,18 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 
-import io.fdeitylink.keroedit.gamedata.GameData;
-
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonValue;
+
+import io.fdeitylink.keroedit.resource.ResourceManager;
+
+import io.fdeitylink.keroedit.Messages;
+
+import io.fdeitylink.keroedit.util.FileEditTab;
+import io.fdeitylink.keroedit.util.JavaFXUtil;
+
+import io.fdeitylink.keroedit.gamedata.GameData;
 
 public class HackTab extends FileEditTab {
     private final SplitPane sPane;

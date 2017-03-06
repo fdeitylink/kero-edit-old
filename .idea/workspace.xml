@@ -7,9 +7,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7e217904-e010-4fe6-a354-8fe1baa2af52" name="Default" comment="">
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/PxAttrManager.java" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxAttrManager.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/PxAttrManager$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/PxAttrManager$PxAttr.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/PxAttrManager$ReadOnlyPxAttrWrapper.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/PxAttrManager.class" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/readme.txt" afterPath="$PROJECT_DIR$/readme.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.java" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/hack/HackTab.java" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/hack/HackTab.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxPack.java" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxPack.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties" />
     </list>
@@ -32,12 +38,11 @@
       <file leaf-file-name="KeroEdit.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="1049" column="48" lean-forward="false" selection-start-line="1049" selection-start-column="48" selection-end-line="1049" selection-end-column="48" />
+            <state relative-caret-position="405">
+              <caret line="175" column="5" lean-forward="true" selection-start-line="175" selection-start-column="5" selection-end-line="175" selection-end-column="5" />
               <folding>
                 <element signature="method#start#0;class#KeroEdit#0" expanded="false" />
                 <element signature="method#setTitle#0;class#KeroEdit#0" expanded="false" />
-                <element signature="method#initStage#0;class#KeroEdit#0" expanded="false" />
                 <element signature="method#initMenuBar#0;class#KeroEdit#0" expanded="false" />
                 <element signature="method#initFileMenu#0;class#KeroEdit#0" expanded="false" />
                 <element signature="method#loadMod#0;class#KeroEdit#0" expanded="false" />
@@ -74,8 +79,8 @@
       <file leaf-file-name="HackTab.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/hack/HackTab.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="33" column="34" lean-forward="true" selection-start-line="33" selection-start-column="34" selection-end-line="33" selection-end-column="34" />
+            <state relative-caret-position="373">
+              <caret line="199" column="1" lean-forward="true" selection-start-line="199" selection-start-column="1" selection-end-line="199" selection-end-column="1" />
               <folding>
                 <element signature="method#HackTab#0;class#HackTab#0" expanded="false" />
                 <element signature="method#undo#0;class#HackTab#0" expanded="false" />
@@ -89,50 +94,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PxPack.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxPack.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5151">
-              <caret line="616" column="0" lean-forward="false" selection-start-line="616" selection-start-column="0" selection-end-line="616" selection-end-column="0" />
-              <folding>
-                <element signature="method#rename#0;class#PxPack#0" expanded="false" />
-                <element signature="method#getEntities#0;class#PxPack#0" expanded="false" />
-                <element signature="method#readString#0;class#PxPack#0" expanded="false" />
-                <element signature="method#writeString#0;class#PxPack#0" expanded="false" />
-                <element signature="method#toString#0;class#PxPack#0" expanded="false" />
-                <element signature="class#Head#0;class#PxPack#0" expanded="false" />
-                <element signature="method#Head#0;class#Head#0;class#PxPack#0" expanded="false" />
-                <element signature="method#Head#1;class#Head#0;class#PxPack#0" expanded="false" />
-                <element signature="method#Head#2;class#Head#0;class#PxPack#0" expanded="false" />
-                <element signature="method#setDescription#0;class#Head#0;class#PxPack#0" expanded="false" />
-                <element signature="method#setMapName#0;class#Head#0;class#PxPack#0" expanded="false" />
-                <element signature="method#setSpritesheetName#0;class#Head#0;class#PxPack#0" expanded="false" />
-                <element signature="method#setBgColor#0;class#Head#0;class#PxPack#0" expanded="false" />
-                <element signature="method#setTilesetName#0;class#Head#0;class#PxPack#0" expanded="false" />
-                <element signature="method#toString#0;class#Head#0;class#PxPack#0" expanded="false" />
-                <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
-                <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPack#0" expanded="false" />
-                <element signature="method#TileLayer#2;class#TileLayer#0;class#PxPack#0" expanded="false" />
-                <element signature="method#resize#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
-                <element signature="method#getTiles#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
-                <element signature="method#toString#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
-                <element signature="class#Entity#0;class#PxPack#0" expanded="false" />
-                <element signature="method#Entity#0;class#Entity#0;class#PxPack#0" expanded="false" />
-                <element signature="method#Entity#1;class#Entity#0;class#PxPack#0" expanded="false" />
-                <element signature="method#Entity#2;class#Entity#0;class#PxPack#0" expanded="false" />
-                <element signature="method#setX#0;class#Entity#0;class#PxPack#0" expanded="false" />
-                <element signature="method#setY#0;class#Entity#0;class#PxPack#0" expanded="false" />
-                <element signature="method#setName#0;class#Entity#0;class#PxPack#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="MapEditTab.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="319">
-              <caret line="437" column="47" lean-forward="false" selection-start-line="437" selection-start-column="47" selection-end-line="437" selection-end-column="47" />
+            <state relative-caret-position="306">
+              <caret line="126" column="92" lean-forward="true" selection-start-line="126" selection-start-column="92" selection-end-line="126" selection-end-column="92" />
               <folding>
                 <element signature="initializer##0;class#MapEditTab#0" expanded="false" />
                 <element signature="initializer##1;class#MapEditTab#0" expanded="false" />
@@ -144,14 +110,19 @@
                 <element signature="method#undo#0;class#MapEditTab#0" expanded="false" />
                 <element signature="method#redo#0;class#MapEditTab#0" expanded="false" />
                 <element signature="method#save#0;class#MapEditTab#0" expanded="false" />
+                <element signature="class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
                 <element signature="method#TileEditTab#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
                 <element signature="method#save#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
                 <element signature="method#initTilesetStage#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+                <element signature="class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
                 <element signature="method#TilesetPane#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+                <element signature="method#initServices#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+                <element signature="class#16284:19990" expanded="true" />
                 <element signature="method#initEventHandlers#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
                 <element signature="method#redrawTileset#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
                 <element signature="method#fixSize#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
                 <element signature="method#redrawSelectedRect#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+                <element signature="class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
                 <element signature="method#MapPane#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
                 <element signature="method#initEventHandlers#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
                 <element signature="method#initContextMenu#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
@@ -166,6 +137,16 @@
                 <element signature="class#MapPaneMenuItems#0;class#MapEditTab#0" expanded="false" />
                 <element signature="class#PropertyEditTab#0;class#MapEditTab#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="readme.txt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/readme.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="204">
+              <caret line="12" column="54" lean-forward="true" selection-start-line="12" selection-start-column="54" selection-end-line="12" selection-end-column="54" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -260,7 +241,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_1.java" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/Test.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/util/MethodStore.java" />
         <option value="$PROJECT_DIR$/src/com/fdl/keroedit/util/Undoable.java" />
@@ -302,15 +282,16 @@
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/util/MathUtil.java" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/resource/ResourceManager.java" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/util/JavaFXUtil.java" />
-        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java" />
-        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.java" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/resource/assist/hour_strings.json" />
-        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/hack/HackTab.java" />
         <option value="$PROJECT_DIR$/.idea/workspace.xml" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/PxAttrManager.java" />
-        <option value="$PROJECT_DIR$/readme.txt" />
-        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxAttrManager.java" />
+        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxPack.java" />
+        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/hack/HackTab.java" />
+        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties" />
+        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.java" />
+        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java" />
+        <option value="$PROJECT_DIR$/readme.txt" />
       </list>
     </option>
   </component>
@@ -375,6 +356,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -419,55 +403,8 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="KeroEdit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="KeroEdit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="keroedit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mapedit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="KeroEdit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="KeroEdit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="keroedit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="map" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scratches" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -830,7 +767,14 @@
       <option name="project" value="LOCAL" />
       <updated>1488413154102</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="Moved PxAttrManager class into io.fdeitylink.map package">
+      <created>1488500052549</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1488500052550</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TodoView">
@@ -853,12 +797,11 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31602374" sideWeight="0.5322108" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329429" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31602374" sideWeight="0.46778917" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31602374" sideWeight="0.46778917" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31305638" sideWeight="0.49707174" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18155198" sideWeight="0.49406528" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Memory View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329429" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24963397" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19180088" sideWeight="0.5059347" order="3" side_tool="true" content_ui="tabs" />
@@ -872,13 +815,14 @@
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" x="92" y="92" width="1182" height="584" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33086053" sideWeight="0.5263543" order="10" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31602374" sideWeight="0.5322108" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329429" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Memory View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329429" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -887,16 +831,16 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24963397" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3264095" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3768546" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.49707174" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.47657394" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" x="92" y="92" width="1182" height="584" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31602374" sideWeight="0.4736457" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31602374" sideWeight="0.46778917" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31305638" sideWeight="0.49707174" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19692533" sideWeight="0.49406528" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18155198" sideWeight="0.49406528" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19180088" sideWeight="0.5059347" order="3" side_tool="true" content_ui="tabs" />
@@ -928,7 +872,8 @@
     <MESSAGE value="Updated HackTab&#10;Disables invalid fields&#10;Private HackField class to better manage each item's attributes and editing&#10;Also NotepadTab class in KeroEdit now" />
     <MESSAGE value="Stopped ignoring out directory" />
     <MESSAGE value="Whoops - did it wrong - now actually stops ignoring .class &amp; .jar files" />
-    <option name="LAST_COMMIT_MESSAGE" value="Whoops - did it wrong - now actually stops ignoring .class &amp; .jar files" />
+    <MESSAGE value="Moved PxAttrManager class into io.fdeitylink.map package" />
+    <option name="LAST_COMMIT_MESSAGE" value="Moved PxAttrManager class into io.fdeitylink.map package" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1154,7 +1099,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
           <caret line="9" column="90" lean-forward="false" selection-start-line="9" selection-start-column="90" selection-end-line="9" selection-end-column="90" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1174,66 +1118,67 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="121">
           <caret line="48" column="5" lean-forward="true" selection-start-line="48" selection-start-column="5" selection-end-line="48" selection-end-column="5" />
-          <folding>
-            <element signature="method#JavaFXUtil#0;class#JavaFXUtil#0" expanded="false" />
-            <element signature="method#setTextFieldLength#0;class#JavaFXUtil#0" expanded="false" />
-            <element signature="method#setBackgroundImage#0;class#JavaFXUtil#0" expanded="false" />
-            <element signature="method#setBackgroundColor#0;class#JavaFXUtil#0" expanded="false" />
-            <element signature="method#colorToString#0;class#JavaFXUtil#0" expanded="false" />
-            <element signature="method#scaleImage#0;class#JavaFXUtil#0" expanded="false" />
-            <element signature="method#createAlert#0;class#JavaFXUtil#0" expanded="false" />
-            <element signature="method#createTextboxAlert#0;class#JavaFXUtil#0" expanded="false" />
-            <element signature="method#createDualTextFieldDialog#0;class#JavaFXUtil#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md" />
+    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/resource/assist/hour_strings.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="20" lean-forward="false" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="197">
+          <caret line="442" column="36" lean-forward="false" selection-start-line="442" selection-start-column="33" selection-end-line="442" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/vcs.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="38" lean-forward="true" selection-start-line="0" selection-start-column="38" selection-end-line="0" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/misc.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="121">
+          <caret line="51" column="44" lean-forward="true" selection-start-line="51" selection-start-column="44" selection-end-line="51" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxAttrManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="34" column="94" lean-forward="false" selection-start-line="34" selection-start-column="94" selection-end-line="34" selection-end-column="94" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxPack.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5151">
-          <caret line="616" column="0" lean-forward="false" selection-start-line="616" selection-start-column="0" selection-end-line="616" selection-end-column="0" />
-          <folding>
-            <element signature="method#rename#0;class#PxPack#0" expanded="false" />
-            <element signature="method#getEntities#0;class#PxPack#0" expanded="false" />
-            <element signature="method#readString#0;class#PxPack#0" expanded="false" />
-            <element signature="method#writeString#0;class#PxPack#0" expanded="false" />
-            <element signature="method#toString#0;class#PxPack#0" expanded="false" />
-            <element signature="class#Head#0;class#PxPack#0" expanded="false" />
-            <element signature="method#Head#0;class#Head#0;class#PxPack#0" expanded="false" />
-            <element signature="method#Head#1;class#Head#0;class#PxPack#0" expanded="false" />
-            <element signature="method#Head#2;class#Head#0;class#PxPack#0" expanded="false" />
-            <element signature="method#setDescription#0;class#Head#0;class#PxPack#0" expanded="false" />
-            <element signature="method#setMapName#0;class#Head#0;class#PxPack#0" expanded="false" />
-            <element signature="method#setSpritesheetName#0;class#Head#0;class#PxPack#0" expanded="false" />
-            <element signature="method#setBgColor#0;class#Head#0;class#PxPack#0" expanded="false" />
-            <element signature="method#setTilesetName#0;class#Head#0;class#PxPack#0" expanded="false" />
-            <element signature="method#toString#0;class#Head#0;class#PxPack#0" expanded="false" />
-            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
-            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPack#0" expanded="false" />
-            <element signature="method#TileLayer#2;class#TileLayer#0;class#PxPack#0" expanded="false" />
-            <element signature="method#resize#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
-            <element signature="method#getTiles#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
-            <element signature="method#toString#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
-            <element signature="class#Entity#0;class#PxPack#0" expanded="false" />
-            <element signature="method#Entity#0;class#Entity#0;class#PxPack#0" expanded="false" />
-            <element signature="method#Entity#1;class#Entity#0;class#PxPack#0" expanded="false" />
-            <element signature="method#Entity#2;class#Entity#0;class#PxPack#0" expanded="false" />
-            <element signature="method#setX#0;class#Entity#0;class#PxPack#0" expanded="false" />
-            <element signature="method#setY#0;class#Entity#0;class#PxPack#0" expanded="false" />
-            <element signature="method#setName#0;class#Entity#0;class#PxPack#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="89" column="31" lean-forward="false" selection-start-line="89" selection-start-column="31" selection-end-line="89" selection-end-column="31" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="1049" column="48" lean-forward="false" selection-start-line="1049" selection-start-column="48" selection-end-line="1049" selection-end-column="48" />
+        <state relative-caret-position="405">
+          <caret line="175" column="5" lean-forward="true" selection-start-line="175" selection-start-column="5" selection-end-line="175" selection-end-column="5" />
           <folding>
             <element signature="method#start#0;class#KeroEdit#0" expanded="false" />
             <element signature="method#setTitle#0;class#KeroEdit#0" expanded="false" />
-            <element signature="method#initStage#0;class#KeroEdit#0" expanded="false" />
             <element signature="method#initMenuBar#0;class#KeroEdit#0" expanded="false" />
             <element signature="method#initFileMenu#0;class#KeroEdit#0" expanded="false" />
             <element signature="method#loadMod#0;class#KeroEdit#0" expanded="false" />
@@ -1266,55 +1211,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/resource/assist/hour_strings.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="20" lean-forward="false" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="197">
-          <caret line="442" column="36" lean-forward="false" selection-start-line="442" selection-start-column="33" selection-end-line="442" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.idea/vcs.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="38" lean-forward="true" selection-start-line="0" selection-start-column="38" selection-end-line="0" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.idea/misc.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="121">
-          <caret line="51" column="44" lean-forward="true" selection-start-line="51" selection-start-column="44" selection-end-line="51" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/readme.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="23" lean-forward="false" selection-start-line="3" selection-start-column="23" selection-end-line="3" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" column="33" lean-forward="false" selection-start-line="18" selection-start-column="33" selection-end-line="18" selection-end-column="33" />
+        <state relative-caret-position="204">
+          <caret line="12" column="54" lean-forward="true" selection-start-line="12" selection-start-column="54" selection-end-line="12" selection-end-column="54" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="319">
-          <caret line="437" column="47" lean-forward="false" selection-start-line="437" selection-start-column="47" selection-end-line="437" selection-end-column="47" />
+        <state relative-caret-position="306">
+          <caret line="126" column="92" lean-forward="true" selection-start-line="126" selection-start-column="92" selection-end-line="126" selection-end-column="92" />
           <folding>
             <element signature="initializer##0;class#MapEditTab#0" expanded="false" />
             <element signature="initializer##1;class#MapEditTab#0" expanded="false" />
@@ -1326,14 +1234,19 @@
             <element signature="method#undo#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#redo#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#save#0;class#MapEditTab#0" expanded="false" />
+            <element signature="class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#TileEditTab#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#save#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#initTilesetStage#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+            <element signature="class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#TilesetPane#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+            <element signature="method#initServices#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+            <element signature="class#16284:19990" expanded="true" />
             <element signature="method#initEventHandlers#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#redrawTileset#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#fixSize#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#redrawSelectedRect#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+            <element signature="class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#MapPane#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#initEventHandlers#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#initContextMenu#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
@@ -1351,27 +1264,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxAttrManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="34" column="94" lean-forward="false" selection-start-line="34" selection-start-column="94" selection-end-line="34" selection-end-column="94" />
-          <folding>
-            <element signature="method#PxAttrManager#0;class#PxAttrManager#0" expanded="false" />
-            <element signature="method#getPxAttr#0;class#PxAttrManager#0" expanded="false" />
-            <element signature="method#setAttribute#0;class#PxAttrManager#0" expanded="false" />
-            <element signature="class#PxAttr#0;class#PxAttrManager#0" expanded="false" />
-            <element signature="method#PxAttr#0;class#PxAttr#0;class#PxAttrManager#0" expanded="false" />
-            <element signature="method#setAttribute#0;class#PxAttr#0;class#PxAttrManager#0" expanded="false" />
-            <element signature="class#ReadOnlyPxAttrWrapper#0;class#PxAttrManager#0" expanded="false" />
-            <element signature="method#setAttribute#0;class#ReadOnlyPxAttrWrapper#0;class#PxAttrManager#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/hack/HackTab.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="33" column="34" lean-forward="true" selection-start-line="33" selection-start-column="34" selection-end-line="33" selection-end-column="34" />
+        <state relative-caret-position="373">
+          <caret line="199" column="1" lean-forward="true" selection-start-line="199" selection-start-column="1" selection-end-line="199" selection-end-column="1" />
           <folding>
             <element signature="method#HackTab#0;class#HackTab#0" expanded="false" />
             <element signature="method#undo#0;class#HackTab#0" expanded="false" />

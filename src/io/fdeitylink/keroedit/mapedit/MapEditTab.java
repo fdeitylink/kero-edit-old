@@ -124,7 +124,7 @@ public class MapEditTab extends FileEditTab {
         }
     }
 
-    private static final SimpleIntegerProperty selectedLayer = new SimpleIntegerProperty();
+    private static final SimpleIntegerProperty selectedLayer = new SimpleIntegerProperty(0);
 
     private static final SimpleObjectProperty <KeroEdit.DrawSettingsItems> drawMode =
             new SimpleObjectProperty <>(KeroEdit.DrawSettingsItems.DRAW);
@@ -141,7 +141,7 @@ public class MapEditTab extends FileEditTab {
         tilesetStage.setTitle(Messages.getString("MapEditTab.TileEditTab.TILESET_WINDOW_TITLE"));
         tilesetStage.setScene(new Scene(new Pane()));
 
-        //redock tileset
+        //remove tileset from stage
         tilesetStage.setOnCloseRequest(event -> {
             tilesetStage.getScene().setRoot(new Pane()); //null not accepted as root
             tilesetStage.close(); //same as hiding
