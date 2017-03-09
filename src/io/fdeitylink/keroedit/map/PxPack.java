@@ -13,18 +13,19 @@
  * Copy constructor and new map constructor
  * Throw except for missing tileset names
  */
-package io.fdeitylink.keroedit.map;
 
-import java.io.FileOutputStream;
-import java.text.MessageFormat;
+package io.fdeitylink.keroedit.map;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.nio.channels.FileChannel;
+import java.text.MessageFormat;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+
+import java.nio.channels.SeekableByteChannel;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -34,8 +35,9 @@ import java.text.ParseException;
 
 import java.io.UnsupportedEncodingException;
 
-import io.fdeitylink.keroedit.Messages;
 import javafx.scene.paint.Color;
+
+import io.fdeitylink.keroedit.Messages;
 
 import io.fdeitylink.keroedit.util.Logger;
 
@@ -45,7 +47,7 @@ import io.fdeitylink.keroedit.util.Logger;
 public class PxPack {
     public static final int NUM_LAYERS = 3;
 
-    private File mapFile;
+    private Path mapPath;
 
     private /*final*/ Head head;
     private /*final*/ TileLayer[] tileLayers;
@@ -55,27 +57,30 @@ public class PxPack {
      * Constructs a PxPackMap object and parses a given PXPACK mapFile
      * to set the fields of the object
      *
-     * @param inFile A File object pointing to a PXPACK mapFile
+     * @param inPath A File object pointing to a PXPACK map file
      *
-     * @throws IOException if there was an error reading the mapFile
+     * @throws IOException if there was an error reading the PXPACK file
      * @throws ParseException if the mapFile format was somehow incorrect
      */
-    public PxPack(final File inFile) throws IOException, ParseException {
-        mapFile = inFile;
+    public PxPack(final Path inPath) throws IOException, ParseException {
+        mapPath = inPath;
 
-        FileInputStream inStream = null;
-        FileChannel chan = null;
+        //TODO: check if file doesn't exist
+        if (!Files.exists(inPath)) {
+            System.err.println("ERROR: Could not locate PXPACK map file " + inPath.getFileName() + ".pxpack");
+            //TODO: initialize fields, exit; new mapFile will be made in save() method
+        }
 
+        SeekableByteChannel chan = null;
         try {
-            inStream = new FileInputStream(inFile);
-            chan = inStream.getChannel();
+            chan = Files.newByteChannel(inPath, StandardOpenOption.READ);
 
             ByteBuffer buf = ByteBuffer.allocate(Head.HEADER_STRING.length());
             chan.read(buf);
 
             if (!(new String(buf.array()).equals(Head.HEADER_STRING))) {
                 throw new ParseException(MessageFormat.format(Messages.getString("PxPack.INCORRECT_HEADER"),
-                                                              inFile.getName()),
+                                                              inPath.getFileName()),
                                          (int)chan.position());
             }
 
@@ -123,7 +128,7 @@ public class PxPack {
                 chan.read(buf);
                 if (!(new String(buf.array()).equals(TileLayer.HEADER_STRING))) {
                     throw new ParseException(MessageFormat.format(Messages.getString("PxPack.INCORRECT_LAYER_HEADER"),
-                                                                  i, inFile.getName()),
+                                                                  i, inPath.getFileName()),
                                              (int)chan.position());
                 }
 
@@ -181,24 +186,21 @@ public class PxPack {
                 entities.add(new Entity(flag, type, unknownByte, x, y, data, name));
             }
         }
-        catch (final FileNotFoundException except) {
-            System.err.println("ERROR: Could not locate PXPACK map file " + inFile.getName() + ".pxpack");
+        /*catch (final FileNotFoundException except) {
+            System.err.println("ERROR: Could not locate PXPACK map file " + inPath.getFileName() + ".pxpack");
             //TODO: initialize fields, exit; new mapFile will be made in save() method
-        }
+        }*/
         catch (final IOException except) {
-            throw new IOException(MessageFormat.format(Messages.getString("PxPack.IOEXCEPT"), inFile.getName()), except);
+            throw new IOException(MessageFormat.format(Messages.getString("PxPack.IOEXCEPT"), inPath.getFileName()), except);
         }
         finally {
             try {
                 if (null != chan) {
                     chan.close();
                 }
-                if (null != inStream) {
-                    inStream.close();
-                }
             }
             catch (final IOException except) {
-                Logger.logException(MessageFormat.format(Messages.getString("PxPack.CLOSE_FAIL"), inFile.getName()),
+                Logger.logException(MessageFormat.format(Messages.getString("PxPack.CLOSE_FAIL"), inPath.getFileName()),
                                     except);
                 //TODO: Probably something should be done if the file can't be closed
             }
@@ -211,12 +213,10 @@ public class PxPack {
      * Saves the PXPACK file
      */
     public void save() {
-        FileOutputStream outStream = null;
-        FileChannel chan = null;
+        SeekableByteChannel chan = null;
 
         try {
-            outStream = new FileOutputStream(mapFile);
-            chan = outStream.getChannel();
+            chan = Files.newByteChannel(mapPath, StandardOpenOption.TRUNCATE_EXISTING);
 
             ByteBuffer buf = ByteBuffer.wrap(Head.HEADER_STRING.getBytes());
             chan.write(buf);
@@ -258,12 +258,9 @@ public class PxPack {
                 if (null != chan) {
                     chan.close();
                 }
-                if (null != outStream) {
-                    outStream.close();
-                }
             }
             catch (final IOException except) {
-                Logger.logException(MessageFormat.format(Messages.getString("PxPack.CLOSE_FAIL"), mapFile.getName()),
+                Logger.logException(MessageFormat.format(Messages.getString("PxPack.CLOSE_FAIL"), mapPath.getFileName()),
                                     except);
                 //TODO: Probably something should be done if the file can't be closed
             }
@@ -271,25 +268,30 @@ public class PxPack {
     }
 
     public String getName() {
-        return mapFile.getName().substring(0, mapFile.getName().lastIndexOf(".pxpack"));
+        final String mapFname = mapPath.getFileName().toString();
+        return mapFname.substring(0, mapFname.lastIndexOf(".pxpack"));
     }
 
     //TODO: Make this undo/redo friendly?
     public void rename(final String newName) throws IOException {
-        final File renamedFile = new File(mapFile.getParent() + File.separatorChar + newName + ".pxpack");
-        if (renamedFile.exists()) {
-            throw new IOException("Attempt to rename " + mapFile.getName() + ".pxpack to " +
-                                  renamedFile.getName() + ".pxpack" +
-                                  " failed because that mapFile already exists!");
+        //final File renamedFile = new File(mapPath.getParent() + File.separatorChar + newName + ".pxpack");
+        /*final Path renamedPath = Paths.get(mapPath.getParent().toAbsolutePath().toString() + File.separatorChar +
+                                          newName + ".pxpack");*/
+
+        mapPath = Files.move(mapPath, mapPath.resolveSibling(newName + ".pxpack"));
+        /*if (Files.exists(renamedPath)) {
+            throw new IOException("Attempt to rename " + mapPath.getName() + ".pxpack to " +
+                                  renamedPath.getFileName() + ".pxpack" +
+                                  " failed because that PXPACK file already exists!");
         }
 
-        if (!mapFile.renameTo(renamedFile)) {
-            throw new IOException("Attempt to rename " + mapFile.getName() + ".pxpack" + " to " + renamedFile.getName() + ".pxpack" +
-                                  " failed for an unknown reason");
-        }
+        if (!mapPath.renameTo(renamedPath)) {
+            throw new IOException("Attempt to rename " + mapPath.getFileName() + ".pxpack" + " to "
+                                  + renamedPath.getFileName() + ".pxpack" + " failed for an unknown reason");
+        }*/
 
         //mapFile.delete();
-        mapFile = renamedFile;
+        //mapPath = renamedPath;
     }
 
     public Head getHead() {
@@ -319,15 +321,15 @@ public class PxPack {
     }*/
 
     /**
-     * Reads a string from a mapFile tied to a given FileChannel
+     * Reads a string from a PXPACk file tied to a given FileChannel
      *
-     * @param chan The FileChannel object to read from
+     * @param chan The SeekableByteChannel object to read from
      *
      * @return The String that was read
      *
-     * @throws IOException if there was an error reading the string from the mapFile
+     * @throws IOException if there was an error reading the string from the PXPACK file
      */
-    private String readString(final FileChannel chan) throws IOException {
+    private String readString(final SeekableByteChannel chan) throws IOException {
         String result = null;
         try {
             ByteBuffer buf = ByteBuffer.allocate(1);
@@ -348,7 +350,7 @@ public class PxPack {
         return result;
     }
 
-    private void writeString(final String str, final FileChannel chan) throws IOException {
+    private void writeString(final String str, final SeekableByteChannel chan) throws IOException {
         final byte[] strAsBytes = str.getBytes("SJIS");
         final ByteBuffer buf = ByteBuffer.allocate(1 + strAsBytes.length);
 
@@ -361,7 +363,7 @@ public class PxPack {
     public String toString() {
         StringBuilder result = new StringBuilder();
 
-        result.append(MessageFormat.format(Messages.getString("PxPack.ToString.NAME"), mapFile.getName()));
+        result.append(MessageFormat.format(Messages.getString("PxPack.ToString.NAME"), mapPath.getFileName()));
 
         result.append(head);
         result.append('\n');

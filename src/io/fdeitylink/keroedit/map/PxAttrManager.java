@@ -1,12 +1,16 @@
 package io.fdeitylink.keroedit.map;
 
-import java.util.Arrays;
-
 import java.util.HashMap;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.nio.channels.FileChannel;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import java.nio.file.StandardOpenOption;
+
+import java.nio.channels.SeekableByteChannel;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -42,9 +46,9 @@ public class PxAttrManager {
         if (pxAttrsMap.containsKey(tilesetName)) {
             return pxAttrsMap.get(tilesetName).getReadOnlyProperty();
         }
-        final PxAttr pxAttr = new PxAttr(new File(GameData.getResourceFolder().getAbsolutePath() +
-                                                  File.separatorChar + "img" + File.separatorChar +
-                                                  tilesetName + ".pxattr"));
+        final PxAttr pxAttr = new PxAttr(Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
+                                                   File.separatorChar + "img" + File.separatorChar +
+                                                   tilesetName + ".pxattr"));
 
         final ReadOnlyPxAttrWrapper pxAttrProp = new ReadOnlyPxAttrWrapper(pxAttr);
         pxAttrsMap.put(tilesetName, pxAttrProp);
@@ -59,27 +63,24 @@ public class PxAttrManager {
     public static class PxAttr {
         private static final String HEADER_STRING = "pxMAP01\0";
 
-        private final File file;
+        private final Path path;
         //when saving, check if file doesn't exist (meaning we used mpt00.pxattr as default) - create new one if so
 
         private int[][] attributes;
 
-        private PxAttr(File inFile) throws IOException, ParseException {
-            file = inFile;
+        private PxAttr(Path inPath) throws IOException, ParseException {
+            path = inPath;
 
-            if (!inFile.exists()) {
-                inFile = new File(inFile.getParent() + File.separatorChar + "mpt00.pxattr");
-                if (!inFile.exists()) {
+            if (!Files.exists(inPath)) {
+                inPath = Paths.get(inPath.getParent().toAbsolutePath().toString() + File.separatorChar + "mpt00.pxattr");
+                if (!Files.exists(inPath)) {
                     throw new FileNotFoundException(Messages.getString("PxAttrManager.PxAttr.DEFAULT_MISSING"));
                 }
             }
 
-            FileInputStream inStream = null;
-            FileChannel chan = null;
-
+            SeekableByteChannel chan = null;
             try {
-                inStream = new FileInputStream(inFile);
-                chan = inStream.getChannel();
+                chan = Files.newByteChannel(inPath, StandardOpenOption.READ);
 
                 ByteBuffer buf = ByteBuffer.allocate(HEADER_STRING.length());
                 buf.order(ByteOrder.BIG_ENDIAN);
@@ -87,7 +88,7 @@ public class PxAttrManager {
 
                 if (!(new String(buf.array()).equals(HEADER_STRING))) {
                     throw new ParseException(MessageFormat.format(Messages.getString("PxAttrManager.PxAttr.INCORRECT_HEADER"),
-                                                                  inFile.getName()),
+                                                                  inPath.getFileName()),
                                              (int)chan.position());
                 }
 
@@ -119,20 +120,17 @@ public class PxAttrManager {
             }
             catch (final IOException except) {
                 throw new IOException(MessageFormat.format(Messages.getString("PxAttrManager.PxAttr.IOEXCEPT"),
-                                                           inFile.getName()), except);
+                                                           inPath.getFileName()), except);
             }
             finally {
                 try {
                     if (null != chan) {
                         chan.close();
                     }
-                    if (null != inStream) {
-                        inStream.close();
-                    }
                 }
                 catch (final IOException except) {
                     Logger.logException(MessageFormat.format(Messages.getString("PxAttrManager.PxAttr.CLOSE_FAIL"),
-                                                             inFile.getName()),
+                                                             inPath.getFileName()),
                                         except);
                     //TODO: Probably something should be done if the file can't be closed
                 }
@@ -140,7 +138,14 @@ public class PxAttrManager {
         }
 
         public int[][] getAttributes() {
-            return null == attributes ? null : Arrays.copyOf(attributes, attributes.length);
+            if (null != attributes) {
+                final int[][] attributesCopy = new int[attributes.length][attributes[0].length];
+                for (int y = 0; y < attributes.length; ++y) {
+                    System.arraycopy(attributes[y], 0, attributesCopy[y], 0, attributes[y].length);
+                }
+                return attributesCopy;
+            }
+            return null;
         }
 
         private void setAttribute(final int x, final int y, final int attribute) {
@@ -149,7 +154,7 @@ public class PxAttrManager {
         }
 
         private void save() {
-            System.out.println("pxattr " + file.getName() + " saved");
+            System.out.println("pxattr " + path.getFileName() + " saved");
         }
     }
 

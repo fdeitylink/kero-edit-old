@@ -1,9 +1,15 @@
 package io.fdeitylink.keroedit.gamedata;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+
+import java.nio.file.DirectoryStream;
+
 import java.nio.file.NoSuchFileException;
 
 import java.text.MessageFormat;
@@ -20,8 +26,8 @@ public class GameData {
 
     private MOD_TYPE modType;
 
-    private File executable;
-    private File resourceFolder;
+    private Path executable;
+    private Path resourceFolder;
 
     private ArrayList <String> bgms;
     private ArrayList <String> maps;
@@ -36,41 +42,54 @@ public class GameData {
     /**
      * Initializes the singleton GameData object based on the given executable
      *
-     * @param executable File pointing to the Kero Blaster executable
+     * @param executable {@code Path} pointing to the Kero Blaster executable
      *
      * @throws NoSuchFileException If the given executable is null
      */
-    public static void init(final File executable) throws NoSuchFileException {
+    public static void init(final Path executable) throws IOException {
         //TODO: Move all/most of this stuff into constructor?
         inst = new GameData();
 
         if (null == executable) {
             throw new NullPointerException(Messages.getString("GameData.EXECUTABLE_NULL"));
         }
-        else if (!executable.exists()) {
+        else if (!Files.exists(executable)) {
             throw new NoSuchFileException(MessageFormat.format(Messages.getString("GameData.EXECUTABLE_NONEXISTENT"),
-                                                               executable.getAbsolutePath()));
+                                                               executable.toAbsolutePath()));
         }
         inst.executable = executable;
 
-        final String[] dirNames = executable.getParentFile().list();
-        if (null == dirNames) {
-            throw new NoSuchFileException(MessageFormat.format(Messages.getString("GameData.MISSING_RSC"),
-                                                               executable.getAbsolutePath()));
+        final DirectoryStream <Path> dirPaths;
+        try {
+            dirPaths = Files.newDirectoryStream(executable.getParent(), entry -> Files.isDirectory(entry));
         }
-        final ArrayList <String> directoryNames = new ArrayList <>(Arrays.asList(dirNames));
+        catch (final IOException except) {
+            throw new IOException(MessageFormat.format(Messages.getString("GameData.ListFilesIOExcept.MESSAGE"),
+                                                       executable.toAbsolutePath()), except);
+        }
 
-        if (directoryNames.contains("rsc_p")) {
-            inst.resourceFolder = new File(inst.executable.getParent() + File.separatorChar + "rsc_p");
-            inst.modType = MOD_TYPE.PINK_HOUR; //TODO: Detect or ask if pink heaven
+        boolean rscExists = false;
+        for (final Path p : dirPaths) {
+            if (p.endsWith("rsc_p")) {
+                inst.resourceFolder = Paths.get(executable.getParent().toAbsolutePath().toString() +
+                                                File.separatorChar + "rsc_p");
+                inst.modType = MOD_TYPE.PINK_HOUR; //TODO: Detect or ask if pink heaven
+                rscExists = true;
+                break;
+            }
+            else if (p.endsWith("rsc_k")) {
+                inst.resourceFolder = Paths.get(executable.getParent().toAbsolutePath().toString() +
+                                                File.separatorChar + "rsc_k");
+                inst.modType = MOD_TYPE.KERO_BLASTER;
+                rscExists = true;
+                break;
+            }
         }
-        else if (directoryNames.contains("rsc_k")) {
-            inst.resourceFolder = new File(inst.executable.getParent() + File.separatorChar + "rsc_k");
-            inst.modType = MOD_TYPE.KERO_BLASTER;
-        }
-        else {
+
+        if (!rscExists) {
+            inst = new GameData();
             throw new NoSuchFileException(MessageFormat.format(Messages.getString("GameData.MISSING_RSC"),
-                                                               executable.getAbsolutePath()));
+                                                               executable.toAbsolutePath()));
         }
 
         inst.bgms = getFileList(File.separatorChar + "bgm" + File.separatorChar, ".ptcop");
@@ -82,11 +101,11 @@ public class GameData {
         inst.scripts = getFileList(File.separatorChar + "text" + File.separatorChar, ".pxeve");
     }
 
-    public static File getExecutable() {
+    public static Path getExecutable() {
         return inst.executable;
     }
 
-    public static File getResourceFolder() {
+    public static Path getResourceFolder() {
         return inst.resourceFolder;
     }
 
@@ -102,15 +121,22 @@ public class GameData {
         inst.maps.remove(mapname);
     }
 
-    private static ArrayList <String> getFileList(final String pathFromResource, final String extension) {
-        final File baseMapDir = new File(inst.resourceFolder.getAbsolutePath() + File.separatorChar + pathFromResource);
-        final File[] fileList = baseMapDir.listFiles(pathname -> pathname.getName().endsWith(extension));
+    private static ArrayList <String> getFileList(final String pathFromResource, final String extension) throws IOException {
+        final Path basePath = Paths.get(inst.resourceFolder.toAbsolutePath().toString() +
+                                        File.separatorChar + pathFromResource);
 
-        final ArrayList <String> nameList = null != fileList ? new ArrayList <>(fileList.length) : null;
-        if (null != fileList) {
-            for (final File file : fileList) {
-                nameList.add(file.getName().substring(0, file.getName().lastIndexOf(extension)));
+        final ArrayList <String> nameList = new ArrayList <>();
+        try {
+            final DirectoryStream <Path> pathList = Files.newDirectoryStream(basePath,
+                                                                             entry -> entry.toString().endsWith(extension));
+            for (final Path p : pathList) {
+                final String filename = p.getFileName().toString();
+                nameList.add(filename.substring(0, filename.lastIndexOf(extension)));
             }
+        }
+        catch (final IOException except) {
+            throw new IOException(MessageFormat.format(Messages.getString("GameData.ListFilesIOExcept.MESSAGE"),
+                                                       inst.executable.toAbsolutePath()), except);
         }
 
         return nameList;

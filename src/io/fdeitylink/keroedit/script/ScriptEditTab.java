@@ -2,19 +2,18 @@ package io.fdeitylink.keroedit.script;
 
 import java.text.MessageFormat;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
-import java.io.FileInputStream;
-import java.nio.channels.FileChannel;
+import java.nio.channels.SeekableByteChannel;
+
 import java.nio.ByteBuffer;
 
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 
-import io.fdeitylink.keroedit.Messages;
-import io.fdeitylink.keroedit.util.FileEditTab;
-import io.fdeitylink.keroedit.util.JavaFXUtil;
 import javafx.scene.control.Alert;
 
 import javafx.scene.control.Tooltip;
@@ -24,24 +23,27 @@ import javafx.scene.text.Font;
 
 import io.fdeitylink.keroedit.util.Logger;
 
+import io.fdeitylink.keroedit.Messages;
+
+import io.fdeitylink.keroedit.util.FileEditTab;
+import io.fdeitylink.keroedit.util.JavaFXUtil;
+
 public class ScriptEditTab extends FileEditTab {
-    private final File scriptFile;
+    private final Path script;
 
     private final TextArea textArea;
 
-    public ScriptEditTab(final File inFile, final boolean global) {
-        scriptFile = inFile;
+    public ScriptEditTab(final Path inScript, final boolean global) {
+        script = inScript;
 
         String scriptText = "";
 
-        FileInputStream inStream = null;
-        FileChannel chan = null;
+        SeekableByteChannel chan = null;
 
         //TODO: Use Reader?
         try {
-            inStream = new FileInputStream(inFile);
-            chan = inStream.getChannel();
-            final ByteBuffer buf = ByteBuffer.allocate((int)inFile.length());
+            chan = Files.newByteChannel(inScript, StandardOpenOption.READ);
+            final ByteBuffer buf = ByteBuffer.allocate((int)Files.size(inScript));
             chan.read(buf);
             scriptText = new String(buf.array(), "SJIS");
         }
@@ -51,25 +53,23 @@ public class ScriptEditTab extends FileEditTab {
         }
         catch (final FileNotFoundException except) {
             //TODO: Create new script file
-            System.err.println("ERROR: Could not locate PXEVE file " + inFile.getName());
+            System.err.println("ERROR: Could not locate PXEVE file " + inScript.toAbsolutePath().toString());
         }
         catch (final IOException except) {
             JavaFXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("ScriptEditTab.IOExcept.TITLE"), null,
-                                   MessageFormat.format(Messages.getString("ScriptEditTab.IOExcept.MESSAGE"), inFile.getName(),
+                                   MessageFormat.format(Messages.getString("ScriptEditTab.IOExcept.MESSAGE"),
+                                                        inScript.getFileName(),
                                                         except.getMessage())).showAndWait();
             getTabPane().getTabs().remove(this);
         }
         finally {
             try {
-                if (null != inStream) {
-                    inStream.close();
-                }
                 if (null != chan) {
                     chan.close();
                 }
             }
             catch (final IOException except) {
-                Logger.logException(MessageFormat.format(Messages.getString("PxPack.CLOSE_FAIL"), inFile.getName()),
+                Logger.logException(MessageFormat.format(Messages.getString("PxPack.CLOSE_FAIL"), inScript.getFileName()),
                                     except);
                 //TODO: Probably something should be done if the script file can't be closed
             }
@@ -80,9 +80,10 @@ public class ScriptEditTab extends FileEditTab {
         textArea.setFont(new Font("Consolas", 12));
         textArea.textProperty().addListener(((observable, oldValue, newValue) -> setChanged(true)));
 
-        setText(global ? inFile.getName() : Messages.getString("ScriptEditTab.TITLE"));
-        setTooltip(new Tooltip(inFile.getAbsolutePath()));
-        setId(inFile.getAbsolutePath());
+        setId(inScript.toAbsolutePath().toString());
+
+        setText(global ? inScript.getFileName().toString() : Messages.getString("ScriptEditTab.TITLE"));
+        setTooltip(new Tooltip(inScript.toAbsolutePath().toString()));
 
         setContent(textArea);
     }

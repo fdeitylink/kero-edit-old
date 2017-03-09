@@ -1,8 +1,14 @@
 package io.fdeitylink.keroedit.hack;
 
 import java.io.File;
-import java.io.FileReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.Path;
+
 import java.io.IOException;
+
+import java.io.BufferedReader;
+import java.nio.charset.Charset;
 
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
@@ -50,11 +56,13 @@ public class HackTab extends FileEditTab {
                 stringsFname = "heaven_strings.json";
                 break;
         }
-        File stringsFile = new File(GameData.getResourceFolder().getAbsolutePath() +
-                                    File.separatorChar + "assist" + File.separatorChar + stringsFname);
-        if (!stringsFile.exists()) {
-            stringsFile = ResourceManager.getFile("assist/" + stringsFname);
+        Path stringsPath = Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
+                                     File.separatorChar + "assist" + File.separatorChar + stringsFname);
+        if (!Files.exists(stringsPath)) {
+            stringsPath = ResourceManager.getPath("assist/" + stringsFname);
         }
+
+        final HackTreeItem stringsTreeItem = parseHackFile(stringsPath, Messages.getString("HackTab.Roots.STRINGS"));
 
         sPane = new SplitPane();
 
@@ -68,7 +76,7 @@ public class HackTab extends FileEditTab {
             }
         });
 
-        hacksTree.getRoot().getChildren().add(parseHackFile(stringsFile, Messages.getString("HackTab.Roots.STRINGS")));
+        hacksTree.getRoot().getChildren().add(stringsTreeItem);
 
         //Get first item of root, which ends up just having children, and then get the first item of that "subroot",
         //which also only has children
@@ -79,7 +87,7 @@ public class HackTab extends FileEditTab {
         //getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE, ButtonType.APPLY, ButtonType.CANCEL);
 
         setText(Messages.getString("HackTab.TITLE"));
-        setTooltip(new Tooltip(GameData.getExecutable().getAbsolutePath()));
+        setTooltip(new Tooltip(GameData.getExecutable().toAbsolutePath().toString()));
 
         setContent(sPane);
     }
@@ -104,12 +112,13 @@ public class HackTab extends FileEditTab {
 
     }
 
-    private HackTreeItem parseHackFile(final File hackFile, final String name) {
-        FileReader hackFileReader = null;
+    private HackTreeItem parseHackFile(final Path hackPath, final String subrootName) {
+        BufferedReader hackFileReader = null;
         HackTreeItem[] hTreeItems = null;
 
         try {
-            final JsonArray sects = Json.parse(hackFileReader = new FileReader(hackFile)).asObject().get("sects").asArray();
+            final JsonArray sects = Json.parse(hackFileReader = Files.newBufferedReader(hackPath, Charset.forName("UTF-8")))
+                                        .asObject().get("sects").asArray();
             hTreeItems = new HackTreeItem[sects.size()];
 
             int i = 0;
@@ -148,7 +157,7 @@ public class HackTab extends FileEditTab {
             }
         }
 
-        final HackTreeItem subroot = new HackTreeItem(name);
+        final HackTreeItem subroot = new HackTreeItem(subrootName);
         subroot.setExpanded(true);
         subroot.getChildren().addAll(hTreeItems);
 

@@ -14,14 +14,21 @@
 
 package io.fdeitylink.keroedit.mapedit;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumMap;
+
 import java.io.File;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import java.io.IOException;
 import java.text.ParseException;
 
 import java.text.MessageFormat;
 
-import io.fdeitylink.keroedit.map.PxAttrManager;
 import javafx.stage.Stage;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
@@ -76,9 +83,6 @@ import javafx.scene.image.WritablePixelFormat;
 import javafx.scene.image.PixelFormat;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumMap;
 
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -104,12 +108,13 @@ import io.fdeitylink.keroedit.resource.ResourceManager;
 import io.fdeitylink.keroedit.gamedata.GameData;
 
 import io.fdeitylink.keroedit.map.PxPack;
+import io.fdeitylink.keroedit.map.PxAttrManager;
 
 import io.fdeitylink.keroedit.script.ScriptEditTab;
 
 public class MapEditTab extends FileEditTab {
-    private static final Image pxAttrImg = ResourceManager.getImage("assist/attribute.png");
-    private static final Image entityImg = ResourceManager.getImage("assist/unittype.png"); //TODO: use file from mod-specific assist folder
+    private static Image pxAttrImg;
+    private static Image entityImg; //TODO: use file from mod-specific assist folder
 
     private static final SimpleIntegerProperty mapZoom = new SimpleIntegerProperty(Config.mapZoom);
     private static final SimpleIntegerProperty tilesetZoom = new SimpleIntegerProperty(Config.tilesetZoom);
@@ -152,10 +157,13 @@ public class MapEditTab extends FileEditTab {
     private /*final*/ PxPack map;
 
     public MapEditTab(final String mapFileName) {
-        final String fullPath = GameData.getResourceFolder().getAbsolutePath() +
-                                File.separatorChar + "field" + File.separatorChar + mapFileName + ".pxpack";
+        initImgs();
+
+        final String fullMapPath = GameData.getResourceFolder().toAbsolutePath().toString() +
+                                   File.separatorChar + "field" + File.separatorChar +
+                                   mapFileName + ".pxpack";
         try {
-            map = new PxPack(new File(fullPath));
+            map = new PxPack(Paths.get(fullMapPath));
         }
         catch (final IOException | ParseException except) {
             JavaFXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("MapEditTab.OpenExcept.TITLE"), null,
@@ -166,12 +174,12 @@ public class MapEditTab extends FileEditTab {
 
         setText(mapFileName);
         setId(mapFileName);
-        setTooltip(new Tooltip(fullPath));
+        setTooltip(new Tooltip(fullMapPath));
 
         //TODO: Context menu? close and rename
 
         tabPane = new TabPane(new TileEditTab(this),
-                              new ScriptEditTab(new File(GameData.getResourceFolder().getAbsolutePath() +
+                              new ScriptEditTab(Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
                                                          File.separatorChar + "text" +
                                                          File.separatorChar + map.getName() + ".pxeve"),
                                                 false),
@@ -239,6 +247,44 @@ public class MapEditTab extends FileEditTab {
         System.out.println("Saved");
         setChanged(false);
         //TODO: save pxpack, pxattr, and script
+    }
+
+    /**
+     * Initializes the {@code pxAttrImg) and {@code entityImg} variables
+     */
+    private void initImgs() {
+        if (null == pxAttrImg) {
+            final Path attrPath = Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
+                                            File.separatorChar + "assist" + File.separatorChar +
+                                            "attribute.png");
+            if (Files.exists(attrPath)) {
+                try {
+                    pxAttrImg = new Image(Files.newInputStream(attrPath));
+                }
+                catch (final IOException except) {
+                    pxAttrImg = ResourceManager.getImage("assist/attribute.png");
+                }
+            }
+            else {
+                pxAttrImg = ResourceManager.getImage("assist/attribute.png");
+            }
+        }
+        if (null == entityImg) {
+            final Path unittypePath = Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
+                                                File.separatorChar + "assist" + File.separatorChar +
+                                                "unittype.png");
+            if (Files.exists(unittypePath)) {
+                try {
+                    entityImg = new Image(Files.newInputStream(unittypePath));
+                }
+                catch (final IOException except) {
+                    entityImg = ResourceManager.getImage("assist/unittype.png");
+                }
+            }
+            else {
+                entityImg = ResourceManager.getImage("assist/unittype.png");
+            }
+        }
     }
 
     private class TileEditTab extends FileEditTab {
@@ -522,7 +568,7 @@ public class MapEditTab extends FileEditTab {
 
                                 for (int i = 0; i < tilesets.length; ++i) {
                                     final Image uncroppedTileset = new Image("file:///" +
-                                                                             GameData.getResourceFolder().getAbsolutePath() +
+                                                                             GameData.getResourceFolder().toAbsolutePath().toString() +
                                                                              File.separatorChar + "img" + File.separatorChar +
                                                                              tilesetNames[i] + ".png", false);
 
@@ -566,7 +612,8 @@ public class MapEditTab extends FileEditTab {
 
                                 for (final String tilesetName : tilesetNames) {
                                     try {
-                                        final ReadOnlyObjectProperty <PxAttrManager.PxAttr> pxAttrProp = PxAttrManager.getPxAttr(tilesetName);
+                                        final ReadOnlyObjectProperty <PxAttrManager.PxAttr> pxAttrProp =
+                                                PxAttrManager.getPxAttr(tilesetName);
                                         pxAttrProp.addListener((observable, oldValue, newValue) -> {
                                             redrawTileTypes.restart();
                                             mapPane.redrawLayer(selectedLayer.get());
@@ -591,16 +638,16 @@ public class MapEditTab extends FileEditTab {
 
             private void initEventHandlers() {
                 selectedLayer.addListener((observable, oldValue, newValue) -> {
+                    redrawTileTypes.restart(); //do this before tileset redraw for speed
                     redrawTileset();
-                    redrawTileTypes.restart();
                     redrawSelectedRect();
                     drawSelectedTiles.restart();
                 });
 
                 tilesetZoom.addListener((observable, oldValue, newValue) -> {
                     fixSize();
+                    redrawTileTypes.restart(); //do this before tileset redraw for speed
                     redrawTileset();
-                    redrawTileTypes.restart();
                     redrawSelectedRect();
                     drawSelectedTiles.restart();
                 });
@@ -1201,7 +1248,7 @@ public class MapEditTab extends FileEditTab {
                         @Override
                         protected Void call() {
                             final PixelReader entitiesReader = entityImg.getPixelReader();
-                            for (final PxPack.Entity entity: entities) {
+                            for (final PxPack.Entity entity : entities) {
                                 //pull sprite
                             }
                             return null;

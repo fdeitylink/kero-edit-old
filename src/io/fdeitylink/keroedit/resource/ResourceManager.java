@@ -1,14 +1,23 @@
 package io.fdeitylink.keroedit.resource;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import java.io.InputStream;
+import java.net.URISyntaxException;
 
 import javafx.scene.image.Image;
 
 public class ResourceManager {
-    public static File getFile(final String filename) {
-        //replaceFirst() should turn path into a normal file path rather than URL/URI/etc.
-        return new File(ResourceManager.class.getResource(filename).toString().replaceFirst("file:/", ""));
+    public static Path getPath(final String filename) {
+        Path p;
+        try {
+            p = Paths.get(ResourceManager.class.getResource(filename).toURI());
+        }
+        catch (final URISyntaxException except) {
+            p = null;
+        }
+        return p;
     }
 
     public static InputStream getInputStream(final String filename) {
@@ -16,6 +25,6 @@ public class ResourceManager {
     }
 
     public static Image getImage(final String filename) {
-        return new Image(ResourceManager.class.getResource(filename).toString(), false);
+        return new Image(getInputStream(filename));
     }
 }

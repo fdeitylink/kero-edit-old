@@ -1,5 +1,6 @@
 /*
  * TODO:
+ * Use try-with-resources?
  * Barebones png editor (color picker and canvas) and reload tilesets in open maps on save (or on edit?)
  * Ctrl +/- and scrollwheel for zoom
  * figure out url bug with assist folder (file:/); fixed?
@@ -10,7 +11,6 @@
  * Resort the map ListView alphabetically when a map is added, and select and open the new map
  * Draggable tabs (and allow popping out into a window)
  * Pass object constructors Files still or move to strings relative to GameData?
- * Use nio.Files and nio.Path instead of io.File
  * Allow opening multiple maps at once (multiple selection)
  * Allow configuring tile size?
  * Use iterators where possible
@@ -31,16 +31,24 @@
 
 package io.fdeitylink.keroedit;
 
-import java.io.File;
-import java.io.FileReader;
-
-import java.nio.file.Files;
-
-import java.io.IOException;
-import java.nio.file.NoSuchFileException;
-
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashSet;
+
+import java.io.File;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import java.io.IOException;
+
+import java.nio.file.DirectoryStream;
+
+import java.nio.file.attribute.PosixFilePermission;
+
+import java.io.BufferedReader;
+import java.nio.charset.Charset;
 
 import java.text.MessageFormat;
 
@@ -240,52 +248,54 @@ public class KeroEdit extends Application {
             }
             setTitle("");
 
-            final FileChooser fChooser = new FileChooser();
-            fChooser.setTitle(Messages.getString("KeroEdit.OpenFile.TITLE"));
+            final FileChooser exeChooser = new FileChooser();
+            exeChooser.setTitle(Messages.getString("KeroEdit.OpenFile.TITLE"));
 
             final String initDir = Config.lastExeLoc.substring(0, Config.lastExeLoc.lastIndexOf(File.separatorChar) + 1);
-            fChooser.setInitialDirectory(new File(initDir));
+            exeChooser.setInitialDirectory(new File(initDir));
 
-            FileChooser.ExtensionFilter[] extensionFilters =
+            final FileChooser.ExtensionFilter[] extFilters =
                     {new FileChooser.ExtensionFilter(Messages.getString("KeroEdit.OpenFile.EXECUTABLE_FILTER"),
                                                      "*.exe"),
                      new FileChooser.ExtensionFilter(Messages.getString("KeroEdit.OpenFile.NO_FILTER"),
                                                      "*.*")};
-            fChooser.getExtensionFilters().addAll(extensionFilters);
-            fChooser.setSelectedExtensionFilter(extensionFilters[0]);
+            exeChooser.getExtensionFilters().addAll(extFilters);
+            exeChooser.setSelectedExtensionFilter(extFilters[0]);
 
-            final File executable = fChooser.showOpenDialog(mainStage);
-            loadMod(executable);
-            setTitle("- " + executable.getParent() + File.separatorChar);
-
-            for (final MenuItem mItem : enableOnLoadItems) {
-                mItem.setDisable(false);
+            final Path exe = exeChooser.showOpenDialog(mainStage).toPath();
+            try {
+                loadMod(exe);
+            }
+            catch (final IOException except) {
+                JavaFXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("KeroEdit.LoadMod.Except.TITLE"), null,
+                                       except.getMessage()).showAndWait();
             }
         });
 
         menuItems[fileMenuItems.get(FileMenuItems.OPEN_LAST)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN));
         menuItems[fileMenuItems.get(FileMenuItems.OPEN_LAST)].setOnAction(event -> {
+            for (final MenuItem mItem : enableOnLoadItems) {
+                if (!mItem.isDisable()) {
+                    mItem.setDisable(true);
+                }
+            }
+
             //TODO: Put into Task
             mainTabPane.getTabs().retainAll(notepadTab);
             mapList.getItems().clear();
-
-            loadMod(new File(Config.lastExeLoc));
-
-            setTitle("- " + Config.lastExeLoc.substring(0, Config.lastExeLoc.lastIndexOf(File.separatorChar) + 1));
-
-            loadMapList();
-            for (final MenuItem mItem : enableOnLoadItems) {
-                mItem.setDisable(false);
+            try {
+                loadMod(Paths.get(Config.lastExeLoc));
+            }
+            catch (final IOException except) {
+                JavaFXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("KeroEdit.LoadMod.Except.TITLE"), null,
+                                       except.getMessage()).showAndWait();
             }
         });
 
-        /*prefsPhaser.register();
-        prefsPhaser.arriveAndAwaitAdvance();*/
         menuItems[fileMenuItems.get(FileMenuItems.OPEN_LAST)]
                 .setDisable(Config.lastExeLoc.equals(System.getProperty("user.dir")) ||
                             !Config.lastExeLoc.endsWith(".exe")); //Disabled if there is no last mod
-        //prefsPhaser.arriveAndDeregister();
 
         menuItems[fileMenuItems.get(FileMenuItems.SAVE)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
@@ -317,11 +327,23 @@ public class KeroEdit extends Application {
         menuItems[fileMenuItems.get(FileMenuItems.RELOAD)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.F5));
         menuItems[fileMenuItems.get(FileMenuItems.RELOAD)].setOnAction(event -> {
+            for (final MenuItem mItem : enableOnLoadItems) {
+                if (!mItem.isDisable()) {
+                    mItem.setDisable(true);
+                }
+            }
+
             //TODO: Warn about unsaved changes
             mainTabPane.getTabs().retainAll(notepadTab);
             mapList.getItems().clear();
 
-            loadMod(GameData.getExecutable());
+            try {
+                loadMod(GameData.getExecutable());
+            }
+            catch (final IOException except) {
+                JavaFXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("KeroEdit.LoadMod.Except.TITLE"), null,
+                                       except.getMessage()).showAndWait();
+            }
         });
         menuItems[fileMenuItems.get(FileMenuItems.RELOAD)]
                 .setDisable(true); //Disable until valid mod opened
@@ -354,28 +376,35 @@ public class KeroEdit extends Application {
      *
      * @param executable A {@code File} that references the executable for a mod
      */
-    private void loadMod(final File executable) {
+    private void loadMod(final Path executable) throws IOException {
         if (null != executable) {
-            try {
-                //TODO: check extension?
-                GameData.init(executable);
-                Config.lastExeLoc = executable.getAbsolutePath();
+            //TODO: check extension?
+            GameData.init(executable);
+            Config.lastExeLoc = executable.toAbsolutePath().toString();
 
-                if (!executable.getParentFile().canWrite() && !executable.getParentFile().setWritable(true)) {
+            if (!Files.isWritable(executable.getParent())) {
+                final HashSet <PosixFilePermission> perms = new HashSet <>(1);
+                perms.add(PosixFilePermission.OWNER_WRITE); //TODO: Group write?
+                Files.setPosixFilePermissions(executable.getParent(), perms); //TODO: does this apply to folder and subitems?
+
+                if (!Files.isWritable(executable.getParent())) {
                     JavaFXUtil.createAlert(Alert.AlertType.INFORMATION,
                                            Messages.getString("KeroEdit.LoadMod.ReadOnly.TITLE"), null,
                                            Messages.getString("KeroEdit.LoadMod.ReadOnly.MESSAGE"));
                 }
-
-                //createAssistFolder();
-
-                loadMapList();
             }
-            catch (final NoSuchFileException except) {
-                JavaFXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("KeroEdit.LoadMod.InvalidPath.TITLE"),
-                                       null,
-                                       Messages.getString("KeroEdit.LoadMod.InvalidPath.MESSAGE")).showAndWait();
+
+            //createAssistFolder();
+
+            loadMapList();
+
+            for (final MenuItem mItem : enableOnLoadItems) {
+                if (mItem.isDisable()) {
+                    mItem.setDisable(false);
+                }
             }
+
+            setTitle("- " + executable.getParent().toAbsolutePath() + File.separatorChar);
         }
     }
 
@@ -383,53 +412,50 @@ public class KeroEdit extends Application {
      * Creates the assist folder for a mod inside of its resource folder
      */
     private void createAssistFolder() {
-        final File assistDir = new File(GameData.getResourceFolder().getAbsolutePath() +
-                                        File.separatorChar + "assist");
+        final Path assistPath = Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
+                                          File.separatorChar + "assist");
         try {
-            if (!assistDir.exists()) {
-                Files.createDirectory(assistDir.toPath());
+            if (!Files.exists(assistPath)) {
+                Files.createDirectory(assistPath);
             }
 
-            final String stringsFilename;
+            final String stringsFname;
             switch (GameData.getModType()) {
                 case KERO_BLASTER:
-                    stringsFilename = "kero_strings.json";
+                    stringsFname = "kero_strings.json";
                     break;
                 case PINK_HOUR:
-                    stringsFilename = "hour_strings.json";
+                    stringsFname = "hour_strings.json";
                     break;
                 case PINK_HEAVEN:
                 default:
-                    stringsFilename = "heaven_strings.json";
+                    stringsFname = "heaven_strings.json";
                     break;
             }
 
-            final File[] assistFiles = ResourceManager.getFile("assist").listFiles();
+            final DirectoryStream <Path> assistPaths = Files.newDirectoryStream(ResourceManager.getPath("assist"));
+            for (final Path p : assistPaths) {
+                //skip if wrong *_strings.json file
+                if (p.toString().endsWith("_strings.json") &&
+                    !p.getFileName().toString().equals(stringsFname)) {
+                    continue;
+                }
 
-            if (null != assistFiles) {
-                for (final File assistFile : assistFiles) {
-                    //skip if attribute png or the wrong *_strings.json file
-                    if (assistFile.getName().equals("attribute.png") ||
-                        (assistFile.getName().endsWith("_strings.json") && !assistFile.getName().equals(stringsFilename))) {
-                        continue;
+                try {
+                    final Path destPath = Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
+                                                    File.separatorChar + "assist" + File.separatorChar +
+                                                    p.getFileName());
+                    if (!Files.exists(destPath)) {
+                        Files.copy(p, destPath);
                     }
-
-                    try {
-                        final File destFile = new File(GameData.getResourceFolder().getAbsolutePath() +
-                                                       File.separatorChar + "assist" +
-                                                       File.separatorChar + assistFile.getName());
-                        if (!destFile.exists()) {
-                            Files.copy(assistFile.toPath(), destFile.toPath());
-                        }
-                    }
-                    catch (final IOException except) {
-                        JavaFXUtil.createAlert(Alert.AlertType.ERROR,
-                                               Messages.getString("KeroEdit.CreateAssistFolder.CopyFileFail.TITLE"),
-                                               null,
-                                               MessageFormat.format(Messages.getString("KeroEdit.CreateAssistFolder.CopyFileFail.MESSAGE"),
-                                                                    assistFile.getName()))
-                                  .showAndWait();
-                    }
+                }
+                catch (final IOException except) {
+                    JavaFXUtil.createAlert(Alert.AlertType.ERROR,
+                                           Messages.getString("KeroEdit.CreateAssistFolder.CopyFileFail.TITLE"),
+                                           null,
+                                           MessageFormat.format(Messages.getString("KeroEdit.CreateAssistFolder.CopyFileFail.MESSAGE"),
+                                                                p.getFileName()))
+                              .showAndWait();
                 }
             }
         }
@@ -598,7 +624,7 @@ public class KeroEdit extends Application {
         menuItems[actionsMenuItems.get(ActionsMenuItems.RUN_GAME)].setOnAction(event -> {
             final Runtime run = Runtime.getRuntime();
             try {
-                run.exec(GameData.getExecutable().getAbsolutePath());
+                run.exec(GameData.getExecutable().toAbsolutePath().toString());
             }
             catch (final IOException except) {
                 JavaFXUtil.createAlert(Alert.AlertType.ERROR,
@@ -610,34 +636,34 @@ public class KeroEdit extends Application {
         enableOnLoadItems.add(menuItems[actionsMenuItems.get(ActionsMenuItems.RUN_GAME)]);
 
         menuItems[actionsMenuItems.get(ActionsMenuItems.EDIT_GLOBAL_SCRIPT)].setOnAction(event -> {
-            final FileChooser fChooser = new FileChooser();
-            fChooser.setTitle(Messages.getString("KeroEdit.OpenFile.TITLE"));
+            final FileChooser scrChooser = new FileChooser();
+            scrChooser.setTitle(Messages.getString("KeroEdit.OpenFile.TITLE"));
 
-            fChooser.setInitialDirectory(GameData.getResourceFolder());
+            scrChooser.setInitialDirectory(new File(GameData.getResourceFolder().toAbsolutePath().toString()));
 
-            FileChooser.ExtensionFilter[] extensionFilters =
+            final FileChooser.ExtensionFilter[] extFilters =
                     {new FileChooser.ExtensionFilter(Messages.getString("KeroEdit.GlobalScript.SCRIPT_FILTER"),
                                                      "*.pxeve"),
-                     new FileChooser.ExtensionFilter(Messages.getString("KeroEdit.GlobalScript.NO_FILTER"), "*.*")};
-            fChooser.getExtensionFilters().addAll(extensionFilters);
-            fChooser.setSelectedExtensionFilter(extensionFilters[0]);
+                     new FileChooser.ExtensionFilter(Messages.getString("KeroEdit.GlobalScript.NO_FILTER"),
+                                                     "*.*")};
+            scrChooser.getExtensionFilters().addAll(extFilters);
+            scrChooser.setSelectedExtensionFilter(extFilters[0]);
 
-            final File scriptFile = fChooser.showOpenDialog(mainStage);
-            if (null != scriptFile) {
-                for (final Tab tab : mainTabPane.getTabs()) {
-                    if (tab instanceof ScriptEditTab &&
-                        tab.getId().equals(scriptFile.getAbsolutePath())) {
-                        mainTabPane.getSelectionModel().select(tab);
-                        mainTabPane.requestFocus();
-                        return;
-                    }
+            final Path scriptFile = scrChooser.showOpenDialog(mainStage).toPath();
+            for (final Tab tab : mainTabPane.getTabs()) {
+                if (tab instanceof ScriptEditTab &&
+                    tab.getId().equals(scriptFile.toAbsolutePath().toString())) {
+                    mainTabPane.getSelectionModel().select(tab);
+                    mainTabPane.requestFocus();
+                    return;
                 }
 
-                final ScriptEditTab sEditTab = new ScriptEditTab(scriptFile, true);
-                mainTabPane.getTabs().add(sEditTab);
-                mainTabPane.getSelectionModel().select(sEditTab);
-                mainTabPane.requestFocus();
             }
+
+            final ScriptEditTab sEditTab = new ScriptEditTab(scriptFile, true);
+            mainTabPane.getTabs().add(sEditTab);
+            mainTabPane.getSelectionModel().select(sEditTab);
+            mainTabPane.requestFocus();
         });
         menuItems[actionsMenuItems.get(ActionsMenuItems.EDIT_GLOBAL_SCRIPT)].setDisable(true);
         enableOnLoadItems.add(menuItems[actionsMenuItems.get(ActionsMenuItems.EDIT_GLOBAL_SCRIPT)]);
@@ -889,10 +915,13 @@ public class KeroEdit extends Application {
             return;
         }
 
-        final File licenseFile = ResourceManager.getFile("LICENSE");
-        final char[] chars = new char[(int)licenseFile.length()];
+        final Path licensePath = ResourceManager.getPath("LICENSE");
+        BufferedReader licenseReader = null;
         try {
-            if (0 < new FileReader(licenseFile).read(chars)) {
+            final char[] chars = new char[(int)Files.size(licensePath)];
+            licenseReader = Files.newBufferedReader(licensePath, Charset.forName("UTF-8"));
+
+            if (0 < licenseReader.read(chars)) {
                 final String licenseText = new String(chars);
                 final Alert licenseAlert = JavaFXUtil.createTextboxAlert(Alert.AlertType.CONFIRMATION,
                                                                          Messages.getString("KeroEdit.ReadLicense.TITLE"),
@@ -912,6 +941,16 @@ public class KeroEdit extends Application {
         }
         catch (final IOException except) {
 
+        }
+        finally {
+            try {
+                if (null != licenseReader) {
+                    licenseReader.close();
+                }
+            }
+            catch (final IOException except) {
+                //meh, ignore - it's an internal file so doesn't really matter
+            }
         }
         JavaFXUtil.createAlert(Alert.AlertType.INFORMATION,
                                Messages.getString("KeroEdit.ReadLicense.UnableToShow.TITLE"), null,
