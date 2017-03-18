@@ -1,6 +1,5 @@
 package io.fdeitylink.keroedit.gamedata;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import java.io.File;
@@ -9,6 +8,8 @@ import java.nio.file.Paths;
 import java.nio.file.Files;
 
 import java.nio.file.DirectoryStream;
+
+import java.io.IOException;
 
 import java.nio.file.NoSuchFileException;
 

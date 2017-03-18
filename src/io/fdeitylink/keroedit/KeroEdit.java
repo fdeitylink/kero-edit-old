@@ -374,6 +374,7 @@ public class KeroEdit extends Application {
      * Loads a mod, checking if it is valid. Also creates its assist folder
      *
      * @param executable A {@code File} that references the executable for a mod
+     *
      * @throws IOException if the mod could not be initialized or was invalid in some way
      */
     private void loadMod(final Path executable) throws IOException {
@@ -454,14 +455,14 @@ public class KeroEdit extends Application {
                                            Messages.getString("KeroEdit.CreateAssistFolder.CopyFileFail.TITLE"),
                                            null,
                                            MessageFormat.format(Messages.getString("KeroEdit.CreateAssistFolder.CopyFileFail.MESSAGE"),
-                                                                p.getFileName()))
-                              .showAndWait();
+                                                                p.getFileName())).showAndWait();
                 }
             }
         }
         catch (final IOException except) {
-            JavaFXUtil.createAlert(Alert.AlertType.ERROR, null,
+            JavaFXUtil.createAlert(Alert.AlertType.ERROR,
                                    Messages.getString("KeroEdit.CreateAssistFolder.CopyFolderFail.TITLE"),
+                                   null,
                                    Messages.getString("KeroEdit.CreateAssistFolder.CopyFolderFail.MESSAGE")).showAndWait();
         }
     }

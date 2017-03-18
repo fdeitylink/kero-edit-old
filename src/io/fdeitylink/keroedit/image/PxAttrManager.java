@@ -1,4 +1,4 @@
-package io.fdeitylink.keroedit.map;
+package io.fdeitylink.keroedit.image;
 
 import java.util.HashMap;
 

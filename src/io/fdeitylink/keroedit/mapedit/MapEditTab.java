@@ -29,6 +29,7 @@ import java.text.ParseException;
 
 import java.text.MessageFormat;
 
+import io.fdeitylink.keroedit.image.ImageManager;
 import javafx.stage.Stage;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
@@ -108,9 +109,20 @@ import io.fdeitylink.keroedit.resource.ResourceManager;
 import io.fdeitylink.keroedit.gamedata.GameData;
 
 import io.fdeitylink.keroedit.map.PxPack;
-import io.fdeitylink.keroedit.map.PxAttrManager;
+import io.fdeitylink.keroedit.image.PxAttrManager;
 
 import io.fdeitylink.keroedit.script.ScriptEditTab;
+
+import static io.fdeitylink.keroedit.image.ImageDimensions.TILE_WIDTH;
+import static io.fdeitylink.keroedit.image.ImageDimensions.TILE_HEIGHT;
+import static io.fdeitylink.keroedit.image.ImageDimensions.TILESET_WIDTH;
+import static io.fdeitylink.keroedit.image.ImageDimensions.TILESET_HEIGHT;
+
+import static io.fdeitylink.keroedit.image.ImageDimensions.PXATTR_TILE_WIDTH;
+import static io.fdeitylink.keroedit.image.ImageDimensions.PXATTR_TILE_HEIGHT;
+import static io.fdeitylink.keroedit.image.ImageDimensions.PXATTR_IMAGE_WIDTH;
+import static io.fdeitylink.keroedit.image.ImageDimensions.PXATTR_IMAGE_HEIGHT;
+
 
 public class MapEditTab extends FileEditTab {
     private static Image pxAttrImg;
@@ -288,18 +300,6 @@ public class MapEditTab extends FileEditTab {
     }
 
     private class TileEditTab extends FileEditTab {
-        private static final int TILE_WIDTH = 8;
-        private static final int TILE_HEIGHT = 8;
-
-        private static final int TILESET_WIDTH = TILE_WIDTH * 16;
-        private static final int TILESET_HEIGHT = TILE_HEIGHT * 16;
-
-        private static final int PXATTR_TILE_WIDTH = 16;
-        private static final int PXATTR_TILE_HEIGHT = 16;
-
-        private static final int PXATTR_IMAGE_WIDTH = PXATTR_TILE_WIDTH * 16;
-        private static final int PXATTR_IMAGE_HEIGHT = PXATTR_TILE_HEIGHT * 16;
-
         private final PxPack.Head head;
         private final ArrayList <PxPack.Entity> entities;
 
@@ -567,19 +567,7 @@ public class MapEditTab extends FileEditTab {
                                 tilesets = new Image[tilesetNames.length];
 
                                 for (int i = 0; i < tilesets.length; ++i) {
-                                    final Image uncroppedTileset = new Image("file:///" +
-                                                                             GameData.getResourceFolder().toAbsolutePath().toString() +
-                                                                             File.separatorChar + "img" + File.separatorChar +
-                                                                             tilesetNames[i] + ".png", false);
-
-                                    //TODO: Figure out purpose of the rest of the tileset and see if it's worth storing
-                                    //(doesn't look to be right now)
-                                    final Image croppedTileset = (0 < uncroppedTileset.getWidth()) ?
-                                                                 new WritableImage(uncroppedTileset.getPixelReader(), 0, 0,
-                                                                                   TILESET_WIDTH, TILESET_HEIGHT) :
-                                                                 uncroppedTileset;
-
-                                    tilesets[i] = croppedTileset;
+                                    tilesets[i] = ImageManager.getImage(tilesetNames[i], true);
                                 }
                                 return null;
                             }
