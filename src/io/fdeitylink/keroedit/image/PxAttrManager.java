@@ -78,10 +78,7 @@ public class PxAttrManager {
                 }
             }
 
-            SeekableByteChannel chan = null;
-            try {
-                chan = Files.newByteChannel(inPath, StandardOpenOption.READ);
-
+            try (final SeekableByteChannel chan =Files.newByteChannel(inPath,StandardOpenOption.READ)) {
                 ByteBuffer buf = ByteBuffer.allocate(HEADER_STRING.length());
                 buf.order(ByteOrder.BIG_ENDIAN);
                 chan.read(buf);
@@ -118,22 +115,9 @@ public class PxAttrManager {
                     attributes = null;
                 }
             }
-            catch (final IOException except) {
+            catch( final IOException except){
                 throw new IOException(MessageFormat.format(Messages.getString("PxAttrManager.PxAttr.IOEXCEPT"),
                                                            inPath.getFileName()), except);
-            }
-            finally {
-                try {
-                    if (null != chan) {
-                        chan.close();
-                    }
-                }
-                catch (final IOException except) {
-                    Logger.logException(MessageFormat.format(Messages.getString("PxAttrManager.PxAttr.CLOSE_FAIL"),
-                                                             inPath.getFileName()),
-                                        except);
-                    //TODO: Probably something should be done if the file can't be closed
-                }
             }
         }
 

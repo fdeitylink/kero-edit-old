@@ -71,10 +71,7 @@ public class PxPack {
             //TODO: initialize fields, exit; new mapFile will be made in save() method
         }
 
-        SeekableByteChannel chan = null;
-        try {
-            chan = Files.newByteChannel(inPath, StandardOpenOption.READ);
-
+        try (final SeekableByteChannel chan = Files.newByteChannel(inPath, StandardOpenOption.READ)) {
             ByteBuffer buf = ByteBuffer.allocate(Head.HEADER_STRING.length());
             chan.read(buf);
 
@@ -193,18 +190,6 @@ public class PxPack {
         catch (final IOException except) {
             throw new IOException(MessageFormat.format(Messages.getString("PxPack.IOEXCEPT"), inPath.getFileName()), except);
         }
-        finally {
-            try {
-                if (null != chan) {
-                    chan.close();
-                }
-            }
-            catch (final IOException except) {
-                Logger.logException(MessageFormat.format(Messages.getString("PxPack.CLOSE_FAIL"), inPath.getFileName()),
-                                    except);
-                //TODO: Probably something should be done if the file can't be closed
-            }
-        }
 
         //save();
     }
@@ -213,11 +198,7 @@ public class PxPack {
      * Saves the PXPACK file
      */
     public void save() {
-        SeekableByteChannel chan = null;
-
-        try {
-            chan = Files.newByteChannel(mapPath, StandardOpenOption.TRUNCATE_EXISTING);
-
+        try (final SeekableByteChannel chan = Files.newByteChannel(mapPath, StandardOpenOption.TRUNCATE_EXISTING)){
             ByteBuffer buf = ByteBuffer.wrap(Head.HEADER_STRING.getBytes());
             chan.write(buf);
 
@@ -253,18 +234,6 @@ public class PxPack {
         catch (final IOException except) {
 
         }
-        finally {
-            try {
-                if (null != chan) {
-                    chan.close();
-                }
-            }
-            catch (final IOException except) {
-                Logger.logException(MessageFormat.format(Messages.getString("PxPack.CLOSE_FAIL"), mapPath.getFileName()),
-                                    except);
-                //TODO: Probably something should be done if the file can't be closed
-            }
-        }
     }
 
     public String getName() {
@@ -274,11 +243,11 @@ public class PxPack {
 
     //TODO: Make this undo/redo friendly?
     public void rename(final String newName) throws IOException {
+        mapPath = Files.move(mapPath, mapPath.resolveSibling(newName + ".pxpack"));
         //final File renamedFile = new File(mapPath.getParent() + File.separatorChar + newName + ".pxpack");
         /*final Path renamedPath = Paths.get(mapPath.getParent().toAbsolutePath().toString() + File.separatorChar +
                                           newName + ".pxpack");*/
 
-        mapPath = Files.move(mapPath, mapPath.resolveSibling(newName + ".pxpack"));
         /*if (Files.exists(renamedPath)) {
             throw new IOException("Attempt to rename " + mapPath.getName() + ".pxpack to " +
                                   renamedPath.getFileName() + ".pxpack" +
@@ -303,18 +272,18 @@ public class PxPack {
     }
 
     public ArrayList <Entity> getEntities() {
-        ArrayList <Entity> entities = new ArrayList <>(this.entities.size());
+        /*final ArrayList <Entity> entities = new ArrayList <>(this.entities.size());
         for (final Entity e : this.entities) {
             entities.add(new Entity(e));
-        }
+        }*/
         return entities;
     }
 
     //TODO: throw NullPointerExceptions for null values
 
-    public void addEntity(final Entity entity) {
+    /*public void addEntity(final Entity entity) {
         entities.add(entity);
-    }
+    }*/
 
     /*public void setEntity(final int index, final Entity entity) {
         entities.set(index, new Entity(entity));

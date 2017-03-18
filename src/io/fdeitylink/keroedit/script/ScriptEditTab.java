@@ -37,12 +37,8 @@ public class ScriptEditTab extends FileEditTab {
         script = inScript;
 
         String scriptText = "";
-
-        SeekableByteChannel chan = null;
-
         //TODO: Use Reader?
-        try {
-            chan = Files.newByteChannel(inScript, StandardOpenOption.READ);
+        try (final SeekableByteChannel chan = Files.newByteChannel(inScript, StandardOpenOption.READ)) {
             final ByteBuffer buf = ByteBuffer.allocate((int)Files.size(inScript));
             chan.read(buf);
             scriptText = new String(buf.array(), "SJIS");
@@ -61,18 +57,6 @@ public class ScriptEditTab extends FileEditTab {
                                                         inScript.getFileName(),
                                                         except.getMessage())).showAndWait();
             getTabPane().getTabs().remove(this);
-        }
-        finally {
-            try {
-                if (null != chan) {
-                    chan.close();
-                }
-            }
-            catch (final IOException except) {
-                Logger.logException(MessageFormat.format(Messages.getString("PxPack.CLOSE_FAIL"), inScript.getFileName()),
-                                    except);
-                //TODO: Probably something should be done if the script file can't be closed
-            }
         }
 
         textArea = new TextArea(scriptText);
@@ -101,6 +85,6 @@ public class ScriptEditTab extends FileEditTab {
     @Override
     public void save() {
         setChanged(false);
-        //TODO: save
+        //TODO: actually save
     }
 }

@@ -1,9 +1,8 @@
 /*
  * TODO:
- * Use try-with-resources?
  * Barebones png editor (color picker and canvas) and reload tilesets in open maps on save (or on edit?)
  * Ctrl +/- and scrollwheel for zoom
- * figure out url bug with assist folder (file:/); fixed?
+ * Figure out url bug with assist folder (file:/); fixed?
  * Use switch statements where applicable
  * Undoable map delete?
  * Put enum filler into method in util package
@@ -917,10 +916,10 @@ public class KeroEdit extends Application {
         }
 
         final Path licensePath = ResourceManager.getPath("LICENSE");
-        BufferedReader licenseReader = null;
-        try {
+        //BufferedReader licenseReader = null;
+        try (final BufferedReader licenseReader = Files.newBufferedReader(licensePath, Charset.forName("UTF-8"))){
             final char[] chars = new char[(int)Files.size(licensePath)];
-            licenseReader = Files.newBufferedReader(licensePath, Charset.forName("UTF-8"));
+            //licenseReader = Files.newBufferedReader(licensePath, Charset.forName("UTF-8"));
 
             if (0 < licenseReader.read(chars)) {
                 final String licenseText = new String(chars);
@@ -942,16 +941,6 @@ public class KeroEdit extends Application {
         }
         catch (final IOException except) {
 
-        }
-        finally {
-            try {
-                if (null != licenseReader) {
-                    licenseReader.close();
-                }
-            }
-            catch (final IOException except) {
-                //meh, ignore - it's an internal file so doesn't really matter
-            }
         }
         JavaFXUtil.createAlert(Alert.AlertType.INFORMATION,
                                Messages.getString("KeroEdit.ReadLicense.UnableToShow.TITLE"), null,

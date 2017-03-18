@@ -1,7 +1,8 @@
 package io.fdeitylink.keroedit.image;
 
-import java.io.File;
 import java.util.HashMap;
+
+import java.io.File;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;

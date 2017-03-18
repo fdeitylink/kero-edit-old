@@ -113,11 +113,10 @@ public class HackTab extends FileEditTab {
     }
 
     private HackTreeItem parseHackFile(final Path hackPath, final String subrootName) {
-        BufferedReader hackFileReader = null;
         HackTreeItem[] hTreeItems = null;
 
-        try {
-            final JsonArray sects = Json.parse(hackFileReader = Files.newBufferedReader(hackPath, Charset.forName("UTF-8")))
+        try (final BufferedReader hackFileReader = Files.newBufferedReader(hackPath, Charset.forName("UTF-8"))) {
+            final JsonArray sects = Json.parse(hackFileReader)
                                         .asObject().get("sects").asArray();
             hTreeItems = new HackTreeItem[sects.size()];
 
@@ -146,16 +145,6 @@ public class HackTab extends FileEditTab {
 
         }
         //TODO: Catch ParseException for invalid JSON
-        finally {
-            try {
-                if (null != hackFileReader) {
-                    hackFileReader.close();
-                }
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
 
         final HackTreeItem subroot = new HackTreeItem(subrootName);
         subroot.setExpanded(true);
