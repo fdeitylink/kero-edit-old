@@ -13,7 +13,6 @@
  * Pass object constructors Files still or move to strings relative to GameData?
  * Allow opening multiple maps at once (multiple selection)
  * Allow configuring tile size?
- * Use iterators where possible
  * Investigate tab-related exceptions, slowness, and NoClassDefFoundError exception when trying to save prefs
  * Log runtime/uncaught exceptions
  * Scaling map down
@@ -375,6 +374,7 @@ public class KeroEdit extends Application {
      * Loads a mod, checking if it is valid. Also creates its assist folder
      *
      * @param executable A {@code File} that references the executable for a mod
+     * @throws IOException if the mod could not be initialized or was invalid in some way
      */
     private void loadMod(final Path executable) throws IOException {
         if (null != executable) {
@@ -382,7 +382,7 @@ public class KeroEdit extends Application {
             GameData.init(executable);
             Config.lastExeLoc = executable.toAbsolutePath().toString();
 
-            if (!Files.isWritable(executable.getParent())) {
+            /*if (!Files.isWritable(executable.getParent())) {
                 final HashSet <PosixFilePermission> perms = new HashSet <>(1);
                 perms.add(PosixFilePermission.OWNER_WRITE); //TODO: Group write?
                 Files.setPosixFilePermissions(executable.getParent(), perms); //TODO: does this apply to folder and subitems?
@@ -392,7 +392,7 @@ public class KeroEdit extends Application {
                                            Messages.getString("KeroEdit.LoadMod.ReadOnly.TITLE"), null,
                                            Messages.getString("KeroEdit.LoadMod.ReadOnly.MESSAGE"));
                 }
-            }
+            }*/
 
             //createAssistFolder();
 

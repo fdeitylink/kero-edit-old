@@ -180,8 +180,8 @@ public class MapEditTab extends FileEditTab {
 
         tabPane = new TabPane(new TileEditTab(this),
                               new ScriptEditTab(Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
-                                                         File.separatorChar + "text" +
-                                                         File.separatorChar + map.getName() + ".pxeve"),
+                                                          File.separatorChar + "text" +
+                                                          File.separatorChar + map.getName() + ".pxeve"),
                                                 false),
                               new PropertyEditTab());
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
@@ -250,7 +250,7 @@ public class MapEditTab extends FileEditTab {
     }
 
     /**
-     * Initializes the {@code pxAttrImg) and {@code entityImg} variables
+     * Initializes the {@code pxAttrImg} and {@code entityImg} variables
      */
     private void initImgs() {
         if (null == pxAttrImg) {
@@ -665,7 +665,7 @@ public class MapEditTab extends FileEditTab {
 
                         final int x = (int)(event.getX() / tilesetZoom.get() / TILE_WIDTH);
                         final int y = (int)(event.getY() / tilesetZoom.get() / TILE_HEIGHT);
-                        final int width = TILESET_WIDTH /* * tilesetZoom.get() / tilesetZoom.get()*/ / TILE_WIDTH;
+                        final int width = TILESET_WIDTH / TILE_WIDTH;
 
                         selectedTiles[selectedLayer.get()] = new int[][]{{(y * width) + x}};
 
@@ -683,6 +683,7 @@ public class MapEditTab extends FileEditTab {
                     @Override
                     public void handle(final MouseEvent event) {
                         if (event.getButton().equals(MouseButton.PRIMARY)) {
+                            //grabs x & y and bounds them to be within tileset size
                             final int x = MathUtil.boundInt((int)event.getX(), 0, (int)(tilesetCanvas.getWidth() - 1)) /
                                           tilesetZoom.get() / TILE_WIDTH;
                             final int y = MathUtil.boundInt((int)event.getY(), 0, (int)(tilesetCanvas.getHeight() - 1)) /
@@ -702,14 +703,15 @@ public class MapEditTab extends FileEditTab {
 
                                 final Rectangle2D selectedRect = selectedRegions[selectedLayer.get()];
 
-                                final int xDiff = (int)(x - (selectedRect.getMaxX() - 1));
-                                final int yDiff = (int)(y - (selectedRect.getMaxY() - 1));
+                                final int dx = (int)(x - (selectedRect.getMaxX() - 1));
+                                final int dy = (int)(y - (selectedRect.getMaxY() - 1));
 
                                 //TODO: Make dragging into relative negatives work better
+                                //should probably draw a graph or something and map movements out
                                 int minX = (int)selectedRect.getMinX();
                                 int minY = (int)selectedRect.getMinY();
-                                int width = (int)(selectedRect.getWidth() + xDiff);
-                                int height = (int)(selectedRect.getHeight() + yDiff);
+                                int width = (int)(selectedRect.getWidth() + dx);
+                                int height = (int)(selectedRect.getHeight() + dy);
 
                                 if (x < minX) {
                                     minX = x;
@@ -723,14 +725,15 @@ public class MapEditTab extends FileEditTab {
                                 selectedRegions[selectedLayer.get()] = new Rectangle2D(minX, minY, width, height);
 
                                 final int[][] tiles = new int[height][width];
-                                final int tilesetWidth = TILESET_WIDTH /* * tilesetZoom.get() / tilesetZoom.get()*/ / TILE_WIDTH;
+                                final int tilesetWidth = TILESET_WIDTH / TILE_WIDTH;
 
+                                //copies selected tiles into tiles 2D arr (created ^)
                                 for (int tilesY = minY; tilesY < minY + height; ++tilesY) {
                                     for (int tilesX = minX; tilesX < minX + width; ++tilesX) {
                                         tiles[tilesY - minY][tilesX - minX] = (tilesY * tilesetWidth) + tilesX;
                                     }
                                 }
-                                selectedTiles[selectedLayer.get()] = tiles;
+                                selectedTiles[selectedLayer.get()] = tiles; //applies selection changes
                                 drawSelectedTiles.restart();
 
                                 redrawSelectedRect();
