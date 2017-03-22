@@ -135,9 +135,9 @@ public class KeroEdit extends Application {
     }
 
     /**
-     * Starts running the Kero Edit program
+     * Starts running the KeroEdit program and sets up its stage
      *
-     * @param stage The stage to run the Kero Edit program in
+     * @param stage The stage to run the KeroEdit program in
      */
     @Override
     public void start(final Stage stage) {
@@ -382,17 +382,17 @@ public class KeroEdit extends Application {
             GameData.init(executable);
             Config.lastExeLoc = executable.toAbsolutePath().toString();
 
-            /*if (!Files.isWritable(executable.getParent())) {
-                final HashSet <PosixFilePermission> perms = new HashSet <>(1);
+            if (!Files.isWritable(executable.getParent())) {
+                /*final HashSet <PosixFilePermission> perms = new HashSet <>(1);
                 perms.add(PosixFilePermission.OWNER_WRITE); //TODO: Group write?
                 Files.setPosixFilePermissions(executable.getParent(), perms); //TODO: does this apply to folder and subitems?
 
-                if (!Files.isWritable(executable.getParent())) {
-                    JavaFXUtil.createAlert(Alert.AlertType.INFORMATION,
-                                           Messages.getString("KeroEdit.LoadMod.ReadOnly.TITLE"), null,
-                                           Messages.getString("KeroEdit.LoadMod.ReadOnly.MESSAGE"));
-                }
-            }*/
+                if (!Files.isWritable(executable.getParent())) {*/
+                JavaFXUtil.createAlert(Alert.AlertType.INFORMATION,
+                                       Messages.getString("KeroEdit.LoadMod.ReadOnly.TITLE"), null,
+                                       Messages.getString("KeroEdit.LoadMod.ReadOnly.MESSAGE"));
+                //}
+            }
 
             //createAssistFolder();
 
@@ -558,7 +558,7 @@ public class KeroEdit extends Application {
 
         menuItems[viewMenuItems.get(ViewMenuItems.TILESET_BG_COLOR)].setOnAction(event -> {
             final ColorPicker cPicker = new ColorPicker(Config.tilesetBgColor);
-            cPicker.setOnAction((ev) -> {
+            cPicker.setOnAction(ev -> {
                 Config.tilesetBgColor = cPicker.getValue();
                 MapEditTab.setTilesetBgColor(cPicker.getValue());
             });
@@ -725,14 +725,14 @@ public class KeroEdit extends Application {
         }
 
         menuItems[helpMenuItems.get(HelpMenuItems.ABOUT)].setOnAction(event -> {
-            final Alert about = JavaFXUtil.createAlert(Alert.AlertType.INFORMATION,
-                                                       Messages.getString("KeroEdit.HelpMenu.About.TITLE"), null,
-                                                       MessageFormat.format(Messages.getString("KeroEdit.HelpMenu.About.MESSAGE"),
-                                                                            Messages.getString("KeroEdit.LAST_UPDATE"),
-                                                                            Messages.getString("KeroEdit.VERSION")));
+            final Alert aboutAlert = JavaFXUtil.createAlert(Alert.AlertType.INFORMATION,
+                                                            Messages.getString("KeroEdit.HelpMenu.About.TITLE"), null,
+                                                            MessageFormat.format(Messages.getString("KeroEdit.HelpMenu.About.MESSAGE"),
+                                                                                 Messages.getString("KeroEdit.LAST_UPDATE"),
+                                                                                 Messages.getString("KeroEdit.VERSION")));
 
-            about.getDialogPane().setGraphic(new ImageView(ResourceManager.getImage("fdl_logo.png")));
-            about.showAndWait();
+            aboutAlert.getDialogPane().setGraphic(new ImageView(ResourceManager.getImage("fdl_logo.png")));
+            aboutAlert.showAndWait();
         });
 
         menuItems[helpMenuItems.get(HelpMenuItems.GUIDE)]
@@ -900,8 +900,7 @@ public class KeroEdit extends Application {
         final TabPane tabPane = new TabPane();
         tabPane.tabClosingPolicyProperty().setValue(TabPane.TabClosingPolicy.ALL_TABS);
 
-        notepadTab = new NotepadTab();
-        tabPane.getTabs().add(notepadTab);
+        tabPane.getTabs().add(notepadTab = new NotepadTab());
 
         return tabPane;
     }
@@ -916,10 +915,9 @@ public class KeroEdit extends Application {
         }
 
         final Path licensePath = ResourceManager.getPath("LICENSE");
-        //BufferedReader licenseReader = null;
-        try (final BufferedReader licenseReader = Files.newBufferedReader(licensePath, Charset.forName("UTF-8"))){
+
+        try (final BufferedReader licenseReader = Files.newBufferedReader(licensePath, Charset.forName("UTF-8"))) {
             final char[] chars = new char[(int)Files.size(licensePath)];
-            //licenseReader = Files.newBufferedReader(licensePath, Charset.forName("UTF-8"));
 
             if (0 < licenseReader.read(chars)) {
                 final String licenseText = new String(chars);
@@ -1081,6 +1079,7 @@ public class KeroEdit extends Application {
         }
     }
 
+    //TODO: Store indexes in enums as opposed to using EnumMap?
     private enum FileMenuItems {
         OPEN,
         OPEN_LAST,

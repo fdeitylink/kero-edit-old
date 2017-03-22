@@ -123,7 +123,6 @@ import static io.fdeitylink.keroedit.image.ImageDimensions.PXATTR_TILE_HEIGHT;
 import static io.fdeitylink.keroedit.image.ImageDimensions.PXATTR_IMAGE_WIDTH;
 import static io.fdeitylink.keroedit.image.ImageDimensions.PXATTR_IMAGE_HEIGHT;
 
-
 public class MapEditTab extends FileEditTab {
     private static Image pxAttrImg;
     private static Image entityImg; //TODO: use file from mod-specific assist folder
@@ -151,16 +150,19 @@ public class MapEditTab extends FileEditTab {
 
     private static final Stage tilesetStage; //TODO: Change to Dialog when adding (not setting) event handlers is allowed
     //(or rework how the stage works)
+    private static final Pane EMPTY_PANE;
 
     static {
+        EMPTY_PANE = new Pane(); //null not accepted as scene roots, so this is used when the tileset stage is not shown
+
         tilesetStage = new Stage();
         tilesetStage.setAlwaysOnTop(true); //TODO: minimize or hide when KeroEdit program not focused
         tilesetStage.setTitle(Messages.getString("MapEditTab.TileEditTab.TILESET_WINDOW_TITLE"));
-        tilesetStage.setScene(new Scene(new Pane()));
+        tilesetStage.setScene(new Scene(EMPTY_PANE));
 
         //remove tileset from stage
         tilesetStage.setOnCloseRequest(event -> {
-            tilesetStage.getScene().setRoot(new Pane()); //null not accepted as root
+            tilesetStage.getScene().setRoot(EMPTY_PANE); //null not accepted as root
             tilesetStage.close(); //same as hiding
         });
     }
@@ -186,7 +188,7 @@ public class MapEditTab extends FileEditTab {
 
         setText(mapFileName);
         setId(mapFileName);
-        setTooltip(new Tooltip(fullMapPath));
+        setTooltip(new Tooltip(fullMapPath + "\n" + map.getHead().getDescription()));
 
         //TODO: Context menu? close and rename
 
@@ -300,7 +302,7 @@ public class MapEditTab extends FileEditTab {
     }
 
     private class TileEditTab extends FileEditTab {
-        private final PxPack.Head head;
+        private final PxPack.Head head; //ensure updates to head reflected in PropertyEditTab
         private final ArrayList <PxPack.Entity> entities;
 
         private final MapPane mapPane;

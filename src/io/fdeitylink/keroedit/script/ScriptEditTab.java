@@ -2,17 +2,16 @@ package io.fdeitylink.keroedit.script;
 
 import java.text.MessageFormat;
 
+import java.util.Iterator;
+import java.util.stream.Stream;
+
+import java.nio.charset.Charset;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-
-import java.nio.channels.SeekableByteChannel;
-
-import java.nio.ByteBuffer;
 
 import java.io.IOException;
 import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
 
 import javafx.scene.control.Alert;
 
@@ -21,12 +20,11 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
 
-import io.fdeitylink.keroedit.util.Logger;
-
 import io.fdeitylink.keroedit.Messages;
 
-import io.fdeitylink.keroedit.util.FileEditTab;
 import io.fdeitylink.keroedit.util.JavaFXUtil;
+
+import io.fdeitylink.keroedit.util.FileEditTab;
 
 public class ScriptEditTab extends FileEditTab {
     private final Path script;
@@ -37,15 +35,10 @@ public class ScriptEditTab extends FileEditTab {
         script = inScript;
 
         String scriptText = "";
-        //TODO: Use Reader?
-        try (final SeekableByteChannel chan = Files.newByteChannel(inScript, StandardOpenOption.READ)) {
-            final ByteBuffer buf = ByteBuffer.allocate((int)Files.size(inScript));
-            chan.read(buf);
-            scriptText = new String(buf.array(), "SJIS");
-        }
-        catch (final UnsupportedEncodingException except) {
-            //TODO: throw error/show message?
-            System.err.println(Messages.getString("UNSUPPORTED_SJIS_ENCODING"));
+        try (final Stream lineStream = Files.lines(inScript, Charset.forName("SJIS"))) {
+            for (final Iterator it = lineStream.iterator(); it.hasNext(); ) {
+                scriptText += it.next() + "\n";
+            }
         }
         catch (final FileNotFoundException except) {
             //TODO: Create new script file

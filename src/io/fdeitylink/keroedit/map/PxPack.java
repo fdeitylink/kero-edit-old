@@ -385,7 +385,7 @@ public class PxPack {
 
             //TODO: Use Arrays.copyOf instead of System.arraycopy?
 
-            this.mapNames = new String[3];
+            this.mapNames = new String[4];
             System.arraycopy(mapNames, 0, this.mapNames, 0, this.mapNames.length);
 
             setSpritesheetName(spritesheetName);
@@ -394,7 +394,7 @@ public class PxPack {
             this.unknownBytes = new byte[5];
             System.arraycopy(unknownBytes, 0, this.unknownBytes, 0, this.unknownBytes.length);
 
-            this.tilesetNames = new String[3];
+            this.tilesetNames = new String[NUM_LAYERS];
             System.arraycopy(tilesetNames, 0, this.tilesetNames, 0, this.tilesetNames.length);
         }
 
@@ -547,7 +547,7 @@ public class PxPack {
                 return;
             }
 
-            if (width == 0 || height == 0) {
+            if (0 == width || 0 == height) {
                 tiles = null;
                 return;
             }
@@ -580,10 +580,6 @@ public class PxPack {
             if (tile < 0 || tile > 0xFF) {
                 throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.TileLayer.SET_TILE_ERROR_MSG"),
                                                                         x, y));
-            }
-
-            if (x >= tiles[0].length || y >= tiles.length) { //do nothing if out of bounds
-                return;
             }
             tiles[y][x] = tile;
         }

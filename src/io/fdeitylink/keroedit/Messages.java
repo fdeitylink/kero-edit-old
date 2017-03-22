@@ -1,9 +1,9 @@
 package io.fdeitylink.keroedit;
 
-import io.fdeitylink.keroedit.util.Logger;
-
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
+
+import io.fdeitylink.keroedit.util.Logger;
 
 public class Messages {
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("io.fdeitylink.keroedit.messages");

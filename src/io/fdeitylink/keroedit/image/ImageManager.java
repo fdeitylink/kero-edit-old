@@ -29,9 +29,9 @@ public class ImageManager {
 
         //if this is a tileset and it is larger than necessary, take only relevant portion
         if (tileset && 0 < image.getWidth() &&
-            (Integer.compare(ImageDimensions.TILESET_WIDTH, (int)image.getWidth()) < 0 ||
-             Integer.compare(ImageDimensions.TILESET_HEIGHT, (int)image.getHeight())< 0)) {
-            //crop down to useful portion (tilesets sometimes have more data than necessary for some reason
+            (ImageDimensions.TILESET_WIDTH < image.getWidth() ||
+             ImageDimensions.TILESET_HEIGHT < image.getHeight())) {
+            //crop down to useful portion (tilesets sometimes have more data than necessary for some reason)
             image = new WritableImage(image.getPixelReader(), 0, 0,
                                       ImageDimensions.TILESET_WIDTH, ImageDimensions.TILESET_HEIGHT);
         }
@@ -40,12 +40,12 @@ public class ImageManager {
         return image;
     }
 
-    //In the event that I allow tileset/image editing, I'll use these and the setup will be similar to
+    //In the event that I allow tileset/image editing, I'll use these and the setup will be similar to PxAttrManager
     /*public static ReadOnlyObjectProperty <Image> getImage(final String imageName) {
 
-    }*/
+    }
 
-    /*private static class ReadOnlyImageWrapper extends ReadOnlyObjectWrapper <Image> {
+    private static class ReadOnlyImageWrapper extends ReadOnlyObjectWrapper <Image> {
         ReadOnlyImageWrapper(final Image image) {
             super(image);
         }
