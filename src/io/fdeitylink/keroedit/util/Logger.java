@@ -15,15 +15,13 @@ import javafx.scene.control.Alert;
 //TODO: Specify log Levels?
 
 public class Logger {
-    private static FileHandler logFile;
-
     private Logger() {
 
     }
 
     public static void logMessage(final String message) {
         try {
-            logFile = new FileHandler("error.log");
+            final FileHandler logFile = new FileHandler("error.log");
             logFile.publish(new LogRecord(Level.ALL, message));
             logFile.close();
         }
@@ -39,6 +37,7 @@ public class Logger {
         sBuilder.append(except.getClass().getName());
         sBuilder.append(": ");
         sBuilder.append(except.getMessage());
+
         for (final StackTraceElement element : except.getStackTrace()) {
             sBuilder.append("\n\t");
             sBuilder.append(element);
@@ -46,7 +45,7 @@ public class Logger {
         final String finalMessage = sBuilder.toString();
 
         try {
-            logFile = new FileHandler("error.log");
+            final FileHandler logFile = new FileHandler("error.log");
             logFile.publish(new LogRecord(Level.ALL, finalMessage));
             logFile.close();
         }

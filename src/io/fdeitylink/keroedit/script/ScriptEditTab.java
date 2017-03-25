@@ -34,10 +34,11 @@ public class ScriptEditTab extends FileEditTab {
     public ScriptEditTab(final Path inScript, final boolean global) {
         script = inScript;
 
-        String scriptText = "";
-        try (final Stream lineStream = Files.lines(inScript, Charset.forName("SJIS"))) {
+        final StringBuilder textBuilder = new StringBuilder();
+        try (Stream lineStream = Files.lines(inScript, Charset.forName("SJIS"))) {
             for (final Iterator it = lineStream.iterator(); it.hasNext(); ) {
-                scriptText += it.next() + "\n";
+                textBuilder.append(it.next());
+                textBuilder.append('\n');
             }
         }
         catch (final FileNotFoundException except) {
@@ -52,7 +53,7 @@ public class ScriptEditTab extends FileEditTab {
             getTabPane().getTabs().remove(this);
         }
 
-        textArea = new TextArea(scriptText);
+        textArea = new TextArea(textBuilder.toString());
         textArea.requestFocus();
         textArea.setFont(new Font("Consolas", 12));
         textArea.textProperty().addListener(((observable, oldValue, newValue) -> setChanged(true)));

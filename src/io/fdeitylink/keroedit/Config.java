@@ -23,6 +23,8 @@ public class Config {
     public static int tilesetZoom;
     public static Color tilesetBgColor;
 
+    public static int displayedLayers;
+
     private Config() {
 
     }
@@ -37,6 +39,9 @@ public class Config {
         tilesetZoom = prefs.getInt(Messages.getString("Config.TILESET_ZOOM"), 2);
         tilesetBgColor = Color.web(prefs.get(Messages.getString("Config.TILESET_BG_COLOR"),
                                              JavaFXUtil.colorToString(Color.MAGENTA)));
+
+        //inits as all layers displayed
+        displayedLayers = prefs.getInt(Messages.getString("Config.DISPLAYED_LAYERS"), 0b111);
     }
 
     static void savePreferences() {
@@ -49,11 +54,12 @@ public class Config {
             prefs.putInt(Messages.getString("Config.TILESET_ZOOM"), tilesetZoom);
             prefs.put(Messages.getString("Config.TILESET_BG_COLOR"), JavaFXUtil.colorToString(tilesetBgColor));
 
+            prefs.putInt(Messages.getString("Config.DISPLAYED_LAYERS"), displayedLayers);
+
             prefs.flush();
         }
         catch (final BackingStoreException except) {
-            Logger.logException(MessageFormat.format(Messages.getString("Config.SAVE_FAILURE"),
-                                                     except.getMessage()), except);
+            Logger.logException(Messages.getString("Config.SAVE_FAILURE"), except);
             //TODO: Show error alert?
         }
     }

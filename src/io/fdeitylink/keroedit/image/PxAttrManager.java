@@ -78,7 +78,7 @@ public class PxAttrManager {
                 }
             }
 
-            try (final SeekableByteChannel chan =Files.newByteChannel(inPath,StandardOpenOption.READ)) {
+            try (SeekableByteChannel chan =Files.newByteChannel(inPath,StandardOpenOption.READ)) {
                 ByteBuffer buf = ByteBuffer.allocate(HEADER_STRING.length());
                 buf.order(ByteOrder.BIG_ENDIAN);
                 chan.read(buf);

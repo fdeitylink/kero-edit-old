@@ -49,6 +49,7 @@ public class GameData {
      */
     public static void init(final Path executable) throws IOException {
         //TODO: Move all/most of this stuff into constructor?
+
         inst = new GameData();
 
         if (null == executable) {
@@ -65,6 +66,7 @@ public class GameData {
             dirPaths = Files.newDirectoryStream(executable.getParent(), entry -> Files.isDirectory(entry));
         }
         catch (final IOException except) {
+            inst = null;
             throw new IOException(MessageFormat.format(Messages.getString("GameData.ListFilesIOExcept.MESSAGE"),
                                                        executable.toAbsolutePath()), except);
         }
@@ -88,38 +90,63 @@ public class GameData {
         }
 
         if (!rscExists) {
-            inst = new GameData();
+            inst = null;
             throw new NoSuchFileException(MessageFormat.format(Messages.getString("GameData.MISSING_RSC"),
                                                                executable.toAbsolutePath()));
         }
 
-        inst.bgms = getFileList(File.separatorChar + "bgm" + File.separatorChar, ".ptcop");
+        try {
+            inst.bgms = getFileList(File.separatorChar + "bgm" + File.separatorChar, ".ptcop");
 
-        inst.maps = getFileList(File.separatorChar + "field" + File.separatorChar, ".pxpack");
+            inst.maps = getFileList(File.separatorChar + "field" + File.separatorChar, ".pxpack");
 
-        inst.soundEffects = getFileList(File.separatorChar + "se" + File.separatorChar, ".ptnoise");
+            inst.soundEffects = getFileList(File.separatorChar + "se" + File.separatorChar, ".ptnoise");
 
-        inst.scripts = getFileList(File.separatorChar + "text" + File.separatorChar, ".pxeve");
+            inst.scripts = getFileList(File.separatorChar + "text" + File.separatorChar, ".pxeve");
+        }
+        catch (final IOException except) {
+            inst = null;
+            throw except;
+        }
     }
 
     public static Path getExecutable() {
+        if (null == inst) {
+            throw new IllegalStateException("GameData has not been properly initialized yet");
+        }
         return inst.executable;
     }
 
     public static Path getResourceFolder() {
+        if (null == inst) {
+            throw new IllegalStateException("GameData has not been properly initialized yet");
+        }
         return inst.resourceFolder;
     }
 
     public static MOD_TYPE getModType() {
+        if (null == inst) {
+            throw new IllegalStateException("GameData has not been properly initialized yet");
+        }
         return inst.modType;
     }
 
     public static ArrayList <String> getMapList() {
+        if (null == inst) {
+            throw new IllegalStateException("GameData has not been properly initialized yet");
+        }
         return new ArrayList <>(inst.maps);
     }
 
     public static void removeMap(final String mapname) {
+        if (null == inst) {
+            throw new IllegalStateException("GameData has not been properly initialized yet");
+        }
+        if (!inst.maps.contains(mapname)) {
+            throw new IllegalArgumentException("No such map (" + mapname + ") exists");
+        }
         inst.maps.remove(mapname);
+        //TODO: actually delete map
     }
 
     private static ArrayList <String> getFileList(final String pathFromResource, final String extension) throws IOException {

@@ -29,7 +29,6 @@ import java.text.ParseException;
 
 import java.text.MessageFormat;
 
-import io.fdeitylink.keroedit.image.ImageManager;
 import javafx.stage.Stage;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
@@ -110,6 +109,7 @@ import io.fdeitylink.keroedit.gamedata.GameData;
 
 import io.fdeitylink.keroedit.map.PxPack;
 import io.fdeitylink.keroedit.image.PxAttrManager;
+import io.fdeitylink.keroedit.image.ImageManager;
 
 import io.fdeitylink.keroedit.script.ScriptEditTab;
 
@@ -131,14 +131,7 @@ public class MapEditTab extends FileEditTab {
     private static final SimpleIntegerProperty tilesetZoom = new SimpleIntegerProperty(Config.tilesetZoom);
     private static final SimpleObjectProperty <Color> tilesetBgColor = new SimpleObjectProperty <>(Config.tilesetBgColor);
 
-    private static final SimpleBooleanProperty[] displayedLayers;
-
-    static {
-        displayedLayers = new SimpleBooleanProperty[PxPack.NUM_LAYERS];
-        for (int i = 0; i < displayedLayers.length; ++i) {
-            displayedLayers[i] = new SimpleBooleanProperty(true);
-        }
-    }
+    private static final SimpleIntegerProperty displayedLayers = new SimpleIntegerProperty(Config.displayedLayers);
 
     private static final SimpleIntegerProperty selectedLayer = new SimpleIntegerProperty(0);
 
@@ -188,15 +181,14 @@ public class MapEditTab extends FileEditTab {
 
         setText(mapFileName);
         setId(mapFileName);
-        setTooltip(new Tooltip(fullMapPath + "\n" + map.getHead().getDescription()));
+        setTooltip(new Tooltip(fullMapPath + "\n" + map.getHead().getDescription())); //ensure updates to description reflected in tooltip
 
         //TODO: Context menu? close and rename
 
         tabPane = new TabPane(new TileEditTab(this),
                               new ScriptEditTab(Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
                                                           File.separatorChar + "text" +
-                                                          File.separatorChar + map.getName() + ".pxeve"),
-                                                false),
+                                                          File.separatorChar + map.getName() + ".pxeve"), false),
                               new PropertyEditTab());
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
@@ -221,8 +213,8 @@ public class MapEditTab extends FileEditTab {
         tilesetBgColor.set(color);
     }
 
-    public static void bindDisplayedLayer(final int index, final BooleanProperty property) {
-        displayedLayers[index].bind(property);
+    public static void bindDisplayedLayers(final /*BooleanProperty*/ SimpleIntegerProperty property) {
+        displayedLayers/*[index]*/.bind(property);
     }
 
     public static void setSelectedLayer(final int layer) {
@@ -785,7 +777,8 @@ public class MapEditTab extends FileEditTab {
                 mapCanvases = new Canvas[tileLayers.length];
                 for (int i = 0; i < mapCanvases.length; ++i) {
                     mapCanvases[i] = new Canvas();
-                    mapCanvases[i].visibleProperty().bind(displayedLayers[i]);
+                    mapCanvases[i].setVisible(LayerFlags.values()[i].flag ==
+                                              (displayedLayers.get() & LayerFlags.values()[i].flag));
                 }
 
                 entityCanvas = new Canvas();
@@ -808,6 +801,7 @@ public class MapEditTab extends FileEditTab {
                 JavaFXUtil.setBackgroundColor(bgColor.get(), mapStackPane);
 
                 initEventHandlers();
+
                 setPannable(false);
                 setContextMenu(initContextMenu());
                 setContent(mapStackPane);
@@ -820,6 +814,13 @@ public class MapEditTab extends FileEditTab {
              * {@code Canvas}es in this {@code ScrollPane}
              */
             private void initEventHandlers() {
+                displayedLayers.addListener(((observable, oldValue, newValue) -> {
+                    for (int i = 0; i < LayerFlags.values().length; ++i) {
+                        mapCanvases[i].setVisible(LayerFlags.values()[i].flag ==
+                                                  (newValue.intValue() & LayerFlags.values()[i].flag));
+                    }
+                }));
+
                 selectedLayer.addListener((observable, oldValue, newValue) -> {
                     if (showTileTypes.get()) {
                         redrawLayer(oldValue.intValue()); //"undraw" tiletypes from previously selected layer
@@ -837,7 +838,6 @@ public class MapEditTab extends FileEditTab {
                     }
                 });
 
-                //TODO: cap x & y to be within map
                 cursorCanvas.setOnMouseMoved(new EventHandler <MouseEvent>() {
                     private int prevX;
                     private int prevY;
@@ -1342,11 +1342,6 @@ public class MapEditTab extends FileEditTab {
         }
     }
 
-    private enum MapPaneMenuItems {
-        RESIZE,
-        BG_COLOR
-    }
-
     //TODO: Make this extend FileEditTab?
     private class PropertyEditTab extends Tab {
         private final GridPane mainGridPane;
@@ -1360,5 +1355,22 @@ public class MapEditTab extends FileEditTab {
 
             mainGridPane = new GridPane();
         }
+    }
+
+    public enum LayerFlags {
+        FOREGROUND(0b1),
+        MIDDLEGROUND(0b10),
+        BACKGROUND(0b100);
+
+        public final int flag;
+
+        LayerFlags(int flag) {
+            this.flag = flag;
+        }
+    }
+
+    private enum MapPaneMenuItems {
+        RESIZE,
+        BG_COLOR
     }
 }

@@ -115,7 +115,7 @@ public class HackTab extends FileEditTab {
     private HackTreeItem parseHackFile(final Path hackPath, final String subrootName) {
         HackTreeItem[] hTreeItems = null;
 
-        try (final BufferedReader hackFileReader = Files.newBufferedReader(hackPath, Charset.forName("UTF-8"))) {
+        try (BufferedReader hackFileReader = Files.newBufferedReader(hackPath, Charset.forName("UTF-8"))) {
             final JsonArray sects = Json.parse(hackFileReader).asObject().get("sects").asArray();
             hTreeItems = new HackTreeItem[sects.size()];
 

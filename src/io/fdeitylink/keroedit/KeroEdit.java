@@ -2,8 +2,6 @@
  * TODO:
  * Barebones png editor (color picker and canvas) and reload tilesets in open maps on save (or on edit?)
  * Ctrl +/- and scrollwheel for zoom
- * Figure out url bug with assist folder (file:/); fixed?
- * Use switch statements where applicable
  * Undoable map delete?
  * Put enum filler into method in util package
  * Use Tab.setOnCloseRequest() to warn about unsaved changes
@@ -17,21 +15,21 @@
  * Scaling map down
  * Lower memory usage and stuffs
  * Allow changing tilesets in map edit tab (so it will have to change head properties)
- * Find most efficient way to read files
  * Play pxtone files
  * Will need something for GameData changes to notify objects using it (i.e. maplist changes)
  * In script editor, eventually put in an autocompleter for stuff like entity names
- *
- * Create missing directories rather than throw error?
- * Find OS-dependent stylesheets?
- * Use the JavaFX API for prefs (get/setUserData())?
  */
 
 package io.fdeitylink.keroedit;
 
+import java.util.Iterator;
+import java.util.stream.Stream;
+
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashSet;
+
+import java.text.MessageFormat;
 
 import java.io.File;
 
@@ -45,10 +43,7 @@ import java.nio.file.DirectoryStream;
 
 import java.nio.file.attribute.PosixFilePermission;
 
-import java.io.BufferedReader;
 import java.nio.charset.Charset;
-
-import java.text.MessageFormat;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -105,6 +100,8 @@ import javafx.stage.FileChooser;
 import javafx.print.PrinterJob;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
+import javafx.beans.property.SimpleIntegerProperty;
 
 import io.fdeitylink.keroedit.resource.ResourceManager;
 
@@ -223,9 +220,12 @@ public class KeroEdit extends Application {
         fileMenu.getItems().addAll(menuItems);
 
         final EnumMap <FileMenuItems, Integer> fileMenuItems = new EnumMap <>(FileMenuItems.class);
-        int i = 0;
-        for (final FileMenuItems x : FileMenuItems.values()) {
-            fileMenuItems.put(x, i++);
+
+        {
+            int i = 0;
+            for (final FileMenuItems x : FileMenuItems.values()) {
+                fileMenuItems.put(x, i++);
+            }
         }
 
         menuItems[fileMenuItems.get(FileMenuItems.OPEN)]
@@ -479,9 +479,11 @@ public class KeroEdit extends Application {
         editMenu.getItems().addAll(menuItems);
 
         final EnumMap <EditMenuItems, Integer> editMenuItems = new EnumMap <>(EditMenuItems.class);
-        int i = 0;
-        for (final EditMenuItems x : EditMenuItems.values()) {
-            editMenuItems.put(x, i++);
+        {
+            int i = 0;
+            for (final EditMenuItems x : EditMenuItems.values()) {
+                editMenuItems.put(x, i++);
+            }
         }
 
         menuItems[editMenuItems.get(EditMenuItems.UNDO)]
@@ -527,14 +529,16 @@ public class KeroEdit extends Application {
         viewMenu.getItems().addAll(menuItems);
 
         final EnumMap <ViewMenuItems, Integer> viewMenuItems = new EnumMap <>(ViewMenuItems.class);
-        int i = 0;
-        for (final ViewMenuItems x : ViewMenuItems.values()) {
-            viewMenuItems.put(x, i++);
+        {
+            int i = 0;
+            for (final ViewMenuItems x : ViewMenuItems.values()) {
+                viewMenuItems.put(x, i++);
+            }
         }
 
         final RadioMenuItem[] mapZoomMenuItems = createZoomSubmenu(Config.mapZoom);
         int zoom = 2;
-        for (i = 0; i < mapZoomMenuItems.length; ++i) {
+        for (int i = 0; i < mapZoomMenuItems.length; ++i) {
             final int z = zoom;
             mapZoomMenuItems[i].setOnAction(event -> {
                 Config.mapZoom = z;
@@ -546,7 +550,7 @@ public class KeroEdit extends Application {
 
         final RadioMenuItem[] tilesetZoomMenuItems = createZoomSubmenu(Config.tilesetZoom);
         zoom = 2;
-        for (i = 0; i < tilesetZoomMenuItems.length; ++i) {
+        for (int i = 0; i < tilesetZoomMenuItems.length; ++i) {
             final int z = zoom;
             tilesetZoomMenuItems[i].setOnAction(event -> {
                 Config.tilesetZoom = z;
@@ -575,13 +579,14 @@ public class KeroEdit extends Application {
     /**
      * Used for creating the Map and Tileset zoom submenus
      *
-     * @param currentZoom The current/default zoom level
+     * @param defaultZoom The current/default zoom level, the {@code RadioMenuItem} for which
+     * will be selected.
      *
      * @return An array of {@code RadioMenuItem}s in a {@code ToggleGroup} that can be used
      * to set a zoom level. None of them are bound to an {@code EventHandler <ActionEvent>},
      * so that must be done after they are created
      */
-    private RadioMenuItem[] createZoomSubmenu(final int currentZoom) {
+    private RadioMenuItem[] createZoomSubmenu(final int defaultZoom) {
         final ToggleGroup zoomToggleGroup = new ToggleGroup();
         final RadioMenuItem[] zoomMenuItems = new RadioMenuItem[3];
 
@@ -590,11 +595,9 @@ public class KeroEdit extends Application {
         int zoom = 2;
         for (int i = 0; i < zoomMenuItems.length; ++i) {
             zoomMenuItems[i] = new RadioMenuItem(String.valueOf(zoom * 100) + '%');
-
             zoomMenuItems[i].setToggleGroup(zoomToggleGroup);
-            if (currentZoom == zoom) {
-                zoomMenuItems[i].setSelected(true);
-            }
+            zoomMenuItems[i].setSelected(defaultZoom == zoom);
+
             zoom += 2;
         }
 
@@ -616,9 +619,11 @@ public class KeroEdit extends Application {
         actionsMenu.getItems().addAll(menuItems);
 
         final EnumMap <ActionsMenuItems, Integer> actionsMenuItems = new EnumMap <>(ActionsMenuItems.class);
-        int i = 0;
-        for (final ActionsMenuItems x : ActionsMenuItems.values()) {
-            actionsMenuItems.put(x, i++);
+        {
+            int i = 0;
+            for (final ActionsMenuItems x : ActionsMenuItems.values()) {
+                actionsMenuItems.put(x, i++);
+            }
         }
 
         menuItems[actionsMenuItems.get(ActionsMenuItems.RUN_GAME)].setOnAction(event -> {
@@ -719,9 +724,11 @@ public class KeroEdit extends Application {
         helpMenu.getItems().addAll(menuItems);
 
         final EnumMap <HelpMenuItems, Integer> helpMenuItems = new EnumMap <>(HelpMenuItems.class);
-        int i = 0;
-        for (final HelpMenuItems x : HelpMenuItems.values()) {
-            helpMenuItems.put(x, i++);
+        {
+            int i = 0;
+            for (final HelpMenuItems x : HelpMenuItems.values()) {
+                helpMenuItems.put(x, i++);
+            }
         }
 
         menuItems[helpMenuItems.get(HelpMenuItems.ABOUT)].setOnAction(event -> {
@@ -765,9 +772,11 @@ public class KeroEdit extends Application {
         mapList.setContextMenu(contextMenu);
 
         final EnumMap <MapListMenuItems, Integer> mapListMenuItems = new EnumMap <>(MapListMenuItems.class);
-        int i = 0;
-        for (final MapListMenuItems x : MapListMenuItems.values()) {
-            mapListMenuItems.put(x, i++);
+        {
+            int i = 0;
+            for (final MapListMenuItems x : MapListMenuItems.values()) {
+                mapListMenuItems.put(x, i++);
+            }
         }
 
         /*
@@ -916,34 +925,33 @@ public class KeroEdit extends Application {
 
         final Path licensePath = ResourceManager.getPath("LICENSE");
 
-        try (final BufferedReader licenseReader = Files.newBufferedReader(licensePath, Charset.forName("UTF-8"))) {
-            final char[] chars = new char[(int)Files.size(licensePath)];
-
-            if (0 < licenseReader.read(chars)) {
-                final String licenseText = new String(chars);
-                final Alert licenseAlert = JavaFXUtil.createTextboxAlert(Alert.AlertType.CONFIRMATION,
-                                                                         Messages.getString("KeroEdit.ReadLicense.TITLE"),
-                                                                         null,
-                                                                         Messages.getString("KeroEdit.ReadLicense.MESSAGE"),
-                                                                         licenseText, false);
-                licenseAlert.showAndWait().ifPresent(result -> {
-                    Config.licenseRead = ButtonType.OK == result;
-                    if (!Config.licenseRead) {
-                        mainStage.close();
-                        Platform.exit();
-                        System.exit(0);
-                    }
-                });
-                return;
+        try (Stream lineStream = Files.lines(licensePath, Charset.forName("UTF-8"))) {
+            final StringBuilder textBuilder = new StringBuilder((int)Files.size(licensePath));
+            for (final Iterator it = lineStream.iterator(); it.hasNext(); ) {
+                textBuilder.append(it.next());
+                textBuilder.append('\n');
             }
-        }
-        catch (final IOException except) {
 
+            JavaFXUtil.createTextboxAlert(Alert.AlertType.CONFIRMATION,
+                                          Messages.getString("KeroEdit.ReadLicense.TITLE"), null,
+                                          Messages.getString("KeroEdit.ReadLicense.MESSAGE"),
+                                          textBuilder.toString(), false).showAndWait()
+                      .ifPresent(result -> {
+                          Config.licenseRead = ButtonType.OK == result;
+                          if (!Config.licenseRead) {
+                              mainStage.close();
+                              Platform.exit();
+                              System.exit(0);
+                          }
+                      });
+            return;
         }
-        JavaFXUtil.createAlert(Alert.AlertType.INFORMATION,
-                               Messages.getString("KeroEdit.ReadLicense.UnableToShow.TITLE"), null,
-                               Messages.getString("KeroEdit.ReadLicense.UnableToShow.MESSAGE")).showAndWait();
-        Config.licenseRead = true; //allow program use, assuming they read it I guess
+        catch (final IOException except) { //unlikely
+            JavaFXUtil.createAlert(Alert.AlertType.INFORMATION,
+                                   Messages.getString("KeroEdit.ReadLicense.UnableToShow.TITLE"), null,
+                                   Messages.getString("KeroEdit.ReadLicense.UnableToShow.MESSAGE")).showAndWait();
+            Config.licenseRead = true; //allow program use, assuming they read it I guess
+        }
     }
 
     private static class SettingsPane extends GridPane {
@@ -964,6 +972,8 @@ public class KeroEdit extends Application {
             label.setFont(Font.font(null, FontWeight.BOLD, 15));
             add(label, x, y++);
 
+            final SimpleIntegerProperty displayedLayers = new SimpleIntegerProperty(Config.displayedLayers);
+
             final CheckBox[] checkboxes = new CheckBox[PxPack.NUM_LAYERS];
             for (int i = 0; i < checkboxes.length; ++i) {
                 final String layerName;
@@ -980,11 +990,27 @@ public class KeroEdit extends Application {
                 checkboxes[i] = new CheckBox(layerName);
 
                 checkboxes[i].setAllowIndeterminate(false);
-                checkboxes[i].setSelected(true);
-                MapEditTab.bindDisplayedLayer(i, checkboxes[i].selectedProperty());
+                checkboxes[i].setSelected(MapEditTab.LayerFlags.values()[i].flag ==
+                                          (Config.displayedLayers & MapEditTab.LayerFlags.values()[i].flag));
+
+                int layer = i;
+                checkboxes[i].selectedProperty().addListener(((observable, oldValue, newValue) -> {
+                    int newDispLayersFlag = displayedLayers.get();
+                    if (newValue) {
+                        newDispLayersFlag |= MapEditTab.LayerFlags.values()[layer].flag;
+                    }
+                    else {
+                        newDispLayersFlag &= MapEditTab.LayerFlags.values()[layer].flag ^ 0b1111_1111;
+                    }
+
+                    displayedLayers.set(newDispLayersFlag);
+                    Config.displayedLayers = newDispLayersFlag;
+                }));
 
                 add(checkboxes[i], x, y++);
             }
+
+            MapEditTab.bindDisplayedLayers(displayedLayers);
         }
 
         private void initSelectedLayer(int x, int y) {
@@ -1028,14 +1054,16 @@ public class KeroEdit extends Application {
             final RadioButton[] radioButtons = {new RadioButton(Messages.getString("KeroEdit.SettingsPane.DRAW"))};
 
             final EnumMap <DrawSettingsItems, Integer> drawSettingsItems = new EnumMap <>(DrawSettingsItems.class);
-            int i = 0;
-            for (final DrawSettingsItems k : DrawSettingsItems.values()) {
-                drawSettingsItems.put(k, i++);
+            {
+                int i = 0;
+                for (final DrawSettingsItems k : DrawSettingsItems.values()) {
+                    drawSettingsItems.put(k, i++);
+                }
             }
 
             radioButtons[drawSettingsItems.get(DrawSettingsItems.DRAW)].setSelected(true);
 
-            for (i = 0; i < radioButtons.length; ++i) {
+            for (int i = 0; i < radioButtons.length; ++i) {
                 final int mode = i;
                 radioButtons[i].setOnAction(event -> MapEditTab.setDrawMode(DrawSettingsItems.values()[mode]));
                 radioButtons[i].setToggleGroup(toggleGroup);

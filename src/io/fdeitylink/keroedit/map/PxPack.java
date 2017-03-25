@@ -71,7 +71,7 @@ public class PxPack {
             //TODO: initialize fields, exit; new mapFile will be made in save() method
         }
 
-        try (final SeekableByteChannel chan = Files.newByteChannel(inPath, StandardOpenOption.READ)) {
+        try (SeekableByteChannel chan = Files.newByteChannel(inPath, StandardOpenOption.READ)) {
             ByteBuffer buf = ByteBuffer.allocate(Head.HEADER_STRING.length());
             chan.read(buf);
 
@@ -198,7 +198,7 @@ public class PxPack {
      * Saves the PXPACK file
      */
     public void save() {
-        try (final SeekableByteChannel chan = Files.newByteChannel(mapPath, StandardOpenOption.TRUNCATE_EXISTING)){
+        try (SeekableByteChannel chan = Files.newByteChannel(mapPath, StandardOpenOption.TRUNCATE_EXISTING)){
             ByteBuffer buf = ByteBuffer.wrap(Head.HEADER_STRING.getBytes());
             chan.write(buf);
 
