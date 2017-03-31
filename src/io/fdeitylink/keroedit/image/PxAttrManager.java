@@ -25,18 +25,17 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 
 import io.fdeitylink.keroedit.Messages;
 
-import io.fdeitylink.keroedit.util.Logger;
-
 import io.fdeitylink.keroedit.gamedata.GameData;
 
 /**
- * Class for managing PXATTR files as they belong to tilesets
+ * Manages PXATTR files as they belong to tilesets
  * and are thus shared between maps. As a result, a central
  * repository of them must be kept so that updates to an attribute
- * inside a PXATTR object will be reflected in all maps depending upon it.
+ * inside a PXATTR object will be reflected in all maps that use it.
  */
 public class PxAttrManager {
     private static final HashMap <String, ReadOnlyPxAttrWrapper> pxAttrsMap = new HashMap <>();
+    private static PxAttr mpt00;
 
     private PxAttrManager() {
 
@@ -46,9 +45,27 @@ public class PxAttrManager {
         if (pxAttrsMap.containsKey(tilesetName)) {
             return pxAttrsMap.get(tilesetName).getReadOnlyProperty();
         }
-        final PxAttr pxAttr = new PxAttr(Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
-                                                   File.separatorChar + "img" + File.separatorChar +
-                                                   tilesetName + ".pxattr"));
+
+        Path path = Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
+                              File.separatorChar + "img" + File.separatorChar +
+                              tilesetName + ".pxattr");
+
+        final PxAttr pxAttr;
+
+        //if mpt00 pxattr is requested or we need to use it as default
+        if ("mpt00".equals(tilesetName) || !Files.exists(path)) {
+            if (null == mpt00) {
+                path = Paths.get(path.getParent().toAbsolutePath().toString() + File.separatorChar + "mpt00.pxattr");
+                if (!Files.exists(path)) { //mpt00 file doesn't exist
+                    throw new FileNotFoundException(Messages.getString("PxAttrManager.PxAttr.DEFAULT_MISSING"));
+                }
+                mpt00 = new PxAttr(path);
+            }
+            pxAttr = mpt00; //no changes made to mpt00 when used as a default (read code for setAttribute() method)
+        }
+        else {
+            pxAttr = new PxAttr(path);
+        }
 
         final ReadOnlyPxAttrWrapper pxAttrProp = new ReadOnlyPxAttrWrapper(pxAttr);
         pxAttrsMap.put(tilesetName, pxAttrProp);
@@ -56,31 +73,39 @@ public class PxAttrManager {
         return pxAttrProp.getReadOnlyProperty();
     }
 
-    public static void setAttribute(final String pxAttrName, final int x, final int y, final int attribute) {
-        pxAttrsMap.get(pxAttrName).setAttribute(x, y, attribute);
+    public static void setAttribute(final String tilesetName, final int x, final int y, final int attribute) {
+        final ReadOnlyPxAttrWrapper pxAttrProp = pxAttrsMap.get(tilesetName);
+        if (!"mpt00".equals(tilesetName) && pxAttrProp.get() == mpt00) {
+            final Path path = Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
+                                        File.separatorChar + "img" + File.separatorChar +
+                                        tilesetName + ".pxattr");
+            final PxAttr pxAttr = new PxAttr(mpt00, path);
+            pxAttrProp.set(pxAttr);
+        }
+        pxAttrProp.setAttribute(x, y, attribute);
     }
 
     public static void wipe() {
         pxAttrsMap.clear();
+        mpt00 = null;
     }
 
     public static class PxAttr {
         private static final String HEADER_STRING = "pxMAP01\0";
 
         private final Path path;
-        //when saving, check if file doesn't exist (meaning we used mpt00.pxattr as default) - create new one if so
 
         private int[][] attributes;
 
         PxAttr(Path inPath) throws IOException, ParseException {
             path = inPath;
 
-            if (!Files.exists(inPath)) {
+            /*if (!Files.exists(inPath)) {
                 inPath = Paths.get(inPath.getParent().toAbsolutePath().toString() + File.separatorChar + "mpt00.pxattr");
                 if (!Files.exists(inPath)) {
                     throw new FileNotFoundException(Messages.getString("PxAttrManager.PxAttr.DEFAULT_MISSING"));
                 }
-            }
+            }*/
 
             try (SeekableByteChannel chan = Files.newByteChannel(inPath, StandardOpenOption.READ)) {
                 ByteBuffer buf = ByteBuffer.allocate(HEADER_STRING.length());
@@ -125,6 +150,12 @@ public class PxAttrManager {
             }
         }
 
+        //for cloning into new PxAttr
+        PxAttr(final PxAttr pxAttr, final Path path) {
+            this.path = Paths.get(path.toAbsolutePath().toString()); //is this necessary or can I just do path = pxAttr.path?
+            attributes = pxAttr.getAttributes(); //clones
+        }
+
         public int[][] getAttributes() {
             if (null != attributes) {
                 final int[][] attributesCopy = new int[attributes.length][attributes[0].length];
@@ -142,6 +173,7 @@ public class PxAttrManager {
         }
 
         void save() {
+            //create file if nonexistent
             System.out.println("pxattr " + path.getFileName() + " saved");
         }
     }

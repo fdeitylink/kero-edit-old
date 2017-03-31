@@ -256,7 +256,7 @@ public class MapEditTab extends FileEditTab {
         //TODO: save pxpack, pxattr, and script
     }
 
-    public static void wipeImgs() {
+    public static void wipeImages() {
         pxAttrImg = null;
         entityImg = null;
     }
@@ -612,8 +612,8 @@ public class MapEditTab extends FileEditTab {
                                         //TODO: Option to create one? (will have to be all blank...)
                                         Platform.runLater(() -> JavaFXUtil.createAlert(Alert.AlertType.ERROR,
                                                                                        Messages.getString("MapEditTab.TileEditTab.PxAttrLoadExcept.TITLE"),
-                                                                                       null,
-                                                                                       except.getMessage()).showAndWait());
+                                                                                       null, except.getMessage())
+                                                                          .showAndWait());
                                     }
                                 }
 

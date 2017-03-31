@@ -356,7 +356,7 @@ public class KeroEdit extends Application {
 
         ImageManager.wipe();
         PxAttrManager.wipe();
-        MapEditTab.wipeImgs();
+        MapEditTab.wipeImages();
     }
 
     /**
