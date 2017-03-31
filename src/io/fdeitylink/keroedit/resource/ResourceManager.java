@@ -9,6 +9,10 @@ import java.net.URISyntaxException;
 import javafx.scene.image.Image;
 
 public class ResourceManager {
+    private ResourceManager() {
+
+    }
+
     public static Path getPath(final String filename) {
         Path p;
         try {

@@ -138,24 +138,25 @@ public class MapEditTab extends FileEditTab {
     private static final SimpleObjectProperty <KeroEdit.DrawSettingsItems> drawMode =
             new SimpleObjectProperty <>(KeroEdit.DrawSettingsItems.DRAW);
 
-    //TODO: Single view flags property?
     private static final SimpleBooleanProperty showTileTypes = new SimpleBooleanProperty(false);
+
+    //TODO: Use this for all view settings (tile types, grid) instead of showTileTypes
+    //private static final SimpleIntegerProperty viewSettings = new SimpleIntegerProperty(0);
 
     private static final Stage tilesetStage; //TODO: Change to Dialog when adding (not setting) event handlers is allowed
     //(or rework how the stage works)
-    private static final Pane EMPTY_PANE;
 
     static {
-        EMPTY_PANE = new Pane(); //null not accepted as scene roots, so this is used when the tileset stage is not shown
+        final Pane emptyPane = new Pane(); //null not accepted as scene roots, so this is used when tileset stage is not shown
 
         tilesetStage = new Stage();
         tilesetStage.setAlwaysOnTop(true); //TODO: minimize or hide when KeroEdit program not focused
         tilesetStage.setTitle(Messages.getString("MapEditTab.TileEditTab.TILESET_WINDOW_TITLE"));
-        tilesetStage.setScene(new Scene(EMPTY_PANE));
+        tilesetStage.setScene(new Scene(emptyPane));
 
         //remove tileset from stage
         tilesetStage.setOnCloseRequest(event -> {
-            tilesetStage.getScene().setRoot(EMPTY_PANE); //null not accepted as root
+            tilesetStage.getScene().setRoot(emptyPane);
             tilesetStage.close(); //same as hiding
         });
     }
@@ -213,8 +214,8 @@ public class MapEditTab extends FileEditTab {
         tilesetBgColor.set(color);
     }
 
-    public static void bindDisplayedLayers(final /*BooleanProperty*/ SimpleIntegerProperty property) {
-        displayedLayers/*[index]*/.bind(property);
+    public static void bindDisplayedLayers(final SimpleIntegerProperty property) {
+        displayedLayers.bind(property);
     }
 
     public static void setSelectedLayer(final int layer) {
@@ -253,6 +254,11 @@ public class MapEditTab extends FileEditTab {
         System.out.println("Saved");
         setChanged(false);
         //TODO: save pxpack, pxattr, and script
+    }
+
+    public static void wipeImgs() {
+        pxAttrImg = null;
+        entityImg = null;
     }
 
     /**

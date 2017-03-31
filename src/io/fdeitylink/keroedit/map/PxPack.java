@@ -39,8 +39,6 @@ import javafx.scene.paint.Color;
 
 import io.fdeitylink.keroedit.Messages;
 
-import io.fdeitylink.keroedit.util.Logger;
-
 /**
  * Object for storing information about a PXPACK map file
  */
@@ -198,14 +196,17 @@ public class PxPack {
      * Saves the PXPACK file
      */
     public void save() {
-        try (SeekableByteChannel chan = Files.newByteChannel(mapPath, StandardOpenOption.TRUNCATE_EXISTING)){
+        try (SeekableByteChannel chan = Files.newByteChannel(mapPath, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+            Files.copy(mapPath, java.nio.file.Paths.get(mapPath.toAbsolutePath().toString().replace(".pxpack", "") +
+                                                        Math.random() + ".pxpack"));
+
             ByteBuffer buf = ByteBuffer.wrap(Head.HEADER_STRING.getBytes());
             chan.write(buf);
 
             writeString(head.getDescription(), chan);
 
-            for (final String referencedMap : head.getMapNames()) {
-                writeString(referencedMap, chan);
+            for (final String map : head.getMapNames()) {
+                writeString(map, chan);
             }
 
             writeString(head.getSpritesheetName(), chan);
@@ -223,6 +224,7 @@ public class PxPack {
             for (final String tilesetName : head.getTilesetNames()) {
                 writeString(tilesetName, chan);
                 buf = ByteBuffer.wrap(new byte[]{0, 0});
+                chan.write(buf);
             }
 
             /*buf = ByteBuffer.wrap(TileLayer.HEADER_STRING.getBytes());
@@ -232,7 +234,7 @@ public class PxPack {
 
         }
         catch (final IOException except) {
-
+            except.printStackTrace();
         }
     }
 
@@ -281,16 +283,8 @@ public class PxPack {
 
     //TODO: throw NullPointerExceptions for null values
 
-    /*public void addEntity(final Entity entity) {
-        entities.add(entity);
-    }*/
-
-    /*public void setEntity(final int index, final Entity entity) {
-        entities.set(index, new Entity(entity));
-    }*/
-
     /**
-     * Reads a string from a PXPACk file tied to a given FileChannel
+     * Reads a string from a PXPACK file tied to a given FileChannel
      *
      * @param chan The SeekableByteChannel object to read from
      *
@@ -299,7 +293,7 @@ public class PxPack {
      * @throws IOException if there was an error reading the string from the PXPACK file
      */
     private String readString(final SeekableByteChannel chan) throws IOException {
-        String result = null;
+        String result = "";
         try {
             ByteBuffer buf = ByteBuffer.allocate(1);
             chan.read(buf);
@@ -320,6 +314,7 @@ public class PxPack {
     }
 
     private void writeString(final String str, final SeekableByteChannel chan) throws IOException {
+        //seems to not work, IDK why
         final byte[] strAsBytes = str.getBytes("SJIS");
         final ByteBuffer buf = ByteBuffer.allocate(1 + strAsBytes.length);
 

@@ -40,6 +40,10 @@ public class ImageManager {
         return image;
     }
 
+    public static void wipe() {
+        imagesMap.clear();
+    }
+
     //In the event that I allow tileset/image editing, I'll use these and the setup will be similar to PxAttrManager
     /*public static ReadOnlyObjectProperty <Image> getImage(final String imageName) {
 

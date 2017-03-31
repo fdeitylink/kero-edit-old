@@ -59,6 +59,10 @@ public class GameData {
             throw new NoSuchFileException(MessageFormat.format(Messages.getString("GameData.EXECUTABLE_NONEXISTENT"),
                                                                executable.toAbsolutePath()));
         }
+        else if (!executable.getFileName().toString().endsWith(".exe")) {
+            throw new IllegalArgumentException(MessageFormat.format(Messages.getString("GameData.EXECUTABLE_NOT_EXE"),
+                                                                    executable.toAbsolutePath()));
+        }
         inst.executable = executable;
 
         final DirectoryStream <Path> dirPaths;

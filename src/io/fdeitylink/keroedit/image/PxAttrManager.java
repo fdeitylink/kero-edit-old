@@ -60,6 +60,10 @@ public class PxAttrManager {
         pxAttrsMap.get(pxAttrName).setAttribute(x, y, attribute);
     }
 
+    public static void wipe() {
+        pxAttrsMap.clear();
+    }
+
     public static class PxAttr {
         private static final String HEADER_STRING = "pxMAP01\0";
 
@@ -68,7 +72,7 @@ public class PxAttrManager {
 
         private int[][] attributes;
 
-        private PxAttr(Path inPath) throws IOException, ParseException {
+        PxAttr(Path inPath) throws IOException, ParseException {
             path = inPath;
 
             if (!Files.exists(inPath)) {
@@ -78,7 +82,7 @@ public class PxAttrManager {
                 }
             }
 
-            try (SeekableByteChannel chan =Files.newByteChannel(inPath,StandardOpenOption.READ)) {
+            try (SeekableByteChannel chan = Files.newByteChannel(inPath, StandardOpenOption.READ)) {
                 ByteBuffer buf = ByteBuffer.allocate(HEADER_STRING.length());
                 buf.order(ByteOrder.BIG_ENDIAN);
                 chan.read(buf);
@@ -115,7 +119,7 @@ public class PxAttrManager {
                     attributes = null;
                 }
             }
-            catch( final IOException except){
+            catch (final IOException except) {
                 throw new IOException(MessageFormat.format(Messages.getString("PxAttrManager.PxAttr.IOEXCEPT"),
                                                            inPath.getFileName()), except);
             }
@@ -132,12 +136,12 @@ public class PxAttrManager {
             return null;
         }
 
-        private void setAttribute(final int x, final int y, final int attribute) {
+        void setAttribute(final int x, final int y, final int attribute) {
             //TODO: Check attribute for validity
             attributes[y][x] = attribute;
         }
 
-        private void save() {
+        void save() {
             System.out.println("pxattr " + path.getFileName() + " saved");
         }
     }

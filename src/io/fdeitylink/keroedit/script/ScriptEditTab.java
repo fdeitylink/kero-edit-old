@@ -2,8 +2,8 @@ package io.fdeitylink.keroedit.script;
 
 import java.text.MessageFormat;
 
-import java.util.Iterator;
 import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import java.nio.charset.Charset;
 
@@ -34,16 +34,13 @@ public class ScriptEditTab extends FileEditTab {
     public ScriptEditTab(final Path inScript, final boolean global) {
         script = inScript;
 
-        final StringBuilder textBuilder = new StringBuilder();
-        try (Stream lineStream = Files.lines(inScript, Charset.forName("SJIS"))) {
-            for (final Iterator it = lineStream.iterator(); it.hasNext(); ) {
-                textBuilder.append(it.next());
-                textBuilder.append('\n');
-            }
+        String scriptText = "";
+        try (Stream <String> lineStream = Files.lines(inScript, Charset.forName("SJIS"))) {
+            scriptText = lineStream.collect(Collectors.joining("\n"));
         }
         catch (final FileNotFoundException except) {
             //TODO: Create new script file
-            System.err.println("ERROR: Could not locate PXEVE file " + inScript.toAbsolutePath().toString());
+            System.err.println("ERROR: Could not locate PXEVE file " + inScript.toAbsolutePath());
         }
         catch (final IOException except) {
             JavaFXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("ScriptEditTab.IOExcept.TITLE"), null,
@@ -53,7 +50,7 @@ public class ScriptEditTab extends FileEditTab {
             getTabPane().getTabs().remove(this);
         }
 
-        textArea = new TextArea(textBuilder.toString());
+        textArea = new TextArea(scriptText);
         textArea.requestFocus();
         textArea.setFont(new Font("Consolas", 12));
         textArea.textProperty().addListener(((observable, oldValue, newValue) -> setChanged(true)));
