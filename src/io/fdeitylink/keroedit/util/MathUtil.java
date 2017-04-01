@@ -1,6 +1,6 @@
 package io.fdeitylink.keroedit.util;
 
-public class MathUtil {
+public final class MathUtil {
     /**
      * Returns either the given number or
      * the lower limit if the number is less than the lower limit or

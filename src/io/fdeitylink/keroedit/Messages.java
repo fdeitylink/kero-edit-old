@@ -5,7 +5,7 @@ import java.util.MissingResourceException;
 
 import io.fdeitylink.keroedit.util.Logger;
 
-public class Messages {
+public final class Messages {
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("io.fdeitylink.keroedit.messages");
 
     private Messages() {

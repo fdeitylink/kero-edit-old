@@ -1,7 +1,7 @@
 package io.fdeitylink.keroedit.image;
 
 //TODO: Implement as enum...maybe
-public class ImageDimensions {
+public final class ImageDimensions {
     private ImageDimensions() {
 
     }

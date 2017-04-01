@@ -116,7 +116,7 @@ import io.fdeitylink.keroedit.hack.HackTab;
 import io.fdeitylink.keroedit.mapedit.MapEditTab;
 import io.fdeitylink.keroedit.script.ScriptEditTab;
 
-public class KeroEdit extends Application {
+public final class KeroEdit extends Application {
     private ArrayList <MenuItem> enableOnLoadItems;
 
     private Stage mainStage;
@@ -921,7 +921,7 @@ public class KeroEdit extends Application {
         }
     }
 
-    private static class SettingsPane extends GridPane {
+    private static final class SettingsPane extends GridPane {
         SettingsPane() {
             setPadding(new Insets(10, 10, 10, 10));
             setVgap(10);
@@ -1060,7 +1060,7 @@ public class KeroEdit extends Application {
         }
     }
 
-    private static class NotepadTab extends Tab {
+    private static final class NotepadTab extends Tab {
         private final TextArea notepad;
 
         NotepadTab() {

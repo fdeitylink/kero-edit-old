@@ -42,7 +42,7 @@ import io.fdeitylink.keroedit.Messages;
 /**
  * Object for storing information about a PXPACK map file
  */
-public class PxPack {
+public final class PxPack {
     public static final int NUM_LAYERS = 3;
 
     private Path mapPath;
@@ -343,7 +343,7 @@ public class PxPack {
         return result.toString();
     }
 
-    public class Head {
+    public static final class Head {
         private static final String HEADER_STRING = "PXPACK121127a**\0";
 
         private final String[] mapNames;
@@ -491,7 +491,7 @@ public class PxPack {
         }
     }
 
-    public class TileLayer {
+    public static final class TileLayer {
         private static final String HEADER_STRING = "pxMAP01\0";
 
         private int[][] tiles;
@@ -605,7 +605,7 @@ public class PxPack {
         }
     }
 
-    public class Entity {
+    public static final class Entity {
         private int type;
         private byte flag, unknownByte; //TODO: make ints?
         private int x, y;

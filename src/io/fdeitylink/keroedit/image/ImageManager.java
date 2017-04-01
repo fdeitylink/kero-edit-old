@@ -12,7 +12,7 @@ import io.fdeitylink.keroedit.gamedata.GameData;
 /*import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;*/
 
-public class ImageManager {
+public final class ImageManager {
     private static final HashMap <String, Image> imagesMap = new HashMap <>();
 
     private ImageManager() {

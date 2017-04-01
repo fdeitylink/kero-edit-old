@@ -33,7 +33,7 @@ import io.fdeitylink.keroedit.gamedata.GameData;
  * repository of them must be kept so that updates to an attribute
  * inside a PXATTR object will be reflected in all maps that use it.
  */
-public class PxAttrManager {
+public final class PxAttrManager {
     private static final HashMap <String, ReadOnlyPxAttrWrapper> pxAttrsMap = new HashMap <>();
     private static PxAttr mpt00;
 
@@ -90,7 +90,7 @@ public class PxAttrManager {
         mpt00 = null;
     }
 
-    public static class PxAttr {
+    public static final class PxAttr {
         private static final String HEADER_STRING = "pxMAP01\0";
 
         private final Path path;
@@ -178,7 +178,7 @@ public class PxAttrManager {
         }
     }
 
-    private static class ReadOnlyPxAttrWrapper extends ReadOnlyObjectWrapper <PxAttr> {
+    private static final class ReadOnlyPxAttrWrapper extends ReadOnlyObjectWrapper <PxAttr> {
         ReadOnlyPxAttrWrapper(final PxAttr pxAttr) {
             super(pxAttr);
         }

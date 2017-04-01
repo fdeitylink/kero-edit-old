@@ -29,7 +29,7 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.image.PixelWriter;
 
-public class JavaFXUtil {
+public final class JavaFXUtil {
     private JavaFXUtil() {
 
     }

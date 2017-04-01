@@ -26,7 +26,7 @@ import io.fdeitylink.keroedit.util.JavaFXUtil;
 
 import io.fdeitylink.keroedit.util.FileEditTab;
 
-public class ScriptEditTab extends FileEditTab {
+public final class ScriptEditTab extends FileEditTab {
     private final Path script;
 
     private final TextArea textArea;

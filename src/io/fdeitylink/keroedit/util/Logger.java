@@ -6,15 +6,12 @@ import java.util.logging.Level;
 
 import java.io.IOException;
 
-import java.util.Date;
-import java.text.SimpleDateFormat;
-
 import io.fdeitylink.keroedit.Messages;
 import javafx.scene.control.Alert;
 
 //TODO: Specify log Levels?
 
-public class Logger {
+public final class Logger {
     private Logger() {
 
     }

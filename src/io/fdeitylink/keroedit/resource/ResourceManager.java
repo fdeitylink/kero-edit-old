@@ -8,7 +8,7 @@ import java.net.URISyntaxException;
 
 import javafx.scene.image.Image;
 
-public class ResourceManager {
+public final class ResourceManager {
     private ResourceManager() {
 
     }

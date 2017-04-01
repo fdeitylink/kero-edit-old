@@ -39,7 +39,7 @@ import io.fdeitylink.keroedit.util.JavaFXUtil;
 
 import io.fdeitylink.keroedit.gamedata.GameData;
 
-public class HackTab extends FileEditTab {
+public final class HackTab extends FileEditTab {
     private final SplitPane sPane;
 
     public HackTab() {
@@ -152,7 +152,7 @@ public class HackTab extends FileEditTab {
         return subroot;
     }
 
-    private static class HackTreeItem extends TreeItem <String> {
+    private static final class HackTreeItem extends TreeItem <String> {
         private final GridPane hackPane;
 
         HackTreeItem() {
@@ -172,7 +172,7 @@ public class HackTab extends FileEditTab {
         }
     }
 
-    private static class HackField extends HBox {
+    private static final class HackField extends HBox {
         private final Text label;
         private final TextField field;
         private final int offset;

@@ -22,7 +22,7 @@ import io.fdeitylink.keroedit.Messages;
 /**
  * Singleton class for storing about a Kero Blaster game
  */
-public class GameData {
+public final class GameData {
     private static GameData inst;
 
     private MOD_TYPE modType;

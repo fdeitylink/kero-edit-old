@@ -123,7 +123,7 @@ import static io.fdeitylink.keroedit.image.ImageDimensions.PXATTR_TILE_HEIGHT;
 import static io.fdeitylink.keroedit.image.ImageDimensions.PXATTR_IMAGE_WIDTH;
 import static io.fdeitylink.keroedit.image.ImageDimensions.PXATTR_IMAGE_HEIGHT;
 
-public class MapEditTab extends FileEditTab {
+public final class MapEditTab extends FileEditTab {
     private static Image pxAttrImg;
     private static Image entityImg; //TODO: use file from mod-specific assist folder
 
@@ -299,7 +299,7 @@ public class MapEditTab extends FileEditTab {
         }
     }
 
-    private class TileEditTab extends FileEditTab {
+    private final class TileEditTab extends FileEditTab {
         private final PxPack.Head head; //ensure updates to head reflected in PropertyEditTab
         private final ArrayList <PxPack.Entity> entities;
 
@@ -974,15 +974,13 @@ public class MapEditTab extends FileEditTab {
                     final String title = MessageFormat.format(Messages.getString("MapEditTab.TileEditTab.Resize.TITLE"),
                                                               layerName);
 
-                    final int width = null == mapPane.tileLayers[selectedLayer.get()].getTiles() ? 0 :
-                                      mapPane.tileLayers[selectedLayer.get()].getTiles()[0].length;
-                    final int height = null == mapPane.tileLayers[selectedLayer.get()].getTiles() ? 0 :
-                                       mapPane.tileLayers[selectedLayer.get()].getTiles().length;
+                    final int[][] layerData = mapPane.tileLayers[selectedLayer.get()].getTiles();
+                    final int width = null == layerData ? 0 : layerData[0].length;
+                    final int height = null == layerData ? 0 : layerData.length;
 
                     final String currentSizeStr = MessageFormat.format(Messages.getString("MapEditTab.TileEditTab.Resize.CURRENT_SIZE"),
                                                                        width, height);
 
-                    //final Optional <Pair <String, String>> result =
                     //TODO: Check that I did this right
                     JavaFXUtil.createDualTextFieldDialog(title, currentSizeStr,
                                                          Messages.getString("MapEditTab.TileEditTab.Resize.NEW_WIDTH"),
@@ -1349,7 +1347,7 @@ public class MapEditTab extends FileEditTab {
     }
 
     //TODO: Make this extend FileEditTab?
-    private class PropertyEditTab extends Tab {
+    private final class PropertyEditTab extends Tab {
         private final GridPane mainGridPane;
 
         private final PxPack.Head head;

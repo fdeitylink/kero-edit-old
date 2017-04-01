@@ -11,7 +11,7 @@ import io.fdeitylink.keroedit.util.Logger;
 /**
  * Stores configuration options
  */
-public class Config {
+public final class Config {
     private static final Preferences prefs = Preferences.userNodeForPackage(Config.class);
 
     static boolean licenseRead;
