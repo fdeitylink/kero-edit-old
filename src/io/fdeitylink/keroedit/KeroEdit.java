@@ -21,6 +21,7 @@
 
 package io.fdeitylink.keroedit;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.EnumMap;
 
@@ -766,10 +767,16 @@ public final class KeroEdit extends Application {
                 }
             }
 
-            final MapEditTab mapEditTab = new MapEditTab(filename);
-            mainTabPane.getTabs().add(mapEditTab);
-            mainTabPane.getSelectionModel().select(mapEditTab);
-            mainTabPane.requestFocus();
+            try {
+                final MapEditTab mapEditTab = new MapEditTab(filename);
+                mainTabPane.getTabs().add(mapEditTab);
+                mainTabPane.getSelectionModel().select(mapEditTab);
+                mainTabPane.requestFocus();
+            }
+            catch (final IOException | ParseException except) {
+                //do nothing - the exception just signals that there was a map parsing issue
+                //dialog box already shown via the MapEditTab constructor
+            }
         });
         contextMenuItems[mapListMenuItems.get(MapListMenuItems.OPEN)].setDisable(true);
         enableOnLoadItems.add(contextMenuItems[mapListMenuItems.get(MapListMenuItems.OPEN)]);
@@ -1096,19 +1103,21 @@ public final class KeroEdit extends Application {
             label.setFont(Font.font(null, FontWeight.BOLD, 15));
             add(label, x, y++);
 
-            final CheckBox[] toggles = {new CheckBox(Messages.getString("KeroEdit.SettingsPane.SHOW_TILE_TYPES"))};
+            final CheckBox[] cBoxes = {new CheckBox(Messages.getString("KeroEdit.SettingsPane.TILE_TYPES"))};
 
             final EnumMap <ViewSettingsItems, Integer> viewSettingsItems = new EnumMap <>(ViewSettingsItems.class);
-            int i = 0;
-            for (final ViewSettingsItems k : ViewSettingsItems.values()) {
-                viewSettingsItems.put(k, i++);
+            {
+                int i = 0;
+                for (final ViewSettingsItems k : ViewSettingsItems.values()) {
+                    viewSettingsItems.put(k, i++);
+                }
             }
 
-            toggles[viewSettingsItems.get(ViewSettingsItems.TILE_TYPES)].setSelected(false);
-            MapEditTab.bindShowTileTypes(toggles[viewSettingsItems.get(ViewSettingsItems.TILE_TYPES)].selectedProperty());
+            cBoxes[viewSettingsItems.get(ViewSettingsItems.TILE_TYPES)].setSelected(false);
+            MapEditTab.bindShowTileTypes(cBoxes[viewSettingsItems.get(ViewSettingsItems.TILE_TYPES)].selectedProperty());
 
-            for (final CheckBox toggle : toggles) {
-                add(toggle, x, y++);
+            for (final CheckBox cBox : cBoxes) {
+                add(cBox, x, y++);
             }
         }
     }

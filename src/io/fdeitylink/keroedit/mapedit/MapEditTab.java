@@ -158,7 +158,7 @@ public final class MapEditTab extends FileEditTab {
     private final TabPane tabPane;
     private /*final*/ PxPack map;
 
-    public MapEditTab(final String mapFileName) {
+    public MapEditTab(final String mapFileName) throws IOException, ParseException {
         initImgs();
 
         final String fullMapPath = GameData.getResourceFolder().toAbsolutePath().toString() +
@@ -171,7 +171,7 @@ public final class MapEditTab extends FileEditTab {
             FXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("MapEditTab.OpenExcept.TITLE"), null,
                                MessageFormat.format(Messages.getString("MapEditTab.OpenExcept.MESSAGE"), mapFileName,
                                                     except.getMessage())).showAndWait();
-            getTabPane().getTabs().remove(this);
+            throw except;
         }
 
         setText(mapFileName);

@@ -153,7 +153,7 @@ public final class PxAttrManager {
         //for cloning into new PxAttr
         PxAttr(final PxAttr pxAttr, final Path path) {
             this.path = Paths.get(path.toAbsolutePath().toString()); //is this necessary or can I just do path = pxAttr.path?
-            attributes = pxAttr.getAttributes(); //clones
+            this.attributes = pxAttr.getAttributes(); //clones
         }
 
         public int[][] getAttributes() {
