@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.nio.charset.Charset;
 
+import io.fdeitylink.keroedit.util.FXUtil;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -35,7 +36,6 @@ import io.fdeitylink.keroedit.resource.ResourceManager;
 import io.fdeitylink.keroedit.Messages;
 
 import io.fdeitylink.keroedit.util.FileEditTab;
-import io.fdeitylink.keroedit.util.JavaFXUtil;
 
 import io.fdeitylink.keroedit.gamedata.GameData;
 
@@ -189,7 +189,7 @@ public final class HackTab extends FileEditTab {
             field = new TextField(currentVal);
             field.setDisable(-1 == len || -1 == offset);
             field.setTooltip(new Tooltip("Default: " + defaultVal));
-            JavaFXUtil.setTextFieldLength(field, len);
+            FXUtil.setTextFieldLength(field, len);
 
             getChildren().addAll(label, field);
         }

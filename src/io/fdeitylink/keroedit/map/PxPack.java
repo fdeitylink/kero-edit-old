@@ -63,10 +63,9 @@ public final class PxPack {
     public PxPack(final Path inPath) throws IOException, ParseException {
         mapPath = inPath;
 
-        //TODO: check if file doesn't exist
         if (!Files.exists(inPath)) {
             System.err.println("ERROR: Could not locate PXPACK map file " + inPath.getFileName() + ".pxpack");
-            //TODO: initialize fields, exit; new mapFile will be made in save() method
+            //TODO: instead, initialize fields, exit; new mapFile will be made in save() method
         }
 
         try (SeekableByteChannel chan = Files.newByteChannel(inPath, StandardOpenOption.READ)) {
@@ -107,11 +106,15 @@ public final class PxPack {
             for (int i = 0; i < tilesetNames.length; ++i) {
                 tilesetNames[i] = readString(chan);
                 chan.position(chan.position() + 2); //skip 2 bytes after each tileset name
-                //First byte is a sort of visibility toggle
-                //0 = invisible; 2 = visible;
-                //1 || >= 3 = pulls wrong tiles but from same tileset (offset?);
-                //> 32 = game crashes
-                //Second is scroll type (scroll.txt)
+                /*
+                 * First byte is a sort of visibility toggle
+                 *  - 0 -> invisible
+                 *  - 2 -> visible
+                 *  - 1 or >= 3 -> pulls wrong tiles from same tileset (offsets?)
+                 *  - > 32 -> game crashes
+                 *
+                 *  Second byte is scroll type (scroll.txt)
+                 */
             }
 
             head = new Head(description, mapNames, spritesheetName, unknownBytes, bgColor, tilesetNames);
@@ -123,8 +126,7 @@ public final class PxPack {
                 chan.read(buf);
                 if (!(new String(buf.array()).equals(TileLayer.HEADER_STRING))) {
                     throw new ParseException(MessageFormat.format(Messages.getString("PxPack.INCORRECT_LAYER_HEADER"),
-                                                                  i, inPath.getFileName()),
-                                             (int)chan.position());
+                                                                  i, inPath.getFileName()), (int)chan.position());
                 }
 
                 buf = ByteBuffer.allocate(4);
@@ -281,8 +283,6 @@ public final class PxPack {
         return entities;
     }
 
-    //TODO: throw NullPointerExceptions for null values
-
     /**
      * Reads a string from a PXPACK file tied to a given FileChannel
      *
@@ -348,9 +348,9 @@ public final class PxPack {
 
         private final String[] mapNames;
         private final String[] tilesetNames;
+        private final byte[] unknownBytes; //TODO: Make int[]?
         private String description;
         private String spritesheetName;
-        private final byte[] unknownBytes; //TODO: Make int[]?
         private Color bgColor;
 
         //TODO: add reset()?
@@ -501,12 +501,7 @@ public final class PxPack {
         }
 
         TileLayer(final TileLayer layer) {
-            if (null != layer.tiles) {
-                tiles = new int[layer.tiles.length][layer.tiles[0].length];
-                for (int y = 0; y < layer.tiles.length; ++y) {
-                    System.arraycopy(layer.tiles[y], 0, tiles[y], 0, layer.tiles[y].length);
-                }
-            }
+            tiles = layer.getTiles();
         }
 
         TileLayer(final int[][] tiles) {

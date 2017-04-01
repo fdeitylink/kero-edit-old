@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
+import io.fdeitylink.keroedit.util.FXUtil;
 import javafx.scene.control.Alert;
 
 import javafx.scene.control.Tooltip;
@@ -21,8 +22,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
 
 import io.fdeitylink.keroedit.Messages;
-
-import io.fdeitylink.keroedit.util.JavaFXUtil;
 
 import io.fdeitylink.keroedit.util.FileEditTab;
 
@@ -43,10 +42,10 @@ public final class ScriptEditTab extends FileEditTab {
             System.err.println("ERROR: Could not locate PXEVE file " + inScript.toAbsolutePath());
         }
         catch (final IOException except) {
-            JavaFXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("ScriptEditTab.IOExcept.TITLE"), null,
-                                   MessageFormat.format(Messages.getString("ScriptEditTab.IOExcept.MESSAGE"),
-                                                        inScript.getFileName(),
-                                                        except.getMessage())).showAndWait();
+            FXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("ScriptEditTab.IOExcept.TITLE"), null,
+                               MessageFormat.format(Messages.getString("ScriptEditTab.IOExcept.MESSAGE"),
+                                                    inScript.getFileName(),
+                                                    except.getMessage())).showAndWait();
             getTabPane().getTabs().remove(this);
         }
 

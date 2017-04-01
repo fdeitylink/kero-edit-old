@@ -29,8 +29,8 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.image.PixelWriter;
 
-public final class JavaFXUtil {
-    private JavaFXUtil() {
+public final class FXUtil {
+    private FXUtil() {
 
     }
 

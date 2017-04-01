@@ -23,8 +23,8 @@ public final class Logger {
             logFile.close();
         }
         catch (final IOException except) {
-            JavaFXUtil.createTextboxAlert(Alert.AlertType.ERROR, Messages.getString("Logger.Alert.TITLE"),
-                                          null, Messages.getString("Logger.Alert.MESSAGE"), message, false).showAndWait();
+            FXUtil.createTextboxAlert(Alert.AlertType.ERROR, Messages.getString("Logger.Alert.TITLE"),
+                                      null, Messages.getString("Logger.Alert.MESSAGE"), message, false).showAndWait();
         }
     }
 
@@ -47,9 +47,9 @@ public final class Logger {
             logFile.close();
         }
         catch (final IOException ioExcept) {
-            JavaFXUtil.createTextboxAlert(Alert.AlertType.ERROR, Messages.getString("Logger.Alert.TITLE"),
-                                          null, Messages.getString("Logger.Alert.MESSAGE"),
-                                          finalMessage, false).showAndWait();
+            FXUtil.createTextboxAlert(Alert.AlertType.ERROR, Messages.getString("Logger.Alert.TITLE"),
+                                      null, Messages.getString("Logger.Alert.MESSAGE"),
+                                      finalMessage, false).showAndWait();
         }
     }
 }

@@ -5,7 +5,7 @@ import java.util.prefs.BackingStoreException;
 
 import javafx.scene.paint.Color;
 
-import io.fdeitylink.keroedit.util.JavaFXUtil;
+import io.fdeitylink.keroedit.util.FXUtil;
 import io.fdeitylink.keroedit.util.Logger;
 
 /**
@@ -13,16 +13,13 @@ import io.fdeitylink.keroedit.util.Logger;
  */
 public final class Config {
     private static final Preferences prefs = Preferences.userNodeForPackage(Config.class);
-
-    static boolean licenseRead;
-    static String lastExeLoc;
-    static String notepadText;
-
     public static int mapZoom;
     public static int tilesetZoom;
     public static Color tilesetBgColor;
-
     public static int displayedLayers;
+    static boolean licenseRead;
+    static String lastExeLoc;
+    static String notepadText;
 
     private Config() {
 
@@ -37,7 +34,7 @@ public final class Config {
         mapZoom = prefs.getInt(Messages.getString("Config.MAP_ZOOM"), 2);
         tilesetZoom = prefs.getInt(Messages.getString("Config.TILESET_ZOOM"), 2);
         tilesetBgColor = Color.web(prefs.get(Messages.getString("Config.TILESET_BG_COLOR"),
-                                             JavaFXUtil.colorToString(Color.MAGENTA)));
+                                             FXUtil.colorToString(Color.MAGENTA)));
 
         //inits as all layers displayed
         displayedLayers = prefs.getInt(Messages.getString("Config.DISPLAYED_LAYERS"), 0b111);
@@ -51,7 +48,7 @@ public final class Config {
 
             prefs.putInt(Messages.getString("Config.MAP_ZOOM"), mapZoom);
             prefs.putInt(Messages.getString("Config.TILESET_ZOOM"), tilesetZoom);
-            prefs.put(Messages.getString("Config.TILESET_BG_COLOR"), JavaFXUtil.colorToString(tilesetBgColor));
+            prefs.put(Messages.getString("Config.TILESET_BG_COLOR"), FXUtil.colorToString(tilesetBgColor));
 
             prefs.putInt(Messages.getString("Config.DISPLAYED_LAYERS"), displayedLayers);
 

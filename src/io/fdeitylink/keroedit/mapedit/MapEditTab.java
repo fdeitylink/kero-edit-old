@@ -29,6 +29,7 @@ import java.text.ParseException;
 
 import java.text.MessageFormat;
 
+import io.fdeitylink.keroedit.util.FXUtil;
 import javafx.stage.Stage;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
@@ -101,7 +102,6 @@ import io.fdeitylink.keroedit.Messages;
 import io.fdeitylink.keroedit.util.Logger;
 
 import io.fdeitylink.keroedit.util.MathUtil;
-import io.fdeitylink.keroedit.util.JavaFXUtil;
 
 import io.fdeitylink.keroedit.resource.ResourceManager;
 
@@ -124,26 +124,20 @@ import static io.fdeitylink.keroedit.image.ImageDimensions.PXATTR_IMAGE_WIDTH;
 import static io.fdeitylink.keroedit.image.ImageDimensions.PXATTR_IMAGE_HEIGHT;
 
 public final class MapEditTab extends FileEditTab {
-    private static Image pxAttrImg;
-    private static Image entityImg; //TODO: use file from mod-specific assist folder
-
     private static final SimpleIntegerProperty mapZoom = new SimpleIntegerProperty(Config.mapZoom);
     private static final SimpleIntegerProperty tilesetZoom = new SimpleIntegerProperty(Config.tilesetZoom);
     private static final SimpleObjectProperty <Color> tilesetBgColor = new SimpleObjectProperty <>(Config.tilesetBgColor);
-
     private static final SimpleIntegerProperty displayedLayers = new SimpleIntegerProperty(Config.displayedLayers);
-
     private static final SimpleIntegerProperty selectedLayer = new SimpleIntegerProperty(0);
-
     private static final SimpleObjectProperty <KeroEdit.DrawSettingsItems> drawMode =
             new SimpleObjectProperty <>(KeroEdit.DrawSettingsItems.DRAW);
-
     private static final SimpleBooleanProperty showTileTypes = new SimpleBooleanProperty(false);
+    private static final Stage tilesetStage; //TODO: Change to Dialog when adding (not setting) event handlers is allowed
+    private static Image pxAttrImg;
 
     //TODO: Use this for all view settings (tile types, grid) instead of showTileTypes
     //private static final SimpleIntegerProperty viewSettings = new SimpleIntegerProperty(0);
-
-    private static final Stage tilesetStage; //TODO: Change to Dialog when adding (not setting) event handlers is allowed
+    private static Image entityImg; //TODO: use file from mod-specific assist folder
     //(or rework how the stage works)
 
     static {
@@ -174,9 +168,9 @@ public final class MapEditTab extends FileEditTab {
             map = new PxPack(Paths.get(fullMapPath));
         }
         catch (final IOException | ParseException except) {
-            JavaFXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("MapEditTab.OpenExcept.TITLE"), null,
-                                   MessageFormat.format(Messages.getString("MapEditTab.OpenExcept.MESSAGE"), mapFileName,
-                                                        except.getMessage())).showAndWait();
+            FXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("MapEditTab.OpenExcept.TITLE"), null,
+                               MessageFormat.format(Messages.getString("MapEditTab.OpenExcept.MESSAGE"), mapFileName,
+                                                    except.getMessage())).showAndWait();
             getTabPane().getTabs().remove(this);
         }
 
@@ -233,6 +227,11 @@ public final class MapEditTab extends FileEditTab {
         showTileTypes.bind(property);
     }
 
+    public static void wipeImages() {
+        pxAttrImg = null;
+        entityImg = null;
+    }
+
     @Override
     public void undo() {
         final Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
@@ -254,11 +253,6 @@ public final class MapEditTab extends FileEditTab {
         System.out.println("Saved");
         setChanged(false);
         //TODO: save pxpack, pxattr, and script
-    }
-
-    public static void wipeImages() {
-        pxAttrImg = null;
-        entityImg = null;
     }
 
     /**
@@ -297,6 +291,23 @@ public final class MapEditTab extends FileEditTab {
                 entityImg = ResourceManager.getImage("assist/unittype.png");
             }
         }
+    }
+
+    public enum LayerFlags {
+        FOREGROUND(0b1),
+        MIDDLEGROUND(0b10),
+        BACKGROUND(0b100);
+
+        public final int flag;
+
+        LayerFlags(int flag) {
+            this.flag = flag;
+        }
+    }
+
+    private enum MapPaneMenuItems {
+        RESIZE,
+        BG_COLOR
     }
 
     private final class TileEditTab extends FileEditTab {
@@ -502,8 +513,8 @@ public final class MapEditTab extends FileEditTab {
                                     }
 
                                     Platform.runLater(() -> tileTypeCanvas.getGraphicsContext2D()
-                                                                          .drawImage(JavaFXUtil.scaleImage(tmpTileTypeImg,
-                                                                                                           tilesetZoom.get() / 2),
+                                                                          .drawImage(FXUtil.scaleImage(tmpTileTypeImg,
+                                                                                                       tilesetZoom.get() / 2),
                                                                                      0, 0));
                                 }
 
@@ -551,7 +562,7 @@ public final class MapEditTab extends FileEditTab {
 
                                 //TODO: Change selectedTiles view to a Canvas?
                                 Platform.runLater(() -> selectedTilesImgView
-                                        .setImage(JavaFXUtil.scaleImage(tilesImg, tilesetZoom.get())));
+                                        .setImage(FXUtil.scaleImage(tilesImg, tilesetZoom.get())));
                                 return null;
                             }
                         };
@@ -610,10 +621,10 @@ public final class MapEditTab extends FileEditTab {
                                     }
                                     catch (final IOException | ParseException except) {
                                         //TODO: Option to create one? (will have to be all blank...)
-                                        Platform.runLater(() -> JavaFXUtil.createAlert(Alert.AlertType.ERROR,
-                                                                                       Messages.getString("MapEditTab.TileEditTab.PxAttrLoadExcept.TITLE"),
-                                                                                       null, except.getMessage())
-                                                                          .showAndWait());
+                                        Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.ERROR,
+                                                                                   Messages.getString("MapEditTab.TileEditTab.PxAttrLoadExcept.TITLE"),
+                                                                                   null, except.getMessage())
+                                                                      .showAndWait());
                                     }
                                 }
 
@@ -740,10 +751,10 @@ public final class MapEditTab extends FileEditTab {
                 tilesetGContext.setFill(tilesetBgColor.get());
                 tilesetGContext.fillRect(0, 0, tilesetCanvas.getWidth(), tilesetCanvas.getHeight());
 
-                tilesetGContext.drawImage(JavaFXUtil.scaleImage(tilesets[selectedLayer.get()], tilesetZoom.get()), 0, 0);
+                tilesetGContext.drawImage(FXUtil.scaleImage(tilesets[selectedLayer.get()], tilesetZoom.get()), 0, 0);
 
                 //Since right now I only load the necessary part of the tileset, a simpler drawImage() method can be called (^)
-                /*tilesetGContext.drawImage(JavaFXUtil.scaleImage(tilesets[selectedLayer.get()], zoom.get()),
+                /*tilesetGContext.drawImage(FXUtil.scaleImage(tilesets[selectedLayer.get()], zoom.get()),
                                             0, 0, TILESET_WIDTH * zoom.get(), TILESET_HEIGHT * zoom.get(),
                                             0, 0, tilesetCanvas.getWidth(), tilesetCanvas.getHeight());*/
             }
@@ -803,8 +814,8 @@ public final class MapEditTab extends FileEditTab {
                 mapStackPane.getChildren().addAll(entityCanvas, cursorCanvas);
 
                 bgColor = new SimpleObjectProperty <>(head.getBgColor());
-                bgColor.addListener((observable, oldValue, newValue) -> JavaFXUtil.setBackgroundColor(newValue, mapStackPane));
-                JavaFXUtil.setBackgroundColor(bgColor.get(), mapStackPane);
+                bgColor.addListener((observable, oldValue, newValue) -> FXUtil.setBackgroundColor(newValue, mapStackPane));
+                FXUtil.setBackgroundColor(bgColor.get(), mapStackPane);
 
                 initEventHandlers();
 
@@ -982,10 +993,10 @@ public final class MapEditTab extends FileEditTab {
                                                                        width, height);
 
                     //TODO: Check that I did this right
-                    JavaFXUtil.createDualTextFieldDialog(title, currentSizeStr,
-                                                         Messages.getString("MapEditTab.TileEditTab.Resize.NEW_WIDTH"),
-                                                         Messages.getString("MapEditTab.TileEditTab.Resize.NEW_HEIGHT"))
-                              .showAndWait().ifPresent(result -> {
+                    FXUtil.createDualTextFieldDialog(title, currentSizeStr,
+                                                     Messages.getString("MapEditTab.TileEditTab.Resize.NEW_WIDTH"),
+                                                     Messages.getString("MapEditTab.TileEditTab.Resize.NEW_HEIGHT"))
+                          .showAndWait().ifPresent(result -> {
                         final String widthStr = result.x;
                         final String heightStr = result.y;
 
@@ -997,20 +1008,20 @@ public final class MapEditTab extends FileEditTab {
                                 newHeight = Integer.parseInt(heightStr);
                             }
                             catch (final NumberFormatException except) {
-                                JavaFXUtil.createAlert(Alert.AlertType.ERROR,
-                                                       Messages.getString("MapEditTab.TileEditTab.Resize.NumFormatExcept.TITLE"),
-                                                       null,
-                                                       Messages.getString("MapEditTab.TileEditTab.Resize.NumFormatExcept.MESSAGE"))
-                                          .showAndWait();
+                                FXUtil.createAlert(Alert.AlertType.ERROR,
+                                                   Messages.getString("MapEditTab.TileEditTab.Resize.NumFormatExcept.TITLE"),
+                                                   null,
+                                                   Messages.getString("MapEditTab.TileEditTab.Resize.NumFormatExcept.MESSAGE"))
+                                      .showAndWait();
                                 return;
                             }
 
                             if (newWidth > 0xFFFF || newHeight > 0xFFFF) {
-                                JavaFXUtil.createAlert(Alert.AlertType.ERROR,
-                                                       Messages.getString("MapEditTab.TileEditTab.Resize.InvalidDimensions.TITLE"),
-                                                       null,
-                                                       Messages.getString("MapEditTab.TileEditTab.Resize.InvalidDimensions.MESSAGE"))
-                                          .showAndWait();
+                                FXUtil.createAlert(Alert.AlertType.ERROR,
+                                                   Messages.getString("MapEditTab.TileEditTab.Resize.InvalidDimensions.TITLE"),
+                                                   null,
+                                                   Messages.getString("MapEditTab.TileEditTab.Resize.InvalidDimensions.MESSAGE"))
+                                      .showAndWait();
                                 return;
                             }
 
@@ -1028,11 +1039,11 @@ public final class MapEditTab extends FileEditTab {
                     final ColorPicker cPicker = new ColorPicker(mapPane.bgColor.get());
                     cPicker.setOnAction(ev -> {
                         if (!cPicker.getValue().isOpaque()) {
-                            JavaFXUtil.createAlert(Alert.AlertType.ERROR,
-                                                   Messages.getString("MapEditTab.TileEditTab.BgColor.OpacityError.TITLE"),
-                                                   null,
-                                                   Messages.getString("MapEditTab.TileEditTab.BgColor.OpacityError.MESSAGE"))
-                                      .showAndWait();
+                            FXUtil.createAlert(Alert.AlertType.ERROR,
+                                               Messages.getString("MapEditTab.TileEditTab.BgColor.OpacityError.TITLE"),
+                                               null,
+                                               Messages.getString("MapEditTab.TileEditTab.BgColor.OpacityError.MESSAGE"))
+                                  .showAndWait();
                         }
                         else {
                             head.setBgColor(cPicker.getValue());
@@ -1087,21 +1098,21 @@ public final class MapEditTab extends FileEditTab {
                             final int tilesetX = tileIndex % (TILESET_WIDTH / TILE_WIDTH);
                             final int tilesetY = tileIndex / (TILESET_HEIGHT / TILE_HEIGHT);
 
-                            tileImg = JavaFXUtil.scaleImage(new WritableImage(tilesetPane.tilesets[layer].getPixelReader(),
-                                                                              tilesetX * TILE_WIDTH, tilesetY * TILE_HEIGHT,
-                                                                              TILE_WIDTH, TILE_HEIGHT),
-                                                            mapZoom.get());
+                            tileImg = FXUtil.scaleImage(new WritableImage(tilesetPane.tilesets[layer].getPixelReader(),
+                                                                          tilesetX * TILE_WIDTH, tilesetY * TILE_HEIGHT,
+                                                                          TILE_WIDTH, TILE_HEIGHT),
+                                                        mapZoom.get());
                             if (drawTileType) {
                                 final int attributesX = attributes[tilesetY][tilesetX] %
                                                         (PXATTR_IMAGE_WIDTH / PXATTR_TILE_WIDTH);
                                 final int attributesY = attributes[tilesetY][tilesetX] /
                                                         (PXATTR_IMAGE_HEIGHT / PXATTR_TILE_HEIGHT);
 
-                                tileTypeImg = JavaFXUtil.scaleImage(new WritableImage(pxAttrImg.getPixelReader(),
-                                                                                      attributesX * PXATTR_TILE_WIDTH,
-                                                                                      attributesY * PXATTR_TILE_HEIGHT,
-                                                                                      PXATTR_TILE_WIDTH, PXATTR_TILE_HEIGHT),
-                                                                    mapZoom.get() / 2);
+                                tileTypeImg = FXUtil.scaleImage(new WritableImage(pxAttrImg.getPixelReader(),
+                                                                                  attributesX * PXATTR_TILE_WIDTH,
+                                                                                  attributesY * PXATTR_TILE_HEIGHT,
+                                                                                  PXATTR_TILE_WIDTH, PXATTR_TILE_HEIGHT),
+                                                                mapZoom.get() / 2);
                             }
                             else {
                                 tileTypeImg = null;
@@ -1225,9 +1236,9 @@ public final class MapEditTab extends FileEditTab {
 
                                 layerGContext.clearRect(0, 0, mapCanvases[layer].getWidth(), mapCanvases[layer].getHeight());
 
-                                layerGContext.drawImage(JavaFXUtil.scaleImage(tmpLayerImg, mapZoom.get()), 0, 0);
+                                layerGContext.drawImage(FXUtil.scaleImage(tmpLayerImg, mapZoom.get()), 0, 0);
                                 //null images ignored
-                                layerGContext.drawImage(JavaFXUtil.scaleImage(tmpTileTypeImg, mapZoom.get() / 2), 0, 0);
+                                layerGContext.drawImage(FXUtil.scaleImage(tmpTileTypeImg, mapZoom.get() / 2), 0, 0);
                             });
 
                             return null;
@@ -1359,22 +1370,5 @@ public final class MapEditTab extends FileEditTab {
 
             mainGridPane = new GridPane();
         }
-    }
-
-    public enum LayerFlags {
-        FOREGROUND(0b1),
-        MIDDLEGROUND(0b10),
-        BACKGROUND(0b100);
-
-        public final int flag;
-
-        LayerFlags(int flag) {
-            this.flag = flag;
-        }
-    }
-
-    private enum MapPaneMenuItems {
-        RESIZE,
-        BG_COLOR
     }
 }
