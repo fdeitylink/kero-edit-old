@@ -1,11 +1,14 @@
 /*
  * TODO:
- * Barebones png editor (color picker and canvas) and reload tilesets in open maps on save (or on edit?)
- * Ctrl +/- and scrollwheel for zoom
+ * Barebones PNG editor
+ *  - Color picker
+ *  - Canvas
+ *  - Reload tilesets in open maps on save (or on edit?)
+ * Ctrl +/- and scroll wheel for zoom
  * Undoable map delete?
  * Put enum filler into method in util package
  * Use Tab.setOnCloseRequest() to warn about unsaved changes
- * Resort the map ListView alphabetically when a map is added, and select and open the new map
+ * Resort map ListView alphabetically when map is added, and select and open the new map
  * Draggable tabs (and allow popping out into a window)
  * Allow opening multiple maps at once (multiple selection)
  * Allow configuring tile size?
@@ -21,7 +24,6 @@
 
 package io.fdeitylink.keroedit;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.EnumMap;
 
@@ -37,6 +39,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 import java.nio.file.DirectoryStream;
 

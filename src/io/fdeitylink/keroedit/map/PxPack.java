@@ -24,8 +24,6 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.text.ParseException;
 
-import java.io.UnsupportedEncodingException;
-
 import javafx.scene.paint.Color;
 
 import io.fdeitylink.keroedit.Messages;
@@ -299,7 +297,7 @@ public final class PxPack {
                 buf.putShort((short)e.getX());
                 buf.putShort((short)e.getY());
 
-                buf.put(e.getUnknownData());
+                buf.put(e.getData());
 
                 buf.flip();
                 chan.write(buf);
@@ -320,7 +318,6 @@ public final class PxPack {
         return mapFname.substring(0, mapFname.lastIndexOf(".pxpack"));
     }
 
-    //TODO: Make this undo/redo friendly?
     public void rename(final String newName) throws IOException {
         mapPath = Files.move(mapPath, mapPath.resolveSibling(newName + ".pxpack"));
     }
@@ -330,8 +327,7 @@ public final class PxPack {
     }
 
     public TileLayer[] getTileLayers() {
-        return Arrays.copyOf(tileLayers, tileLayers.length); //shallow copy of elements
-        //element references are same but array reference is diff
+        return Arrays.copyOf(tileLayers, tileLayers.length); //just shallow copies elements
     }
 
     public ArrayList <Entity> getEntities() {
@@ -351,6 +347,7 @@ public final class PxPack {
      * @return The String that was read
      *
      * @throws IOException if there was an error reading the string from the PXPACK file
+     * @throws ParseException if the string was too long (as per {@code maxLen}
      */
     private String readString(final SeekableByteChannel chan, final int maxLen, final String type)
             throws IOException, ParseException {
@@ -407,35 +404,15 @@ public final class PxPack {
         private String description;
         private final String[] mapNames;
         private String spritesheetName;
+
         private final byte[] data; //TODO: Make int[]?
         private Color bgColor;
+
         private final String[] tilesetNames;
         private final byte[] visibilityTypes;
         private final byte[] scrollTypes;
 
         //TODO: add reset()?
-
-        Head() {
-            description = "";
-            mapNames = new String[4];
-            spritesheetName = "";
-            data = new byte[5];
-            bgColor = Color.BLACK;
-            tilesetNames = new String[NUM_LAYERS];
-            visibilityTypes = new byte[NUM_LAYERS];
-            scrollTypes = new byte[NUM_LAYERS];
-        }
-
-        Head(final Head head) {
-            this.description = head.description;
-            this.mapNames = head.getMapNames();
-            this.spritesheetName = head.spritesheetName;
-            this.data = head.getData();
-            this.bgColor = head.bgColor;
-            this.tilesetNames = head.getTilesetNames();
-            this.visibilityTypes = head.getVisibilityTypes();
-            this.scrollTypes = head.getScrollTypes();
-        }
 
         Head(final String description, final String[] mapNames, final String spritesheetName,
              final byte[] data, final Color bgColor, final String[] tilesetNames,
@@ -604,10 +581,6 @@ public final class PxPack {
 
         }
 
-        TileLayer(final TileLayer layer) {
-            tiles = layer.getTiles();
-        }
-
         TileLayer(final int[][] tiles) {
             if (null != tiles) {
                 if (tiles.length > 0xFFFF || tiles[0].length > 0xFFFF) {
@@ -706,26 +679,14 @@ public final class PxPack {
 
     public static final class Entity {
         private int type;
-        private byte flag, unknownByte; //TODO: make ints?
+        private byte flag; //TODO: make int?
+        private byte unknownByte; //make int?
         private int x, y;
-        private byte[] unknownData;
+        private byte[] data;
         private String name;
 
-        Entity() {
-            unknownData = new byte[2];
-            name = "";
-        }
-
-        Entity(Entity entity) {
-            this.flag = entity.flag;
-            this.x = entity.x;
-            this.y = entity.y;
-            this.unknownData = entity.unknownData;
-            this.name = entity.name;
-        }
-
         Entity(final byte flag, final int type, final byte unknownByte, final int x, final int y,
-               final byte[] unknownData, final String name) {
+               final byte[] data, final String name) {
 
             //TODO: call x and y setters instead of this?
             if (x > 0xFFFF || y > 0xFFFF) {
@@ -736,7 +697,7 @@ public final class PxPack {
             this.unknownByte = unknownByte;
             this.x = x;
             this.y = y;
-            this.unknownData = Arrays.copyOf(unknownData, 2);
+            this.data = Arrays.copyOf(data, 2);
             this.name = name;
         }
 
@@ -760,8 +721,8 @@ public final class PxPack {
             return y;
         }
 
-        public byte[] getUnknownData() {
-            return Arrays.copyOf(unknownData, unknownData.length);
+        public byte[] getData() {
+            return Arrays.copyOf(data, data.length);
         }
 
         public String getName() {
@@ -796,8 +757,13 @@ public final class PxPack {
             this.y = y;
         }
 
-        public void setUnknownData(final int index, final byte data) {
-            this.unknownData[index] = data;
+        public void setCoordinates(final int x, final int y) {
+            setX(x);
+            setY(y);
+        }
+
+        public void setData(final int index, final byte data) {
+            this.data[index] = data;
         }
 
         public void setName(final String name) {
@@ -817,13 +783,13 @@ public final class PxPack {
                                                String.format("%02X", type)));
             result.append(MessageFormat.format(Messages.getString("PxPack.Entity.ToString.UNKNOWN_BYTE"),
                                                String.format("%02X", unknownByte)));
-            result.append(MessageFormat.format(Messages.getString("PxPack.Entity.ToString.X_COORDINATE"),
+            result.append(MessageFormat.format(Messages.getString("PxPack.Entity.ToString.X"),
                                                String.format("%02X", x)));
-            result.append(MessageFormat.format(Messages.getString("PxPack.Entity.ToString.Y_COORDINATE"),
+            result.append(MessageFormat.format(Messages.getString("PxPack.Entity.ToString.Y"),
                                                String.format("%02X", y)));
-            for (int i = 0; i < unknownData.length; ++i) {
+            for (int i = 0; i < data.length; ++i) {
                 result.append(MessageFormat.format(Messages.getString("PxPack.Entity.ToString.DATA"),
-                                                   i, String.format("%02X", unknownData[i])));
+                                                   i, String.format("%02X", data[i])));
             }
             result.append(MessageFormat.format(Messages.getString("PxPack.Entity.ToString.NAME"), name));
             result.append('\n');

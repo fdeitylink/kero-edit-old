@@ -126,18 +126,23 @@ import static io.fdeitylink.keroedit.image.ImageDimensions.PXATTR_IMAGE_HEIGHT;
 public final class MapEditTab extends FileEditTab {
     private static final SimpleIntegerProperty mapZoom = new SimpleIntegerProperty(Config.mapZoom);
     private static final SimpleIntegerProperty tilesetZoom = new SimpleIntegerProperty(Config.tilesetZoom);
+
     private static final SimpleObjectProperty <Color> tilesetBgColor = new SimpleObjectProperty <>(Config.tilesetBgColor);
+
     private static final SimpleIntegerProperty displayedLayers = new SimpleIntegerProperty(Config.displayedLayers);
     private static final SimpleIntegerProperty selectedLayer = new SimpleIntegerProperty(0);
+
     private static final SimpleObjectProperty <KeroEdit.DrawSettingsItems> drawMode =
             new SimpleObjectProperty <>(KeroEdit.DrawSettingsItems.DRAW);
-    private static final SimpleBooleanProperty showTileTypes = new SimpleBooleanProperty(false);
-    private static final Stage tilesetStage; //TODO: Change to Dialog when adding (not setting) event handlers is allowed
-    private static Image pxAttrImg;
 
+    private static final SimpleBooleanProperty showTileTypes = new SimpleBooleanProperty(false);
     //TODO: Use this for all view settings (tile types, grid) instead of showTileTypes
     //private static final SimpleIntegerProperty viewSettings = new SimpleIntegerProperty(0);
-    private static Image entityImg; //TODO: use file from mod-specific assist folder
+
+    private static Image pxAttrImg;
+    private static Image entityImg;
+
+    private static final Stage tilesetStage; //TODO: Change to Dialog when adding (not setting) event handlers is allowed
     //(or rework how the stage works)
 
     static {
@@ -227,11 +232,6 @@ public final class MapEditTab extends FileEditTab {
         showTileTypes.bind(property);
     }
 
-    public static void wipeImages() {
-        pxAttrImg = null;
-        entityImg = null;
-    }
-
     @Override
     public void undo() {
         final Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
@@ -253,6 +253,14 @@ public final class MapEditTab extends FileEditTab {
         System.out.println("Saved");
         setChanged(false);
         //TODO: save pxpack, pxattr, and script
+    }
+
+    /**
+     * Wipes the stored PxAttr attribute and entity images from memory
+     */
+    public static void wipeImages() {
+        pxAttrImg = null;
+        entityImg = null;
     }
 
     /**
@@ -291,23 +299,6 @@ public final class MapEditTab extends FileEditTab {
                 entityImg = ResourceManager.getImage("assist/unittype.png");
             }
         }
-    }
-
-    public enum LayerFlags {
-        FOREGROUND(0b1),
-        MIDDLEGROUND(0b10),
-        BACKGROUND(0b100);
-
-        public final int flag;
-
-        LayerFlags(int flag) {
-            this.flag = flag;
-        }
-    }
-
-    private enum MapPaneMenuItems {
-        RESIZE,
-        BG_COLOR
     }
 
     private final class TileEditTab extends FileEditTab {
@@ -1370,5 +1361,22 @@ public final class MapEditTab extends FileEditTab {
 
             mainGridPane = new GridPane();
         }
+    }
+
+    public enum LayerFlags {
+        FOREGROUND(0b1),
+        MIDDLEGROUND(0b10),
+        BACKGROUND(0b100);
+
+        public final int flag;
+
+        LayerFlags(int flag) {
+            this.flag = flag;
+        }
+    }
+
+    private enum MapPaneMenuItems {
+        RESIZE,
+        BG_COLOR
     }
 }
