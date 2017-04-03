@@ -19,7 +19,8 @@ public final class ImageManager {
 
     }
 
-    public static Image getImage(final String imageName, final boolean tileset) {
+    public static Image getImage(final String imageName, final boolean isTileset) {
+        //TODO: Throw IllegalStateException if GameData is not yet valid
         if (imagesMap.containsKey(imageName)) {
             return imagesMap.get(imageName);
         }
@@ -28,7 +29,7 @@ public final class ImageManager {
                                 imageName + ".png", false);
 
         //if this is a tileset and it is larger than necessary, take only relevant portion
-        if (tileset && 0 < image.getWidth() &&
+        if (isTileset && 0 < image.getWidth() &&
             (ImageDimensions.TILESET_WIDTH < image.getWidth() ||
              ImageDimensions.TILESET_HEIGHT < image.getHeight())) {
             //crop down to useful portion (tilesets sometimes have more data than necessary for some reason)
@@ -44,7 +45,7 @@ public final class ImageManager {
         imagesMap.clear();
     }
 
-    //In the event that I allow tileset/image editing, I'll use these and the setup will be similar to PxAttrManager
+    //If I allow tileset/image editing, I'll use these and the setup will be similar to PxAttrManager
     /*public static ReadOnlyObjectProperty <Image> getImage(final String imageName) {
 
     }

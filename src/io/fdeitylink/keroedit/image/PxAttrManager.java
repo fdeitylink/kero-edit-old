@@ -41,7 +41,9 @@ public final class PxAttrManager {
 
     }
 
-    public static ReadOnlyObjectProperty <PxAttr> getPxAttr(final String tilesetName) throws IOException, ParseException {
+    public static ReadOnlyObjectProperty <PxAttr> getPxAttr(final String tilesetName)
+            throws IOException, ParseException {
+        //TODO: Throw IllegalStateException if GameData is not yet valid
         if (pxAttrsMap.containsKey(tilesetName)) {
             return pxAttrsMap.get(tilesetName).getReadOnlyProperty();
         }
@@ -153,7 +155,7 @@ public final class PxAttrManager {
         //for cloning into new PxAttr
         PxAttr(final PxAttr pxAttr, final Path path) {
             this.path = Paths.get(path.toAbsolutePath().toString()); //is this necessary or can I just do path = pxAttr.path?
-            this.attributes = pxAttr.getAttributes(); //clones
+            attributes = pxAttr.getAttributes(); //clones
         }
 
         public int[][] getAttributes() {

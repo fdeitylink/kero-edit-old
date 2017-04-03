@@ -141,12 +141,12 @@ public final class KeroEdit extends Application {
      */
     @Override
     public void start(final Stage stage) {
-        Config.loadPreferences();
+        Config.loadPrefs();
 
         mainStage = stage;
         mainStage.setOnCloseRequest(event -> {
             Config.notepadText = notepadTab.notepad.getText();
-            Config.savePreferences();
+            Config.savePrefs();
 
             mainStage.close();
 
@@ -237,22 +237,20 @@ public final class KeroEdit extends Application {
             wipeLoaded();
 
             final FileChooser exeChooser = new FileChooser();
-            exeChooser.setTitle(Messages.getString("KeroEdit.OpenFile.TITLE"));
+            exeChooser.setTitle(Messages.getString("KeroEdit.OpenMod.TITLE"));
 
             final String initDir = Config.lastExeLoc.substring(0, Config.lastExeLoc.lastIndexOf(File.separatorChar) + 1);
             exeChooser.setInitialDirectory(new File(initDir));
 
-            final FileChooser.ExtensionFilter[] extFilters =
-                    {new FileChooser.ExtensionFilter(Messages.getString("KeroEdit.OpenFile.EXECUTABLE_FILTER"), "*.exe"),
-                     new FileChooser.ExtensionFilter(Messages.getString("KeroEdit.OpenFile.NO_FILTER"), "*.*")};
-            exeChooser.getExtensionFilters().addAll(extFilters);
-            exeChooser.setSelectedExtensionFilter(extFilters[0]);
+            final FileChooser.ExtensionFilter extFilter =
+                    new FileChooser.ExtensionFilter(Messages.getString("KeroEdit.OpenMod.EXECUTABLE_FILTER"), "*.exe");
+            exeChooser.getExtensionFilters().add(extFilter);
 
             final File exeFile = exeChooser.showOpenDialog(mainStage);
-
             if (null != exeFile) {
                 try {
-                    loadMod(exeFile.toPath());
+                    final Path p = exeFile.toPath();
+                    loadMod(p);
                 }
                 catch (final IOException except) {
                     FXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("KeroEdit.LoadMod.Except.TITLE"),
@@ -371,29 +369,37 @@ public final class KeroEdit extends Application {
      * @throws IOException if the mod could not be initialized or was invalid in some way
      */
     private void loadMod(final Path executable) throws IOException {
-        if (null != executable) {
-            GameData.init(executable);
-            Config.lastExeLoc = executable.toAbsolutePath().toString();
-
-            if (!Files.isWritable(executable.getParent())) {
-                //TODO: Figure out how to use POSIX file permissions to give current user RWX permissions
-                FXUtil.createAlert(Alert.AlertType.INFORMATION,
-                                   Messages.getString("KeroEdit.LoadMod.ReadOnly.TITLE"), null,
-                                   Messages.getString("KeroEdit.LoadMod.ReadOnly.MESSAGE"));
-            }
-
-            //createAssistFolder();
-
-            loadMapList();
-
-            for (final MenuItem mItem : enableOnLoadItems) {
-                if (mItem.isDisable()) {
-                    mItem.setDisable(false);
-                }
-            }
-
-            setTitle(executable.getParent().toAbsolutePath().toString() + File.separatorChar);
+        if (null == executable) {
+            throw new NullPointerException(Messages.getString("KeroEdit.LoadMod.NULL_EXECUTABLE"));
         }
+
+        if (!executable.toString().endsWith(".exe")) {
+            FXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("KeroEdit.LoadMod.NotExe.TITLE"),
+                               null, Messages.getString("KeroEdit.LoadMod.NotExe.MESSAGE"));
+            return;
+        }
+
+        GameData.init(executable);
+        Config.lastExeLoc = executable.toAbsolutePath().toString();
+
+        if (!Files.isWritable(executable.getParent())) {
+            //TODO: Figure out how to use POSIX file permissions to give current user RWX permissions
+            FXUtil.createAlert(Alert.AlertType.INFORMATION,
+                               Messages.getString("KeroEdit.LoadMod.ReadOnly.TITLE"), null,
+                               Messages.getString("KeroEdit.LoadMod.ReadOnly.MESSAGE"));
+        }
+
+        //createAssistFolder();
+
+        loadMapList();
+
+        for (final MenuItem mItem : enableOnLoadItems) {
+            if (mItem.isDisable()) {
+                mItem.setDisable(false);
+            }
+        }
+
+        setTitle(executable.getParent().toAbsolutePath().toString() + File.separatorChar);
     }
 
     /**
@@ -620,7 +626,7 @@ public final class KeroEdit extends Application {
 
         menuItems[actionsMenuItems.get(ActionsMenuItems.EDIT_GLOBAL_SCRIPT)].setOnAction(event -> {
             final FileChooser scrChooser = new FileChooser();
-            scrChooser.setTitle(Messages.getString("KeroEdit.OpenFile.TITLE"));
+            scrChooser.setTitle(Messages.getString("KeroEdit.OpenMod.TITLE"));
 
             scrChooser.setInitialDirectory(new File(GameData.getResourceFolder().toAbsolutePath().toString()));
 

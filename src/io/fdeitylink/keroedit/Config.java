@@ -5,8 +5,9 @@ import java.util.prefs.BackingStoreException;
 
 import javafx.scene.paint.Color;
 
-import io.fdeitylink.keroedit.util.FXUtil;
 import io.fdeitylink.keroedit.util.Logger;
+
+import io.fdeitylink.keroedit.util.FXUtil;
 
 /**
  * Stores configuration options
@@ -25,7 +26,7 @@ public final class Config {
 
     }
 
-    static void loadPreferences() {
+    static void loadPrefs() {
         licenseRead = prefs.getBoolean(Messages.getString("Config.LICENSE_READ"), false);
         lastExeLoc = prefs.get(Messages.getString("Config.LAST_EXE_LOC"), System.getProperty("user.dir"));
         notepadText = prefs.get(Messages.getString("Config.NOTEPAD_TEXT"),
@@ -40,7 +41,7 @@ public final class Config {
         displayedLayers = prefs.getInt(Messages.getString("Config.DISPLAYED_LAYERS"), 0b111);
     }
 
-    static void savePreferences() {
+    static void savePrefs() {
         try {
             prefs.putBoolean(Messages.getString("Config.LICENSE_READ"), licenseRead);
             prefs.put(Messages.getString("Config.LAST_EXE_LOC"), lastExeLoc);
@@ -56,7 +57,6 @@ public final class Config {
         }
         catch (final BackingStoreException except) {
             Logger.logException(Messages.getString("Config.SAVE_FAILURE"), except);
-            //TODO: Show error alert?
         }
     }
 }

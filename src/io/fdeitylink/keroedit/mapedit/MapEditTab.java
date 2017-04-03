@@ -10,6 +10,8 @@
  * Make method for redrawing subset/region of map
  * Improve multiple selection in tileset
  * Put exception strs in messages.properties
+ * Handle images not existing...
+ *  - Figure out what Image does if file doesn't exist
  */
 
 package io.fdeitylink.keroedit.mapedit;
@@ -267,6 +269,7 @@ public final class MapEditTab extends FileEditTab {
      * Initializes the {@code pxAttrImg} and {@code entityImg} variables
      */
     private void initImgs() {
+        //TODO: Should ImageManager handle pxAttrImg & entityImg?
         if (null == pxAttrImg) {
             final Path attrPath = Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
                                             File.separatorChar + "assist" + File.separatorChar +
@@ -1152,6 +1155,9 @@ public final class MapEditTab extends FileEditTab {
                             final WritablePixelFormat <ByteBuffer> pxFormat = PixelFormat.getByteBgraInstance();
 
                             final PixelReader tilesetReader = tilesetPane.tilesets[layer].getPixelReader();
+                            if (null == tilesetReader) { //this should handle empty/nonexistent images
+                                return null;
+                            }
 
                             final WritableImage tmpLayerImg = new WritableImage(layerData[0].length * TILE_WIDTH,
                                                                                 layerData.length * TILE_HEIGHT);
