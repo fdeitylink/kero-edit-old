@@ -20,6 +20,8 @@
  * Play pxtone files
  * Will need something for GameData changes to notify objects using it (i.e. maplist changes)
  * In script editor, eventually put in an autocompleter for stuff like entity names
+ * Add more IllegalStateExceptions to code - checking if GameData has been initialized yet
+ * Add @throws to Javadoc comments for runtime exceptions
  */
 
 package io.fdeitylink.keroedit;
@@ -102,6 +104,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import javafx.beans.property.SimpleIntegerProperty;
+
+import io.fdeitylink.keroedit.util.NullArgumentException;
 
 import io.fdeitylink.keroedit.resource.ResourceManager;
 
@@ -223,7 +227,6 @@ public final class KeroEdit extends Application {
         fileMenu.getItems().addAll(menuItems);
 
         final EnumMap <FileMenuItems, Integer> fileMenuItems = new EnumMap <>(FileMenuItems.class);
-
         {
             int i = 0;
             for (final FileMenuItems x : FileMenuItems.values()) {
@@ -249,8 +252,7 @@ public final class KeroEdit extends Application {
             final File exeFile = exeChooser.showOpenDialog(mainStage);
             if (null != exeFile) {
                 try {
-                    final Path p = exeFile.toPath();
-                    loadMod(p);
+                    loadMod(exeFile.toPath());
                 }
                 catch (final IOException except) {
                     FXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("KeroEdit.LoadMod.Except.TITLE"),
@@ -273,10 +275,8 @@ public final class KeroEdit extends Application {
                                    except.getMessage()).showAndWait();
             }
         });
-
         menuItems[fileMenuItems.get(FileMenuItems.OPEN_LAST)]
-                .setDisable(Config.lastExeLoc.equals(System.getProperty("user.dir")) ||
-                            !Config.lastExeLoc.endsWith(".exe")); //Disabled if there is no last mod
+                .setDisable(!Config.lastExeLoc.endsWith(".exe")); //Disabled if there is no last mod
 
         menuItems[fileMenuItems.get(FileMenuItems.SAVE)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
@@ -340,9 +340,7 @@ public final class KeroEdit extends Application {
     }
 
     /**
-     * Wipes all loaded images and PxAttrs, closes open tabs, clears the map list,
-     * and disables menu items that only function on loaded mods. In other words,
-     * erases all stored and open remnants of the current mod.
+     * Erases all stored and open remnants of the currently loaded mod.
      */
     private void wipeLoaded() {
         setTitle("");
@@ -356,27 +354,26 @@ public final class KeroEdit extends Application {
             }
         }
 
+        GameData.wipe();
         ImageManager.wipe();
         PxAttrManager.wipe();
         MapEditTab.wipeImages();
     }
 
     /**
-     * Loads a mod, checking if it is valid. Also creates its assist folder
+     * Loads a mod, checking if it is valid. Also creates its assist folder.
      *
-     * @param executable A {@code File} that references the executable for a mod
+     * @param executable A {@code Path} that references the executable for a mod
      *
      * @throws IOException if the mod could not be initialized or was invalid in some way
      */
     private void loadMod(final Path executable) throws IOException {
         if (null == executable) {
-            throw new NullPointerException(Messages.getString("KeroEdit.LoadMod.NULL_EXECUTABLE"));
+            throw new NullArgumentException("loadMod", "executable");
         }
-
         if (!executable.toString().endsWith(".exe")) {
-            FXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("KeroEdit.LoadMod.NotExe.TITLE"),
-                               null, Messages.getString("KeroEdit.LoadMod.NotExe.MESSAGE"));
-            return;
+            throw new IllegalArgumentException("Attempt to load mod with file " + executable.toAbsolutePath() +
+                                               " that does not end with \".exe\"");
         }
 
         GameData.init(executable);
@@ -391,7 +388,8 @@ public final class KeroEdit extends Application {
 
         //createAssistFolder();
 
-        loadMapList();
+        mapList.setItems(FXCollections.observableArrayList(GameData.getMapList()));
+        mapList.requestFocus();
 
         for (final MenuItem mItem : enableOnLoadItems) {
             if (mItem.isDisable()) {
@@ -792,7 +790,7 @@ public final class KeroEdit extends Application {
 
         contextMenuItems[mapListMenuItems.get(MapListMenuItems.NEW)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN));
-        //TODO: Create dialog asking for name
+        //TODO: Create dialog asking for mapname
         contextMenuItems[mapListMenuItems.get(MapListMenuItems.NEW)]
                 .setOnAction(event -> FXUtil.createAlert(Alert.AlertType.INFORMATION,
                                                          Messages.getString("KeroEdit.MapListView.ContextMenu.NEW_MAP")
@@ -866,7 +864,7 @@ public final class KeroEdit extends Application {
                 menuItem.getOnAction().handle(new ActionEvent());
             }*/
 
-            //this is the only one that doesn't seem to be triggered by keypresses on map list, IDK why
+            //This is the only one that doesn't seem to be triggered by keypresses on map list, IDK why
             if (new KeyCodeCombination(KeyCode.ENTER).match(event)) {
                 contextMenuItems[mapListMenuItems.get(MapListMenuItems.OPEN)].getOnAction().handle(new ActionEvent());
             }
@@ -874,20 +872,11 @@ public final class KeroEdit extends Application {
 
         mapListView.setOnMouseClicked(event -> {
             if (event.getButton().equals(MouseButton.PRIMARY) && 2 == event.getClickCount()) {
-                contextMenu.getItems().get(mapListMenuItems.get(MapListMenuItems.OPEN))
-                           .getOnAction().handle(new ActionEvent());
+                contextMenuItems[mapListMenuItems.get(MapListMenuItems.OPEN)].getOnAction().handle(new ActionEvent());
             }
         });
 
         return mapListView;
-    }
-
-    /**
-     * Adds all the maps to the {@code ListView} for maps that was previously created by {@code setupMapList()}.
-     */
-    private void loadMapList() {
-        mapList.setItems(FXCollections.observableArrayList(GameData.getMapList()));
-        mapList.requestFocus();
     }
 
     /**

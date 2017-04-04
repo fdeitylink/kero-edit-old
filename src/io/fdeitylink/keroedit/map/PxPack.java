@@ -2,6 +2,7 @@
  * TODO:
  * Default initialize strings as empty? (files known to pre-exist for filenames?)
  * Make rename() undoable?
+ * Array index bounds checking
  */
 
 package io.fdeitylink.keroedit.map;
@@ -25,7 +26,11 @@ import java.text.ParseException;
 
 import javafx.scene.paint.Color;
 
+import io.fdeitylink.keroedit.util.NullArgumentException;
+
 import io.fdeitylink.keroedit.Messages;
+
+import io.fdeitylink.keroedit.util.FXUtil;
 
 /**
  * Object for storing information about a PXPACK map file
@@ -41,7 +46,7 @@ public final class PxPack {
 
     /**
      * Constructs a PxPackMap object and parses a given PXPACK mapFile
-     * to set the fields of the object
+     * to initialize the fields of the object
      *
      * @param inPath A File object pointing to a PXPACK map file
      *
@@ -52,10 +57,10 @@ public final class PxPack {
         mapPath = inPath;
 
         if (!inPath.toString().endsWith(".pxpack")) {
-            throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.NOT_PXPACK"),
-                                                                    inPath.toAbsolutePath()));
+            throw new IllegalArgumentException("File " + inPath.toAbsolutePath() + " does not end with .pxpack extension");
         }
 
+        //TODO: Test this
         if (!Files.exists(inPath)) {
             //TODO: set inPath to an internal default pxpack file and parse that?
             //clone internal file to outside?
@@ -221,13 +226,13 @@ public final class PxPack {
             ByteBuffer buf = ByteBuffer.wrap(Head.HEADER_STRING.getBytes());
             chan.write(buf);
 
-            writeString(head.getDescription(), chan);
+            writeString(chan, head.getDescription());
 
             for (final String map : head.getMapNames()) {
-                writeString(map, chan);
+                writeString(chan, map);
             }
 
-            writeString(head.getSpritesheetName(), chan);
+            writeString(chan, head.getSpritesheetName());
 
             buf = ByteBuffer.wrap(head.getData());
             chan.write(buf);
@@ -241,7 +246,7 @@ public final class PxPack {
             final byte[] visibilityTypes = head.getVisibilityTypes();
             final byte[] scrollTypes = head.getScrollTypes();
             for (int i = 0; i < tilesetNames.length; ++i) {
-                writeString(tilesetNames[i], chan);
+                writeString(chan, tilesetNames[i]);
 
                 buf = ByteBuffer.allocate(2);
                 buf.put(visibilityTypes[i]);
@@ -311,7 +316,7 @@ public final class PxPack {
                 buf.flip();
                 chan.write(buf);
 
-                writeString(e.getName(), chan);
+                writeString(chan, e.getName());
             }
         }
         catch (final FileNotFoundException except) {
@@ -355,7 +360,7 @@ public final class PxPack {
      * Used to provide a descriptive exception message if the read string is of invalid length
      * or if it contains spaces.
      *
-     * @return The String that was read
+     * @return The string that was read
      *
      * @throws IOException if there was an error reading the string from the PXPACK file
      * @throws ParseException if the string was too long (as per {@code maxLen} or contained spaces
@@ -384,7 +389,7 @@ public final class PxPack {
         return ret;
     }
 
-    private void writeString(final String str, final SeekableByteChannel chan) throws IOException {
+    private void writeString(final SeekableByteChannel chan, final String str) throws IOException {
         //TODO: test with 0 len str
         final byte[] strAsBytes = str.getBytes("SJIS");
         final ByteBuffer buf = ByteBuffer.allocate(1 + strAsBytes.length);
@@ -436,24 +441,24 @@ public final class PxPack {
              final byte[] data, final Color bgColor, final String[] tilesetNames,
              final byte[] visibilityTypes, final byte[] scrollTypes) {
             if (NUM_REF_MAPS != mapNames.length) {
-                throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.INVALID_ARR_LEN"),
-                                                                        "mapNames", mapNames.length, NUM_REF_MAPS));
+                throw new IllegalArgumentException("Attempt to set mapNames[] when arg has length " + mapNames.length +
+                                                   " when length of " + NUM_REF_MAPS + " is expected");
             }
             if (5 != data.length) {
-                throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.INVALID_ARR_LEN"),
-                                                                        "data", data.length, 5));
+                throw new IllegalArgumentException("Attempt to set data[] when arg has length " + data.length +
+                                                   " when length of 5 is expected");
             }
             if (NUM_LAYERS != tilesetNames.length) {
-                throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.INVALID_ARR_LEN"),
-                                                                        "tilesetNames", tilesetNames.length, NUM_LAYERS));
+                throw new IllegalArgumentException("Attempt to set tilesetNames[] when arg has length " + tilesetNames.length +
+                                                   " when length of " + NUM_LAYERS + " is expected");
             }
             if (NUM_LAYERS != visibilityTypes.length) {
-                throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.INVALID_ARR_LEN"),
-                                                                        "visibilityTypes", visibilityTypes.length, NUM_LAYERS));
+                throw new IllegalArgumentException("Attempt to set visibilityTypes[] when arg has length " + visibilityTypes.length +
+                                                   " when length of " + NUM_LAYERS + " is expected");
             }
             if (NUM_LAYERS != scrollTypes.length) {
-                throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.INVALID_ARR_LEN"),
-                                                                        "scrollTypes", scrollTypes.length, NUM_LAYERS));
+                throw new IllegalArgumentException("Attempt to set scrollTypes[] when arg has length " + scrollTypes.length +
+                                                   " when length of " + NUM_LAYERS + " is expected");
             }
 
             //TODO: check if these method calls are bad practice
@@ -523,41 +528,39 @@ public final class PxPack {
 
         public void setDescription(final String description) {
             if (null == description) {
-                throw new NullPointerException(MessageFormat.format(Messages.getString("PxPack.NULL_ARG"), "description"));
+                throw new NullArgumentException("setDescription", "description");
             }
             if (description.length() > 31) {
-                throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.INVALID_STR_LEN"),
-                                                                        "description text", 31));
+                throw new IllegalArgumentException("Attempt to set description when arg has length " +
+                                                   description.length() + " when max length is 31");
             }
             this.description = description;
         }
 
         public void setMapName(final int index, final String mapName) {
             if (null == mapName) {
-                throw new NullPointerException(MessageFormat.format(Messages.getString("PxPack.NULL_ARG"), "mapName"));
+                throw new NullArgumentException("setMapName", "mapName");
             }
             if (mapName.length() > 15) {
-                throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.INVALID_STR_LEN"),
-                                                                        "mapName", mapName.length(), 15));
+                throw new IllegalArgumentException("Attempt to set mapName when arg has length " +
+                                                   mapName.length() + " when max length is 15");
             }
             if (mapName.contains(" ")) {
-                throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.STR_CONTAINS_SPACE"),
-                                                                        "mapName"));
+                throw new IllegalArgumentException("Attempt to set mapName when arg has spaces when spaces are not allowed");
             }
             this.mapNames[index] = mapName;
         }
 
         public void setSpritesheetName(final String spritesheetName) {
             if (null == spritesheetName) {
-                throw new NullPointerException(MessageFormat.format(Messages.getString("PxPack.NULL_ARG"), "spritesheetName"));
+                throw new NullArgumentException("setSpritesheetName", "spritesheetName");
             }
             if (spritesheetName.length() > 15) {
-                throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.INVALID_STR_LEN"),
-                                                                        "spritesheetName", spritesheetName.length(), 15));
+                throw new IllegalArgumentException("Attempt to set spritesheetName when arg has length " +
+                                                   spritesheetName.length() + " when max length is 15");
             }
             if (spritesheetName.contains(" ")) {
-                throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.STR_CONTAINS_SPACE"),
-                                                                        "spritesheetName"));
+                throw new IllegalArgumentException("Attempt to set spritesheetName when arg has spaces when spaces are not allowed");
             }
             this.spritesheetName = spritesheetName;
         }
@@ -569,44 +572,43 @@ public final class PxPack {
 
         public void setBgColor(final Color color) {
             if (null == color) {
-                throw new NullPointerException(MessageFormat.format(Messages.getString("PxPack.NULL_ARG"), "color"));
+                throw new NullArgumentException("setBgColor", "color");
             }
             //TODO: verify kero blaster doesn't support bg opacity
             if (!color.isOpaque()) {
-                throw new IllegalArgumentException(Messages.getString("PxPack.Head.COLOR_NOT_OPAQUE"));
+                throw new IllegalArgumentException("Attempt to set background color to non-opaque color");
             }
             bgColor = color;
         }
 
         public void setTilesetName(final int index, final String tilesetName) {
             if (null == tilesetName) {
-                throw new NullPointerException(MessageFormat.format(Messages.getString("PxPack.NULL_ARG"), "tilesetName"));
+                throw new NullArgumentException("setTilesetName", "tilesetName");
             }
             //only first is required
             if (0 == index && tilesetName.isEmpty()) {
-                throw new IllegalArgumentException(Messages.getString("PxPack.Head.EMPTY_FIRST_TILESET_NAME"));
+                throw new IllegalArgumentException("Attempt to set first tilesetName to empty string");
             }
             if (tilesetName.length() > 15) {
-                throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.INVALID_STR_LEN"),
-                                                                        "tilesetName", tilesetName.length(), 15));
+                throw new IllegalArgumentException("Attempt to set tilesetName when arg has length " +
+                                                   tilesetName.length() + " when max length is 15");
             }
             if (tilesetName.contains(" ")) {
-                throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.STR_CONTAINS_SPACE"),
-                                                                        "tilesetName"));
+                throw new IllegalArgumentException("Attempt to set tilesetName when arg has spaces when spaces are not allowed");
             }
             this.tilesetNames[index] = tilesetName;
         }
 
         public void setVisibilityType(final int index, final byte visibility) {
             if ((visibility & 0xFF) > 32) {
-                throw new IllegalArgumentException(Messages.getString("PxPack.Head.INVALID_VISIBILITY"));
+                throw new IllegalArgumentException("Attempt to assign visibility type to value > 32");
             }
             visibilityTypes[index] = visibility;
         }
 
         public void setScrollType(final int index, final byte scroll) {
             if ((scroll & 0xFF) > 9) {
-                throw new IllegalArgumentException(Messages.getString("PxPack.Head.INVALID_SCROLL"));
+                throw new IllegalArgumentException("Attempt to assign scroll type to value > 9");
             }
             scrollTypes[index] = scroll;
         }
@@ -628,9 +630,8 @@ public final class PxPack {
                                                    i, String.format("%02X", data[i])));
             }
 
-            //TODO: Format as hex
             result.append(MessageFormat.format(Messages.getString("PxPack.Head.ToString.BACKGROUND_COLOR"),
-                                               bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue()));
+                                               FXUtil.colorToString(bgColor)));
 
             for (int i = 0; i < tilesetNames.length; ++i) {
                 result.append(MessageFormat.format(Messages.getString("PxPack.Head.ToString.TILESET_NAME"),
@@ -652,26 +653,35 @@ public final class PxPack {
 
         TileLayer(final int[][] tiles) {
             if (null != tiles && 0 < tiles.length) {
-                if (tiles.length > 0xFFFF || tiles[0].length > 0xFFFF) {
-                    throw new IllegalArgumentException(Messages.getString("PxPack.TileLayer.TILES_TOO_LARGE"));
+                final int height = tiles.length;
+                final int width = tiles[0].length;
+                if (height > 0xFFFF || width > 0xFFFF) {
+                    throw new IllegalArgumentException("Attempt to create tile layer with dimensions greater than max of 65,535 " +
+                                                       "(width: " + width + ", height: " + height + ")");
+
                 }
 
-                this.tiles = new int[tiles.length][tiles[0].length];
-                for (int y = 0; y < tiles.length; ++y) {
-                    System.arraycopy(tiles[y], 0, this.tiles[y], 0, tiles[y].length);
+                this.tiles = new int[height][width];
+                for (int y = 0; y < height; ++y) {
+                    System.arraycopy(tiles[y], 0, this.tiles[y], 0, width);
                 }
             }
         }
 
         /**
-         * Resize the tile layer's dimensions
+         * Resizes the layer's dimensions
          *
          * @param width The new width for the layer
          * @param height The new height for the layer
          */
         public void resize(final int width, final int height) {
+            if (0 > width || 0 > height) {
+                throw new IllegalArgumentException("Attempt to resize tile layer to have negative dimensions " +
+                                                   "(width: " + width + ", height: " + height + ")");
+            }
             if (width > 0xFFFF || height > 0xFFFF) {
-                throw new IllegalArgumentException(Messages.getString("PxPack.TileLayer.RESIZE_ERROR_MSG"));
+                throw new IllegalArgumentException("Attempt to resize tile layer to have dimensions greater than max of 65,535 " +
+                                                   "(width: " + width + ", height: " + height + ")");
             }
 
             if (null == tiles) {
@@ -696,8 +706,11 @@ public final class PxPack {
             tiles = new int[height][width];
 
             //loop & copy for each index in smaller dimension
-            for (int y = 0; y < (height < oldTiles.length ? height : oldTiles.length); ++y) {
-                System.arraycopy(oldTiles[y], 0, tiles[y], 0, (width < oldTiles[y].length ? width : oldTiles[y].length));
+            int yBound = height < oldTiles.length ? height : oldTiles.length;
+            int xBound = width < oldTiles[0].length ? width : oldTiles[0].length;
+
+            for (int y = 0; y < yBound; ++y) {
+                System.arraycopy(oldTiles[y], 0, tiles[y], 0, xBound);
             }
         }
 
@@ -714,8 +727,8 @@ public final class PxPack {
 
         public void setTile(final int x, final int y, final int tile) {
             if (tile < 0 || tile > 0xFF) {
-                throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.TileLayer.SET_TILE_ERROR_MSG"),
-                                                                        x, y));
+                throw new IllegalArgumentException("Attempt to set tile at (" + x + ", " + y +
+                                                   ") to have a value outside 0 - 255 (tile: " + tile + ")");
             }
             tiles[y][x] = tile;
         }
@@ -748,8 +761,8 @@ public final class PxPack {
 
     public static final class Entity {
         private int type;
-        private byte flag; //TODO: make int?
-        private byte unknownByte; //make int?
+        private byte flag;
+        private byte unknownByte;
         private int x, y;
         private final byte[] data;
         private String name;
@@ -757,8 +770,8 @@ public final class PxPack {
         Entity(final byte flag, final int type, final byte unknownByte, final int x, final int y,
                final byte[] data, final String name) {
             if (data.length != 2) {
-                throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.INVALID_ARR_LEN"),
-                                                                        "data", data.length, 2));
+                throw new IllegalArgumentException("Attempt to assign data[] when arg has length " + data.length +
+                                                   " when length of 2 is expected");
             }
 
             setFlag(flag);
@@ -815,16 +828,16 @@ public final class PxPack {
 
         public void setX(final int x) {
             if (x < 0 || x > 0xFFFF) {
-                throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.Entity.INVALID_COORD"),
-                                                                        "x"));
+                throw new IllegalArgumentException("Attempt to set entity x coordinate to value outside 0 - 65,535 " +
+                                                   "(x: " + x + ")");
             }
             this.x = x;
         }
 
         public void setY(final int y) {
             if (x < 0 || y > 0xFFFF) {
-                throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.Entity.INVALID_COORD"),
-                                                                        "y"));
+                throw new IllegalArgumentException("Attempt to set entity y coordinate to value outside 0 - 65,535 " +
+                                                   "(y: " + y + ")");
             }
             this.y = y;
         }
@@ -840,15 +853,14 @@ public final class PxPack {
 
         public void setName(final String entityName) {
             if (null == entityName) {
-                throw new NullPointerException(MessageFormat.format(Messages.getString("PxPack.NULL_ARG"), "entityName"));
+                throw new NullArgumentException("setName", "entityName");
             }
             if (entityName.length() > 15) {
-                throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.INVALID_STR_LEN"),
-                                                                        "entityName", entityName.length(), 15));
+                throw new IllegalArgumentException("Attempt to set entityName when arg has length " +
+                                                   entityName.length() + " when max length is 15");
             }
             if (entityName.contains(" ")) {
-                throw new IllegalArgumentException(MessageFormat.format(Messages.getString("PxPack.STR_CONTAINS_SPACE"),
-                                                                        "entityName"));
+                throw new IllegalArgumentException("Attempt to set entityName when arg has spaces when spaces are not allowed");
             }
             this.name = entityName;
         }

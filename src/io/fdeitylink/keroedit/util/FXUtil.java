@@ -91,8 +91,7 @@ public final class FXUtil {
      * @param scale The scale factor to scale the image by
      *
      * @return The result of scaling the given image by the given scale factor.
-     * If src is null, then null is returned, and if the scale is 1,
-     * src is returned.
+     * If src is null or the scale is 1, src is returned.
      */
     public static Image scaleImage(final Image src, final int scale) {
         if (null == src || 1 == scale) {

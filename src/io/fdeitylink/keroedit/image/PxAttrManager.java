@@ -43,7 +43,10 @@ public final class PxAttrManager {
 
     public static ReadOnlyObjectProperty <PxAttr> getPxAttr(final String tilesetName)
             throws IOException, ParseException {
-        //TODO: Throw IllegalStateException if GameData is not yet valid
+        if (!GameData.isInitialized()) {
+            throw new IllegalStateException("Attempt to retrieve PxAttr file when GameData has not been properly initialized yet");
+        }
+
         if (pxAttrsMap.containsKey(tilesetName)) {
             return pxAttrsMap.get(tilesetName).getReadOnlyProperty();
         }
@@ -125,6 +128,7 @@ public final class PxAttrManager {
                 chan.read(buf);
                 buf.flip();
 
+                //TODO: validate dimensions
                 final int width = buf.getShort();
                 final int height = buf.getShort();
 

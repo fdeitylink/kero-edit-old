@@ -28,6 +28,10 @@ public final class Logger {
         }
     }
 
+    public static void logException(final Exception except) {
+        logException("", except);
+    }
+
     public static void logException(final String message, final Exception except) {
         final StringBuilder sBuilder = new StringBuilder(message);
         sBuilder.append('\n');
@@ -46,7 +50,7 @@ public final class Logger {
             logFile.publish(new LogRecord(Level.ALL, finalMessage));
             logFile.close();
         }
-        catch (final IOException ioExcept) {
+        catch (final IOException ex) {
             FXUtil.createTextboxAlert(Alert.AlertType.ERROR, Messages.getString("Logger.Alert.TITLE"),
                                       null, Messages.getString("Logger.Alert.MESSAGE"),
                                       finalMessage, false).showAndWait();

@@ -39,6 +39,7 @@ import io.fdeitylink.keroedit.util.FileEditTab;
 
 import io.fdeitylink.keroedit.gamedata.GameData;
 
+//TODO: Make singleton
 public final class HackTab extends FileEditTab {
     private final SplitPane sPane;
 

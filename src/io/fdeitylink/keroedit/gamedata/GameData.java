@@ -15,9 +15,11 @@ import java.nio.file.NoSuchFileException;
 
 import java.text.MessageFormat;
 
+import io.fdeitylink.keroedit.util.NullArgumentException;
+
 import io.fdeitylink.keroedit.Messages;
 
-//TODO: Throws errors (or mkdirs()?) if rsc_x is missing necessary folders
+//TODO: Throws errors (or mkdirs()?) if rsc_x is missing necessary subfolders
 
 /**
  * Singleton class for storing about a Kero Blaster game
@@ -43,25 +45,25 @@ public final class GameData {
     /**
      * Initializes the singleton GameData object based on the given executable
      *
-     * @param executable {@code Path} pointing to the Kero Blaster executable
+     * @param executable A {@code Path} that references the executable for a mod
      *
      * @throws NoSuchFileException If the given executable is null
      */
     public static void init(final Path executable) throws IOException {
         //TODO: Move all/most of this stuff into constructor?
-
         inst = new GameData();
 
         if (null == executable) {
-            throw new NullPointerException(Messages.getString("GameData.EXECUTABLE_NULL"));
+            throw new NullArgumentException("init", "executable");
         }
-        else if (!Files.exists(executable)) {
+        if (!executable.getFileName().toString().endsWith(".exe")) {
+            throw new IllegalArgumentException("Attempt to initialize GameData with file " +
+                                               executable.toAbsolutePath() + " that doesn't end with \".exe\"");
+        }
+        if (!Files.exists(executable)) {
+            //TODO: Throw IllegalArgumentException?
             throw new NoSuchFileException(MessageFormat.format(Messages.getString("GameData.EXECUTABLE_NONEXISTENT"),
                                                                executable.toAbsolutePath()));
-        }
-        else if (!executable.getFileName().toString().endsWith(".exe")) {
-            throw new IllegalArgumentException(MessageFormat.format(Messages.getString("GameData.EXECUTABLE_NOT_EXE"),
-                                                                    executable.toAbsolutePath()));
         }
         inst.executable = executable;
 
@@ -114,46 +116,60 @@ public final class GameData {
         }
     }
 
+    public static boolean isInitialized() {
+        return null != inst;
+    }
+
+    public static void wipe() {
+        inst = null;
+    }
+
     public static Path getExecutable() {
-        if (null == inst) {
-            throw new IllegalStateException("GameData has not been properly initialized yet");
+        if (!isInitialized()) {
+            throw new IllegalStateException("Attempt to retrieve information from GameData " +
+                                            "when it has not been properly initialized yet");
         }
         return inst.executable;
     }
 
     public static Path getResourceFolder() {
-        if (null == inst) {
-            throw new IllegalStateException("GameData has not been properly initialized yet");
+        if (!isInitialized()) {
+            throw new IllegalStateException("Attempt to retrieve information from GameData " +
+                                            "when it has not been properly initialized yet");
         }
         return inst.resourceFolder;
     }
 
     public static MOD_TYPE getModType() {
-        if (null == inst) {
-            throw new IllegalStateException("GameData has not been properly initialized yet");
+        if (!isInitialized()) {
+            throw new IllegalStateException("Attempt to retrieve information from GameData " +
+                                            "when it has not been properly initialized yet");
         }
         return inst.modType;
     }
 
     public static ArrayList <String> getMapList() {
-        if (null == inst) {
-            throw new IllegalStateException("GameData has not been properly initialized yet");
+        if (!isInitialized()) {
+            throw new IllegalStateException("Attempt to retrieve information from GameData " +
+                                            "when it has not been properly initialized yet");
         }
         return new ArrayList <>(inst.maps);
     }
 
     public static void removeMap(final String mapname) {
-        if (null == inst) {
-            throw new IllegalStateException("GameData has not been properly initialized yet");
+        if (!isInitialized()) {
+            throw new IllegalStateException("Attempt to retrieve information from GameData " +
+                                            "when it has not been properly initialized yet");
         }
         if (!inst.maps.contains(mapname)) {
             throw new IllegalArgumentException("No such map (" + mapname + ") exists");
         }
         inst.maps.remove(mapname);
-        //TODO: actually delete map
+        //TODO: actually delete map file
     }
 
-    private static ArrayList <String> getFileList(final String pathFromResource, final String extension) throws IOException {
+    private static ArrayList <String> getFileList(final String pathFromResource, final String extension)
+            throws IOException {
         final Path basePath = Paths.get(inst.resourceFolder.toAbsolutePath().toString() +
                                         File.separatorChar + pathFromResource);
 

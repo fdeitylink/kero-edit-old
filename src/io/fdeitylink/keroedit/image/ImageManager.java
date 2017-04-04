@@ -20,7 +20,10 @@ public final class ImageManager {
     }
 
     public static Image getImage(final String imageName, final boolean isTileset) {
-        //TODO: Throw IllegalStateException if GameData is not yet valid
+        if (!GameData.isInitialized()) {
+            throw new IllegalStateException("Attempt to retrieve image file when GameData has not been properly initialized yet");
+        }
+
         if (imagesMap.containsKey(imageName)) {
             return imagesMap.get(imageName);
         }

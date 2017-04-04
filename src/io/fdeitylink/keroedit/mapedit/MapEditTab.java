@@ -6,10 +6,10 @@
  * For map - draw tile types on separate layer just like with the tileset pane
  * Find workaround for NPE with large Canvas (19tunnel maps in KB); current workaround is minimal map zoom
  * - https://bugs.openjdk.java.net/browse/JDK-8089835
- * throw error on tilesetload for 0 dimension?
+ * Throw error on tileset load for 0 dimension?
  * Make method for redrawing subset/region of map
  * Improve multiple selection in tileset
- * Put exception strs in messages.properties
+ * Put exception strings in messages.properties?
  * Handle images not existing...
  *  - Figure out what Image does if file doesn't exist
  */
@@ -31,7 +31,7 @@ import java.text.ParseException;
 
 import java.text.MessageFormat;
 
-import io.fdeitylink.keroedit.util.FXUtil;
+import io.fdeitylink.keroedit.util.MathUtil;
 import javafx.stage.Stage;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
@@ -93,19 +93,19 @@ import javafx.application.Platform;
 
 import javafx.geometry.Rectangle2D;
 
-import io.fdeitylink.keroedit.KeroEdit;
-import io.fdeitylink.keroedit.Config;
-
-import io.fdeitylink.keroedit.util.FileEditTab;
-import io.fdeitylink.keroedit.util.UndoableEdit;
-
 import io.fdeitylink.keroedit.Messages;
 
 import io.fdeitylink.keroedit.util.Logger;
 
-import io.fdeitylink.keroedit.util.MathUtil;
+import io.fdeitylink.keroedit.util.FXUtil;
+
+import io.fdeitylink.keroedit.KeroEdit;
+import io.fdeitylink.keroedit.Config;
 
 import io.fdeitylink.keroedit.resource.ResourceManager;
+
+import io.fdeitylink.keroedit.util.FileEditTab;
+import io.fdeitylink.keroedit.util.UndoableEdit;
 
 import io.fdeitylink.keroedit.gamedata.GameData;
 
@@ -166,7 +166,7 @@ public final class MapEditTab extends FileEditTab {
     private /*final*/ PxPack map;
 
     public MapEditTab(final String mapFileName) throws IOException, ParseException {
-        initImgs();
+        initImages();
 
         final String fullMapPath = GameData.getResourceFolder().toAbsolutePath().toString() +
                                    File.separatorChar + "field" + File.separatorChar +
@@ -175,9 +175,23 @@ public final class MapEditTab extends FileEditTab {
             map = new PxPack(Paths.get(fullMapPath));
         }
         catch (final IOException | ParseException except) {
-            FXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("MapEditTab.OpenExcept.TITLE"), null,
-                               MessageFormat.format(Messages.getString("MapEditTab.OpenExcept.MESSAGE"), mapFileName,
-                                                    except.getMessage())).showAndWait();
+            final String title;
+            final String message;
+
+            if (except instanceof IOException) {
+                title = Messages.getString("MapEditTab.OpenIOExcept.TITLE");
+                message = except.getMessage();
+
+                Logger.logException(except); //TODO: Log in PxPack instead?
+            }
+            else {
+                title = Messages.getString("MapEditTab.OpenParseExcept.TITLE");
+                message = MessageFormat.format(Messages.getString("MapEditTab.OpenParseExcept.MESSAGE"),
+                                               mapFileName, except.getMessage());
+            }
+
+            FXUtil.createAlert(Alert.AlertType.ERROR, title, null, message).showAndWait();
+
             throw except;
         }
 
@@ -199,14 +213,14 @@ public final class MapEditTab extends FileEditTab {
 
     public static void setMapZoom(final int zoom) {
         if (0 >= zoom) {
-            throw new IllegalArgumentException(Messages.getString("MapEditTab.ZOOM_EXCEPT"));
+            throw new IllegalArgumentException("Attempt to set map zoom level to be <= 0 (zoom: " + zoom + ")");
         }
         mapZoom.set(zoom);
     }
 
     public static void setTilesetZoom(final int zoom) {
         if (0 >= zoom) {
-            throw new IllegalArgumentException(Messages.getString("MapEditTab.ZOOM_EXCEPT"));
+            throw new IllegalArgumentException("Attempt to set tileset zoom level to be <= 0 (zoom: " + zoom + ")");
         }
         tilesetZoom.set(zoom);
     }
@@ -221,7 +235,7 @@ public final class MapEditTab extends FileEditTab {
 
     public static void setSelectedLayer(final int layer) {
         if (layer < 0 || layer > 2) {
-            throw new IllegalArgumentException(Messages.getString("MapEditTab.SET_LAYER_EXCEPTION"));
+            throw new IllegalArgumentException("Attempt to set selected layer to value outside range 0 - 2 (layer: " + layer + ")");
         }
         selectedLayer.set(layer);
     }
@@ -268,7 +282,7 @@ public final class MapEditTab extends FileEditTab {
     /**
      * Initializes the {@code pxAttrImg} and {@code entityImg} variables
      */
-    private void initImgs() {
+    private void initImages() {
         //TODO: Should ImageManager handle pxAttrImg & entityImg?
         if (null == pxAttrImg) {
             final Path attrPath = Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
@@ -614,10 +628,12 @@ public final class MapEditTab extends FileEditTab {
                                         pxAttrs.add(pxAttrProp);
                                     }
                                     catch (final IOException | ParseException except) {
+                                        final String title = except instanceof IOException ?
+                                                             Messages.getString("MapEditTab.TileEditTab.PxAttrLoadIOExcept.TITLE") :
+                                                             Messages.getString("MapEditTab.TileEditTab.PxAttrLoadParseExcept.TITLE");
                                         //TODO: Option to create one? (will have to be all blank...)
-                                        Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.ERROR,
-                                                                                   Messages.getString("MapEditTab.TileEditTab.PxAttrLoadExcept.TITLE"),
-                                                                                   null, except.getMessage())
+                                        Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.ERROR, title, null,
+                                                                                   except.getMessage())
                                                                       .showAndWait());
                                     }
                                 }
@@ -929,7 +945,7 @@ public final class MapEditTab extends FileEditTab {
                                                 setChanged(true);
 
                                                 getRedoStack().clear();
-                                                getUndoStack().addFirst(new UndoableMapEdit(layer, x, y, oldTiles, newTiles));
+                                                getUndoStack().addFirst(new UndoableMapDrawEdit(layer, x, y, oldTiles, newTiles));
                                             }
                                         }
                                     }
@@ -986,7 +1002,6 @@ public final class MapEditTab extends FileEditTab {
                     final String currentSizeStr = MessageFormat.format(Messages.getString("MapEditTab.TileEditTab.Resize.CURRENT_SIZE"),
                                                                        width, height);
 
-                    //TODO: Check that I did this right
                     FXUtil.createDualTextFieldDialog(title, currentSizeStr,
                                                      Messages.getString("MapEditTab.TileEditTab.Resize.NEW_WIDTH"),
                                                      Messages.getString("MapEditTab.TileEditTab.Resize.NEW_HEIGHT"))
@@ -1304,16 +1319,17 @@ public final class MapEditTab extends FileEditTab {
                 entityCanvas.setHeight(maxHeight);
             }
 
-            private class UndoableMapEdit implements UndoableEdit {
+            private class UndoableMapDrawEdit implements UndoableEdit {
                 private final int layer;
                 private final int x;
                 private final int y;
                 private final int[][] oldTiles;
                 private final int[][] newTiles;
 
-                UndoableMapEdit(final int layer, final int x, final int y, final int[][] oldTiles, final int[][] newTiles) {
+                UndoableMapDrawEdit(final int layer, final int x, final int y, final int[][] oldTiles, final int[][] newTiles) {
                     if (oldTiles.length != newTiles.length || oldTiles[0].length != newTiles[0].length) {
-                        throw new IllegalArgumentException("oldTiles & newTiles dimensions must be equal");
+                        throw new IllegalArgumentException("Attempt to initialize new UndoableMapDrawEdit " +
+                                                           "with oldTiles and newTiles with unequal dimensions");
                     }
 
                     this.layer = layer;
@@ -1351,6 +1367,8 @@ public final class MapEditTab extends FileEditTab {
                     }
                 }
             }
+
+            //TODO: UndoableMapResizeEdit
         }
     }
 
