@@ -17,7 +17,7 @@ public final class Messages {
             return resourceBundle.getString(key);
         }
         catch (final MissingResourceException except) {
-            Logger.logException("Missing string resource: " + key, except);
+            Logger.logThrowable("Missing string resource: " + key, except);
             return "Missing resource: " + key;
         }
     }

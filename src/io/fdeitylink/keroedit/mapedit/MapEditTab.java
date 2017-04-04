@@ -31,7 +31,6 @@ import java.text.ParseException;
 
 import java.text.MessageFormat;
 
-import io.fdeitylink.keroedit.util.MathUtil;
 import javafx.stage.Stage;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
@@ -97,6 +96,10 @@ import io.fdeitylink.keroedit.Messages;
 
 import io.fdeitylink.keroedit.util.Logger;
 
+import io.fdeitylink.keroedit.util.ArrayIndexEnum;
+
+import io.fdeitylink.keroedit.util.MathUtil;
+
 import io.fdeitylink.keroedit.util.FXUtil;
 
 import io.fdeitylink.keroedit.KeroEdit;
@@ -104,8 +107,8 @@ import io.fdeitylink.keroedit.Config;
 
 import io.fdeitylink.keroedit.resource.ResourceManager;
 
-import io.fdeitylink.keroedit.util.FileEditTab;
-import io.fdeitylink.keroedit.util.UndoableEdit;
+import io.fdeitylink.keroedit.util.edit.FileEditTab;
+import io.fdeitylink.keroedit.util.edit.UndoableEdit;
 
 import io.fdeitylink.keroedit.gamedata.GameData;
 
@@ -182,7 +185,7 @@ public final class MapEditTab extends FileEditTab {
                 title = Messages.getString("MapEditTab.OpenIOExcept.TITLE");
                 message = except.getMessage();
 
-                Logger.logException(except); //TODO: Log in PxPack instead?
+                Logger.logThrowable(except); //TODO: Log in PxPack instead?
             }
             else {
                 title = Messages.getString("MapEditTab.OpenParseExcept.TITLE");
@@ -955,7 +958,7 @@ public final class MapEditTab extends FileEditTab {
                         }.call();
                     }
                     catch (final Exception except) {
-                        Logger.logException("Exception in mapStackPane.setOnMouseClicked()", except);
+                        Logger.logThrowable("Exception in mapStackPane.setOnMouseClicked()", except);
                     }
                 });
 
@@ -972,11 +975,7 @@ public final class MapEditTab extends FileEditTab {
                 final MenuItem[] menuItems = {new MenuItem(Messages.getString("MapEditTab.TileEditTab.Resize.MENU_TEXT")),
                                               new MenuItem(Messages.getString("MapEditTab.TileEditTab.BgColor.MENU_TEXT"))};
 
-                final EnumMap <MapPaneMenuItems, Integer> mapPaneMenuItems = new EnumMap <>(MapPaneMenuItems.class);
-                int i = 0;
-                for (final MapPaneMenuItems x : MapPaneMenuItems.values()) {
-                    mapPaneMenuItems.put(x, i++);
-                }
+                final EnumMap <MapPaneMenuItems, Integer> mapPaneMenuItems = MapPaneMenuItems.enumMap();
 
                 menuItems[mapPaneMenuItems.get(MapPaneMenuItems.RESIZE)].setOnAction(event -> {
                     final String layerName;
@@ -1147,7 +1146,7 @@ public final class MapEditTab extends FileEditTab {
                     }.call();
                 }
                 catch (final Exception except) {
-                    Logger.logException("Exception in redrawTile(" + layer + ", " + x + ", " + y + ", " + ")", except);
+                    Logger.logThrowable("Exception in redrawTile(" + layer + ", " + x + ", " + y + ", " + ")", except);
                 }
             }
 
@@ -1258,7 +1257,7 @@ public final class MapEditTab extends FileEditTab {
                     }.call();
                 }
                 catch (final Exception except) {
-                    Logger.logException("Exception in redrawLayer(" + layer + ")", except);
+                    Logger.logThrowable("Exception in redrawLayer(" + layer + ")", except);
                 }
             }
 
@@ -1276,7 +1275,7 @@ public final class MapEditTab extends FileEditTab {
                     }.call();
                 }
                 catch (final Exception except) {
-                    Logger.logException("Exception in redrawEntities()", except);
+                    Logger.logThrowable("Exception in redrawEntities()", except);
                 }
 
                 entityCanvas.getGraphicsContext2D().setStroke(Color.BLACK);
@@ -1399,8 +1398,12 @@ public final class MapEditTab extends FileEditTab {
         }
     }
 
-    private enum MapPaneMenuItems {
+    private enum MapPaneMenuItems implements ArrayIndexEnum <MapPaneMenuItems> {
         RESIZE,
-        BG_COLOR
+        BG_COLOR;
+
+        public static EnumMap <MapPaneMenuItems, Integer> enumMap() {
+            return RESIZE.enumMap(MapPaneMenuItems.class);
+        }
     }
 }

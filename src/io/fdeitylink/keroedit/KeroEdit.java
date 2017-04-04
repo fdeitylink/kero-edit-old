@@ -13,10 +13,8 @@
  * Allow opening multiple maps at once (multiple selection)
  * Allow configuring tile size?
  * Investigate tab-related exceptions, slowness, and NoClassDefFoundError exception when trying to save prefs
- * Log runtime/uncaught exceptions
  * Scaling map down
  * Lower memory usage and stuffs
- * Allow changing tilesets in map edit tab (so it will have to change head properties)
  * Play pxtone files
  * Will need something for GameData changes to notify objects using it (i.e. maplist changes)
  * In script editor, eventually put in an autocompleter for stuff like entity names
@@ -47,6 +45,8 @@ import java.nio.file.DirectoryStream;
 
 import java.nio.charset.Charset;
 
+import io.fdeitylink.keroedit.util.ArrayIndexEnum;
+import io.fdeitylink.keroedit.util.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
 
@@ -111,7 +111,7 @@ import io.fdeitylink.keroedit.resource.ResourceManager;
 
 import io.fdeitylink.keroedit.util.FXUtil;
 
-import io.fdeitylink.keroedit.util.FileEditTab;
+import io.fdeitylink.keroedit.util.edit.FileEditTab;
 
 import io.fdeitylink.keroedit.map.PxPack;
 
@@ -145,14 +145,18 @@ public final class KeroEdit extends Application {
      */
     @Override
     public void start(final Stage stage) {
+        final Thread.UncaughtExceptionHandler fxDefExceptHandler = Thread.currentThread().getUncaughtExceptionHandler();
+        Thread.currentThread().setUncaughtExceptionHandler((t, e) -> {
+            fxDefExceptHandler.uncaughtException(t, e);
+            Logger.logThrowable(e);
+        });
+
         Config.loadPrefs();
 
         mainStage = stage;
         mainStage.setOnCloseRequest(event -> {
             Config.notepadText = notepadTab.notepad.getText();
             Config.savePrefs();
-
-            mainStage.close();
 
             Platform.exit(); //graceful shutdown & closes all child windows
 
@@ -226,13 +230,7 @@ public final class KeroEdit extends Application {
                                       new MenuItem(Messages.getString("KeroEdit.FileMenu.CLOSE_ALL_TABS"))};
         fileMenu.getItems().addAll(menuItems);
 
-        final EnumMap <FileMenuItems, Integer> fileMenuItems = new EnumMap <>(FileMenuItems.class);
-        {
-            int i = 0;
-            for (final FileMenuItems x : FileMenuItems.values()) {
-                fileMenuItems.put(x, i++);
-            }
-        }
+        final EnumMap <FileMenuItems, Integer> fileMenuItems = FileMenuItems.enumMap();
 
         menuItems[fileMenuItems.get(FileMenuItems.OPEN)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
@@ -469,13 +467,7 @@ public final class KeroEdit extends Application {
                                       new MenuItem(Messages.getString("KeroEdit.EditMenu.REDO"))};
         editMenu.getItems().addAll(menuItems);
 
-        final EnumMap <EditMenuItems, Integer> editMenuItems = new EnumMap <>(EditMenuItems.class);
-        {
-            int i = 0;
-            for (final EditMenuItems x : EditMenuItems.values()) {
-                editMenuItems.put(x, i++);
-            }
-        }
+        final EnumMap <EditMenuItems, Integer> editMenuItems = EditMenuItems.enumMap();
 
         menuItems[editMenuItems.get(EditMenuItems.UNDO)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN));
@@ -519,13 +511,7 @@ public final class KeroEdit extends Application {
                                       new MenuItem(Messages.getString("KeroEdit.ViewMenu.TILESET_BG_COLOR"))};
         viewMenu.getItems().addAll(menuItems);
 
-        final EnumMap <ViewMenuItems, Integer> viewMenuItems = new EnumMap <>(ViewMenuItems.class);
-        {
-            int i = 0;
-            for (final ViewMenuItems x : ViewMenuItems.values()) {
-                viewMenuItems.put(x, i++);
-            }
-        }
+        final EnumMap <ViewMenuItems, Integer> viewMenuItems = ViewMenuItems.enumMap();
 
         final RadioMenuItem[] mapZoomMenuItems = createZoomSubmenu(Config.mapZoom);
         int zoom = 2;
@@ -600,13 +586,7 @@ public final class KeroEdit extends Application {
                                       new MenuItem(Messages.getString("KeroEdit.ActionsMenu.WAFFLE"))};
         actionsMenu.getItems().addAll(menuItems);
 
-        final EnumMap <ActionsMenuItems, Integer> actionsMenuItems = new EnumMap <>(ActionsMenuItems.class);
-        {
-            int i = 0;
-            for (final ActionsMenuItems x : ActionsMenuItems.values()) {
-                actionsMenuItems.put(x, i++);
-            }
-        }
+        final EnumMap <ActionsMenuItems, Integer> actionsMenuItems = ActionsMenuItems.enumMap();
 
         menuItems[actionsMenuItems.get(ActionsMenuItems.RUN_GAME)].setOnAction(event -> {
             final Runtime run = Runtime.getRuntime();
@@ -705,13 +685,7 @@ public final class KeroEdit extends Application {
                                       new MenuItem(Messages.getString("KeroEdit.HelpMenu.GUIDE"))};
         helpMenu.getItems().addAll(menuItems);
 
-        final EnumMap <HelpMenuItems, Integer> helpMenuItems = new EnumMap <>(HelpMenuItems.class);
-        {
-            int i = 0;
-            for (final HelpMenuItems x : HelpMenuItems.values()) {
-                helpMenuItems.put(x, i++);
-            }
-        }
+        final EnumMap <HelpMenuItems, Integer> helpMenuItems = HelpMenuItems.enumMap();
 
         menuItems[helpMenuItems.get(HelpMenuItems.ABOUT)].setOnAction(event -> {
             final Alert aboutAlert = FXUtil.createAlert(Alert.AlertType.INFORMATION,
@@ -753,13 +727,7 @@ public final class KeroEdit extends Application {
         final ContextMenu contextMenu = new ContextMenu(contextMenuItems);
         mapListView.setContextMenu(contextMenu);
 
-        final EnumMap <MapListMenuItems, Integer> mapListMenuItems = new EnumMap <>(MapListMenuItems.class);
-        {
-            int i = 0;
-            for (final MapListMenuItems x : MapListMenuItems.values()) {
-                mapListMenuItems.put(x, i++);
-            }
-        }
+        final EnumMap <MapListMenuItems, Integer> mapListMenuItems = MapListMenuItems.enumMap();
 
         //TODO: Change accelerator text from an arrow to "Enter"
         contextMenuItems[mapListMenuItems.get(MapListMenuItems.OPEN)].setAccelerator(new KeyCodeCombination(KeyCode.ENTER));
@@ -912,7 +880,6 @@ public final class KeroEdit extends Application {
                                       licenseText, false).showAndWait()
                   .ifPresent(result -> {
                       if (!(Config.licenseRead = (ButtonType.OK == result))) {
-                          mainStage.close();
                           Platform.exit();
                           System.exit(0);
                       }
@@ -926,57 +893,89 @@ public final class KeroEdit extends Application {
         }
     }
 
-    private enum FileMenuItems {
+    private enum FileMenuItems implements ArrayIndexEnum <FileMenuItems> {
         OPEN,
         OPEN_LAST,
         SAVE,
         SAVE_ALL,
         RELOAD,
         CLOSE_TAB,
-        CLOSE_ALL_TABS
+        CLOSE_ALL_TABS;
+
+        public static EnumMap <FileMenuItems, Integer> enumMap() {
+            return OPEN.enumMap(FileMenuItems.class);
+        }
     }
 
-    private enum EditMenuItems {
+    private enum EditMenuItems implements ArrayIndexEnum <EditMenuItems> {
         UNDO,
-        REDO
+        REDO;
+
+        public static EnumMap <EditMenuItems, Integer> enumMap() {
+            return UNDO.enumMap(EditMenuItems.class);
+        }
     }
 
-    private enum ViewMenuItems {
+    private enum ViewMenuItems implements ArrayIndexEnum <ViewMenuItems> {
         MAP_ZOOM,
         TILESET_ZOOM,
-        TILESET_BG_COLOR
+        TILESET_BG_COLOR;
+
+        public static EnumMap <ViewMenuItems, Integer> enumMap() {
+            return MAP_ZOOM.enumMap(ViewMenuItems.class);
+        }
     }
 
-    private enum ActionsMenuItems {
+    private enum ActionsMenuItems implements ArrayIndexEnum <ActionsMenuItems> {
         RUN_GAME,
         EDIT_GLOBAL_SCRIPT,
         HACK_EXECUTABLE,
-        WAFFLE
+        WAFFLE;
+
+        public static EnumMap <ActionsMenuItems, Integer> enumMap() {
+            return RUN_GAME.enumMap(ActionsMenuItems.class);
+        }
     }
 
-    private enum HelpMenuItems {
+    private enum HelpMenuItems implements ArrayIndexEnum <HelpMenuItems> {
         ABOUT,
-        GUIDE
+        GUIDE;
+
+        public static EnumMap <HelpMenuItems, Integer> enumMap() {
+            return ABOUT.enumMap(HelpMenuItems.class);
+        }
     }
 
-    private enum MapListMenuItems {
+    private enum MapListMenuItems implements ArrayIndexEnum <MapListMenuItems> {
         OPEN,
         NEW,
         DELETE,
         DUPLICATE,
-        RENAME
+        RENAME;
+
+        public static EnumMap <MapListMenuItems, Integer> enumMap() {
+            return OPEN.enumMap(MapListMenuItems.class);
+        }
     }
 
-    public enum DrawSettingsItems {
+    public enum DrawSettingsItems implements ArrayIndexEnum <DrawSettingsItems> {
         DRAW,
         RECT,
         COPY,
         FILL,
-        REPLACE
+        REPLACE;
+
+        public static EnumMap <DrawSettingsItems, Integer> enumMap() {
+            return DRAW.enumMap(DrawSettingsItems.class);
+        }
     }
 
-    private enum ViewSettingsItems {
-        TILE_TYPES
+    private enum ViewSettingsItems implements ArrayIndexEnum <ViewSettingsItems> {
+        TILE_TYPES;
+
+        public static EnumMap <ViewSettingsItems, Integer> enumMap() {
+            return TILE_TYPES.enumMap(ViewSettingsItems.class);
+        }
     }
 
     private static final class SettingsPane extends GridPane {
@@ -1078,13 +1077,7 @@ public final class KeroEdit extends Application {
             final ToggleGroup toggleGroup = new ToggleGroup();
             final RadioButton[] radioButtons = {new RadioButton(Messages.getString("KeroEdit.SettingsPane.DRAW"))};
 
-            final EnumMap <DrawSettingsItems, Integer> drawSettingsItems = new EnumMap <>(DrawSettingsItems.class);
-            {
-                int i = 0;
-                for (final DrawSettingsItems k : DrawSettingsItems.values()) {
-                    drawSettingsItems.put(k, i++);
-                }
-            }
+            final EnumMap <DrawSettingsItems, Integer> drawSettingsItems = DrawSettingsItems.enumMap();
 
             radioButtons[drawSettingsItems.get(DrawSettingsItems.DRAW)].setSelected(true);
 
@@ -1103,13 +1096,7 @@ public final class KeroEdit extends Application {
 
             final CheckBox[] cBoxes = {new CheckBox(Messages.getString("KeroEdit.SettingsPane.TILE_TYPES"))};
 
-            final EnumMap <ViewSettingsItems, Integer> viewSettingsItems = new EnumMap <>(ViewSettingsItems.class);
-            {
-                int i = 0;
-                for (final ViewSettingsItems k : ViewSettingsItems.values()) {
-                    viewSettingsItems.put(k, i++);
-                }
-            }
+            final EnumMap <ViewSettingsItems, Integer> viewSettingsItems = ViewSettingsItems.enumMap();
 
             cBoxes[viewSettingsItems.get(ViewSettingsItems.TILE_TYPES)].setSelected(false);
             MapEditTab.bindShowTileTypes(cBoxes[viewSettingsItems.get(ViewSettingsItems.TILE_TYPES)].selectedProperty());

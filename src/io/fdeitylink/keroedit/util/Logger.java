@@ -23,23 +23,22 @@ public final class Logger {
             logFile.close();
         }
         catch (final IOException except) {
-            FXUtil.createTextboxAlert(Alert.AlertType.ERROR, Messages.getString("Logger.Alert.TITLE"),
-                                      null, Messages.getString("Logger.Alert.MESSAGE"), message, false).showAndWait();
+
         }
     }
 
-    public static void logException(final Exception except) {
-        logException("", except);
+    public static void logThrowable(final Throwable t) {
+        logThrowable("", t);
     }
 
-    public static void logException(final String message, final Exception except) {
+    public static void logThrowable(final String message, final Throwable t) {
         final StringBuilder sBuilder = new StringBuilder(message);
         sBuilder.append('\n');
-        sBuilder.append(except.getClass().getName());
+        sBuilder.append(t.getClass().getName());
         sBuilder.append(": ");
-        sBuilder.append(except.getMessage());
+        sBuilder.append(t.getMessage());
 
-        for (final StackTraceElement element : except.getStackTrace()) {
+        for (final StackTraceElement element : t.getStackTrace()) {
             sBuilder.append("\n\t");
             sBuilder.append(element);
         }
@@ -51,9 +50,7 @@ public final class Logger {
             logFile.close();
         }
         catch (final IOException ex) {
-            FXUtil.createTextboxAlert(Alert.AlertType.ERROR, Messages.getString("Logger.Alert.TITLE"),
-                                      null, Messages.getString("Logger.Alert.MESSAGE"),
-                                      finalMessage, false).showAndWait();
+
         }
     }
 }

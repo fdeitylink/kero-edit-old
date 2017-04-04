@@ -23,7 +23,7 @@ import javafx.scene.text.Font;
 
 import io.fdeitylink.keroedit.Messages;
 
-import io.fdeitylink.keroedit.util.FileEditTab;
+import io.fdeitylink.keroedit.util.edit.FileEditTab;
 
 public final class ScriptEditTab extends FileEditTab {
     private final Path script;

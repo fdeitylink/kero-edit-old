@@ -35,7 +35,7 @@ import io.fdeitylink.keroedit.resource.ResourceManager;
 
 import io.fdeitylink.keroedit.Messages;
 
-import io.fdeitylink.keroedit.util.FileEditTab;
+import io.fdeitylink.keroedit.util.edit.FileEditTab;
 
 import io.fdeitylink.keroedit.gamedata.GameData;
 

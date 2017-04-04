@@ -1,4 +1,4 @@
-package io.fdeitylink.keroedit.util;
+package io.fdeitylink.keroedit.util.edit;
 
 import java.util.ArrayDeque;
 

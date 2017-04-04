@@ -30,8 +30,6 @@ import io.fdeitylink.keroedit.util.NullArgumentException;
 
 import io.fdeitylink.keroedit.Messages;
 
-import io.fdeitylink.keroedit.util.FXUtil;
-
 /**
  * Object for storing information about a PXPACK map file
  */
@@ -403,19 +401,17 @@ public final class PxPack {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder();
+        final StringBuilder result = new StringBuilder();
 
-        result.append(MessageFormat.format(Messages.getString("PxPack.ToString.NAME"), mapPath.getFileName()));
+        result.append("Name: ").append(mapPath.getFileName()).append('\n');
 
-        result.append(head);
-        result.append('\n');
+        result.append(head).append('\n');
 
-        for (TileLayer layer : tileLayers) {
-            result.append(layer);
-            result.append('\n');
+        for (final TileLayer layer : tileLayers) {
+            result.append(layer).append('\n');
         }
-        for (Entity entity : entities) {
-            result.append(entity);
+        for (final Entity entity : entities) {
+            result.append(entity).append('\n');
         }
 
         return result.toString();
@@ -617,25 +613,22 @@ public final class PxPack {
         public String toString() {
             final StringBuilder result = new StringBuilder();
 
-            result.append(MessageFormat.format(Messages.getString("PxPack.Head.ToString.DESCRIPTION"), description));
+            result.append("Description: ").append(description).append('\n');
 
             for (int i = 0; i < mapNames.length; ++i) {
-                result.append(MessageFormat.format(Messages.getString("PxPack.Head.ToString.MAPNAME"), i, mapNames[i]));
+                result.append("Mapname ").append(i).append(": ").append(mapNames[i]).append('\n');
             }
 
-            result.append(MessageFormat.format(Messages.getString("PxPack.Head.ToString.SPRITESHEET_NAME"), spritesheetName));
+            result.append("Spritesheet Name: ").append(spritesheetName).append('\n');
 
             for (int i = 0; i < data.length; ++i) {
-                result.append(MessageFormat.format(Messages.getString("PxPack.Head.ToString.UNKNOWN_BYTES"),
-                                                   i, String.format("%02X", data[i])));
+                result.append("Byte ").append(i).append(": ").append(String.format("%02X", data[i])).append('\n');
             }
 
-            result.append(MessageFormat.format(Messages.getString("PxPack.Head.ToString.BACKGROUND_COLOR"),
-                                               FXUtil.colorToString(bgColor)));
+            result.append("Background Color: ").append(bgColor).append('\n');
 
             for (int i = 0; i < tilesetNames.length; ++i) {
-                result.append(MessageFormat.format(Messages.getString("PxPack.Head.ToString.TILESET_NAME"),
-                                                   i, tilesetNames[i]));
+                result.append("Tileset Name ").append(i).append(": ").append(tilesetNames[i]).append('\n');
             }
 
             return result.toString();
@@ -738,19 +731,16 @@ public final class PxPack {
             final StringBuilder result = new StringBuilder();
 
             if (null == tiles) {
-                result.append(MessageFormat.format(Messages.getString("PxPack.TileLayer.ToString.WIDTH"), "00"));
-                result.append(MessageFormat.format(Messages.getString("PxPack.TileLayer.ToString.HEIGHT"), "00"));
+                result.append("Width: 00").append('\n');
+                result.append("Height: 00").append('\n');
             }
             else {
-                result.append(MessageFormat.format(Messages.getString("PxPack.TileLayer.ToString.WIDTH"),
-                                                   String.format("%02X", tiles[0].length)));
-                result.append(MessageFormat.format(Messages.getString("PxPack.TileLayer.ToString.HEIGHT"),
-                                                   String.format("%02X", tiles.length)));
+                result.append("\tWidth: ").append(String.format("%02X", tiles[0].length)).append('\n');
+                result.append("\tHeight: ").append(String.format("%02X", tiles.length)).append('\n');
                 for (final int[] row : tiles) {
                     result.append('\t');
                     for (final int tile : row) {
-                        result.append(String.format("%02X", tile));
-                        result.append(' ');
+                        result.append(String.format("%02X", tile)).append(' ');
                     }
                     result.append('\n');
                 }
@@ -869,22 +859,18 @@ public final class PxPack {
         public String toString() {
             final StringBuilder result = new StringBuilder();
 
-            result.append(MessageFormat.format(Messages.getString("PxPack.Entity.ToString.FLAG"),
-                                               String.format("%02X", flag)));
-            result.append(MessageFormat.format(Messages.getString("PxPack.Entity.ToString.TYPE"),
-                                               String.format("%02X", type)));
-            result.append(MessageFormat.format(Messages.getString("PxPack.Entity.ToString.UNKNOWN_BYTE"),
-                                               String.format("%02X", unknownByte)));
-            result.append(MessageFormat.format(Messages.getString("PxPack.Entity.ToString.X"),
-                                               String.format("%02X", x)));
-            result.append(MessageFormat.format(Messages.getString("PxPack.Entity.ToString.Y"),
-                                               String.format("%02X", y)));
+            result.append("Flag: ").append(String.format("%02X", flag)).append('\n');
+            result.append("Type: ").append(String.format("%02X", type)).append('\n');
+            result.append("Unknown Byte: ").append(String.format("%02X", unknownByte)).append('\n');
+
+            result.append("X: ").append(String.format("%02X", x)).append('\n');
+            result.append("Y: ").append(String.format("%02X", y)).append('\n');
+
             for (int i = 0; i < data.length; ++i) {
-                result.append(MessageFormat.format(Messages.getString("PxPack.Entity.ToString.DATA"),
-                                                   i, String.format("%02X", data[i])));
+                result.append("Data ").append(i).append(": ").append(String.format("%02X", data[i])).append('\n');
             }
-            result.append(MessageFormat.format(Messages.getString("PxPack.Entity.ToString.NAME"), name));
-            result.append('\n');
+
+            result.append("Name: ").append(name).append('\n');
 
             return result.toString();
         }
