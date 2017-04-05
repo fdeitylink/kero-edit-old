@@ -14,7 +14,4 @@ public interface ArrayIndexEnum <E extends Enum <E>> {
 
         return enumMap;
     }
-
-    //TODO: require overload of enumMap()
-    //static EnumMap <E, Integer> enumMap()
 }

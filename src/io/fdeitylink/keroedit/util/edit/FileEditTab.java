@@ -9,7 +9,7 @@ public abstract class FileEditTab extends Tab {
     private final ArrayDeque <UndoableEdit> undoStack = new ArrayDeque <>();
     private final ArrayDeque <UndoableEdit> redoStack = new ArrayDeque <>();
 
-    protected boolean changed;
+    private boolean changed;
 
     public FileEditTab() {
         changed = false;
@@ -17,7 +17,6 @@ public abstract class FileEditTab extends Tab {
 
     public FileEditTab(final String text) {
         super(text);
-        changed = false;
     }
 
     public FileEditTab(final String text, final Node content) {
@@ -48,12 +47,12 @@ public abstract class FileEditTab extends Tab {
         return changed;
     }
 
-    //TODO: Make final?
-    protected void setChanged(final boolean changed) {
+    protected final void setChanged(final boolean changed) {
         this.changed = changed;
         if (getText().endsWith("*")) {
             if (!changed) {
-                setText(getText().substring(0, getText().length() - 2));
+                final String text = getText();
+                setText(text.substring(0, text.lastIndexOf("*")));
             }
         }
         else if (changed) {

@@ -294,7 +294,40 @@
               <section>
                 <rule>
                   <match>
-                    <ENUM>true</ENUM>
+                    <AND>
+                      <ENUM>true</ENUM>
+                      <PUBLIC>true</PUBLIC>
+                    </AND>
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <AND>
+                      <ENUM>true</ENUM>
+                      <PROTECTED>true</PROTECTED>
+                    </AND>
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <AND>
+                      <ENUM>true</ENUM>
+                      <PACKAGE_PRIVATE>true</PACKAGE_PRIVATE>
+                    </AND>
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <AND>
+                      <ENUM>true</ENUM>
+                      <PRIVATE>true</PRIVATE>
+                    </AND>
                   </match>
                 </rule>
               </section>

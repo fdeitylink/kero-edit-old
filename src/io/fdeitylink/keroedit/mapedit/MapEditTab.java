@@ -975,9 +975,7 @@ public final class MapEditTab extends FileEditTab {
                 final MenuItem[] menuItems = {new MenuItem(Messages.getString("MapEditTab.TileEditTab.Resize.MENU_TEXT")),
                                               new MenuItem(Messages.getString("MapEditTab.TileEditTab.BgColor.MENU_TEXT"))};
 
-                final EnumMap <MapPaneMenuItems, Integer> mapPaneMenuItems = MapPaneMenuItems.enumMap();
-
-                menuItems[mapPaneMenuItems.get(MapPaneMenuItems.RESIZE)].setOnAction(event -> {
+                menuItems[MapPaneMenuItems.arrIndexEnumMap.get(MapPaneMenuItems.RESIZE)].setOnAction(event -> {
                     final String layerName;
                     switch (selectedLayer.get()) {
                         case 0:
@@ -1043,7 +1041,7 @@ public final class MapEditTab extends FileEditTab {
                     });
                 });
 
-                menuItems[mapPaneMenuItems.get(MapPaneMenuItems.BG_COLOR)].setOnAction(event -> {
+                menuItems[MapPaneMenuItems.arrIndexEnumMap.get(MapPaneMenuItems.BG_COLOR)].setOnAction(event -> {
                     final ColorPicker cPicker = new ColorPicker(mapPane.bgColor.get());
                     cPicker.setOnAction(ev -> {
                         if (!cPicker.getValue().isOpaque()) {
@@ -1402,8 +1400,6 @@ public final class MapEditTab extends FileEditTab {
         RESIZE,
         BG_COLOR;
 
-        public static EnumMap <MapPaneMenuItems, Integer> enumMap() {
-            return RESIZE.enumMap(MapPaneMenuItems.class);
-        }
+        static final EnumMap <MapPaneMenuItems, Integer> arrIndexEnumMap = RESIZE.enumMap(MapPaneMenuItems.class);
     }
 }
