@@ -19,11 +19,10 @@ import io.fdeitylink.keroedit.util.NullArgumentException;
 
 import io.fdeitylink.keroedit.Messages;
 
-//TODO: Throws errors (or mkdirs()?) if rsc_x is missing necessary subfolders
-
 /**
  * Singleton class for storing about a Kero Blaster game
  */
+
 public final class GameData {
     private static GameData inst;
 
@@ -51,6 +50,7 @@ public final class GameData {
      */
     public static void init(final Path executable) throws IOException {
         //TODO: Move all/most of this stuff into constructor?
+        //TODO: Throws errors (or mkdirs()?) if rsc_x is missing necessary subfolders
         inst = new GameData();
 
         if (null == executable) {
@@ -156,15 +156,17 @@ public final class GameData {
         return new ArrayList <>(inst.maps);
     }
 
-    public static void removeMap(final String mapname) {
+    public static void removeMap(final String mapName) {
         if (!isInitialized()) {
             throw new IllegalStateException("Attempt to retrieve information from GameData " +
                                             "when it has not been properly initialized yet");
         }
-        if (!inst.maps.contains(mapname)) {
-            throw new IllegalArgumentException("No such map (" + mapname + ") exists");
+        //TODO: if a PxPack is renamed, entry must also be renamed here
+        if (!inst.maps.contains(mapName)) {
+            throw new IllegalArgumentException("Attempt to remove map that doesn't exist " +
+                                               "(mapName: " + mapName + ")");
         }
-        inst.maps.remove(mapname);
+        inst.maps.remove(mapName);
         //TODO: actually delete map file
     }
 
@@ -175,8 +177,8 @@ public final class GameData {
 
         final ArrayList <String> nameList = new ArrayList <>();
         try {
-            final DirectoryStream <Path> pathList = Files.newDirectoryStream(basePath,
-                                                                             entry -> entry.toString().endsWith(extension));
+            final DirectoryStream <Path> pathList =
+                    Files.newDirectoryStream(basePath, entry -> entry.toString().endsWith(extension));
             for (final Path p : pathList) {
                 final String filename = p.getFileName().toString();
                 nameList.add(filename.substring(0, filename.lastIndexOf(extension)));

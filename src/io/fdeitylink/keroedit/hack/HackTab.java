@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.nio.charset.Charset;
 
-import io.fdeitylink.keroedit.util.FXUtil;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -31,19 +30,30 @@ import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonValue;
 
-import io.fdeitylink.keroedit.resource.ResourceManager;
-
 import io.fdeitylink.keroedit.Messages;
 
-import io.fdeitylink.keroedit.util.edit.FileEditTab;
+import io.fdeitylink.keroedit.resource.ResourceManager;
+
+import io.fdeitylink.keroedit.util.FXUtil;
 
 import io.fdeitylink.keroedit.gamedata.GameData;
 
-//TODO: Make singleton
-public final class HackTab extends FileEditTab {
-    private final SplitPane sPane;
+public final class HackTab extends FXUtil.FileEditTab {
+    private static HackTab inst;
 
-    public HackTab() {
+    private SplitPane sPane;
+
+    private HackTab() {
+
+    }
+
+    public static void init() {
+        if (!GameData.isInitialized()) {
+            throw new IllegalStateException("Attempt to create HackTab when GameData has not been properly initialized yet");
+        }
+
+        inst = new HackTab();
+
         final String stringsFname;
         switch (GameData.getModType()) {
             case KERO_BLASTER:
@@ -61,11 +71,15 @@ public final class HackTab extends FileEditTab {
                                      File.separatorChar + "assist" + File.separatorChar + stringsFname);
         if (!Files.exists(stringsPath)) {
             stringsPath = ResourceManager.getPath("assist/" + stringsFname);
+            if (null == stringsPath) { //this should never happen but I'm being safe
+                //inst = null;
+                //TODO: throw some kind of exception...
+            }
         }
 
         final HackTreeItem stringsTreeItem = parseHackFile(stringsPath, Messages.getString("HackTab.Roots.STRINGS"));
 
-        sPane = new SplitPane();
+        inst.sPane = new SplitPane();
 
         final HackTreeItem root = new HackTreeItem();
         root.setExpanded(true);
@@ -73,7 +87,7 @@ public final class HackTab extends FileEditTab {
         final TreeView <String> hacksTree = new TreeView <>(root);
         hacksTree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.isLeaf()) {
-                sPane.getItems().set(1, ((HackTreeItem)newValue).hackPane);
+                inst.sPane.getItems().set(1, ((HackTreeItem)newValue).hackPane);
             }
         });
 
@@ -81,16 +95,24 @@ public final class HackTab extends FileEditTab {
 
         //Get first item of root, which ends up just having children, and then get the first item of that "subroot",
         //which also only has children
-        sPane.getItems().addAll(hacksTree, ((HackTreeItem)hacksTree.getRoot().getChildren().get(0)
-                                                                   .getChildren().get(0)).hackPane);
-        sPane.setDividerPositions(0.2);
+        inst.sPane.getItems().addAll(hacksTree, ((HackTreeItem)hacksTree.getRoot().getChildren().get(0)
+                                                                        .getChildren().get(0)).hackPane);
+        inst.sPane.setDividerPositions(0.2);
 
-        //getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE, ButtonType.APPLY, ButtonType.CANCEL);
+        //inst.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE, ButtonType.APPLY, ButtonType.CANCEL);
 
-        setText(Messages.getString("HackTab.TITLE"));
-        setTooltip(new Tooltip(GameData.getExecutable().toAbsolutePath().toString()));
+        inst.setText(Messages.getString("HackTab.TITLE"));
+        inst.setTooltip(new Tooltip(GameData.getExecutable().toAbsolutePath().toString()));
 
-        setContent(sPane);
+        inst.setContent(inst.sPane);
+    }
+
+    public static void wipe() {
+        inst = null;
+    }
+
+    public static HackTab getInst() {
+        return inst;
     }
 
     @Override
@@ -109,7 +131,7 @@ public final class HackTab extends FileEditTab {
         System.out.println("exe saved");
     }
 
-    private HackTreeItem parseHackFile(final Path hackPath, final String subrootName) {
+    private static HackTreeItem parseHackFile(final Path hackPath, final String subrootName) {
         HackTreeItem[] hTreeItems = null;
 
         try (BufferedReader hackFileReader = Files.newBufferedReader(hackPath, Charset.forName("UTF-8"))) {

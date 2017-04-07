@@ -1,4 +1,4 @@
-package io.fdeitylink.keroedit.util.edit;
+package io.fdeitylink.keroedit.util;
 
 public interface UndoableEdit {
     void undo();

@@ -13,7 +13,6 @@ import java.nio.file.Path;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
-import io.fdeitylink.keroedit.util.FXUtil;
 import javafx.scene.control.Alert;
 
 import javafx.scene.control.Tooltip;
@@ -21,16 +20,23 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
 
+import io.fdeitylink.keroedit.util.NullArgumentException;
+
 import io.fdeitylink.keroedit.Messages;
 
-import io.fdeitylink.keroedit.util.edit.FileEditTab;
+import io.fdeitylink.keroedit.util.FXUtil;
 
-public final class ScriptEditTab extends FileEditTab {
+import io.fdeitylink.keroedit.mapedit.MapEditTab;
+
+//TODO: Make this a static inner class of MapEditTab?
+public final class ScriptEditTab extends FXUtil.FileEditTab {
     private final Path script;
+
+    private MapEditTab parent;
 
     private final TextArea textArea;
 
-    public ScriptEditTab(final Path inScript, final boolean global) {
+    public ScriptEditTab(final Path inScript) throws IOException {
         script = inScript;
 
         String scriptText = "";
@@ -44,22 +50,39 @@ public final class ScriptEditTab extends FileEditTab {
         catch (final IOException except) {
             FXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("ScriptEditTab.IOExcept.TITLE"), null,
                                MessageFormat.format(Messages.getString("ScriptEditTab.IOExcept.MESSAGE"),
-                                                    inScript.getFileName(),
-                                                    except.getMessage())).showAndWait();
-            getTabPane().getTabs().remove(this);
+                                                    inScript.getFileName(), except.getMessage())).showAndWait();
+            throw except;
         }
 
         textArea = new TextArea(scriptText);
         textArea.requestFocus();
         textArea.setFont(new Font("Consolas", 12));
-        textArea.textProperty().addListener(((observable, oldValue, newValue) -> setChanged(true)));
+
+        textArea.textProperty().addListener((observable, oldValue, newValue) -> {
+            setChanged(true);
+            if (null != parent) {
+                parent.setChanged(true);
+            }
+        });
 
         setId(inScript.toAbsolutePath().toString());
 
-        setText(global ? inScript.getFileName().toString() : Messages.getString("ScriptEditTab.TITLE"));
+        //assume this tab is not inside MapEditTab - other constructor will call setText() if it is inside MapEditTab
+        setText(inScript.getFileName().toString());
         setTooltip(new Tooltip(inScript.toAbsolutePath().toString()));
 
         setContent(textArea);
+    }
+
+    public ScriptEditTab(final Path inScript, final MapEditTab parent) throws IOException {
+        this(inScript);
+
+        if (null == parent) {
+            throw new NullArgumentException("ScriptEditTab", "parent");
+        }
+
+        this.parent = parent;
+        setText(Messages.getString("ScriptEditTab.TITLE"));
     }
 
     @Override
@@ -74,7 +97,14 @@ public final class ScriptEditTab extends FileEditTab {
 
     @Override
     public void save() {
-        setChanged(false);
-        //TODO: actually save
+        try {
+            Files.write(script, textArea.getParagraphs(), Charset.forName("SJIS"));
+            setChanged(false);
+        }
+        catch (final IOException except) {
+            FXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("ScriptEditTab.Save.IOExcept.TITLE"), null,
+                               MessageFormat.format(Messages.getString("ScriptEditTab.Save.IOExcept.MESSAGE"),
+                                                    script.getFileName(), except.getMessage())).showAndWait();
+        }
     }
 }

@@ -14,14 +14,12 @@ public final class ResourceManager {
     }
 
     public static Path getPath(final String filename) {
-        Path p;
         try {
-            p = Paths.get(ResourceManager.class.getResource(filename).toURI());
+            return Paths.get(ResourceManager.class.getResource(filename).toURI());
         }
         catch (final URISyntaxException except) {
-            p = null;
+            return null;
         }
-        return p;
     }
 
     public static InputStream getInputStream(final String filename) {
@@ -29,6 +27,6 @@ public final class ResourceManager {
     }
 
     public static Image getImage(final String filename) {
-        return new Image(getInputStream(filename));
+        return new Image("file:///" + filename, false);
     }
 }

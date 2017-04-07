@@ -36,9 +36,9 @@ import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
 import javafx.scene.Scene;
 
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.StackPane;
 
@@ -92,6 +92,8 @@ import javafx.application.Platform;
 
 import javafx.geometry.Rectangle2D;
 
+import io.fdeitylink.keroedit.util.NullArgumentException;
+
 import io.fdeitylink.keroedit.Messages;
 
 import io.fdeitylink.keroedit.util.Logger;
@@ -107,12 +109,12 @@ import io.fdeitylink.keroedit.Config;
 
 import io.fdeitylink.keroedit.resource.ResourceManager;
 
-import io.fdeitylink.keroedit.util.edit.FileEditTab;
-import io.fdeitylink.keroedit.util.edit.UndoableEdit;
+import io.fdeitylink.keroedit.util.UndoableEdit;
 
 import io.fdeitylink.keroedit.gamedata.GameData;
 
 import io.fdeitylink.keroedit.map.PxPack;
+
 import io.fdeitylink.keroedit.image.PxAttrManager;
 import io.fdeitylink.keroedit.image.ImageManager;
 
@@ -128,7 +130,7 @@ import static io.fdeitylink.keroedit.image.ImageDimensions.PXATTR_TILE_HEIGHT;
 import static io.fdeitylink.keroedit.image.ImageDimensions.PXATTR_IMAGE_WIDTH;
 import static io.fdeitylink.keroedit.image.ImageDimensions.PXATTR_IMAGE_HEIGHT;
 
-public final class MapEditTab extends FileEditTab {
+public final class MapEditTab extends FXUtil.FileEditTab {
     private static final SimpleIntegerProperty mapZoom = new SimpleIntegerProperty(Config.mapZoom);
     private static final SimpleIntegerProperty tilesetZoom = new SimpleIntegerProperty(Config.tilesetZoom);
 
@@ -137,6 +139,7 @@ public final class MapEditTab extends FileEditTab {
     private static final SimpleIntegerProperty displayedLayers = new SimpleIntegerProperty(Config.displayedLayers);
     private static final SimpleIntegerProperty selectedLayer = new SimpleIntegerProperty(0);
 
+    //does this really need to be a property? can it be a normal field?
     private static final SimpleObjectProperty <KeroEdit.DrawSettingsItems> drawMode =
             new SimpleObjectProperty <>(KeroEdit.DrawSettingsItems.DRAW);
 
@@ -166,14 +169,26 @@ public final class MapEditTab extends FileEditTab {
     }
 
     private final TabPane tabPane;
+
+    private final TileEditTab tileEditTab;
+    private final ScriptEditTab scriptEditTab;
+
     private /*final*/ PxPack map;
 
-    public MapEditTab(final String mapFileName) throws IOException, ParseException {
+    public MapEditTab(final String mapFname) throws IOException, ParseException {
+        if (null == mapFname) {
+            throw new NullArgumentException("MapEditTab", "mapFname");
+        }
+
+        if (!GameData.isInitialized()) {
+            throw new IllegalStateException("Attempt to create MapEditTab when GameData has not been properly initialized yet");
+        }
+
         initImages();
 
         final String fullMapPath = GameData.getResourceFolder().toAbsolutePath().toString() +
                                    File.separatorChar + "field" + File.separatorChar +
-                                   mapFileName + ".pxpack";
+                                   mapFname + ".pxpack";
         try {
             map = new PxPack(Paths.get(fullMapPath));
         }
@@ -183,14 +198,15 @@ public final class MapEditTab extends FileEditTab {
 
             if (except instanceof IOException) {
                 title = Messages.getString("MapEditTab.OpenIOExcept.TITLE");
-                message = except.getMessage();
+                message = MessageFormat.format(Messages.getString("MapEditTab.OpenIOExcept.MESSAGE"),
+                                               mapFname, except.getMessage());
 
                 Logger.logThrowable(except); //TODO: Log in PxPack instead?
             }
             else {
                 title = Messages.getString("MapEditTab.OpenParseExcept.TITLE");
                 message = MessageFormat.format(Messages.getString("MapEditTab.OpenParseExcept.MESSAGE"),
-                                               mapFileName, except.getMessage());
+                                               mapFname, except.getMessage());
             }
 
             FXUtil.createAlert(Alert.AlertType.ERROR, title, null, message).showAndWait();
@@ -198,18 +214,22 @@ public final class MapEditTab extends FileEditTab {
             throw except;
         }
 
-        setText(mapFileName);
-        setId(mapFileName);
-        setTooltip(new Tooltip(fullMapPath + "\n" + map.getHead().getDescription())); //ensure updates to description reflected in tooltip
+        setId(mapFname);
+        setText(mapFname);
 
-        //TODO: Context menu? close and rename
+        //TODO: ensure updates to description reflected in tooltip
+        setTooltip(new Tooltip(fullMapPath + "\n" +
+                               Messages.getString("MapEditTab.TOOLTIP_DESCRIPTION_LABEL") + map.getHead().getDescription()));
 
-        tabPane = new TabPane(new TileEditTab(this),
-                              new ScriptEditTab(Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
-                                                          File.separatorChar + "text" +
-                                                          File.separatorChar + map.getName() + ".pxeve"), false),
-                              new PropertyEditTab());
+        tileEditTab = new TileEditTab(this);
+        scriptEditTab = new ScriptEditTab(Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
+                                                    File.separatorChar + "text" +
+                                                    File.separatorChar + map.getName() + ".pxeve"), this);
+
+        tabPane = new TabPane(tileEditTab, scriptEditTab, new PropertyEditTab());
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+
+        //TODO: Context menu? rename...
 
         setContent(tabPane);
     }
@@ -254,24 +274,45 @@ public final class MapEditTab extends FileEditTab {
     @Override
     public void undo() {
         final Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
-        if (selectedTab instanceof FileEditTab) {
-            ((FileEditTab)selectedTab).undo();
+        if (selectedTab instanceof FXUtil.FileEditTab) {
+            ((FXUtil.FileEditTab)selectedTab).undo();
         }
     }
 
     @Override
     public void redo() {
         final Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
-        if (selectedTab instanceof FileEditTab) {
-            ((FileEditTab)selectedTab).redo();
+        if (selectedTab instanceof FXUtil.FileEditTab) {
+            ((FXUtil.FileEditTab)selectedTab).redo();
         }
     }
 
     @Override
     public void save() {
-        System.out.println("Saved");
-        setChanged(false);
-        //TODO: save pxpack, pxattr, and script
+        try {
+            //TODO: save PxAttrs
+            map.save();
+
+            /*
+             * If an IOException is thrown in ScriptEditTab's save() method, it does not rethrow/escalate the exception.
+             * Instead it tells the user with a dialog, and does not call setChanged(false)
+             * (and thereby the '*' will remain on the tab's label).
+             */
+            scriptEditTab.save();
+
+            setChanged(false);
+        }
+        catch (final IOException except) {
+            FXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("MapEditTab.Save.IOExcept.TITLE"), null,
+                               MessageFormat.format(Messages.getString("MapEditTab.Save.IOExcept.MESSAGE"),
+                                                    map.getName(), except.getMessage())).showAndWait();
+        }
+    }
+
+    @Override
+    public void setChanged(final boolean changed) {
+        super.setChanged(changed);
+        tileEditTab.setChanged(changed);
     }
 
     /**
@@ -321,7 +362,7 @@ public final class MapEditTab extends FileEditTab {
         }
     }
 
-    private final class TileEditTab extends FileEditTab {
+    private final class TileEditTab extends FXUtil.FileEditTab {
         private final PxPack.Head head; //ensure updates to head reflected in PropertyEditTab
         private final ArrayList <PxPack.Entity> entities;
 
@@ -330,11 +371,11 @@ public final class MapEditTab extends FileEditTab {
 
         private final int[][][] selectedTiles;
 
-        //private final MapEditTab parent;
+        private final MapEditTab parent;
 
         TileEditTab(final MapEditTab parent) {
             super(Messages.getString("MapEditTab.TileEditTab.TITLE"));
-            //this.parent = parent;
+            this.parent = parent;
 
             selectedTiles = new int[map.getTileLayers().length][1][1];
 
@@ -346,15 +387,20 @@ public final class MapEditTab extends FileEditTab {
             sPane.setOrientation(Orientation.VERTICAL);
             sPane.setDividerPositions(0.1);
 
-            initTilesetStage(sPane, parent);
+            initTilesetStage(sPane);
 
             setContent(sPane);
         }
 
         @Override
         public void save() {
-            setChanged(false);
-            System.out.println("TileEditTab saved");
+            //does nothing
+        }
+
+        //Overridden so the parent MapEditTab can call it in save()
+        @Override
+        public void setChanged(final boolean changed) {
+            super.setChanged(changed);
         }
 
         /**
@@ -363,32 +409,39 @@ public final class MapEditTab extends FileEditTab {
          *
          * @param sPane The {@code SplitPane} containing the {@code TilesetPane} to be swapped
          * between the main {@code Stage} and a secondary {@code Stage}
-         * @param parent The {@code MapEditTab} that holds this {@code TileEditTab}
          */
-        private void initTilesetStage(final SplitPane sPane, final MapEditTab parent) {
-            //tilesetPane of TileEditTab in EVERY MapEditTab will be removed when tilesetStage is shown
-            tilesetStage.addEventHandler(WindowEvent.WINDOW_SHOWING, event -> {
+        private void initTilesetStage(final SplitPane sPane) {
+            //tilesetPane in EVERY MapEditTab will be removed from sPane when tilesetStage is shown
+            final EventHandler <? super WindowEvent> beforeShowingEvent = event -> {
                 sPane.getItems().remove(tilesetPane);
+
                 /*
                  * The following is a temporary workaround for a bug where removing a node from a SplitPane does not
                  * immediately (or ever?) set its parent to null. If it is not set to null, an exception will be thrown
                  * when an attempt is made to make the Node (in this case tilesetPane) the root of a Scene. This code
                  * will make a Pane the Node's parent, then remove the Node so that the Node's parent is null and the
-                 * Node is ready to be made the root of a Scene.
+                 * Node is ready to be made the root of a Scene. The bug should be fixed in Java/JavaFX 9
                  * https://bugs.openjdk.java.net/browse/JDK-8148828
                  * https://bugs.openjdk.java.net/browse/JDK-8132898
                  */
                 final Pane tmpPane = new Pane(tilesetPane);
                 tmpPane.getChildren().remove(tilesetPane);
-            });
 
-            //tilesetPane of TileEditTab in EVERY MapEditTab will be added back to sPane when tilesetStage is hidden
-            tilesetStage.addEventHandler(WindowEvent.WINDOW_HIDDEN, event -> {
+                tilesetStage.getScene().setRoot(tilesetPane);
+                tilesetStage.setWidth(tilesetPane.getWidth());
+                tilesetStage.setHeight(tilesetPane.getHeight());
+            };
+            tilesetStage.addEventHandler(WindowEvent.WINDOW_SHOWING, beforeShowingEvent);
+
+            //tilesetPane in EVERY MapEditTab will be added back to sPane when tilesetStage is hidden
+            final EventHandler <? super WindowEvent> afterHiddenEvent = event -> {
+                //read the static{} block at the top of this file - tilesetStage's root set to empty Pane when closed
                 sPane.getItems().add(0, tilesetPane);
                 sPane.setDividerPositions(0.1);
-            });
+            };
+            tilesetStage.addEventHandler(WindowEvent.WINDOW_HIDDEN, afterHiddenEvent);
 
-            //minimizes/shows tilesetStage depending on if TileEditTab is selected or Properties/Script Tabs are selected
+            //shows or minimizes tilesetStage depending on if TileEditTab is selected or Properties/Script Tabs are selected
             setOnSelectionChanged(event -> tilesetStage.setIconified(!isSelected()));
 
             //undock tileset
@@ -396,16 +449,20 @@ public final class MapEditTab extends FileEditTab {
                 if (event.getButton().equals(MouseButton.PRIMARY) && 2 == event.getClickCount()
                     && !tilesetStage.showingProperty().get()) {
                     tilesetStage.show(); //also runs code of WINDOW_SHOWING EventHandler
+                }
+            });
+
+            //change shown tilesetPane when selected MapEditTab is changed
+            parent.setOnSelectionChanged(event -> {
+                if (parent.isSelected() && tilesetStage.isShowing() &&
+                    tilesetStage.getScene().getRoot() != tilesetPane) {
                     tilesetStage.getScene().setRoot(tilesetPane);
                 }
             });
 
-            //change shown tilesetPane when current map is changed
-            parent.setOnSelectionChanged(event -> {
-                if (parent.isSelected() && tilesetStage.showingProperty().get() &&
-                    tilesetStage.getScene().getRoot() != tilesetPane) {
-                    tilesetStage.getScene().setRoot(tilesetPane);
-                }
+            parent.setOnClosed(event -> {
+                tilesetStage.removeEventHandler(WindowEvent.WINDOW_SHOWING, beforeShowingEvent);
+                tilesetStage.removeEventHandler(WindowEvent.WINDOW_HIDDEN, afterHiddenEvent);
             });
 
             //TODO: Clear tilesetStage when last MapEditTab is closed
@@ -413,13 +470,7 @@ public final class MapEditTab extends FileEditTab {
 
             //if the tilesetStage is being shown on init, change shown tilesetPane to this one
             if (tilesetStage.showingProperty().get()) {
-                sPane.getItems().remove(tilesetPane);
-
-                //see WINDOW_SHOWING EventHandler for why this is necessary
-                final Pane tmpPane = new Pane(tilesetPane);
-                tmpPane.getChildren().remove(tilesetPane);
-
-                tilesetStage.getScene().setRoot(tilesetPane);
+                beforeShowingEvent.handle(new WindowEvent(tilesetStage, WindowEvent.WINDOW_SHOWING));
             }
         }
 
@@ -695,7 +746,7 @@ public final class MapEditTab extends FileEditTab {
                     @Override
                     public void handle(final MouseEvent event) {
                         if (event.getButton().equals(MouseButton.PRIMARY)) {
-                            //grabs x & y and bounds them to be within tileset size
+                            //grabs x & y and bounds them to be within tileset
                             final int x = MathUtil.boundInt((int)event.getX(), 0, (int)(tilesetCanvas.getWidth() - 1)) /
                                           tilesetZoom.get() / TILE_WIDTH;
                             final int y = MathUtil.boundInt((int)event.getY(), 0, (int)(tilesetCanvas.getHeight() - 1)) /
@@ -708,7 +759,7 @@ public final class MapEditTab extends FileEditTab {
                                 if (0 == tilesets[selectedLayer.get()].getWidth() ||
                                     0 == tilesets[selectedLayer.get()].getHeight()) {
                                     selectedRegions[selectedLayer.get()] = new Rectangle2D(0, 0, 1, 1);
-                                    selectedTiles[selectedLayer.get()] = new int[][]{{0}}; //TODO: make array empty?
+                                    selectedTiles[selectedLayer.get()] = new int[][]{{0}}; //TODO: make array empty? null?
                                     redrawSelectedRect();
                                     return;
                                 }
@@ -719,7 +770,7 @@ public final class MapEditTab extends FileEditTab {
                                 final int dy = (int)(y - (selectedRect.getMaxY() - 1));
 
                                 //TODO: Make dragging into relative negatives work better
-                                //should probably draw a graph or something and map movements out
+                                //maybe need startX, startY variables on drag start
                                 int minX = (int)selectedRect.getMinX();
                                 int minY = (int)selectedRect.getMinY();
                                 int width = (int)(selectedRect.getWidth() + dx);
@@ -910,6 +961,7 @@ public final class MapEditTab extends FileEditTab {
                                     final int[][] tiles = tileLayers[layer].getTiles();
 
                                     if (null != tiles) {
+                                        //grabs x & y and bounds them to be within map
                                         final int x = MathUtil.boundInt((int)event.getX(), 0,
                                                                         (int)(mapCanvases[layer].getWidth() - 1)) /
                                                       mapZoom.get() / TILE_WIDTH;
@@ -917,39 +969,43 @@ public final class MapEditTab extends FileEditTab {
                                                                         (int)(mapCanvases[layer].getHeight() - 1)) /
                                                       mapZoom.get() / TILE_HEIGHT;
 
-                                        if (y < tileLayers[layer].getTiles().length &&
-                                            x < tileLayers[layer].getTiles()[y].length) {
+                                        /*
+                                         * Caps newTiles.length in the event that x or y is close enough
+                                         * to the map edge that selectedTiles goes off the edge
+                                         */
+                                        final int hLen = Math.min(tiles[0].length - x, selectedTiles[layer][0].length);
+                                        final int vLen = Math.min(tiles.length - y, selectedTiles[layer].length);
 
-                                            //caps lengths in the event x or y is close to map edge such that selected tiles go off edge
-                                            final int hLen = Math.min(tiles[0].length - x, selectedTiles[layer][0].length);
-                                            final int vLen = Math.min(tiles.length - y, selectedTiles[layer].length);
+                                        final int[][] newTiles = new int[vLen][hLen];
 
-                                            final int[][] newTiles = new int[vLen][hLen];
-                                            //newTiles potentially smaller in either dimension than selectedTiles, as per hLen & vLen
-                                            for (int r = 0; r < newTiles.length; ++r) {
-                                                System.arraycopy(selectedTiles[layer][r], 0, newTiles[r], 0, newTiles[r].length);
-                                            }
+                                        //newTiles potentially smaller in either dimension than selectedTiles, as per hLen & vLen
+                                        for (int r = 0; r < newTiles.length; ++r) {
+                                            System.arraycopy(selectedTiles[layer][r], 0, newTiles[r], 0, newTiles[r].length);
+                                        }
 
-                                            final int[][] oldTiles = new int[newTiles.length][newTiles[0].length];
+                                        final int[][] oldTiles = new int[newTiles.length][newTiles[0].length];
 
-                                            for (int r = y; r < y + newTiles.length && r < tiles.length; ++r) {
-                                                System.arraycopy(tiles[r], x, oldTiles[r - y], 0, oldTiles[r - y].length);
+                                        boolean oldEqualsNew = true;
 
-                                                for (int c = x; c < x + newTiles[r - y].length && c < tiles[r].length; ++c) {
-                                                    if (oldTiles[r - y][c - x] != newTiles[r - y][c - x]) {
-                                                        tileLayers[layer].setTile(c, r, newTiles[r - y][c - x]);
-                                                        redrawTile(layer, c, r);
-                                                    }
+                                        for (int r = y; r < y + newTiles.length /*&& r < tiles.length*/; ++r) {
+                                            //oldTiles stores only the tiles being replaced, a subset of the whole map
+                                            System.arraycopy(tiles[r], x, oldTiles[r - y], 0, oldTiles[r - y].length);
+
+                                            for (int c = x; c < x + newTiles[r - y].length /*&& c < tiles[r].length*/; ++c) {
+                                                if (oldTiles[r - y][c - x] != newTiles[r - y][c - x]) {
+                                                    oldEqualsNew = false;
+                                                    tileLayers[layer].setTile(c, r, newTiles[r - y][c - x]);
+                                                    redrawTile(layer, c, r);
                                                 }
                                             }
+                                        }
 
-                                            if (!Arrays.deepEquals(oldTiles, newTiles)) {
-                                                //TODO: call setChanged() in parent
-                                                setChanged(true);
+                                        if (!oldEqualsNew/*Arrays.deepEquals(oldTiles, newTiles)*/) {
+                                            setChanged(true);
+                                            parent.setChanged(true);
 
-                                                getRedoStack().clear();
-                                                getUndoStack().addFirst(new UndoableMapDrawEdit(layer, x, y, oldTiles, newTiles));
-                                            }
+                                            getRedoStack().clear();
+                                            getUndoStack().addFirst(new UndoableMapDrawEdit(layer, x, y, oldTiles, newTiles));
                                         }
                                     }
                                 }
@@ -1037,6 +1093,7 @@ public final class MapEditTab extends FileEditTab {
                             redrawLayer(selectedLayer.get());
 
                             setChanged(true);
+                            parent.setChanged(true);
                         }
                     });
                 });
@@ -1055,6 +1112,7 @@ public final class MapEditTab extends FileEditTab {
                             head.setBgColor(cPicker.getValue());
                             mapPane.bgColor.set(cPicker.getValue());
                             setChanged(true);
+                            parent.setChanged(true);
                         }
                     });
 

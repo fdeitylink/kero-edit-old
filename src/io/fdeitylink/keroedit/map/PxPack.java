@@ -201,15 +201,14 @@ public final class PxPack {
                 entities.add(new Entity(flag, type, unknownByte, x, y, entityData, name));
             }
         }
-        catch (final IOException except) {
-            throw new IOException(MessageFormat.format(Messages.getString("PxPack.IOEXCEPT"), inPath.getFileName()), except);
-        }
     }
 
     /**
      * Saves the PXPACK file represented by this object
+     *
+     * @throws IOException if there was an error saving the PXPACK file
      */
-    public void save() {
+    public void save() throws IOException {
         try (SeekableByteChannel chan = Files.newByteChannel(mapPath,
                                                              StandardOpenOption.WRITE,
                                                              StandardOpenOption.TRUNCATE_EXISTING,
@@ -312,9 +311,6 @@ public final class PxPack {
         }
         catch (final FileNotFoundException except) {
             //TODO: create the file
-        }
-        catch (final IOException except) {
-            except.printStackTrace();
         }
     }
 
@@ -840,8 +836,11 @@ public final class PxPack {
         }
 
         public void setType(final int type) {
-            if (0 > type || NUM_TYPES <= type) {
-                throw new IllegalArgumentException("Attempt to set type to value outside range 0 - " + (NUM_TYPES - 1) +
+            if (0 > type || 0xFF < type/* || NUM_TYPES <= type*/) {
+                //an entity type in 00title is 177 but unittype.txt only has 175 entities...
+                /*throw new IllegalArgumentException("Attempt to set type to value outside range 0 - " + (NUM_TYPES - 1) +
+                                                   " (type: " + type + ")");*/
+                throw new IllegalArgumentException("Attempt to set type to value outside range 0 - 255 " +
                                                    "(type: " + type + ")");
             }
             this.type = type;

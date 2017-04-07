@@ -12,7 +12,15 @@ public final class Messages {
 
     }
 
-    public static String getString(String key) {
+    /**
+     * Returns a {@code String} that corresponds to a key in the {@code messages.properties}
+     * resource bundle.
+     *
+     * @param key The key corresponding to the {@code String} to retrieve
+     *
+     * @return The {@code String} corresponding to {@code key}
+     */
+    public static String getString(final String key) {
         try {
             return resourceBundle.getString(key);
         }
