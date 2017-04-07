@@ -33,7 +33,6 @@ import javafx.scene.control.TextArea;
 
 import javafx.application.Platform;
 
-
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
@@ -53,6 +52,10 @@ public final class FXUtil {
      * @throws IllegalStateException if the tab is not inside a {@code TabPane}
      */
     public static void closeTab(final Tab tab) {
+        if (null == tab) {
+            throw new NullArgumentException("closeTab", "tab");
+        }
+
         final TabPane tabPane = tab.getTabPane();
         if (null == tabPane) {
             throw new IllegalStateException("Attempt to close a tab that is not inside a TabPane");

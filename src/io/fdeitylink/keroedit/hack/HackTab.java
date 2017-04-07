@@ -47,6 +47,7 @@ public final class HackTab extends FXUtil.FileEditTab {
 
     }
 
+    //TODO: don't init() until getInst(), where it is initialized if null?
     public static void init() {
         if (!GameData.isInitialized()) {
             throw new IllegalStateException("Attempt to create HackTab when GameData has not been properly initialized yet");
@@ -111,7 +112,12 @@ public final class HackTab extends FXUtil.FileEditTab {
         inst = null;
     }
 
+    //TODO: add isInitialized()?
+
     public static HackTab getInst() {
+        if (null == inst) {
+            throw new IllegalStateException("Attempt to get instance of HackTab when it has not been properly initialized yet");
+        }
         return inst;
     }
 

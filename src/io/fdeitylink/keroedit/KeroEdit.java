@@ -8,17 +8,17 @@
  * Resort map ListView alphabetically when map is added, and select and open the new map
  * Draggable tabs (and allow popping out into a window)
  * Allow opening multiple maps at once (multiple selection)
- * Allow opening multiple scripts at once (multiple selection FileChooser)
  * Scaling map down
  * Lower memory usage and stuffs
  * Play pxtone files
  * Will need something for GameData changes to notify objects using it (i.e. maplist changes)
  * In script editor, eventually put in an autocompleter for stuff like entity names
- * Add @throws to Javadoc comments for runtime exceptions
+ * Add @throws to JavaDoc comments for runtime exceptions
  */
 
 package io.fdeitylink.keroedit;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.EnumMap;
 
@@ -592,54 +592,68 @@ public final class KeroEdit extends Application {
 
         menuItems[ActionsMenuItems.arrIndexEnumMap.get(ActionsMenuItems.EDIT_GLOBAL_SCRIPT)].setOnAction(event -> {
             final FileChooser scrChooser = new FileChooser();
-            scrChooser.setTitle(Messages.getString("KeroEdit.OpenMod.TITLE"));
+            scrChooser.setTitle(Messages.getString("KeroEdit.GlobalScript.TITLE"));
 
             scrChooser.setInitialDirectory(new File(GameData.getResourceFolder().toAbsolutePath().toString()));
 
             final FileChooser.ExtensionFilter[] extFilters =
-                    {new FileChooser.ExtensionFilter(Messages.getString("KeroEdit.GlobalScript.SCRIPT_FILTER"),
-                                                     "*.pxeve"),
-                     new FileChooser.ExtensionFilter(Messages.getString("KeroEdit.GlobalScript.NO_FILTER"),
-                                                     "*.*")};
+                    {new FileChooser.ExtensionFilter(Messages.getString("KeroEdit.GlobalScript.SCRIPT_FILTER"), "*.pxeve"),
+                     new FileChooser.ExtensionFilter(Messages.getString("KeroEdit.GlobalScript.NO_FILTER"), "*.*")};
             scrChooser.getExtensionFilters().addAll(extFilters);
             scrChooser.setSelectedExtensionFilter(extFilters[0]);
 
-            final Path scriptFile = scrChooser.showOpenDialog(mainStage).toPath();
-            for (final Tab tab : mainTabPane.getTabs()) {
-                if (tab instanceof ScriptEditTab &&
-                    tab.getId().equals(scriptFile.toAbsolutePath().toString())) {
-                    mainTabPane.getSelectionModel().select(tab);
-                    mainTabPane.requestFocus();
-                    return;
-                }
-            }
+            final List <File> scriptFiles = scrChooser.showOpenMultipleDialog(mainStage);
+            if (null != scriptFiles) {
+                for (final File f : scriptFiles) {
+                    final Path scriptPath = f.toPath();
 
-            try {
-                final ScriptEditTab sEditTab = new ScriptEditTab(scriptFile);
-                mainTabPane.getTabs().add(sEditTab);
-                mainTabPane.getSelectionModel().select(sEditTab);
-                mainTabPane.requestFocus();
-            }
-            catch (final IOException except) {
-                //do nothing - the exception just signals that there was a script reading issue
-                //dialog box already shown via the ScriptEditTab constructor
+                    boolean alreadyOpen = false;
+                    for (final Tab tab : mainTabPane.getTabs()) {
+                        if (tab instanceof ScriptEditTab &&
+                            tab.getId().equals(scriptPath.toAbsolutePath().toString())) {
+                            mainTabPane.getSelectionModel().select(tab);
+                            mainTabPane.requestFocus();
+                            alreadyOpen = true;
+                            break; //breaks from looping through mainTabpane.getTabs()
+                        }
+                    }
+
+                    if (!alreadyOpen) {
+                        try {
+                            final ScriptEditTab sEditTab = new ScriptEditTab(scriptPath);
+                            mainTabPane.getTabs().add(sEditTab);
+                            mainTabPane.getSelectionModel().select(sEditTab);
+                            mainTabPane.requestFocus();
+                        }
+                        catch (final IOException except) {
+                        /*
+                         * Do nothing - the exception just signals that there was a script reading issue
+                         * and prevents us from adding the ScriptEditTab to the tab pane.
+                         * A dialog was already shown to the user via the ScriptEditTab constructor.
+                         */
+                        }
+                    }
+                }
             }
         });
         menuItems[ActionsMenuItems.arrIndexEnumMap.get(ActionsMenuItems.EDIT_GLOBAL_SCRIPT)].setDisable(true);
         enableOnLoadItems.add(menuItems[ActionsMenuItems.arrIndexEnumMap.get(ActionsMenuItems.EDIT_GLOBAL_SCRIPT)]);
 
         menuItems[ActionsMenuItems.arrIndexEnumMap.get(ActionsMenuItems.HACK_EXECUTABLE)].setOnAction(event -> {
-            for (final Tab tab : mainTabPane.getTabs()) {
+            /*for (final Tab tab : mainTabPane.getTabs()) {
                 if (tab instanceof HackTab) {
                     mainTabPane.getSelectionModel().select(tab);
                     mainTabPane.requestFocus();
                     return;
                 }
+            }*/
+            if (!mainTabPane.getTabs().contains(HackTab.getInst())) {
+                mainTabPane.getTabs().add(HackTab.getInst());
             }
 
-            mainTabPane.getTabs().add(HackTab.getInst());
             mainTabPane.getSelectionModel().select(HackTab.getInst());
             mainTabPane.requestFocus();
+
         });
         menuItems[ActionsMenuItems.arrIndexEnumMap.get(ActionsMenuItems.HACK_EXECUTABLE)].setDisable(true);
         enableOnLoadItems.add(menuItems[ActionsMenuItems.arrIndexEnumMap.get(ActionsMenuItems.HACK_EXECUTABLE)]);

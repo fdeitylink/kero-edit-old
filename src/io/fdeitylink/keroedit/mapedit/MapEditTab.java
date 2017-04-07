@@ -222,6 +222,8 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                                Messages.getString("MapEditTab.TOOLTIP_DESCRIPTION_LABEL") + map.getHead().getDescription()));
 
         tileEditTab = new TileEditTab(this);
+
+        //TODO: Don't fail/escalate except if ScriptEditTab() throws IOException?
         scriptEditTab = new ScriptEditTab(Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
                                                     File.separatorChar + "text" +
                                                     File.separatorChar + map.getName() + ".pxeve"), this);
