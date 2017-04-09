@@ -7,13 +7,13 @@
  * Ctrl +/- and scroll wheel for zoom
  * Resort map ListView alphabetically when map is added, and select and open the new map
  * Draggable tabs (and allow popping out into a window)
- * Allow opening multiple maps at once (multiple selection)
  * Scaling map down
  * Lower memory usage and stuffs
  * Play pxtone files
  * Will need something for GameData changes to notify objects using it (i.e. maplist changes)
  * In script editor, eventually put in an autocompleter for stuff like entity names
  * Add @throws to JavaDoc comments for runtime exceptions
+ * Unify capitalization on mapname, mapName, mapNames
  */
 
 package io.fdeitylink.keroedit;
@@ -44,6 +44,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 
 import javafx.scene.control.Dialog;
+import javafx.scene.control.SelectionMode;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.geometry.Rectangle2D;
@@ -607,18 +608,18 @@ public final class KeroEdit extends Application {
                 for (final File f : scriptFiles) {
                     final Path scriptPath = f.toPath();
 
-                    boolean alreadyOpen = false;
+                    boolean isAlreadyOpen = false;
                     for (final Tab tab : mainTabPane.getTabs()) {
                         if (tab instanceof ScriptEditTab &&
                             tab.getId().equals(scriptPath.toAbsolutePath().toString())) {
                             mainTabPane.getSelectionModel().select(tab);
                             mainTabPane.requestFocus();
-                            alreadyOpen = true;
-                            break; //breaks from looping through mainTabpane.getTabs()
+                            isAlreadyOpen = true;
+                            break;
                         }
                     }
 
-                    if (!alreadyOpen) {
+                    if (!isAlreadyOpen) {
                         try {
                             final ScriptEditTab sEditTab = new ScriptEditTab(scriptPath);
                             mainTabPane.getTabs().add(sEditTab);
@@ -723,6 +724,8 @@ public final class KeroEdit extends Application {
         mapListView.setMinWidth(125);
         mapListView.setPrefWidth(125);
 
+        mapListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
         final MenuItem[] contextMenuItems = {new MenuItem(Messages.getString("KeroEdit.MapListView.ContextMenu.OPEN_MAP")),
                                              new MenuItem(Messages.getString("KeroEdit.MapListView.ContextMenu.NEW_MAP")),
                                              new MenuItem(Messages.getString("KeroEdit.MapListView.ContextMenu.DELETE_MAP")),
@@ -736,25 +739,29 @@ public final class KeroEdit extends Application {
         contextMenuItems[MapListMenuItems.arrIndexEnumMap.get(MapListMenuItems.OPEN)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.ENTER));
         contextMenuItems[MapListMenuItems.arrIndexEnumMap.get(MapListMenuItems.OPEN)].setOnAction(event -> {
-            final String filename = mapListView.getSelectionModel().getSelectedItem();
-            for (final Tab tab : mainTabPane.getTabs()) {
-                if (tab instanceof MapEditTab &&
-                    tab.getId().equals(filename)) {
-                    mainTabPane.getSelectionModel().select(tab);
-                    mainTabPane.requestFocus();
-                    return;
+            for (final String mapName : mapListView.getSelectionModel().getSelectedItems()) {
+                boolean isAlreadyOpen = false;
+                for (final Tab tab : mainTabPane.getTabs()) {
+                    if (tab instanceof MapEditTab && tab.getId().equals(mapName)) {
+                        mainTabPane.getSelectionModel().select(tab);
+                        mainTabPane.requestFocus();
+                        isAlreadyOpen = true;
+                        break;
+                    }
                 }
-            }
 
-            try {
-                final MapEditTab mapEditTab = new MapEditTab(filename);
-                mainTabPane.getTabs().add(mapEditTab);
-                mainTabPane.getSelectionModel().select(mapEditTab);
-                mainTabPane.requestFocus();
-            }
-            catch (final IOException | ParseException except) {
-                //do nothing - the exception just signals that there was a map parsing or script reading issue
-                //dialog box already shown via the MapEditTab constructor
+                if (!isAlreadyOpen) {
+                    try {
+                        final MapEditTab mapEditTab = new MapEditTab(mapName);
+                        mainTabPane.getTabs().add(mapEditTab);
+                        mainTabPane.getSelectionModel().select(mapEditTab);
+                        mainTabPane.requestFocus();
+                    }
+                    catch (final IOException | ParseException except) {
+                        //do nothing - the exception just signals that there was a map parsing or script reading issue
+                        //dialog box already shown via the MapEditTab constructor
+                    }
+                }
             }
         });
         contextMenuItems[MapListMenuItems.arrIndexEnumMap.get(MapListMenuItems.OPEN)].setDisable(true);
@@ -767,33 +774,56 @@ public final class KeroEdit extends Application {
                 .setOnAction(event -> FXUtil.createAlert(Alert.AlertType.INFORMATION,
                                                          Messages.getString("KeroEdit.MapListView.ContextMenu.NEW_MAP")
                                                                  .replace("_", ""),
-                                                         null, Messages.getString("KeroEdit.NOT_IMPLEMENTED"))
-                                            .showAndWait());
+                                                         null, Messages.getString("KeroEdit.NOT_IMPLEMENTED")).showAndWait());
         contextMenuItems[MapListMenuItems.arrIndexEnumMap.get(MapListMenuItems.NEW)].setDisable(true);
         enableOnLoadItems.add(contextMenuItems[MapListMenuItems.arrIndexEnumMap.get(MapListMenuItems.NEW)]);
 
         contextMenuItems[MapListMenuItems.arrIndexEnumMap.get(MapListMenuItems.DELETE)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.DELETE));
         contextMenuItems[MapListMenuItems.arrIndexEnumMap.get(MapListMenuItems.DELETE)].setOnAction(event -> {
-            final String mapName = mapListView.getSelectionModel().getSelectedItem();
-            FXUtil.createAlert(Alert.AlertType.CONFIRMATION, mapName, null,
-                               Messages.getString("KeroEdit.DeleteMap.MESSAGE")).showAndWait()
-                  .ifPresent(result -> {
-                      if (ButtonType.OK == result) {
-                          GameData.removeMap(mapName);
-                          mapListView.getItems().remove(mapName);
+            //This code works similarly to that in the closeTabs() method so reading that may help you to understand this
 
-                          //TODO: remove looping part?
-                          for (final Tab tab : mainTabPane.getTabs()) {
-                              if (tab instanceof MapEditTab && tab.getId().equals(mapName)) {
-                                  //don't use FXUtil.closeTab() as we've already confirmed we want to delete the map
-                                  //and thus don't care about unsaved changes
-                                  mainTabPane.getTabs().remove(tab);
-                                  break;
+            //reference completely new list to avoid list being modified because of deleted and deselected items
+            final ArrayList <String> selectedMapNames =
+                    new ArrayList <>(mapListView.getSelectionModel().getSelectedItems());
+            for (int i = 0; i < selectedMapNames.size() && 0 < selectedMapNames.size(); ) {
+                final String mapName = selectedMapNames.get(i);
+
+                FXUtil.createAlert(Alert.AlertType.CONFIRMATION, mapName, null,
+                                   Messages.getString("KeroEdit.DeleteMap.MESSAGE")).showAndWait()
+                      .ifPresent(result -> {
+                          if (ButtonType.OK == result) {
+                              GameData.removeMap(mapName);
+                              mapListView.getItems().remove(mapName);
+                              selectedMapNames.remove(mapName);
+
+                              for (final Tab tab : mainTabPane.getTabs()) {
+                                  if (tab instanceof MapEditTab && tab.getId().equals(mapName)) {
+                                      /*
+                                       * Don't use FXUtil.closeTab() as we've already confirmed
+                                       * the user wants to delete the map, and thus doesn't care
+                                       * about unsaved changes.
+                                       */
+                                      mainTabPane.getTabs().remove(tab);
+                                      break;
+                                  }
                               }
                           }
-                      }
-                  });
+                      });
+                /*
+                 * If user canceled map deletion, i++ moves onto the next
+                 * index where the following selected map name will be.
+                 * If map was deleted, then i, which used to point to the
+                 * map name that was just removed, will now point to the next
+                 * selected map name (or none if we've iterated through
+                 * every selected map name).
+                 */
+                if (selectedMapNames.contains(mapName)) {
+                    i++;
+                }
+            }
+
+            mapListView.getSelectionModel().clearSelection();
         });
         contextMenuItems[MapListMenuItems.arrIndexEnumMap.get(MapListMenuItems.DELETE)].setDisable(true);
         enableOnLoadItems.add(contextMenuItems[MapListMenuItems.arrIndexEnumMap.get(MapListMenuItems.DELETE)]);
@@ -803,8 +833,7 @@ public final class KeroEdit extends Application {
                 .setOnAction(event -> FXUtil.createAlert(Alert.AlertType.INFORMATION,
                                                          Messages.getString("KeroEdit.MapListView.ContextMenu.RENAME_MAP")
                                                                  .replace("_", ""),
-                                                         null, Messages.getString("KeroEdit.NOT_IMPLEMENTED"))
-                                            .showAndWait());
+                                                         null, Messages.getString("KeroEdit.NOT_IMPLEMENTED")).showAndWait());
         contextMenuItems[MapListMenuItems.arrIndexEnumMap.get(MapListMenuItems.RENAME)].setDisable(true);
         enableOnLoadItems.add(contextMenuItems[MapListMenuItems.arrIndexEnumMap.get(MapListMenuItems.RENAME)]);
 
@@ -813,17 +842,17 @@ public final class KeroEdit extends Application {
                 .setOnAction(event -> FXUtil.createAlert(Alert.AlertType.INFORMATION,
                                                          Messages.getString("KeroEdit.MapListView.ContextMenu.DUPLICATE_MAP")
                                                                  .replace("_", ""),
-                                                         null, Messages.getString("KeroEdit.NOT_IMPLEMENTED"))
-                                            .showAndWait());
+                                                         null, Messages.getString("KeroEdit.NOT_IMPLEMENTED")).showAndWait());
         contextMenuItems[MapListMenuItems.arrIndexEnumMap.get(MapListMenuItems.DUPLICATE)].setDisable(true);
         enableOnLoadItems.add(contextMenuItems[MapListMenuItems.arrIndexEnumMap.get(MapListMenuItems.DUPLICATE)]);
 
         mapListView.setOnKeyPressed(event -> {
             /*
-             * This code is from before when it seemed that the MenuItems in the context menu weren't being triggered
-             * by keypresses on the map list itself.
-             * Now it seems they get triggered so I don't think this is necessary anymore, but it's being kept in case
-             * it is needed for whatever reason.
+             * This code is from before when it seemed that the MenuItems
+             * in the context menu weren't being triggered by keypresses
+             * on the map list itself. Now it seems they get triggered so
+             * I don't think this is necessary anymore, but it's being kept
+             * in case it is needed for whatever reason.
              */
             //Retrieves MenuItem in the context menu that the key is bound to
             /*MenuItem menuItem = null;
@@ -839,8 +868,9 @@ public final class KeroEdit extends Application {
             }*/
 
             //This is the only one that doesn't seem to be triggered by keypresses on map list, IDK why
-            if (new KeyCodeCombination(KeyCode.ENTER).match(event)) {
-                contextMenuItems[MapListMenuItems.arrIndexEnumMap.get(MapListMenuItems.OPEN)].getOnAction().handle(new ActionEvent());
+            final MenuItem openMap = contextMenuItems[MapListMenuItems.arrIndexEnumMap.get(MapListMenuItems.OPEN)];
+            if (openMap.getAccelerator().match(event)) {
+                openMap.getOnAction().handle(new ActionEvent());
             }
         });
 

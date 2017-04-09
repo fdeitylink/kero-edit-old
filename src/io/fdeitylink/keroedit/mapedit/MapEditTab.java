@@ -175,9 +175,9 @@ public final class MapEditTab extends FXUtil.FileEditTab {
 
     private /*final*/ PxPack map;
 
-    public MapEditTab(final String mapFname) throws IOException, ParseException {
-        if (null == mapFname) {
-            throw new NullArgumentException("MapEditTab", "mapFname");
+    public MapEditTab(final String mapName) throws IOException, ParseException {
+        if (null == mapName) {
+            throw new NullArgumentException("MapEditTab", "mapName");
         }
 
         if (!GameData.isInitialized()) {
@@ -188,7 +188,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
 
         final String fullMapPath = GameData.getResourceFolder().toAbsolutePath().toString() +
                                    File.separatorChar + "field" + File.separatorChar +
-                                   mapFname + ".pxpack";
+                                   mapName + ".pxpack";
         try {
             map = new PxPack(Paths.get(fullMapPath));
         }
@@ -199,14 +199,14 @@ public final class MapEditTab extends FXUtil.FileEditTab {
             if (except instanceof IOException) {
                 title = Messages.getString("MapEditTab.OpenIOExcept.TITLE");
                 message = MessageFormat.format(Messages.getString("MapEditTab.OpenIOExcept.MESSAGE"),
-                                               mapFname, except.getMessage());
+                                               mapName, except.getMessage());
 
                 Logger.logThrowable(except); //TODO: Log in PxPack instead?
             }
             else {
                 title = Messages.getString("MapEditTab.OpenParseExcept.TITLE");
                 message = MessageFormat.format(Messages.getString("MapEditTab.OpenParseExcept.MESSAGE"),
-                                               mapFname, except.getMessage());
+                                               mapName, except.getMessage());
             }
 
             FXUtil.createAlert(Alert.AlertType.ERROR, title, null, message).showAndWait();
@@ -214,8 +214,8 @@ public final class MapEditTab extends FXUtil.FileEditTab {
             throw except;
         }
 
-        setId(mapFname);
-        setText(mapFname);
+        setId(mapName);
+        setText(mapName);
 
         //TODO: ensure updates to description reflected in tooltip
         setTooltip(new Tooltip(fullMapPath + "\n" +

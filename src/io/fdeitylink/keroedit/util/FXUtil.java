@@ -49,6 +49,7 @@ public final class FXUtil {
      *
      * @param tab The tab to close
      *
+     * @throws NullArgumentException if {@code tab} is null
      * @throws IllegalStateException if the tab is not inside a {@code TabPane}
      */
     public static void closeTab(final Tab tab) {

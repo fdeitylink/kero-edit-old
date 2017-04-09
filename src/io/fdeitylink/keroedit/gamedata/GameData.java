@@ -32,7 +32,10 @@ public final class GameData {
     private Path resourceFolder;
 
     private ArrayList <String> bgms;
+
+    //TODO: if PxPack is renamed, it must also be renamed here
     private ArrayList <String> maps;
+
     private ArrayList <String> images;
     private ArrayList <String> soundEffects;
     private ArrayList <String> scripts;
@@ -67,9 +70,25 @@ public final class GameData {
         }
         inst.executable = executable;
 
-        final DirectoryStream <Path> dirPaths;
-        try {
-            dirPaths = Files.newDirectoryStream(executable.getParent(), entry -> Files.isDirectory(entry));
+        boolean rscExists = false;
+        try (DirectoryStream <Path> dirPaths = Files.newDirectoryStream(executable.getParent(),
+                                                                        entry -> Files.isDirectory(entry))) {
+            for (final Path p : dirPaths) {
+                if (p.endsWith("rsc_p")) {
+                    inst.resourceFolder = Paths.get(executable.getParent().toAbsolutePath().toString() +
+                                                    File.separatorChar + "rsc_p");
+                    inst.modType = MOD_TYPE.PINK_HOUR; //TODO: Detect or ask if Pink Heaven
+                    rscExists = true;
+                    break;
+                }
+                else if (p.endsWith("rsc_k")) {
+                    inst.resourceFolder = Paths.get(executable.getParent().toAbsolutePath().toString() +
+                                                    File.separatorChar + "rsc_k");
+                    inst.modType = MOD_TYPE.KERO_BLASTER;
+                    rscExists = true;
+                    break;
+                }
+            }
         }
         catch (final IOException except) {
             inst = null;
@@ -77,29 +96,12 @@ public final class GameData {
                                                        executable.toAbsolutePath()), except);
         }
 
-        boolean rscExists = false;
-        for (final Path p : dirPaths) {
-            if (p.endsWith("rsc_p")) {
-                inst.resourceFolder = Paths.get(executable.getParent().toAbsolutePath().toString() +
-                                                File.separatorChar + "rsc_p");
-                inst.modType = MOD_TYPE.PINK_HOUR; //TODO: Detect or ask if pink heaven
-                rscExists = true;
-                break;
-            }
-            else if (p.endsWith("rsc_k")) {
-                inst.resourceFolder = Paths.get(executable.getParent().toAbsolutePath().toString() +
-                                                File.separatorChar + "rsc_k");
-                inst.modType = MOD_TYPE.KERO_BLASTER;
-                rscExists = true;
-                break;
-            }
-        }
-
         if (!rscExists) {
             inst = null;
             throw new NoSuchFileException(MessageFormat.format(Messages.getString("GameData.MISSING_RSC"),
                                                                executable.toAbsolutePath()));
         }
+
 
         try {
             inst.bgms = getFileList(File.separatorChar + "bgm" + File.separatorChar, ".ptcop");
@@ -161,7 +163,6 @@ public final class GameData {
             throw new IllegalStateException("Attempt to retrieve information from GameData " +
                                             "when it has not been properly initialized yet");
         }
-        //TODO: if a PxPack is renamed, entry must also be renamed here
         if (!inst.maps.contains(mapName)) {
             throw new IllegalArgumentException("Attempt to remove map that doesn't exist " +
                                                "(mapName: " + mapName + ")");
