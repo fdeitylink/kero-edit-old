@@ -33,11 +33,11 @@ public final class ImageManager {
 
         //if this is a tileset and it is larger than necessary, take only relevant portion
         if (isTileset && 0 < image.getWidth() &&
-            (ImageDimensions.TILESET_WIDTH < image.getWidth() ||
-             ImageDimensions.TILESET_HEIGHT < image.getHeight())) {
+            (ImageDimension.TILESET_WIDTH < image.getWidth() ||
+             ImageDimension.TILESET_HEIGHT < image.getHeight())) {
             //crop down to useful portion (tilesets sometimes have more data than necessary for some reason)
             image = new WritableImage(image.getPixelReader(), 0, 0,
-                                      ImageDimensions.TILESET_WIDTH, ImageDimensions.TILESET_HEIGHT);
+                                      ImageDimension.TILESET_WIDTH, ImageDimension.TILESET_HEIGHT);
         }
 
         imagesMap.put(imageName, image);

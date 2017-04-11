@@ -12,7 +12,9 @@ public final class MathUtil {
      *
      * @return A number within the specified bounds
      */
-    public static int boundInt(final int num, final int lower, final int upper) {
+    public static int bound(final int num, final int lower, final int upper) {
         return Math.max(lower, Math.min(num, upper));
     }
+
+    //TODO: overload bound() for float double, long
 }

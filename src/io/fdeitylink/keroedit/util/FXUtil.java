@@ -50,21 +50,17 @@ public final class FXUtil {
      * @param tab The tab to close
      *
      * @throws NullArgumentException if {@code tab} is null
-     * @throws IllegalStateException if the tab is not inside a {@code TabPane}
      */
     public static void closeTab(final Tab tab) {
         if (null == tab) {
             throw new NullArgumentException("closeTab", "tab");
         }
-
-        final TabPane tabPane = tab.getTabPane();
-        if (null == tabPane) {
-            throw new IllegalStateException("Attempt to close a tab that is not inside a TabPane");
+        if (null == tab.getTabPane()) {
+            return;
         }
-
         //https://stackoverflow.com/a/22783949/7355843
         //assumes default TabPane skin
-        final TabPaneBehavior behavior = ((TabPaneSkin)tabPane.getSkin()).getBehavior();
+        final TabPaneBehavior behavior = ((TabPaneSkin)tab.getTabPane().getSkin()).getBehavior();
         if (behavior.canCloseTab(tab)) {
             behavior.closeTab(tab);
         }
@@ -75,8 +71,17 @@ public final class FXUtil {
      *
      * @param input The {@code TextInputConrol} to apply a length limit to
      * @param len The maximum length of the string inside the given {@code TextInputControl}
+     *
+     * @throws NullArgumentException if {@code input} is null
+     * @throws IllegalArgumentException if {@code len} is negative
      */
-    public static void setTextFieldLength(final TextInputControl input, final int len) {
+    public static void setTextControlLength(final TextInputControl input, final int len) {
+        if (null == input) {
+            throw new NullArgumentException("setTextControlLength", "input");
+        }
+        if (len < 0) {
+            throw new IllegalArgumentException("Attempt to set max length of TextInputControl to negative value");
+        }
         input.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.length() > len) {
                 input.textProperty().set(newValue.substring(0, len));
@@ -87,20 +92,33 @@ public final class FXUtil {
     /**
      * Sets the background image of a given {@code Region}
      *
-     * @param image The image of the background
      * @param region The {@code Region} to apply the background image to
+     * @param image The image of the background
+     *
+     * @throws NullArgumentException if {@code image} or {@code region} is null
      */
-    public static void setBackgroundImage(final Image image, final Region region) {
+    public static void setBackgroundImage(final Region region, final Image image) {
+        if (null == region) {
+            throw new NullArgumentException("setBackgroundImage", "region");
+        }
+        if (null == image) {
+            throw new NullArgumentException("setBackgroundImage", "image");
+        }
         region.setBackground(new Background(new BackgroundImage(image, null, null, null, null)));
     }
 
     /**
      * Sets the background color of a given {@code Region}
      *
-     * @param color The color of the background
      * @param region The {@code Region} to apply the background color to
+     * @param color The color of the background
+     *
+     * @throws NullArgumentException if {@code region} is null
      */
-    public static void setBackgroundColor(final Color color, final Region region) {
+    public static void setBackgroundColor(final Region region, final Color color) {
+        if (null == region) {
+            throw new NullArgumentException("setBackgroundColor", "region");
+        }
         region.setBackground(new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
     }
 
@@ -111,8 +129,14 @@ public final class FXUtil {
      * @param color The {@code Color} to convert to a web string
      *
      * @return A web string representing the given {@code Color}
+     *
+     * @throws NullArgumentException if {@code color} is null
      */
     public static String colorToString(final Color color) {
+        if (null == color) {
+            throw new NullArgumentException("colorToString", "color");
+        }
+
         return String.format("0x%02X%02X%02X",
                              (int)(color.getRed() * 255),
                              (int)(color.getGreen() * 255),
@@ -243,18 +267,17 @@ public final class FXUtil {
         final TextField secondField = new TextField();
         secondField.setPromptText(secondLabel);
 
-        final GridPane dialogPane = new GridPane();
+        final GridPane pane = new GridPane();
+        pane.add(firstField, 1, 0);
+        pane.add(secondField, 1, 1);
 
-        dialogPane.add(firstField, 1, 0);
-        dialogPane.add(secondField, 1, 1);
-
-        dialog.getDialogPane().setContent(dialogPane);
+        dialog.getDialogPane().setContent(pane);
 
         Platform.runLater(firstField::requestFocus);
 
-        dialog.setResultConverter(param -> ButtonType.OK == param ? new Tuple <>(firstField.getText(), secondField.getText()) :
+        dialog.setResultConverter(param -> ButtonType.OK == param ?
+                                           new Tuple <>(firstField.getText(), secondField.getText()) :
                                            null);
-
         return dialog;
     }
 

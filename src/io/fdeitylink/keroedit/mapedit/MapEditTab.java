@@ -17,7 +17,6 @@
 package io.fdeitylink.keroedit.mapedit;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumMap;
 
 import java.io.File;
@@ -120,15 +119,15 @@ import io.fdeitylink.keroedit.image.ImageManager;
 
 import io.fdeitylink.keroedit.script.ScriptEditTab;
 
-import static io.fdeitylink.keroedit.image.ImageDimensions.TILE_WIDTH;
-import static io.fdeitylink.keroedit.image.ImageDimensions.TILE_HEIGHT;
-import static io.fdeitylink.keroedit.image.ImageDimensions.TILESET_WIDTH;
-import static io.fdeitylink.keroedit.image.ImageDimensions.TILESET_HEIGHT;
+import static io.fdeitylink.keroedit.image.ImageDimension.TILE_WIDTH;
+import static io.fdeitylink.keroedit.image.ImageDimension.TILE_HEIGHT;
+import static io.fdeitylink.keroedit.image.ImageDimension.TILESET_WIDTH;
+import static io.fdeitylink.keroedit.image.ImageDimension.TILESET_HEIGHT;
 
-import static io.fdeitylink.keroedit.image.ImageDimensions.PXATTR_TILE_WIDTH;
-import static io.fdeitylink.keroedit.image.ImageDimensions.PXATTR_TILE_HEIGHT;
-import static io.fdeitylink.keroedit.image.ImageDimensions.PXATTR_IMAGE_WIDTH;
-import static io.fdeitylink.keroedit.image.ImageDimensions.PXATTR_IMAGE_HEIGHT;
+import static io.fdeitylink.keroedit.image.ImageDimension.PXATTR_TILE_WIDTH;
+import static io.fdeitylink.keroedit.image.ImageDimension.PXATTR_TILE_HEIGHT;
+import static io.fdeitylink.keroedit.image.ImageDimension.PXATTR_IMAGE_WIDTH;
+import static io.fdeitylink.keroedit.image.ImageDimension.PXATTR_IMAGE_HEIGHT;
 
 public final class MapEditTab extends FXUtil.FileEditTab {
     private static final SimpleIntegerProperty mapZoom = new SimpleIntegerProperty(Config.mapZoom);
@@ -140,11 +139,11 @@ public final class MapEditTab extends FXUtil.FileEditTab {
     private static final SimpleIntegerProperty selectedLayer = new SimpleIntegerProperty(0);
 
     //does this really need to be a property? can it be a normal field?
-    private static final SimpleObjectProperty <KeroEdit.DrawSettingsItems> drawMode =
-            new SimpleObjectProperty <>(KeroEdit.DrawSettingsItems.DRAW);
+    private static final SimpleObjectProperty <KeroEdit.DrawSettingsItem> drawMode =
+            new SimpleObjectProperty <>(KeroEdit.DrawSettingsItem.DRAW);
 
     private static final SimpleBooleanProperty showTileTypes = new SimpleBooleanProperty(false);
-    //TODO: Use this for all view settings (tile types, grid) instead of showTileTypes
+    //TODO: Use this for all view settings (tile types, grid, entity box, sprites, and names) instead of showTileTypes
     //private static final SimpleIntegerProperty viewSettings = new SimpleIntegerProperty(0);
 
     private static Image pxAttrImg;
@@ -265,7 +264,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
         selectedLayer.set(layer);
     }
 
-    public static void setDrawMode(final KeroEdit.DrawSettingsItems mode) {
+    public static void setDrawMode(final KeroEdit.DrawSettingsItem mode) {
         drawMode.set(mode);
     }
 
@@ -749,9 +748,9 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                     public void handle(final MouseEvent event) {
                         if (event.getButton().equals(MouseButton.PRIMARY)) {
                             //grabs x & y and bounds them to be within tileset
-                            final int x = MathUtil.boundInt((int)event.getX(), 0, (int)(tilesetCanvas.getWidth() - 1)) /
+                            final int x = MathUtil.bound((int)event.getX(), 0, (int)(tilesetCanvas.getWidth() - 1)) /
                                           tilesetZoom.get() / TILE_WIDTH;
-                            final int y = MathUtil.boundInt((int)event.getY(), 0, (int)(tilesetCanvas.getHeight() - 1)) /
+                            final int y = MathUtil.bound((int)event.getY(), 0, (int)(tilesetCanvas.getHeight() - 1)) /
                                           tilesetZoom.get() / TILE_HEIGHT;
 
                             if (x != prevX || y != prevY) {
@@ -860,8 +859,8 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                 mapCanvases = new Canvas[tileLayers.length];
                 for (int i = 0; i < mapCanvases.length; ++i) {
                     mapCanvases[i] = new Canvas();
-                    mapCanvases[i].setVisible(LayerFlags.values()[i].flag ==
-                                              (displayedLayers.get() & LayerFlags.values()[i].flag));
+                    mapCanvases[i].setVisible(LayerFlag.values()[i].flag ==
+                                              (displayedLayers.get() & LayerFlag.values()[i].flag));
                 }
 
                 entityCanvas = new Canvas();
@@ -880,8 +879,8 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                 mapStackPane.getChildren().addAll(entityCanvas, cursorCanvas);
 
                 bgColor = new SimpleObjectProperty <>(head.getBgColor());
-                bgColor.addListener((observable, oldValue, newValue) -> FXUtil.setBackgroundColor(newValue, mapStackPane));
-                FXUtil.setBackgroundColor(bgColor.get(), mapStackPane);
+                bgColor.addListener((observable, oldValue, newValue) -> FXUtil.setBackgroundColor(mapStackPane, newValue));
+                FXUtil.setBackgroundColor(mapStackPane, bgColor.get());
 
                 initEventHandlers();
 
@@ -898,9 +897,9 @@ public final class MapEditTab extends FXUtil.FileEditTab {
              */
             private void initEventHandlers() {
                 displayedLayers.addListener(((observable, oldValue, newValue) -> {
-                    for (int i = 0; i < LayerFlags.values().length; ++i) {
-                        mapCanvases[i].setVisible(LayerFlags.values()[i].flag ==
-                                                  (newValue.intValue() & LayerFlags.values()[i].flag));
+                    for (int i = 0; i < LayerFlag.values().length; ++i) {
+                        mapCanvases[i].setVisible(LayerFlag.values()[i].flag ==
+                                                  (newValue.intValue() & LayerFlag.values()[i].flag));
                     }
                 }));
 
@@ -964,11 +963,11 @@ public final class MapEditTab extends FXUtil.FileEditTab {
 
                                     if (null != tiles) {
                                         //grabs x & y and bounds them to be within map
-                                        final int x = MathUtil.boundInt((int)event.getX(), 0,
-                                                                        (int)(mapCanvases[layer].getWidth() - 1)) /
+                                        final int x = MathUtil.bound((int)event.getX(), 0,
+                                                                     (int)(mapCanvases[layer].getWidth() - 1)) /
                                                       mapZoom.get() / TILE_WIDTH;
-                                        final int y = MathUtil.boundInt((int)event.getY(), 0,
-                                                                        (int)(mapCanvases[layer].getHeight() - 1)) /
+                                        final int y = MathUtil.bound((int)event.getY(), 0,
+                                                                     (int)(mapCanvases[layer].getHeight() - 1)) /
                                                       mapZoom.get() / TILE_HEIGHT;
 
                                         /*
@@ -1033,9 +1032,11 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                 final MenuItem[] menuItems = {new MenuItem(Messages.getString("MapEditTab.TileEditTab.Resize.MENU_TEXT")),
                                               new MenuItem(Messages.getString("MapEditTab.TileEditTab.BgColor.MENU_TEXT"))};
 
-                menuItems[MapPaneMenuItems.arrIndexEnumMap.get(MapPaneMenuItems.RESIZE)].setOnAction(event -> {
+                menuItems[MapPaneMenuItem.arrIndexEnumMap.get(MapPaneMenuItem.RESIZE)].setOnAction(event -> {
+                    final int layer = selectedLayer.get();
+
                     final String layerName;
-                    switch (selectedLayer.get()) {
+                    switch (layer) {
                         case 0:
                             layerName = Messages.getString("LayerNames.FOREGROUND");
                             break;
@@ -1050,12 +1051,12 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                     final String title = MessageFormat.format(Messages.getString("MapEditTab.TileEditTab.Resize.TITLE"),
                                                               layerName);
 
-                    final int[][] layerData = mapPane.tileLayers[selectedLayer.get()].getTiles();
-                    final int width = null == layerData ? 0 : layerData[0].length;
-                    final int height = null == layerData ? 0 : layerData.length;
+                    final int[][] oldTiles = mapPane.tileLayers[layer].getTiles();
+                    final int oldWidth = null == oldTiles ? 0 : oldTiles[0].length;
+                    final int oldHeight = null == oldTiles ? 0 : oldTiles.length;
 
                     final String currentSizeStr = MessageFormat.format(Messages.getString("MapEditTab.TileEditTab.Resize.CURRENT_SIZE"),
-                                                                       width, height);
+                                                                       oldWidth, oldHeight);
 
                     FXUtil.createDualTextFieldDialog(title, currentSizeStr,
                                                      Messages.getString("MapEditTab.TileEditTab.Resize.NEW_WIDTH"),
@@ -1089,18 +1090,21 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                                 return;
                             }
 
-                            tileLayers[selectedLayer.get()].resize(newWidth, newHeight);
+                            tileLayers[layer].resize(newWidth, newHeight);
 
                             fixCanvasSizes();
-                            redrawLayer(selectedLayer.get());
+                            redrawLayer(layer);
 
                             setChanged(true);
                             parent.setChanged(true);
+
+                            getRedoStack().clear();
+                            getUndoStack().addFirst(new UndoableMapResizeEdit(layer, oldTiles, tileLayers[layer].getTiles()));
                         }
                     });
                 });
 
-                menuItems[MapPaneMenuItems.arrIndexEnumMap.get(MapPaneMenuItems.BG_COLOR)].setOnAction(event -> {
+                menuItems[MapPaneMenuItem.arrIndexEnumMap.get(MapPaneMenuItem.BG_COLOR)].setOnAction(event -> {
                     final ColorPicker cPicker = new ColorPicker(mapPane.bgColor.get());
                     cPicker.setOnAction(ev -> {
                         if (!cPicker.getValue().isOpaque()) {
@@ -1141,10 +1145,11 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                         @Override
                         protected Void call() throws Exception {
                             //TODO: remove tileset name check?
-                            if (null == tileLayers[layer].getTiles() || null == head.getTilesetNames()[layer]) {
+                            final int[][] tiles = tileLayers[layer].getTiles();
+                            if (null == tiles || null == head.getTilesetNames()[layer]) {
                                 return null;
                             }
-                            final int tileIndex = tileLayers[layer].getTiles()[y][x];
+                            final int tileIndex = tiles[y][x];
 
                             final Image tileImg;
 
@@ -1218,9 +1223,9 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                     new Task <Void>() {
                         @Override
                         protected Void call() throws Exception {
-                            final int[][] layerData = tileLayers[layer].getTiles();
+                            final int[][] tiles = tileLayers[layer].getTiles();
                             //TODO: remove tileset name check?
-                            if (null == layerData || null == head.getTilesetNames()[layer]) {
+                            if (null == tiles || null == head.getTilesetNames()[layer]) {
                                 return null;
                             }
 
@@ -1231,8 +1236,8 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                                 return null;
                             }
 
-                            final WritableImage tmpLayerImg = new WritableImage(layerData[0].length * TILE_WIDTH,
-                                                                                layerData.length * TILE_HEIGHT);
+                            final WritableImage tmpLayerImg = new WritableImage(tiles[0].length * TILE_WIDTH,
+                                                                                tiles.length * TILE_HEIGHT);
                             final PixelWriter tmpLayerImgWriter = tmpLayerImg.getPixelWriter();
 
                             ////////////////////////////////////////////////////////////////////////////////////////////
@@ -1268,10 +1273,10 @@ public final class MapEditTab extends FXUtil.FileEditTab {
 
                             final byte[] tile = new byte[TILE_WIDTH * TILE_HEIGHT * 4];
 
-                            for (int y = 0; y < layerData.length; ++y) {
-                                for (int x = 0; x < layerData[y].length; ++x) {
-                                    final int tilesetX = layerData[y][x] % (TILESET_WIDTH / TILE_WIDTH);
-                                    final int tilesetY = layerData[y][x] / (TILESET_HEIGHT / TILE_HEIGHT);
+                            for (int y = 0; y < tiles.length; ++y) {
+                                for (int x = 0; x < tiles[y].length; ++x) {
+                                    final int tilesetX = tiles[y][x] % (TILESET_WIDTH / TILE_WIDTH);
+                                    final int tilesetY = tiles[y][x] / (TILESET_HEIGHT / TILE_HEIGHT);
 
                                     tilesetReader.getPixels(tilesetX * TILE_WIDTH, tilesetY * TILE_HEIGHT, TILE_WIDTH,
                                                             TILE_HEIGHT, pxFormat, tile, 0, TILE_WIDTH * 4);
@@ -1350,13 +1355,15 @@ public final class MapEditTab extends FXUtil.FileEditTab {
             private void fixCanvasSizes() {
                 int maxWidth = 0, maxHeight = 0;
                 for (int i = 0; i < tileLayers.length; ++i) {
-                    if (null == tileLayers[i].getTiles()) {
+                    final int[][] tiles = tileLayers[i].getTiles();
+                    if (null == tiles) {
                         mapCanvases[i].setWidth(0);
                         mapCanvases[i].setHeight(0);
                         continue;
                     }
-                    final int width = tileLayers[i].getTiles()[0].length * TILE_WIDTH * mapZoom.get();
-                    final int height = tileLayers[i].getTiles().length * TILE_HEIGHT * mapZoom.get();
+
+                    final int width = tiles[0].length * TILE_WIDTH * mapZoom.get();
+                    final int height = tiles.length * TILE_HEIGHT * mapZoom.get();
 
                     if (width > maxWidth) {
                         maxWidth = width;
@@ -1376,14 +1383,40 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                 entityCanvas.setHeight(maxHeight);
             }
 
-            private class UndoableMapDrawEdit implements UndoableEdit {
+            private final class UndoableMapDrawEdit implements UndoableEdit {
                 private final int layer;
                 private final int x;
                 private final int y;
                 private final int[][] oldTiles;
                 private final int[][] newTiles;
 
-                UndoableMapDrawEdit(final int layer, final int x, final int y, final int[][] oldTiles, final int[][] newTiles) {
+                UndoableMapDrawEdit(final int layer, final int x, final int y, final int[][] oldTiles,
+                                    final int[][] newTiles) {
+                    if (null == oldTiles) {
+                        throw new NullArgumentException("UndoableMapDrawEdit", "oldTiles");
+                    }
+                    if (null == newTiles) {
+                        throw new NullArgumentException("UndoableMapDrawEdit", "newTiles");
+                    }
+
+                    if (0 == oldTiles.length) {
+                        throw new IllegalArgumentException("Attempt to initialize new UndoableMapDrawEdit " +
+                                                           "with oldTiles with height of 0");
+                    }
+                    if (0 == oldTiles[0].length) {
+                        throw new IllegalArgumentException("Attempt to initialize new UndoableMapDrawEdit " +
+                                                           "with oldTiles with width of 0");
+                    }
+
+                    if (0 == newTiles.length) {
+                        throw new IllegalArgumentException("Attempt to initialize new UndoableMapDrawEdit " +
+                                                           "with newTiles with height of 0");
+                    }
+                    if (0 == newTiles[0].length) {
+                        throw new IllegalArgumentException("Attempt to initialize new UndoableMapDrawEdit " +
+                                                           "with newTiles with width of 0");
+                    }
+
                     if (oldTiles.length != newTiles.length || oldTiles[0].length != newTiles[0].length) {
                         throw new IllegalArgumentException("Attempt to initialize new UndoableMapDrawEdit " +
                                                            "with oldTiles and newTiles with unequal dimensions");
@@ -1425,7 +1458,74 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                 }
             }
 
-            //TODO: UndoableMapResizeEdit
+            private final class UndoableMapResizeEdit implements UndoableEdit {
+                //TODO: Instead, store one array of largest size (either pre or post-resize) as well as old and new dimensions
+                private final int layer;
+                private final int[][] oldTiles;
+                private final int[][] newTiles;
+
+                UndoableMapResizeEdit(final int layer, final int[][] oldTiles, final int[][] newTiles) {
+                    this.layer = layer;
+
+                    if (null == oldTiles || 0 == oldTiles.length || 0 == oldTiles[0].length) {
+                        this.oldTiles = null;
+                    }
+                    else {
+                        this.oldTiles = new int[oldTiles.length][oldTiles[0].length];
+                        for (int i = 0; i < oldTiles.length; ++i) {
+                            System.arraycopy(oldTiles[i], 0, this.oldTiles[i], 0, oldTiles[i].length);
+                        }
+                    }
+
+                    if (null == newTiles || 0 == newTiles.length || 0 == newTiles[0].length) {
+                        this.newTiles = null;
+                    }
+                    else {
+                        this.newTiles = new int[newTiles.length][newTiles[0].length];
+                        for (int i = 0; i < newTiles.length; ++i) {
+                            System.arraycopy(newTiles[i], 0, this.newTiles[i], 0, newTiles[i].length);
+                        }
+                    }
+                }
+
+                @Override
+                public void undo() {
+                    if (null == oldTiles) {
+                        tileLayers[layer].resize(0, 0);
+                    }
+                    else {
+                        tileLayers[layer].resize(oldTiles[0].length, oldTiles.length);
+                        for (int y = 0; y < oldTiles.length; ++y) {
+                            for (int x = 0; x < oldTiles[y].length; ++x) {
+                                tileLayers[layer].setTile(x, y, oldTiles[y][x]);
+                            }
+                        }
+                    }
+
+                    redrawLayer(layer);
+                    fixCanvasSizes();
+                    redrawLayer(layer);
+                }
+
+                @Override
+                public void redo() {
+                    if (null == newTiles) {
+                        tileLayers[layer].resize(0, 0);
+                    }
+                    else {
+                        tileLayers[layer].resize(newTiles[0].length, newTiles.length);
+                        for (int y = 0; y < newTiles.length; ++y) {
+                            for (int x = 0; x < newTiles[y].length; ++x) {
+                                tileLayers[layer].setTile(x, y, newTiles[y][x]);
+                            }
+                        }
+                    }
+
+                    redrawLayer(layer);
+                    fixCanvasSizes();
+                    redrawLayer(layer);
+                }
+            }
         }
     }
 
@@ -1444,22 +1544,22 @@ public final class MapEditTab extends FXUtil.FileEditTab {
         }
     }
 
-    public enum LayerFlags {
+    public enum LayerFlag {
         FOREGROUND(0b1),
         MIDDLEGROUND(0b10),
         BACKGROUND(0b100);
 
         public final int flag;
 
-        LayerFlags(int flag) {
+        LayerFlag(final int flag) {
             this.flag = flag;
         }
     }
 
-    private enum MapPaneMenuItems implements ArrayIndexEnum <MapPaneMenuItems> {
+    private enum MapPaneMenuItem implements ArrayIndexEnum <MapPaneMenuItem> {
         RESIZE,
         BG_COLOR;
 
-        static final EnumMap <MapPaneMenuItems, Integer> arrIndexEnumMap = RESIZE.enumMap(MapPaneMenuItems.class);
+        static final EnumMap <MapPaneMenuItem, Integer> arrIndexEnumMap = RESIZE.enumMap(MapPaneMenuItem.class);
     }
 }

@@ -214,7 +214,7 @@ public final class HackTab extends FXUtil.FileEditTab {
             field = new TextField(currentVal);
             field.setDisable(-1 == len || -1 == offset);
             field.setTooltip(new Tooltip("Default: " + defaultVal));
-            FXUtil.setTextFieldLength(field, len);
+            FXUtil.setTextControlLength(field, len);
 
             getChildren().addAll(label, field);
         }
