@@ -2,6 +2,7 @@ package io.fdeitylink.keroedit.image;
 
 //TODO: Implement as enum ... maybe
 public final class ImageDimension {
+    //all dimensions are in pixels
     public static final int TILE_WIDTH = 8;
     public static final int TILE_HEIGHT = 8;
 

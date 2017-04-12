@@ -196,7 +196,7 @@ public final class KeroEdit extends Application {
         showLicense();
     }
 
-    /**
+    /**d
      * Appends a given string to the base title of the program's {@code Stage}
      *
      * @param str The string to append to the title
@@ -236,7 +236,6 @@ public final class KeroEdit extends Application {
                                       new MenuItem(Messages.getString("KeroEdit.FileMenu.CLOSE_ALL_TABS"))};
         fileMenu.getItems().addAll(menuItems);
 
-
         menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.OPEN)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
         menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.OPEN)].setOnAction(event -> {
@@ -256,13 +255,7 @@ public final class KeroEdit extends Application {
 
                 final File exeFile = exeChooser.showOpenDialog(mainStage);
                 if (null != exeFile) {
-                    new Task <Void>() {
-                        @Override
-                        protected Void call() {
-                            loadMod(exeFile.toPath());
-                            return null;
-                        }
-                    }.call();
+                    loadMod(exeFile.toPath());
                 }
             }
         });
@@ -273,14 +266,7 @@ public final class KeroEdit extends Application {
             //if user didn't cancel any attempted tab closes and definitely wants to load last mod
             if (!closeTabs(true)) {
                 wipeLoaded();
-
-                new Task <Void>() {
-                    @Override
-                    protected Void call() {
-                        loadMod(Paths.get(Config.lastExeLoc));
-                        return null;
-                    }
-                }.call();
+                loadMod(Paths.get(Config.lastExeLoc));
             }
         });
         menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.OPEN_LAST)]
@@ -355,69 +341,74 @@ public final class KeroEdit extends Application {
 
     /**
      * Loads a mod, checking if it is valid. Also creates its assist folder.
-     * It is expected that this method is called on a thread other than the
-     * JavaFX Application Thread, so all dialogs are shown via {@code Platform.runLater()}.
      *
      * @param executable A {@code Path} that references the executable for a mod
      *
      * @throws NullArgumentException if {@code executable} is null
      */
     private void loadMod(final Path executable) {
-        if (null == executable) {
-            throw new NullArgumentException("loadMod", "executable");
-        }
-        if (!executable.toString().endsWith(".exe")) {
-            Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.ERROR,
-                                                       Messages.getString("KeroEdit.LoadMod.NotExe.TITLE"), null,
-                                                       MessageFormat.format(Messages.getString("KeroEdit.LoadMod.NotExe.MESSAGE"),
-                                                                            executable.toAbsolutePath())).showAndWait());
-            return;
-        }
-
-        try {
-            GameData.init(executable);
-            Config.lastExeLoc = executable.toAbsolutePath().toString();
-
-            HackTab.init();
-
-            final File executableParent = executable.getParent().toAbsolutePath().toFile();
-
-            boolean hasRWXPermissions = executableParent.canRead() && executableParent.canWrite() &&
-                                        executableParent.canExecute();
-            if (!hasRWXPermissions) {
-                hasRWXPermissions = executableParent.setReadable(true) && executableParent.setWritable(true) &&
-                                    executableParent.setExecutable(true);
-                if (!hasRWXPermissions) {
-                    Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.INFORMATION,
-                                                               Messages.getString("KeroEdit.LoadMod.StrictPermissions.TITLE"),
-                                                               null,
-                                                               Messages.getString("KeroEdit.LoadMod.StrictPermissions.MESSAGE"))
-                                                  .showAndWait());
+        new Task <Void>() {
+            @Override
+            protected Void call() {
+                if (null == executable) {
+                    throw new NullArgumentException("loadMod", "executable");
                 }
-            }
-            if (hasRWXPermissions) {
-                //createAssistFolder();
-            }
+                if (!executable.toString().endsWith(".exe")) {
+                    Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.ERROR,
+                                                               Messages.getString("KeroEdit.LoadMod.NotExe.TITLE"), null,
+                                                               MessageFormat.format(Messages.getString("KeroEdit.LoadMod.NotExe.MESSAGE"),
+                                                                                    executable.toAbsolutePath())).showAndWait());
+                    return null;
+                }
 
-            Platform.runLater(() -> {
-                openLast.setDisable(false);
-                mapList.setItems(FXCollections.observableArrayList(GameData.getMapList()));
-                mapList.requestFocus();
+                try {
+                    GameData.init(executable);
+                    Config.lastExeLoc = executable.toAbsolutePath().toString();
 
-                for (final MenuItem mItem : enableOnLoadItems) {
-                    if (mItem.isDisable()) {
-                        mItem.setDisable(false);
+                    HackTab.init();
+
+                    final File executableParent = executable.getParent().toAbsolutePath().toFile();
+
+                    boolean hasRWXPermissions = executableParent.canRead() && executableParent.canWrite() &&
+                                                executableParent.canExecute();
+                    if (!hasRWXPermissions) {
+                        hasRWXPermissions = executableParent.setReadable(true) && executableParent.setWritable(true) &&
+                                            executableParent.setExecutable(true);
+                        if (!hasRWXPermissions) {
+                            Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.INFORMATION,
+                                                                       Messages.getString("KeroEdit.LoadMod.StrictPermissions.TITLE"),
+                                                                       null,
+                                                                       Messages.getString("KeroEdit.LoadMod.StrictPermissions.MESSAGE"))
+                                                          .showAndWait());
+                        }
                     }
+                    if (hasRWXPermissions) {
+                        //createAssistFolder();
+                    }
+
+                    Platform.runLater(() -> {
+                        openLast.setDisable(false);
+                        mapList.setItems(FXCollections.observableArrayList(GameData.getMapList()));
+                        mapList.requestFocus();
+
+                        for (final MenuItem mItem : enableOnLoadItems) {
+                            if (mItem.isDisable()) {
+                                mItem.setDisable(false);
+                            }
+                        }
+
+                        setTitle(executable.getParent().toAbsolutePath().toString() + File.separatorChar);
+                    });
+                }
+                catch (final IOException except) {
+                    Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.ERROR,
+                                                               Messages.getString("KeroEdit.LoadMod.IOExcept.TITLE"), null,
+                                                               except.getMessage()).showAndWait());
                 }
 
-                setTitle(executable.getParent().toAbsolutePath().toString() + File.separatorChar);
-            });
-        }
-        catch (final IOException except) {
-            Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.ERROR,
-                                                       Messages.getString("KeroEdit.LoadMod.IOExcept.TITLE"), null,
-                                                       except.getMessage()).showAndWait());
-        }
+                return null;
+            }
+        }.call();
     }
 
     /**
@@ -932,8 +923,7 @@ public final class KeroEdit extends Application {
      * all tab closes are completely independent of each other and canceling one tab closing
      * should not cancel attempts to close others.
      *
-     * @return true if and only if {@code cancelAll} is true and at least one tab closing
-     * was canceled by the user.
+     * @return true if {@code cancelAll} is true and at least one tab closing was canceled by the user.
      */
     private boolean closeTabs(final boolean cancelAll) {
         final ObservableList <Tab> tabs = mainTabPane.getTabs();
@@ -1025,31 +1015,29 @@ public final class KeroEdit extends Application {
             final SimpleIntegerProperty displayedLayers = new SimpleIntegerProperty(Config.displayedLayers);
 
             final CheckBox[] checkboxes = new CheckBox[PxPack.NUM_LAYERS];
+
+            final String[] layerNames = {Messages.getString("PxPack.LayerNames.FOREGROUND"),
+                                         Messages.getString("PxPack.LayerNames.MIDDLEGROUND"),
+                                         Messages.getString("PxPack.LayerNames.BACKGROUND")};
+
             for (int i = 0; i < checkboxes.length; ++i) {
-                final String layerName;
-                switch (i) {
-                    case 0:
-                        layerName = Messages.getString("LayerNames.FOREGROUND");
-                        break;
-                    case 1:
-                        layerName = Messages.getString("LayerNames.MIDDLEGROUND");
-                        break;
-                    default:
-                        layerName = Messages.getString("LayerNames.BACKGROUND");
-                }
-                checkboxes[i] = new CheckBox(layerName);
+                checkboxes[i] = new CheckBox(layerNames[i]);
 
                 checkboxes[i].setAllowIndeterminate(false);
+
+                //selected if the flag is set
                 checkboxes[i].setSelected(MapEditTab.LayerFlag.values()[i].flag ==
                                           (Config.displayedLayers & MapEditTab.LayerFlag.values()[i].flag));
 
-                int layer = i;
+                final int layer = i;
                 checkboxes[i].selectedProperty().addListener(((observable, oldValue, newValue) -> {
                     int newDispLayersFlag = displayedLayers.get();
                     if (newValue) {
+                        //enable flag
                         newDispLayersFlag |= MapEditTab.LayerFlag.values()[layer].flag;
                     }
                     else {
+                        //disable flag
                         newDispLayersFlag &= MapEditTab.LayerFlag.values()[layer].flag ^ 0b1111_1111;
                     }
 
@@ -1069,25 +1057,20 @@ public final class KeroEdit extends Application {
             add(label, x, y++);
 
             final ToggleGroup toggleGroup = new ToggleGroup();
-            final RadioButton[] radioButtons = new RadioButton[PxPack.NUM_LAYERS];
+            final RadioButton[] radioButtons = {new RadioButton(Messages.getString("PxPack.LayerNames.FOREGROUND")),
+                                                new RadioButton(Messages.getString("PxPack.LayerNames.MIDDLEGROUND")),
+                                                new RadioButton(Messages.getString("PxPack.LayerNames.BACKGROUND"))};
 
-            final String[] layerNames = {Messages.getString("LayerNames.FOREGROUND"),
-                                         Messages.getString("LayerNames.MIDDLEGROUND"),
-                                         Messages.getString("LayerNames.BACKGROUND")};
+            radioButtons[Config.selectedLayer].setSelected(true);
 
             for (int i = 0; i < radioButtons.length; ++i) {
-                radioButtons[i] = new RadioButton(layerNames[i]);
-
                 radioButtons[i].setToggleGroup(toggleGroup);
-
-                if (0 == i) {
-                    radioButtons[i].setSelected(true);
-                }
 
                 final int layer = i;
                 radioButtons[i].selectedProperty().addListener((observable, oldValue, newValue) -> {
                     if (newValue) {
                         MapEditTab.setSelectedLayer(layer);
+                        Config.selectedLayer = layer;
                     }
                 });
 
@@ -1103,11 +1086,15 @@ public final class KeroEdit extends Application {
             final ToggleGroup toggleGroup = new ToggleGroup();
             final RadioButton[] radioButtons = {new RadioButton(Messages.getString("KeroEdit.SettingsPane.DRAW"))};
 
-            radioButtons[DrawSettingsItem.arrIndexEnumMap.get(DrawSettingsItem.DRAW)].setSelected(true);
+            radioButtons[DrawMode.arrIndexEnumMap.get(Config.drawMode)].setSelected(true);
 
             for (int i = 0; i < radioButtons.length; ++i) {
-                final int mode = i;
-                radioButtons[i].setOnAction(event -> MapEditTab.setDrawMode(DrawSettingsItem.values()[mode]));
+                final int modeIndex = i;
+                radioButtons[i].setOnAction(event -> {
+                    final DrawMode mode = DrawMode.values()[modeIndex];
+                    MapEditTab.setDrawMode(mode);
+                    Config.drawMode = mode;
+                });
                 radioButtons[i].setToggleGroup(toggleGroup);
                 add(radioButtons[i], x, y++);
             }
@@ -1143,14 +1130,14 @@ public final class KeroEdit extends Application {
         }
     }
 
-    public enum DrawSettingsItem implements ArrayIndexEnum <DrawSettingsItem> {
+    public enum DrawMode implements ArrayIndexEnum <DrawMode> {
         DRAW,
         RECT,
         COPY,
         FILL,
         REPLACE;
 
-        public static final EnumMap <DrawSettingsItem, Integer> arrIndexEnumMap = DRAW.enumMap(DrawSettingsItem.class);
+        public static final EnumMap <DrawMode, Integer> arrIndexEnumMap = DRAW.enumMap(DrawMode.class);
     }
 
     private enum FileMenuItem implements ArrayIndexEnum <FileMenuItem> {

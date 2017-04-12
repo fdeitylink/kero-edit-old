@@ -14,6 +14,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;*/
 
 public final class ImageManager {
     private static final HashMap <String, Image> imagesMap = new HashMap <>();
+    private static final Image emptyImage = new Image("file:///");
 
     private ImageManager() {
 
@@ -31,8 +32,14 @@ public final class ImageManager {
                                 File.separator + "img" + File.separatorChar +
                                 imageName + ".png", false);
 
+        //TODO: Detect if image is not square? (only for tilesets?)
+
+        if (0 == image.getWidth() || 0 == image.getHeight()) {
+            image = emptyImage;
+        }
         //if this is a tileset and it is larger than necessary, take only relevant portion
-        if (isTileset && 0 < image.getWidth() &&
+        //if code in this block runs, image is definitely larger than 0x0
+        if (isTileset &&
             (ImageDimension.TILESET_WIDTH < image.getWidth() ||
              ImageDimension.TILESET_HEIGHT < image.getHeight())) {
             //crop down to useful portion (tilesets sometimes have more data than necessary for some reason)

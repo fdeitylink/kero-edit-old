@@ -2,11 +2,10 @@
  * TODO:
  * Try using resize() instead of setWidth() and setHeight()
  * Resizing map & tileset is slightly slow
- * Detect if tileset is not square
  * For map - draw tile types on separate layer just like with the tileset pane
  * Find workaround for NPE with large Canvas (19tunnel maps in KB); current workaround is minimal map zoom
  * - https://bugs.openjdk.java.net/browse/JDK-8089835
- * Throw error on tileset load for 0 dimension?
+ * Show error on tileset load for 0 dimension?
  * Make method for redrawing subset/region of map
  * Improve multiple selection in tileset
  * Put exception strings in messages.properties?
@@ -130,21 +129,20 @@ import static io.fdeitylink.keroedit.image.ImageDimension.PXATTR_IMAGE_WIDTH;
 import static io.fdeitylink.keroedit.image.ImageDimension.PXATTR_IMAGE_HEIGHT;
 
 public final class MapEditTab extends FXUtil.FileEditTab {
-    private static final SimpleIntegerProperty mapZoom = new SimpleIntegerProperty(Config.mapZoom);
-    private static final SimpleIntegerProperty tilesetZoom = new SimpleIntegerProperty(Config.tilesetZoom);
+    private static final SimpleIntegerProperty mapZoom;
+    private static final SimpleIntegerProperty tilesetZoom;
 
-    private static final SimpleObjectProperty <Color> tilesetBgColor = new SimpleObjectProperty <>(Config.tilesetBgColor);
+    private static final SimpleObjectProperty <Color> tilesetBgColor;
 
-    private static final SimpleIntegerProperty displayedLayers = new SimpleIntegerProperty(Config.displayedLayers);
-    private static final SimpleIntegerProperty selectedLayer = new SimpleIntegerProperty(0);
+    private static final SimpleIntegerProperty displayedLayers;
+    private static final SimpleIntegerProperty selectedLayer;
 
     //does this really need to be a property? can it be a normal field?
-    private static final SimpleObjectProperty <KeroEdit.DrawSettingsItem> drawMode =
-            new SimpleObjectProperty <>(KeroEdit.DrawSettingsItem.DRAW);
+    private static final SimpleObjectProperty <KeroEdit.DrawMode> drawMode;
 
-    private static final SimpleBooleanProperty showTileTypes = new SimpleBooleanProperty(false);
+    private static final SimpleBooleanProperty showTileTypes;
     //TODO: Use this for all view settings (tile types, grid, entity box, sprites, and names) instead of showTileTypes
-    //private static final SimpleIntegerProperty viewSettings = new SimpleIntegerProperty(0);
+    //private static final SimpleIntegerProperty viewSettings;
 
     private static Image pxAttrImg;
     private static Image entityImg;
@@ -153,6 +151,18 @@ public final class MapEditTab extends FXUtil.FileEditTab {
     //(or rework how the stage works)
 
     static {
+        mapZoom = new SimpleIntegerProperty(Config.mapZoom);
+        tilesetZoom = new SimpleIntegerProperty(Config.tilesetZoom);
+        tilesetBgColor = new SimpleObjectProperty <>(Config.tilesetBgColor);
+
+        displayedLayers = new SimpleIntegerProperty(Config.displayedLayers);
+        selectedLayer = new SimpleIntegerProperty(Config.selectedLayer);
+
+        drawMode = new SimpleObjectProperty <>(Config.drawMode);
+
+        showTileTypes = new SimpleBooleanProperty(false);
+        //viewSettings = new SimpleIntegerProperty(0);
+
         final Pane emptyPane = new Pane(); //null not accepted as scene roots, so this is used when tileset stage is not shown
 
         tilesetStage = new Stage();
@@ -264,7 +274,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
         selectedLayer.set(layer);
     }
 
-    public static void setDrawMode(final KeroEdit.DrawSettingsItem mode) {
+    public static void setDrawMode(final KeroEdit.DrawMode mode) {
         drawMode.set(mode);
     }
 
@@ -295,8 +305,9 @@ public final class MapEditTab extends FXUtil.FileEditTab {
             map.save();
 
             /*
-             * If an IOException is thrown in ScriptEditTab's save() method, it does not rethrow/escalate the exception.
-             * Instead it tells the user with a dialog, and does not call setChanged(false)
+             * If an IOException is thrown in ScriptEditTab's save() method,
+             * it does not rethrow/escalate the exception. Instead it tells
+             * the user with a dialog, and does not call setChanged(false)
              * (and thereby the '*' will remain on the tab's label).
              */
             scriptEditTab.save();
@@ -1038,14 +1049,14 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                     final String layerName;
                     switch (layer) {
                         case 0:
-                            layerName = Messages.getString("LayerNames.FOREGROUND");
+                            layerName = Messages.getString("PxPack.LayerNames.FOREGROUND");
                             break;
                         case 1:
-                            layerName = Messages.getString("LayerNames.MIDDLEGROUND");
+                            layerName = Messages.getString("PxPack.LayerNames.MIDDLEGROUND");
                             break;
                         case 2:
                         default:
-                            layerName = Messages.getString("LayerNames.BACKGROUND");
+                            layerName = Messages.getString("PxPack.LayerNames.BACKGROUND");
                     }
 
                     final String title = MessageFormat.format(Messages.getString("MapEditTab.TileEditTab.Resize.TITLE"),
@@ -1545,13 +1556,27 @@ public final class MapEditTab extends FXUtil.FileEditTab {
     }
 
     public enum LayerFlag {
-        FOREGROUND(0b1),
-        MIDDLEGROUND(0b10),
-        BACKGROUND(0b100);
+        FOREGROUND(0b0000_0001),
+        MIDDLEGROUND(0b0000_0010),
+        BACKGROUND(0b0000_0100);
 
         public final int flag;
 
         LayerFlag(final int flag) {
+            this.flag = flag;
+        }
+    }
+
+    public enum ViewFlag {
+        TILE_TYPES(0b0000_0001),
+        GRID(0b0000_0010),
+        ENTITY_BOXES(0b0000_0100),
+        ENTITY_SPRITES(0b0000_1000),
+        ENTITY_NAMES(0b0001_0000);
+
+        public final int flag;
+
+        ViewFlag(final int flag) {
             this.flag = flag;
         }
     }

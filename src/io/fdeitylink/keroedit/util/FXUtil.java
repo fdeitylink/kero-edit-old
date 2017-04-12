@@ -2,6 +2,7 @@ package io.fdeitylink.keroedit.util;
 
 import java.util.ArrayDeque;
 
+import io.fdeitylink.keroedit.Messages;
 import javafx.scene.layout.Region;
 import javafx.geometry.Insets;
 
@@ -219,7 +220,6 @@ public final class FXUtil {
      */
     public static Alert createTextboxAlert(final Alert.AlertType type, final String title, final String headerText,
                                            final String message, final String textAreaContent, final boolean editable) {
-
         final Alert alert = createAlert(type, title, headerText, message);
 
         final TextArea textArea = new TextArea(textAreaContent);
@@ -301,10 +301,10 @@ public final class FXUtil {
 
             setOnCloseRequest(event -> {
                 if (isChanged()) {
-                    final String str = getText();
+                    final String title = getText();
                     final Alert alert = createAlert(Alert.AlertType.NONE,
-                                                    str.substring(0, str.lastIndexOf('*')) + " - Unsaved changes", null,
-                                                    "This tab has unsaved changes. Save first?");
+                                                    title.substring(0, title.lastIndexOf('*')), null,
+                                                    Messages.getString("FXUtil.FileEditTab.UNSAVED_CHANGES"));
 
                     alert.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
 

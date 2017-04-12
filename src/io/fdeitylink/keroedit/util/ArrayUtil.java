@@ -9,15 +9,16 @@ public final class ArrayUtil {
         }
 
         final int srcDimensions = getNumDimensions(src);
-        if (getNumDimensions(dest) != srcDimensions) {
-            throw new IllegalArgumentException("Attempt to copy src into dest when they have unequal dimensions " +
-                                               "(src: " + srcDimensions + ", " + "dest: " + getNumDimensions(dest) + ")");
+        final int destDimensions = getNumDimensions(dest);
+        if (srcDimensions != destDimensions) {
+            throw new IllegalArgumentException("Attempt to copy src into dest when they have an unequal amount of dimensions " +
+                                               "(src: " + srcDimensions + ", " + "dest: " + destDimensions + ")");
         }
 
         final int srcLen = Array.getLength(src);
         final int destLen = Array.getLength(dest);
         if (srcLen != destLen) {
-            throw new IllegalArgumentException("Attempt to copy src into dest when they have unequal lengths " +
+            throw new IllegalArgumentException("Attempt to copy src into dest when at least one of their lengths are unequal " +
                                                "(src: " + srcLen + ", " + "dest: " + destLen + ")");
         }
 
