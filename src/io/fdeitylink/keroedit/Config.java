@@ -9,6 +9,8 @@ import io.fdeitylink.keroedit.util.Logger;
 
 import io.fdeitylink.keroedit.util.FXUtil;
 
+import io.fdeitylink.keroedit.mapedit.MapEditTab;
+
 /**
  * Stores configuration options
  */
@@ -27,7 +29,9 @@ public final class Config {
     public static int displayedLayers;
     public static int selectedLayer;
 
-    public static KeroEdit.DrawMode drawMode;
+    public static MapEditTab.DrawMode drawMode;
+
+    public static int viewSettings;
 
     private Config() {
 
@@ -42,12 +46,14 @@ public final class Config {
         tilesetZoom = prefs.getInt("TILESET_ZOOM", 2);
         tilesetBgColor = Color.web(prefs.get("TILESET_BG_COLOR", FXUtil.colorToString(Color.MAGENTA)));
 
-        //0b111 -> inits as all layers displayed
-        displayedLayers = prefs.getInt("DISPLAYED_LAYERS", 0b111);
+        //0b0000_0111 -> inits as all layers displayed
+        displayedLayers = prefs.getInt("DISPLAYED_LAYERS", 0b0000_0111);
         selectedLayer = prefs.getInt("SELECTED_LAYER", 0);
 
-        final int drawModeIndex = prefs.getInt("DRAW_MODE", 0);
-        drawMode = KeroEdit.DrawMode.values()[drawModeIndex];
+        drawMode = MapEditTab.DrawMode.values()[prefs.getInt("DRAW_MODE", 0)];
+
+        //0b0000_0000 -> inits as nothing on
+        viewSettings = prefs.getInt("VIEW_SETTINGS", 0b0000_0000);
     }
 
     static void savePrefs() {
@@ -63,8 +69,9 @@ public final class Config {
             prefs.putInt("DISPLAYED_LAYERS", displayedLayers);
             prefs.putInt("SELECTED_LAYER", selectedLayer);
 
-            final int drawModeIndex = KeroEdit.DrawMode.arrIndexEnumMap.get(drawMode);
-            prefs.putInt("DRAW_MODE", drawModeIndex);
+            prefs.putInt("DRAW_MODE", MapEditTab.DrawMode.arrIndexEnumMap.get(drawMode));
+
+            prefs.putInt("VIEW_SETTINGS", viewSettings);
 
             prefs.flush();
         }

@@ -16,6 +16,7 @@
  * Add @throws to JavaDoc comments for runtime exceptions
  * Unify capitalization on mapname, mapName, mapNames
  * Use the n-dimensional array copy method?
+ * Throw IllegalAccessExceptions in private constructors for classes not intended to be instantiated?
  */
 
 package io.fdeitylink.keroedit;
@@ -117,8 +118,6 @@ import io.fdeitylink.keroedit.util.FXUtil;
 
 import io.fdeitylink.keroedit.gamedata.GameData;
 
-import io.fdeitylink.keroedit.map.PxPack;
-
 import io.fdeitylink.keroedit.image.ImageManager;
 import io.fdeitylink.keroedit.image.PxAttrManager;
 
@@ -145,19 +144,19 @@ public final class KeroEdit extends Application {
     /**
      * Starts running the KeroEdit program and sets up its stage
      *
-     * @param stage The stage to run the KeroEdit program in
+     * @param primaryStage The {@code Stage} to run the KeroEdit program in
      */
     @Override
-    public void start(final Stage stage) {
+    public void start(final Stage primaryStage) {
         final Thread.UncaughtExceptionHandler fxDefExceptHandler = Thread.currentThread().getUncaughtExceptionHandler();
-        Thread.currentThread().setUncaughtExceptionHandler((t, e) -> {
-            fxDefExceptHandler.uncaughtException(t, e);
-            Logger.logThrowable(e);
+        Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
+            fxDefExceptHandler.uncaughtException(thread, throwable);
+            Logger.logThrowable(throwable);
         });
 
         Config.loadPrefs();
 
-        mainStage = stage;
+        mainStage = primaryStage;
         mainStage.setOnCloseRequest(event -> {
             //if user didn't cancel any attempted tab closes and definitely wants to close program
             if (!closeTabs(true)) {
@@ -173,8 +172,8 @@ public final class KeroEdit extends Application {
         enableOnLoadItems = new ArrayList <>();
 
         /*
-         * Note to self - keep these as BorderPanes - while a VBox may conceptually seem more fit for this
-         * it does not resize well and there's a whole load of sizing issues
+         * Note to self - keep these as BorderPanes - while a VBox may conceptually seem
+         * more fit for this it does not resize well and there's a whole load of sizing issues.
          */
         final BorderPane right = new BorderPane(mainTabPane = initTabPane());
         right.setTop(new SettingsPane());
@@ -196,7 +195,7 @@ public final class KeroEdit extends Application {
         showLicense();
     }
 
-    /**d
+    /**
      * Appends a given string to the base title of the program's {@code Stage}
      *
      * @param str The string to append to the title
@@ -368,13 +367,12 @@ public final class KeroEdit extends Application {
                     HackTab.init();
 
                     final File executableParent = executable.getParent().toAbsolutePath().toFile();
-
                     boolean hasRWXPermissions = executableParent.canRead() && executableParent.canWrite() &&
                                                 executableParent.canExecute();
                     if (!hasRWXPermissions) {
-                        hasRWXPermissions = executableParent.setReadable(true) && executableParent.setWritable(true) &&
-                                            executableParent.setExecutable(true);
-                        if (!hasRWXPermissions) {
+                        if (!(hasRWXPermissions = executableParent.setReadable(true) &&
+                                                  executableParent.setWritable(true) &&
+                                                  executableParent.setExecutable(true))) {
                             Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.INFORMATION,
                                                                        Messages.getString("KeroEdit.LoadMod.StrictPermissions.TITLE"),
                                                                        null,
@@ -383,10 +381,12 @@ public final class KeroEdit extends Application {
                         }
                     }
                     if (hasRWXPermissions) {
-                        //createAssistFolder();
+                        createAssistFolder();
                     }
 
                     Platform.runLater(() -> {
+                        setTitle(executable.getParent().toAbsolutePath().toString() + File.separatorChar);
+
                         openLast.setDisable(false);
                         mapList.setItems(FXCollections.observableArrayList(GameData.getMapList()));
                         mapList.requestFocus();
@@ -396,8 +396,6 @@ public final class KeroEdit extends Application {
                                 mItem.setDisable(false);
                             }
                         }
-
-                        setTitle(executable.getParent().toAbsolutePath().toString() + File.separatorChar);
                     });
                 }
                 catch (final IOException except) {
@@ -418,7 +416,14 @@ public final class KeroEdit extends Application {
         try {
             final Path modAssistPath = Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
                                                  File.separatorChar + "assist");
-            Files.createDirectory(modAssistPath);
+            if (!Files.exists(modAssistPath)) {
+                Files.createDirectory(modAssistPath);
+            }
+
+            final Path internalAssistPath = ResourceManager.getPath("assist");
+            if (null == internalAssistPath) {
+                throw new IOException(); //jumps to outer catch block with CopyFolderFail
+            }
 
             final String stringsFname;
             switch (GameData.getModType()) {
@@ -434,12 +439,6 @@ public final class KeroEdit extends Application {
                     break;
             }
 
-            final Path internalAssistPath = ResourceManager.getPath("assist");
-
-            if (null == internalAssistPath) {
-                throw new IOException(); //jumps to outer catch block with CopyFolderFail
-            }
-
             final DirectoryStream <Path> assistPaths = Files.newDirectoryStream(internalAssistPath);
             for (final Path p : assistPaths) {
                 //skip if wrong *_strings.json file
@@ -448,7 +447,10 @@ public final class KeroEdit extends Application {
                 }
 
                 try {
-                    Files.copy(p, Paths.get(modAssistPath.toString() + File.separatorChar + p.getFileName()));
+                    final Path modCopyPath = Paths.get(modAssistPath.toString() + File.separatorChar + p.getFileName());
+                    if (!Files.exists(modCopyPath)) {
+                        Files.copy(p, modCopyPath);
+                    }
                 }
                 catch (final IOException except) {
                     FXUtil.createAlert(Alert.AlertType.ERROR,
@@ -957,7 +959,8 @@ public final class KeroEdit extends Application {
     }
 
     /**
-     * Prompts the user, asking them if they agree to the license terms (Apache 2.0).
+     * If the user has not yet read the license, this shows a prompt with
+     * the license and asks if they agree to the license terms (Apache 2.0).
      * Also sets {@code Config.licenseRead}.
      */
     private void showLicense() {
@@ -1014,23 +1017,18 @@ public final class KeroEdit extends Application {
 
             final SimpleIntegerProperty displayedLayers = new SimpleIntegerProperty(Config.displayedLayers);
 
-            final CheckBox[] checkboxes = new CheckBox[PxPack.NUM_LAYERS];
+            final CheckBox[] cBoxes = {new CheckBox(Messages.getString("PxPack.LayerNames.FOREGROUND")),
+                                       new CheckBox(Messages.getString("PxPack.LayerNames.MIDDLEGROUND")),
+                                       new CheckBox(Messages.getString("PxPack.LayerNames.BACKGROUND"))};
 
-            final String[] layerNames = {Messages.getString("PxPack.LayerNames.FOREGROUND"),
-                                         Messages.getString("PxPack.LayerNames.MIDDLEGROUND"),
-                                         Messages.getString("PxPack.LayerNames.BACKGROUND")};
-
-            for (int i = 0; i < checkboxes.length; ++i) {
-                checkboxes[i] = new CheckBox(layerNames[i]);
-
-                checkboxes[i].setAllowIndeterminate(false);
-
+            for (int i = 0; i < cBoxes.length; ++i) {
+                cBoxes[i].setAllowIndeterminate(false);
                 //selected if the flag is set
-                checkboxes[i].setSelected(MapEditTab.LayerFlag.values()[i].flag ==
-                                          (Config.displayedLayers & MapEditTab.LayerFlag.values()[i].flag));
+                cBoxes[i].setSelected(MapEditTab.LayerFlag.values()[i].flag ==
+                                      (Config.displayedLayers & MapEditTab.LayerFlag.values()[i].flag));
 
                 final int layer = i;
-                checkboxes[i].selectedProperty().addListener(((observable, oldValue, newValue) -> {
+                cBoxes[i].selectedProperty().addListener((observable, oldValue, newValue) -> {
                     int newDispLayersFlag = displayedLayers.get();
                     if (newValue) {
                         //enable flag
@@ -1043,9 +1041,9 @@ public final class KeroEdit extends Application {
 
                     displayedLayers.set(newDispLayersFlag);
                     Config.displayedLayers = newDispLayersFlag;
-                }));
+                });
 
-                add(checkboxes[i], x, y++);
+                add(cBoxes[i], x, y++);
             }
 
             MapEditTab.bindDisplayedLayers(displayedLayers);
@@ -1084,14 +1082,18 @@ public final class KeroEdit extends Application {
             add(label, x, y++);
 
             final ToggleGroup toggleGroup = new ToggleGroup();
-            final RadioButton[] radioButtons = {new RadioButton(Messages.getString("KeroEdit.SettingsPane.DRAW"))};
+            final RadioButton[] radioButtons = {new RadioButton(Messages.getString("KeroEdit.SettingsPane.DRAW"))/*,
+                                                new RadioButton(Messages.getString("KeroEdit.SettingsPane.RECT")),
+                                                new RadioButton(Messages.getString("KeroEdit.SettingsPane.COPY")),
+                                                new RadioButton(Messages.getString("KeroEdit.SettingsPane.FILL")),
+                                                new RadioButton(Messages.getString("KeroEdit.SettingsPane.REPLACE"))*/};
 
-            radioButtons[DrawMode.arrIndexEnumMap.get(Config.drawMode)].setSelected(true);
+            radioButtons[MapEditTab.DrawMode.arrIndexEnumMap.get(Config.drawMode)].setSelected(true);
 
             for (int i = 0; i < radioButtons.length; ++i) {
                 final int modeIndex = i;
                 radioButtons[i].setOnAction(event -> {
-                    final DrawMode mode = DrawMode.values()[modeIndex];
+                    final MapEditTab.DrawMode mode = MapEditTab.DrawMode.values()[modeIndex];
                     MapEditTab.setDrawMode(mode);
                     Config.drawMode = mode;
                 });
@@ -1105,15 +1107,40 @@ public final class KeroEdit extends Application {
             label.setFont(Font.font(null, FontWeight.BOLD, 15));
             add(label, x, y++);
 
-            final CheckBox[] cBoxes = {new CheckBox(Messages.getString("KeroEdit.SettingsPane.TILE_TYPES"))};
+            final SimpleIntegerProperty viewSettings = new SimpleIntegerProperty(Config.viewSettings);
 
-            cBoxes[ViewSettingsItem.arrIndexEnumMap.get(ViewSettingsItem.TILE_TYPES)].setSelected(false);
-            MapEditTab.bindShowTileTypes(cBoxes[ViewSettingsItem.arrIndexEnumMap.get(ViewSettingsItem.TILE_TYPES)]
-                                                 .selectedProperty());
+            final CheckBox[] cBoxes = {new CheckBox(Messages.getString("KeroEdit.SettingsPane.TILE_TYPES"))/*,
+                                       new CheckBox(Messages.getString("KeroEdit.SettingsPane.GRID")),
+                                       new CheckBox(Messages.getString("KeroEdit.SettingsPane.ENTITY_BOXES")),
+                                       new CheckBox(Messages.getString("KeroEdit.SettingsPane.ENTITY_SPRITES")),
+                                       new CheckBox(Messages.getString("KeroEdit.SettingsPane.ENTITY_NAMES"))*/};
 
-            for (final CheckBox cBox : cBoxes) {
-                add(cBox, x, y++);
+            for (int i = 0; i < cBoxes.length; ++i) {
+                cBoxes[i].setAllowIndeterminate(false);
+
+                cBoxes[i].setSelected(MapEditTab.ViewFlag.values()[i].flag ==
+                                      (Config.viewSettings & MapEditTab.ViewFlag.values()[i].flag));
+
+                final int index = i;
+                cBoxes[i].selectedProperty().addListener((observable, oldValue, newValue) -> {
+                    int newViewSettingsFlag = viewSettings.get();
+                    if (newValue) {
+                        //enable flag
+                        newViewSettingsFlag |= MapEditTab.ViewFlag.values()[index].flag;
+                    }
+                    else {
+                        //disable flag
+                        newViewSettingsFlag &= MapEditTab.ViewFlag.values()[index].flag ^ 0b1111_1111;
+                    }
+
+                    viewSettings.set(newViewSettingsFlag);
+                    Config.viewSettings = newViewSettingsFlag;
+                });
+
+                add(cBoxes[i], x, y++);
             }
+
+            MapEditTab.bindViewSettings(viewSettings);
         }
     }
 
@@ -1128,16 +1155,6 @@ public final class KeroEdit extends Application {
 
             setContent(notepad = new TextArea(Config.notepadText));
         }
-    }
-
-    public enum DrawMode implements ArrayIndexEnum <DrawMode> {
-        DRAW,
-        RECT,
-        COPY,
-        FILL,
-        REPLACE;
-
-        public static final EnumMap <DrawMode, Integer> arrIndexEnumMap = DRAW.enumMap(DrawMode.class);
     }
 
     private enum FileMenuItem implements ArrayIndexEnum <FileMenuItem> {
@@ -1190,11 +1207,5 @@ public final class KeroEdit extends Application {
         RENAME; //TODO: remove this?
 
         static final EnumMap <MapListMenuItem, Integer> arrIndexEnumMap = OPEN.enumMap(MapListMenuItem.class);
-    }
-
-    private enum ViewSettingsItem implements ArrayIndexEnum <ViewSettingsItem> {
-        TILE_TYPES;
-
-        static final EnumMap <ViewSettingsItem, Integer> arrIndexEnumMap = TILE_TYPES.enumMap(ViewSettingsItem.class);
     }
 }

@@ -6,225 +6,340 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e217904-e010-4fe6-a354-8fe1baa2af52" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/KeroEdit_jar/KeroEdit.jar" afterPath="$PROJECT_DIR$/out/artifacts/KeroEdit_jar/KeroEdit.jar" />
+    <list default="true" id="7e217904-e010-4fe6-a354-8fe1baa2af52" name="Default" comment="Full use of viewSettings bitflags (akin to displayedLayers) that will function for tile types, grid, and entity boxes, sprites, and names&#10;Config saves view settings&#10;Removed KeroEdit.ViewSettingsItem enum as it was not being used&#10;Cleanup">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/allclasses-frame.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/allclasses-noframe.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/Json.DefaultHandler.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/Json.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonArray.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonHandler.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonLiteral.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonNumber.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonObject.HashIndexTable.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonObject.Member.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonObject.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonParser.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonString.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonValue.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonWriter.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/Location.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/ParseException.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/PrettyPrint.PrettyPrintWriter.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/PrettyPrint.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/WriterConfig.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/WritingBuffer.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/Json.DefaultHandler.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/Json.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonArray.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonHandler.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonLiteral.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonNumber.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonObject.HashIndexTable.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonObject.Member.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonObject.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonParser.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonString.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonValue.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonWriter.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/Location.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/ParseException.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/PrettyPrint.PrettyPrintWriter.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/PrettyPrint.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/WriterConfig.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/WritingBuffer.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/package-frame.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/package-summary.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/package-tree.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/package-use.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/constant-values.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/deprecated-list.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/help-doc.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-1.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-10.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-11.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-12.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-13.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-14.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-15.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-16.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-17.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-18.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-19.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-2.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-20.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-21.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-22.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-23.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-24.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-25.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-3.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-4.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-5.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-6.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-7.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-8.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index-files/index-9.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/Config.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.ActionsMenuItem.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.ActionsMenuItems.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.DrawSettingsItem.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.DrawSettingsItems.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.EditMenuItem.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.EditMenuItems.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.FileMenuItem.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.FileMenuItems.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.HelpMenuItem.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.HelpMenuItems.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.MapListMenuItem.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.MapListMenuItems.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.NotepadTab.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.SettingsPane.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.ViewMenuItem.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.ViewMenuItems.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.ViewSettingsItem.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.ViewSettingsItems.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/Messages.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/Config.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.ActionsMenuItem.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.ActionsMenuItems.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.DrawSettingsItem.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.DrawSettingsItems.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.EditMenuItem.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.EditMenuItems.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.FileMenuItem.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.FileMenuItems.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.HelpMenuItem.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.HelpMenuItems.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.MapListMenuItem.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.MapListMenuItems.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.NotepadTab.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.SettingsPane.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.ViewMenuItem.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.ViewMenuItems.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.ViewSettingsItem.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.ViewSettingsItems.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/Messages.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/GameData.MOD_TYPE.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/GameData.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/class-use/GameData.MOD_TYPE.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/class-use/GameData.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/package-frame.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/package-summary.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/package-tree.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/package-use.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/HackTab.HackField.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/HackTab.HackTreeItem.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/HackTab.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/class-use/HackTab.HackField.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/class-use/HackTab.HackTreeItem.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/class-use/HackTab.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/package-frame.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/package-summary.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/package-tree.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/package-use.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/ImageDimension.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/ImageDimensions.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/ImageManager.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/PxAttrManager.PxAttr.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/PxAttrManager.ReadOnlyPxAttrWrapper.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/PxAttrManager.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/class-use/ImageDimension.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/class-use/ImageDimensions.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/class-use/ImageManager.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/class-use/PxAttrManager.PxAttr.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/class-use/PxAttrManager.ReadOnlyPxAttrWrapper.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/class-use/PxAttrManager.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/package-frame.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/package-summary.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/package-tree.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/package-use.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/PxPack.Entity.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/PxPack.Head.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/PxPack.TileLayer.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/PxPack.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/class-use/PxPack.Entity.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/class-use/PxPack.Head.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/class-use/PxPack.TileLayer.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/class-use/PxPack.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/package-frame.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/package-summary.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/package-tree.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/package-use.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.LayerFlag.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.LayerFlags.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.MapPaneMenuItem.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.MapPaneMenuItems.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.PropertyEditTab.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.TileEditTab.MapPane.UndoableMapDrawEdit.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.TileEditTab.MapPane.UndoableMapResizeEdit.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.TileEditTab.MapPane.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.TileEditTab.TilesetPane.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.TileEditTab.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.LayerFlag.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.LayerFlags.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.MapPaneMenuItem.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.MapPaneMenuItems.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.PropertyEditTab.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.TileEditTab.MapPane.UndoableMapDrawEdit.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.TileEditTab.MapPane.UndoableMapResizeEdit.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.TileEditTab.MapPane.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.TileEditTab.TilesetPane.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.TileEditTab.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/package-frame.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/package-summary.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/package-tree.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/package-use.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/package-frame.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/package-summary.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/package-tree.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/package-use.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/resource/ResourceManager.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/resource/class-use/ResourceManager.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/resource/package-frame.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/resource/package-summary.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/resource/package-tree.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/resource/package-use.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/script/ScriptEditTab.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/script/class-use/ScriptEditTab.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/script/package-frame.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/script/package-summary.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/script/package-tree.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/script/package-use.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/ArrayIndexEnum.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/ArrayUtil.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/FXUtil.FileEditTab.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/FXUtil.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/Logger.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/MathUtil.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/NullArgumentException.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/Tuple.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/UndoableEdit.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/ArrayIndexEnum.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/ArrayUtil.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/FXUtil.FileEditTab.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/FXUtil.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/Logger.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/MathUtil.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/NullArgumentException.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/Tuple.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/UndoableEdit.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/package-frame.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/package-summary.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/package-tree.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/package-use.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/overview-frame.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/overview-summary.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/overview-tree.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/package-list" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/script.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/serialized-form.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/stylesheet.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/artifacts/KeroEdit_jar/KeroEdit.jar" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/META-INF/MANIFEST.MF" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/Json$DefaultHandler.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/Json.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/JsonArray$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/JsonArray.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/JsonHandler.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/JsonLiteral.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/JsonNumber.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/JsonObject$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/JsonObject$HashIndexTable.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/JsonObject$Member.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/JsonObject.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/JsonParser.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/JsonString.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/JsonValue.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/JsonWriter.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/LICENSE" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/Location.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/ParseException.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/PrettyPrint$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/PrettyPrint$PrettyPrintWriter.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/PrettyPrint.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/WriterConfig$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/WriterConfig.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/WritingBuffer.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/Config.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/KeroEdit$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/KeroEdit$NotepadTab.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/KeroEdit$SettingsPane.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/KeroEdit.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/Messages.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/gamedata/GameData$MOD_TYPE.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/gamedata/GameData.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/hack/HackTab$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/hack/HackTab$HackField.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/hack/HackTab$HackTreeItem.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/hack/HackTab.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/image/ImageDimension.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/image/ImageManager.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/image/PxAttrManager$PxAttr.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/image/PxAttrManager$ReadOnlyPxAttrWrapper.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/image/PxAttrManager.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/map/PxPack$Entity.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/map/PxPack$Head.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/map/PxPack$TileLayer.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/map/PxPack.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/MapEditTab$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/MapEditTab$PropertyEditTab.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/MapEditTab$TileEditTab$MapPane$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/MapEditTab$TileEditTab$MapPane$2.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/MapEditTab$TileEditTab$MapPane$3.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/MapEditTab$TileEditTab$MapPane$4.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/MapEditTab$TileEditTab$MapPane$5.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/MapEditTab$TileEditTab$MapPane$UndoableMapDrawEdit.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/MapEditTab$TileEditTab$MapPane.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/MapEditTab$TileEditTab$TilesetPane$1$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/MapEditTab$TileEditTab$TilesetPane$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/MapEditTab$TileEditTab$TilesetPane$2$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/MapEditTab$TileEditTab$TilesetPane$2.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/MapEditTab$TileEditTab$TilesetPane$3$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/MapEditTab$TileEditTab$TilesetPane$3.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/MapEditTab$TileEditTab$TilesetPane$4$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/MapEditTab$TileEditTab$TilesetPane$4.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/MapEditTab$TileEditTab$TilesetPane$5.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/MapEditTab$TileEditTab$TilesetPane.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/MapEditTab$TileEditTab.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/mapedit/MapEditTab.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/messages.properties" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/resource/LICENSE" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/resource/ResourceManager.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/resource/assist/attribute.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/resource/assist/attribute.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/resource/assist/flags.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/resource/assist/heaven_strings.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/resource/assist/hour_strings.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/resource/assist/kero_strings.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/resource/assist/pxeve.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/resource/assist/pxeve_args.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/resource/assist/scroll.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/resource/assist/unittype.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/resource/assist/unittype.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/resource/fdl_logo.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/resource/purple_checkerboard.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/resource/waffle.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/script/ScriptEditTab.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/util/ArrayIndexEnum.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/util/FXUtil$FileEditTab.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/util/FXUtil.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/util/Logger.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/util/MathUtil.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/util/NullArgumentException.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/util/Tuple.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/keroedit/util/UndoableEdit.class" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/allclasses-frame.html" afterPath="$PROJECT_DIR$/doc/allclasses-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/allclasses-noframe.html" afterPath="$PROJECT_DIR$/doc/allclasses-noframe.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/Json.DefaultHandler.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/Json.DefaultHandler.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/Json.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/Json.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonArray.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonArray.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonHandler.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonHandler.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonLiteral.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonLiteral.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonNumber.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonNumber.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonObject.HashIndexTable.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonObject.HashIndexTable.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonObject.Member.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonObject.Member.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonObject.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonObject.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonParser.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonParser.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonString.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonString.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonValue.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonValue.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonWriter.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/JsonWriter.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/Location.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/Location.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/ParseException.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/ParseException.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/PrettyPrint.PrettyPrintWriter.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/PrettyPrint.PrettyPrintWriter.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/PrettyPrint.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/PrettyPrint.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/WriterConfig.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/WriterConfig.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/WritingBuffer.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/WritingBuffer.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/Json.DefaultHandler.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/Json.DefaultHandler.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/Json.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/Json.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonArray.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonArray.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonHandler.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonHandler.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonLiteral.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonLiteral.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonNumber.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonNumber.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonObject.HashIndexTable.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonObject.HashIndexTable.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonObject.Member.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonObject.Member.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonObject.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonObject.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonParser.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonParser.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonString.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonString.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonValue.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonValue.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonWriter.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/JsonWriter.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/Location.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/Location.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/ParseException.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/ParseException.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/PrettyPrint.PrettyPrintWriter.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/PrettyPrint.PrettyPrintWriter.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/PrettyPrint.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/PrettyPrint.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/WriterConfig.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/WriterConfig.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/WritingBuffer.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/class-use/WritingBuffer.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/package-frame.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/package-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/package-summary.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/package-summary.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/package-tree.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/package-tree.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/com/eclipsesource/json/package-use.html" afterPath="$PROJECT_DIR$/doc/com/eclipsesource/json/package-use.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/constant-values.html" afterPath="$PROJECT_DIR$/doc/constant-values.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/deprecated-list.html" afterPath="$PROJECT_DIR$/doc/deprecated-list.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/help-doc.html" afterPath="$PROJECT_DIR$/doc/help-doc.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-1.html" afterPath="$PROJECT_DIR$/doc/index-files/index-1.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-10.html" afterPath="$PROJECT_DIR$/doc/index-files/index-10.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-11.html" afterPath="$PROJECT_DIR$/doc/index-files/index-11.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-12.html" afterPath="$PROJECT_DIR$/doc/index-files/index-12.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-13.html" afterPath="$PROJECT_DIR$/doc/index-files/index-13.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-14.html" afterPath="$PROJECT_DIR$/doc/index-files/index-14.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-15.html" afterPath="$PROJECT_DIR$/doc/index-files/index-15.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-16.html" afterPath="$PROJECT_DIR$/doc/index-files/index-16.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-17.html" afterPath="$PROJECT_DIR$/doc/index-files/index-17.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-18.html" afterPath="$PROJECT_DIR$/doc/index-files/index-18.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-19.html" afterPath="$PROJECT_DIR$/doc/index-files/index-19.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-2.html" afterPath="$PROJECT_DIR$/doc/index-files/index-2.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-20.html" afterPath="$PROJECT_DIR$/doc/index-files/index-20.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-21.html" afterPath="$PROJECT_DIR$/doc/index-files/index-21.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-22.html" afterPath="$PROJECT_DIR$/doc/index-files/index-22.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-23.html" afterPath="$PROJECT_DIR$/doc/index-files/index-23.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-24.html" afterPath="$PROJECT_DIR$/doc/index-files/index-24.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-25.html" afterPath="$PROJECT_DIR$/doc/index-files/index-25.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-3.html" afterPath="$PROJECT_DIR$/doc/index-files/index-3.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-4.html" afterPath="$PROJECT_DIR$/doc/index-files/index-4.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-5.html" afterPath="$PROJECT_DIR$/doc/index-files/index-5.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-6.html" afterPath="$PROJECT_DIR$/doc/index-files/index-6.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-7.html" afterPath="$PROJECT_DIR$/doc/index-files/index-7.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-8.html" afterPath="$PROJECT_DIR$/doc/index-files/index-8.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-9.html" afterPath="$PROJECT_DIR$/doc/index-files/index-9.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index.html" afterPath="$PROJECT_DIR$/doc/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/Config.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/Config.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.ActionsMenuItem.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.ActionsMenuItem.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.EditMenuItem.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.EditMenuItem.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.FileMenuItem.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.FileMenuItem.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.HelpMenuItem.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.HelpMenuItem.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.MapListMenuItem.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.MapListMenuItem.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.NotepadTab.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.NotepadTab.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.SettingsPane.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.SettingsPane.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.ViewMenuItem.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.ViewMenuItem.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.ViewSettingsItem.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.ViewSettingsItem.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/KeroEdit.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/Messages.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/Messages.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/Config.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/Config.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.ActionsMenuItem.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.ActionsMenuItem.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.DrawSettingsItem.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.DrawSettingsItem.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.DrawSettingsItems.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.DrawSettingsItems.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.EditMenuItem.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.EditMenuItem.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.FileMenuItem.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.FileMenuItem.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.HelpMenuItem.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.HelpMenuItem.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.MapListMenuItem.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.MapListMenuItem.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.NotepadTab.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.NotepadTab.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.SettingsPane.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.SettingsPane.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.ViewMenuItem.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.ViewMenuItem.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.ViewSettingsItem.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.ViewSettingsItem.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/KeroEdit.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/Messages.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/class-use/Messages.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/GameData.MOD_TYPE.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/GameData.MOD_TYPE.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/GameData.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/GameData.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/class-use/GameData.MOD_TYPE.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/class-use/GameData.MOD_TYPE.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/class-use/GameData.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/class-use/GameData.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/package-frame.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/package-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/package-summary.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/package-summary.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/package-tree.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/package-tree.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/package-use.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/gamedata/package-use.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/HackTab.HackField.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/HackTab.HackField.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/HackTab.HackTreeItem.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/HackTab.HackTreeItem.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/HackTab.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/HackTab.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/class-use/HackTab.HackField.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/class-use/HackTab.HackField.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/class-use/HackTab.HackTreeItem.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/class-use/HackTab.HackTreeItem.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/class-use/HackTab.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/class-use/HackTab.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/package-frame.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/package-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/package-summary.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/package-summary.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/package-tree.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/package-tree.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/package-use.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/hack/package-use.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/ImageDimension.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/ImageDimension.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/ImageManager.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/ImageManager.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/PxAttrManager.PxAttr.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/PxAttrManager.PxAttr.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/PxAttrManager.ReadOnlyPxAttrWrapper.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/PxAttrManager.ReadOnlyPxAttrWrapper.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/PxAttrManager.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/PxAttrManager.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/class-use/ImageDimension.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/class-use/ImageDimension.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/class-use/ImageManager.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/class-use/ImageManager.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/class-use/PxAttrManager.PxAttr.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/class-use/PxAttrManager.PxAttr.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/class-use/PxAttrManager.ReadOnlyPxAttrWrapper.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/class-use/PxAttrManager.ReadOnlyPxAttrWrapper.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/class-use/PxAttrManager.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/class-use/PxAttrManager.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/package-frame.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/package-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/package-summary.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/package-summary.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/package-tree.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/package-tree.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/package-use.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/image/package-use.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/PxPack.Entity.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/PxPack.Entity.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/PxPack.Head.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/PxPack.Head.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/PxPack.TileLayer.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/PxPack.TileLayer.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/PxPack.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/PxPack.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/class-use/PxPack.Entity.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/class-use/PxPack.Entity.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/class-use/PxPack.Head.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/class-use/PxPack.Head.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/class-use/PxPack.TileLayer.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/class-use/PxPack.TileLayer.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/class-use/PxPack.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/class-use/PxPack.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/package-frame.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/package-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/package-summary.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/package-summary.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/package-tree.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/package-tree.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/package-use.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/map/package-use.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.LayerFlag.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.LayerFlag.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.MapPaneMenuItem.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.MapPaneMenuItem.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.PropertyEditTab.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.PropertyEditTab.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.TileEditTab.MapPane.UndoableMapDrawEdit.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.TileEditTab.MapPane.UndoableMapDrawEdit.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.TileEditTab.MapPane.UndoableMapResizeEdit.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.TileEditTab.MapPane.UndoableMapResizeEdit.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.TileEditTab.MapPane.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.TileEditTab.MapPane.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.TileEditTab.TilesetPane.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.TileEditTab.TilesetPane.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.TileEditTab.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.TileEditTab.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/MapEditTab.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.LayerFlag.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.LayerFlag.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.MapPaneMenuItem.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.MapPaneMenuItem.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.PropertyEditTab.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.PropertyEditTab.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.TileEditTab.MapPane.UndoableMapDrawEdit.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.TileEditTab.MapPane.UndoableMapDrawEdit.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.TileEditTab.MapPane.UndoableMapResizeEdit.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.TileEditTab.MapPane.UndoableMapResizeEdit.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.TileEditTab.MapPane.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.TileEditTab.MapPane.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.TileEditTab.TilesetPane.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.TileEditTab.TilesetPane.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.TileEditTab.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.TileEditTab.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/class-use/MapEditTab.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/package-frame.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/package-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/package-summary.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/package-summary.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/package-tree.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/package-tree.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/package-use.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/mapedit/package-use.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/package-frame.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/package-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/package-summary.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/package-summary.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/package-tree.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/package-tree.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/package-use.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/package-use.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/resource/ResourceManager.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/resource/ResourceManager.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/resource/class-use/ResourceManager.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/resource/class-use/ResourceManager.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/resource/package-frame.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/resource/package-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/resource/package-summary.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/resource/package-summary.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/resource/package-tree.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/resource/package-tree.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/resource/package-use.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/resource/package-use.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/script/ScriptEditTab.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/script/ScriptEditTab.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/script/class-use/ScriptEditTab.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/script/class-use/ScriptEditTab.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/script/package-frame.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/script/package-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/script/package-summary.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/script/package-summary.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/script/package-tree.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/script/package-tree.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/script/package-use.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/script/package-use.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/ArrayIndexEnum.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/ArrayIndexEnum.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/ArrayUtil.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/ArrayUtil.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/FXUtil.FileEditTab.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/FXUtil.FileEditTab.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/FXUtil.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/FXUtil.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/Logger.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/Logger.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/MathUtil.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/MathUtil.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/NullArgumentException.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/NullArgumentException.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/Tuple.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/Tuple.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/UndoableEdit.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/UndoableEdit.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/ArrayIndexEnum.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/ArrayIndexEnum.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/ArrayUtil.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/ArrayUtil.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/FXUtil.FileEditTab.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/FXUtil.FileEditTab.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/FXUtil.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/FXUtil.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/Logger.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/Logger.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/MathUtil.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/MathUtil.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/NullArgumentException.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/NullArgumentException.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/Tuple.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/Tuple.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/UndoableEdit.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/class-use/UndoableEdit.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/package-frame.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/package-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/package-summary.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/package-summary.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/package-tree.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/package-tree.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/package-use.html" afterPath="$PROJECT_DIR$/doc/io/fdeitylink/keroedit/util/package-use.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/overview-frame.html" afterPath="$PROJECT_DIR$/doc/overview-frame.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/overview-summary.html" afterPath="$PROJECT_DIR$/doc/overview-summary.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/overview-tree.html" afterPath="$PROJECT_DIR$/doc/overview-tree.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/serialized-form.html" afterPath="$PROJECT_DIR$/doc/serialized-form.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/readme.txt" afterPath="$PROJECT_DIR$/readme.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/Config.java" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/Config.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.java" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/image/ImageDimension.java" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/image/ImageDimension.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/image/ImageManager.java" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/image/ImageManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxPack.java" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxPack.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/util/ArrayUtil.java" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/util/ArrayUtil.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/util/FXUtil.java" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/util/FXUtil.java" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -245,8 +360,8 @@
       <file leaf-file-name="KeroEdit.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="351">
-              <caret line="207" column="0" lean-forward="true" selection-start-line="207" selection-start-column="0" selection-end-line="207" selection-end-column="0" />
+            <state relative-caret-position="235">
+              <caret line="473" column="39" lean-forward="true" selection-start-line="473" selection-start-column="39" selection-end-line="473" selection-end-column="39" />
               <folding>
                 <element signature="method#start#0;class#KeroEdit#0" expanded="false" />
                 <element signature="method#setTitle#0;class#KeroEdit#0" expanded="false" />
@@ -254,6 +369,7 @@
                 <element signature="method#initFileMenu#0;class#KeroEdit#0" expanded="false" />
                 <element signature="method#wipeLoaded#0;class#KeroEdit#0" expanded="false" />
                 <element signature="method#loadMod#0;class#KeroEdit#0" expanded="false" />
+                <element signature="class#13176:16522" expanded="true" />
                 <element signature="method#createAssistFolder#0;class#KeroEdit#0" expanded="false" />
                 <element signature="method#initEditMenu#0;class#KeroEdit#0" expanded="false" />
                 <element signature="method#initViewMenu#0;class#KeroEdit#0" expanded="false" />
@@ -272,83 +388,12 @@
                 <element signature="method#initViewSettings#0;class#SettingsPane#0;class#KeroEdit#0" expanded="false" />
                 <element signature="class#NotepadTab#0;class#KeroEdit#0" expanded="false" />
                 <element signature="method#NotepadTab#0;class#NotepadTab#0;class#KeroEdit#0" expanded="false" />
-                <element signature="class#DrawMode#0;class#KeroEdit#0" expanded="false" />
                 <element signature="class#FileMenuItem#0;class#KeroEdit#0" expanded="false" />
                 <element signature="class#EditMenuItem#0;class#KeroEdit#0" expanded="false" />
                 <element signature="class#ViewMenuItem#0;class#KeroEdit#0" expanded="false" />
                 <element signature="class#ActionsMenuItem#0;class#KeroEdit#0" expanded="false" />
                 <element signature="class#HelpMenuItem#0;class#KeroEdit#0" expanded="false" />
                 <element signature="class#MapListMenuItem#0;class#KeroEdit#0" expanded="false" />
-                <element signature="class#ViewSettingsItem#0;class#KeroEdit#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MapEditTab.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="351">
-              <caret line="376" column="63" lean-forward="false" selection-start-line="376" selection-start-column="63" selection-end-line="376" selection-end-column="63" />
-              <folding>
-                <element signature="e#0#76183#0" expanded="true" />
-                <element signature="initializer##0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#MapEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#setMapZoom#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#setTilesetZoom#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#setSelectedLayer#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#undo#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#redo#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#save#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#setChanged#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#wipeImages#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#initImages#0;class#MapEditTab#0" expanded="false" />
-                <element signature="class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#TileEditTab#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#save#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#initTilesetStage#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#TilesetPane#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#initServices#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#initEventHandlers#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#handle#0;class#33302:36963" expanded="false" />
-                <element signature="method#redrawTileset#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#fixSize#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#redrawSelectedRect#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#MapPane#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#initEventHandlers#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#initContextMenu#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#redrawTile#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#redrawLayer#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#redrawEntities#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#call#0;class#65854:66281" expanded="false" />
-                <element signature="method#fixCanvasSizes#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="class#UndoableMapDrawEdit#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#UndoableMapDrawEdit#0;class#UndoableMapDrawEdit#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#undo#0;class#UndoableMapDrawEdit#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#redo#0;class#UndoableMapDrawEdit#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="class#UndoableMapResizeEdit#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#UndoableMapResizeEdit#0;class#UndoableMapResizeEdit#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#undo#0;class#UndoableMapResizeEdit#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#redo#0;class#UndoableMapResizeEdit#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="class#PropertyEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="method#PropertyEditTab#0;class#PropertyEditTab#0;class#MapEditTab#0" expanded="false" />
-                <element signature="class#LayerFlag#0;class#MapEditTab#0" expanded="false" />
-                <element signature="class#ViewFlag#0;class#MapEditTab#0" expanded="false" />
-                <element signature="class#MapPaneMenuItem#0;class#MapEditTab#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ImageManager.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/image/ImageManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding>
-                <element signature="method#ImageManager#0;class#ImageManager#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -367,9 +412,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>Fname</find>
-      <find>boundInt</find>
-      <find>remove(</find>
       <find>onClosedProperty</find>
       <find>closedproperty</find>
       <find>!close</find>
@@ -397,6 +439,9 @@
       <find>ArrayIndexOutOf</find>
       <find>UndoableMapResizeEdit</find>
       <find>pixelformat</find>
+      <find>0b</find>
+      <find>VIEW_SETTINGS</find>
+      <find>Config.</find>
     </findStrings>
     <replaceStrings>
       <replace>phaser</replace>
@@ -483,7 +528,6 @@
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/util/UndoableEdit.java" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/script/ScriptEditTab.java" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/resource/ResourceManager.java" />
-        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxPack.java" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/Messages.java" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/hack/HackTab.java" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/gamedata/GameData.java" />
@@ -491,13 +535,14 @@
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/util/ArrayIndexEnum.java" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/util/MathUtil.java" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/util/ArrayUtil.java" />
-        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/Config.java" />
-        <option value="$PROJECT_DIR$/readme.txt" />
-        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/util/FXUtil.java" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/image/ImageDimension.java" />
-        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/image/ImageManager.java" />
+        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxPack.java" />
+        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/Config.java" />
+        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java" />
+        <option value="$PROJECT_DIR$/readme.txt" />
+        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.java" />
       </list>
     </option>
@@ -551,7 +596,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
+      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -598,8 +644,7 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
-      <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -618,16 +663,19 @@
     <property name="GenerateAntBuildDialog.outputFileNameProperty" value="keroedit" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
-      <recent name="io" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\brian\Documents\Programming\IdeaProjects\KeroEdit\src\com\fdl\keroedit\resource" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\brian\Documents\Programming\IdeaProjects\KeroEdit\src\com\eclipsesource\json" />
       <recent name="C:\Users\brian\Documents\Programming\IdeaProjects\KeroEdit\src\com\fdl\keroedit" />
       <recent name="C:\Users\brian\Documents\Programming\IdeaProjects\KeroEdit\src\com\fdl\keroedit\util" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="io" />
+    </key>
+    <key name="MoveMembersDialog.RECENTS_KEY">
+      <recent name="io.fdeitylink.keroedit.mapedit.MapEditTab" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\brian\Documents\Programming\IdeaProjects\KeroEdit\src\com\fdl\keroedit\resource" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -1119,7 +1167,14 @@
       <option name="project" value="LOCAL" />
       <updated>1491881647524</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="Added selected layer, draw mode to Config&#10;Cleanup&#10;Started work on integer flag for view settings (akin to displayed layers)&#10;Added emptyImage field to ImageManager class for when a loaded image is empty">
+      <created>1492041156291</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1492041156291</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1141,12 +1196,11 @@
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31490016" sideWeight="0.53806734" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329429" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32344213" sideWeight="0.46193266" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32344213" sideWeight="0.46193266" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31305638" sideWeight="0.49707174" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2137628" sideWeight="0.48813057" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24963397" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.38130563" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1161,6 +1215,7 @@
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" x="92" y="92" width="1182" height="584" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1234,7 +1289,7 @@
           <option name="timeStamp" value="178" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="250" />
+      <option name="time" value="253" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1244,55 +1299,6 @@
     <module2generated>rO0ABXNyABFqYXZhLnV0aWwuSGFzaE1hcAUH2sHDFmDRAwACRgAKbG9hZEZhY3RvckkACXRocmVzaG9sZHhwP0AAAAAAAAF3CAAAAAIAAAABdAAIS2Vyb0VkaXRzcgAvb3JnLmVjbGlwc2UueHRleHQuYnVpbGQuU291cmNlMkdlbmVyYXRlZE1hcHBpbmdgwc1G7ZGGygwAAHhwdwQAAAAAeHg=</module2generated>
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/scene/control/SingleSelectionModel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="403">
-          <caret line="122" column="30" lean-forward="false" selection-start-line="122" selection-start-column="30" selection-end-line="122" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/stage/FileChooser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="284">
-          <caret line="351" column="63" lean-forward="false" selection-start-line="351" selection-start-column="63" selection-end-line="351" selection-end-column="63" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/scene/control/SelectionModel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="119" column="19" lean-forward="false" selection-start-line="119" selection-start-column="19" selection-end-line="119" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/src.zip!/java/util/Objects.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="245" column="26" lean-forward="false" selection-start-line="245" selection-start-column="26" selection-end-line="245" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/src.zip!/java/util/List.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="143">
-          <caret line="260" column="12" lean-forward="false" selection-start-line="260" selection-start-column="12" selection-end-line="260" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/collections/ObservableList.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="143">
-          <caret line="45" column="44" lean-forward="false" selection-start-line="45" selection-start-column="44" selection-end-line="45" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/src.zip!/java/util/ArrayList.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="254">
-          <caret line="316" column="20" lean-forward="false" selection-start-line="316" selection-start-column="20" selection-end-line="316" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/beans/property/ObjectPropertyBase.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="148">
@@ -1454,13 +1460,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxPack.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/src.zip!/java/lang/annotation/Annotation.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1496,27 +1495,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/readme.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="23" lean-forward="false" selection-start-line="3" selection-start-column="23" selection-end-line="3" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/scene/control/ButtonType.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="371">
           <caret line="100" column="0" lean-forward="true" selection-start-line="100" selection-start-column="0" selection-end-line="100" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="397">
-          <caret line="161" column="87" lean-forward="true" selection-start-line="161" selection-start-column="87" selection-end-line="161" selection-end-column="87" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1548,19 +1530,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="130">
           <caret line="19" column="32" lean-forward="true" selection-start-line="19" selection-start-column="32" selection-end-line="19" selection-end-column="32" />
-          <folding>
-            <element signature="method#getNumDimensions#0;class#ArrayUtil#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/Config.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="46" column="58" lean-forward="true" selection-start-line="46" selection-start-column="58" selection-end-line="46" selection-end-column="58" />
-          <folding>
-            <element signature="method#Config#0;class#Config#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1574,20 +1543,179 @@
         </state>
       </provider>
     </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/embed/swing/SwingFXUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="589">
+          <caret line="187" column="5" lean-forward="true" selection-start-line="187" selection-start-column="5" selection-end-line="187" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/scene/image/PixelFormat.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="147">
+          <caret line="131" column="22" lean-forward="true" selection-start-line="131" selection-start-column="22" selection-end-line="131" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/src.zip!/java/awt/image/SampleModel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="143">
+          <caret line="125" column="12" lean-forward="false" selection-start-line="125" selection-start-column="12" selection-end-line="125" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/src.zip!/java/awt/image/BufferedImage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="371">
+          <caret line="341" column="11" lean-forward="true" selection-start-line="341" selection-start-column="11" selection-end-line="341" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/application/Application.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="504">
+          <caret line="476" column="16" lean-forward="true" selection-start-line="476" selection-start-column="16" selection-end-line="476" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/scene/image/Image.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
-          <caret line="618" column="11" lean-forward="false" selection-start-line="618" selection-start-column="11" selection-end-line="618" selection-end-column="11" />
+          <caret line="738" column="4" lean-forward="false" selection-start-line="738" selection-start-column="4" selection-end-line="738" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/scene/image/PixelWriter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="496">
+          <caret line="212" column="16" lean-forward="false" selection-start-line="212" selection-start-column="16" selection-end-line="212" selection-end-column="16" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/image/ImageManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="22" column="82" lean-forward="false" selection-start-line="22" selection-start-column="82" selection-end-line="22" selection-end-column="82" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/script/ScriptEditTab.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="92" column="13" lean-forward="true" selection-start-line="92" selection-start-column="13" selection-end-line="92" selection-end-column="13" />
+          <folding>
+            <element signature="method#ScriptEditTab#0;class#ScriptEditTab#0" expanded="false" />
+            <element signature="method#ScriptEditTab#1;class#ScriptEditTab#0" expanded="false" />
+            <element signature="method#save#0;class#ScriptEditTab#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/image/PxAttrManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="method#PxAttrManager#0;class#PxAttrManager#0" expanded="false" />
+            <element signature="method#getPxAttr#0;class#PxAttrManager#0" expanded="false" />
+            <element signature="method#setAttribute#0;class#PxAttrManager#0" expanded="false" />
+            <element signature="method#wipe#0;class#PxAttrManager#0" expanded="false" />
+            <element signature="class#PxAttr#0;class#PxAttrManager#0" expanded="false" />
+            <element signature="method#PxAttr#0;class#PxAttr#0;class#PxAttrManager#0" expanded="false" />
+            <element signature="method#PxAttr#1;class#PxAttr#0;class#PxAttrManager#0" expanded="false" />
+            <element signature="method#getAttributes#0;class#PxAttr#0;class#PxAttrManager#0" expanded="false" />
+            <element signature="method#setAttribute#0;class#PxAttr#0;class#PxAttrManager#0" expanded="false" />
+            <element signature="method#save#0;class#PxAttr#0;class#PxAttrManager#0" expanded="false" />
+            <element signature="class#ReadOnlyPxAttrWrapper#0;class#PxAttrManager#0" expanded="false" />
+            <element signature="method#setAttribute#0;class#ReadOnlyPxAttrWrapper#0;class#PxAttrManager#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/scene/image/WritableImage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="45" column="13" lean-forward="false" selection-start-line="45" selection-start-column="13" selection-end-line="45" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxPack.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="method#PxPack#0;class#PxPack#0" expanded="false" />
+            <element signature="method#save#0;class#PxPack#0" expanded="false" />
+            <element signature="method#getName#0;class#PxPack#0" expanded="false" />
+            <element signature="method#rename#0;class#PxPack#0" expanded="false" />
+            <element signature="method#getTileLayers#0;class#PxPack#0" expanded="false" />
+            <element signature="method#getEntities#0;class#PxPack#0" expanded="false" />
+            <element signature="method#readString#0;class#PxPack#0" expanded="false" />
+            <element signature="method#writeString#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Head#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setDescription#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setMapName#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setSpritesheetName#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setData#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setBgColor#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setTilesetName#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setVisibilityType#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setScrollType#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Head#0;class#PxPack#0" expanded="false" />
+            <element signature="class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#TileLayer#1;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#resize#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#getTiles#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setTile#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#TileLayer#0;class#PxPack#0" expanded="false" />
+            <element signature="class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#Entity#0;class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setType#0;class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setX#0;class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setY#0;class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setCoordinates#0;class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setData#0;class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#setName#0;class#Entity#0;class#PxPack#0" expanded="false" />
+            <element signature="method#toString#0;class#Entity#0;class#PxPack#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/concurrent/Task.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="139">
+          <caret line="658" column="0" lean-forward="false" selection-start-line="658" selection-start-column="0" selection-end-line="658" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/beans/property/IntegerPropertyBase.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="147">
+          <caret line="132" column="0" lean-forward="false" selection-start-line="132" selection-start-column="0" selection-end-line="132" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/Config.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="371">
+          <caret line="81" column="1" lean-forward="true" selection-start-line="81" selection-start-column="1" selection-end-line="81" selection-end-column="1" />
+          <folding>
+            <element signature="method#Config#0;class#Config#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="351">
-          <caret line="376" column="63" lean-forward="false" selection-start-line="376" selection-start-column="63" selection-end-line="376" selection-end-column="63" />
+        <state relative-caret-position="371">
+          <caret line="324" column="0" lean-forward="true" selection-start-line="324" selection-start-column="0" selection-end-line="324" selection-end-column="0" />
           <folding>
-            <element signature="e#0#76183#0" expanded="true" />
             <element signature="initializer##0;class#MapEditTab#0" expanded="false" />
             <element signature="method#MapEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#setMapZoom#0;class#MapEditTab#0" expanded="false" />
@@ -1606,19 +1734,21 @@
             <element signature="class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#TilesetPane#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#initServices#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+            <element signature="class#29136:31146" expanded="true" />
             <element signature="method#initEventHandlers#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-            <element signature="method#handle#0;class#33302:36963" expanded="false" />
+            <element signature="method#handle#0;class#33766:37427" expanded="false" />
             <element signature="method#redrawTileset#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-            <element signature="method#fixSize#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#redrawSelectedRect#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+            <element signature="method#fixSize#0;class#TilesetPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#MapPane#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#initEventHandlers#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
+            <element signature="method#handle#0;class#43630:45232" expanded="false" />
             <element signature="method#initContextMenu#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#redrawTile#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#redrawLayer#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#redrawEntities#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
-            <element signature="method#call#0;class#65854:66281" expanded="false" />
+            <element signature="method#call#0;class#67555:67982" expanded="false" />
             <element signature="method#fixCanvasSizes#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="class#UndoableMapDrawEdit#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#UndoableMapDrawEdit#0;class#UndoableMapDrawEdit#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
@@ -1630,6 +1760,7 @@
             <element signature="method#redo#0;class#UndoableMapResizeEdit#0;class#MapPane#0;class#TileEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="class#PropertyEditTab#0;class#MapEditTab#0" expanded="false" />
             <element signature="method#PropertyEditTab#0;class#PropertyEditTab#0;class#MapEditTab#0" expanded="false" />
+            <element signature="class#DrawMode#0;class#MapEditTab#0" expanded="false" />
             <element signature="class#LayerFlag#0;class#MapEditTab#0" expanded="false" />
             <element signature="class#ViewFlag#0;class#MapEditTab#0" expanded="false" />
             <element signature="class#MapPaneMenuItem#0;class#MapEditTab#0" expanded="false" />
@@ -1637,52 +1768,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/embed/swing/SwingFXUtils.java">
+    <entry file="file://$PROJECT_DIR$/readme.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="589">
-          <caret line="187" column="5" lean-forward="true" selection-start-line="187" selection-start-column="5" selection-end-line="187" selection-end-column="5" />
+        <state relative-caret-position="51">
+          <caret line="3" column="23" lean-forward="false" selection-start-line="3" selection-start-column="23" selection-end-line="3" selection-end-column="23" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/scene/image/PixelFormat.java">
+    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="147">
-          <caret line="131" column="22" lean-forward="true" selection-start-line="131" selection-start-column="22" selection-end-line="131" selection-end-column="22" />
+        <state relative-caret-position="51">
+          <caret line="3" column="33" lean-forward="false" selection-start-line="3" selection-start-column="33" selection-end-line="3" selection-end-column="33" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/src.zip!/java/awt/image/SampleModel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="143">
-          <caret line="125" column="12" lean-forward="false" selection-start-line="125" selection-start-column="12" selection-end-line="125" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/src.zip!/java/awt/image/BufferedImage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="371">
-          <caret line="341" column="11" lean-forward="true" selection-start-line="341" selection-start-column="11" selection-end-line="341" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/image/ImageManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="method#ImageManager#0;class#ImageManager#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="351">
-          <caret line="207" column="0" lean-forward="true" selection-start-line="207" selection-start-column="0" selection-end-line="207" selection-end-column="0" />
+        <state relative-caret-position="235">
+          <caret line="473" column="39" lean-forward="true" selection-start-line="473" selection-start-column="39" selection-end-line="473" selection-end-column="39" />
           <folding>
             <element signature="method#start#0;class#KeroEdit#0" expanded="false" />
             <element signature="method#setTitle#0;class#KeroEdit#0" expanded="false" />
@@ -1690,6 +1795,7 @@
             <element signature="method#initFileMenu#0;class#KeroEdit#0" expanded="false" />
             <element signature="method#wipeLoaded#0;class#KeroEdit#0" expanded="false" />
             <element signature="method#loadMod#0;class#KeroEdit#0" expanded="false" />
+            <element signature="class#13176:16522" expanded="true" />
             <element signature="method#createAssistFolder#0;class#KeroEdit#0" expanded="false" />
             <element signature="method#initEditMenu#0;class#KeroEdit#0" expanded="false" />
             <element signature="method#initViewMenu#0;class#KeroEdit#0" expanded="false" />
@@ -1708,14 +1814,12 @@
             <element signature="method#initViewSettings#0;class#SettingsPane#0;class#KeroEdit#0" expanded="false" />
             <element signature="class#NotepadTab#0;class#KeroEdit#0" expanded="false" />
             <element signature="method#NotepadTab#0;class#NotepadTab#0;class#KeroEdit#0" expanded="false" />
-            <element signature="class#DrawMode#0;class#KeroEdit#0" expanded="false" />
             <element signature="class#FileMenuItem#0;class#KeroEdit#0" expanded="false" />
             <element signature="class#EditMenuItem#0;class#KeroEdit#0" expanded="false" />
             <element signature="class#ViewMenuItem#0;class#KeroEdit#0" expanded="false" />
             <element signature="class#ActionsMenuItem#0;class#KeroEdit#0" expanded="false" />
             <element signature="class#HelpMenuItem#0;class#KeroEdit#0" expanded="false" />
             <element signature="class#MapListMenuItem#0;class#KeroEdit#0" expanded="false" />
-            <element signature="class#ViewSettingsItem#0;class#KeroEdit#0" expanded="false" />
           </folding>
         </state>
       </provider>

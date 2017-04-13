@@ -57,9 +57,13 @@ public final class PxPack {
             //clone internal file to outside?
             head = new Head("", new String[]{"", "", "", ""}, "", new byte[]{0, 0, 0, 0, 0}, Color.BLACK,
                             new String[]{"mpt00", "", ""}, new byte[]{2, 2, 2}, new byte[]{0, 0, 1});
-            //All images named must exist
-            //Only first tileset is required
-            //Use most common values for defaults
+
+            /*
+             * All images named must exist
+             * Only first tileset is required
+             * Use most common values for defaults
+             * Is spritesheet required?? (I don't think so...)
+             */
 
             tileLayers = new TileLayer[NUM_LAYERS];
             for (int i = 0; i < tileLayers.length; ++i) {
@@ -328,7 +332,8 @@ public final class PxPack {
     }
 
     public TileLayer[] getTileLayers() {
-        return Arrays.copyOf(tileLayers, tileLayers.length); //just shallow copies elements
+        //shallow copies elements, so elements are same, array reference is different
+        return Arrays.copyOf(tileLayers, tileLayers.length);
     }
 
     public ArrayList <Entity> getEntities() {
@@ -367,13 +372,13 @@ public final class PxPack {
         buf = ByteBuffer.allocate(strLen);
         chan.read(buf);
 
-        final String ret = new String(buf.array(), "SJIS");
-        if (!"description".equals(type) && ret.contains(" ")) {
+        final String str = new String(buf.array(), "SJIS");
+        if (!"description".equals(type) && str.contains(" ")) {
             throw new ParseException(MessageFormat.format(Messages.getString("PxPack.ReadString.CONTAINS_SPACE"),
                                                           type), (int)chan.position());
         }
 
-        return ret;
+        return str;
     }
 
     private void writeString(final SeekableByteChannel chan, final String str) throws IOException {
@@ -676,7 +681,6 @@ public final class PxPack {
                 if (0xFFFF < width || 0xFFFF < height) {
                     throw new IllegalArgumentException("Attempt to create tile layer with dimensions greater than max of 65,535 " +
                                                        "(width: " + width + ", height: " + height + ")");
-
                 }
 
                 this.tiles = new int[height][width];

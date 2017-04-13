@@ -5,7 +5,7 @@
  * For map - draw tile types on separate layer just like with the tileset pane
  * Find workaround for NPE with large Canvas (19tunnel maps in KB); current workaround is minimal map zoom
  * - https://bugs.openjdk.java.net/browse/JDK-8089835
- * Show error on tileset load for 0 dimension?
+ * Show error on tileset load for 0 dimension? (only if first tileset?)
  * Make method for redrawing subset/region of map
  * Improve multiple selection in tileset
  * Put exception strings in messages.properties?
@@ -60,9 +60,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.ColorPicker;
 
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
@@ -102,7 +101,6 @@ import io.fdeitylink.keroedit.util.MathUtil;
 
 import io.fdeitylink.keroedit.util.FXUtil;
 
-import io.fdeitylink.keroedit.KeroEdit;
 import io.fdeitylink.keroedit.Config;
 
 import io.fdeitylink.keroedit.resource.ResourceManager;
@@ -137,12 +135,9 @@ public final class MapEditTab extends FXUtil.FileEditTab {
     private static final SimpleIntegerProperty displayedLayers;
     private static final SimpleIntegerProperty selectedLayer;
 
-    //does this really need to be a property? can it be a normal field?
-    private static final SimpleObjectProperty <KeroEdit.DrawMode> drawMode;
+    private static DrawMode drawMode;
 
-    private static final SimpleBooleanProperty showTileTypes;
-    //TODO: Use this for all view settings (tile types, grid, entity box, sprites, and names) instead of showTileTypes
-    //private static final SimpleIntegerProperty viewSettings;
+    private static final SimpleIntegerProperty viewSettings;
 
     private static Image pxAttrImg;
     private static Image entityImg;
@@ -158,10 +153,9 @@ public final class MapEditTab extends FXUtil.FileEditTab {
         displayedLayers = new SimpleIntegerProperty(Config.displayedLayers);
         selectedLayer = new SimpleIntegerProperty(Config.selectedLayer);
 
-        drawMode = new SimpleObjectProperty <>(Config.drawMode);
+        drawMode = Config.drawMode;
 
-        showTileTypes = new SimpleBooleanProperty(false);
-        //viewSettings = new SimpleIntegerProperty(0);
+        viewSettings = new SimpleIntegerProperty(Config.viewSettings);
 
         final Pane emptyPane = new Pane(); //null not accepted as scene roots, so this is used when tileset stage is not shown
 
@@ -210,7 +204,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                 message = MessageFormat.format(Messages.getString("MapEditTab.OpenIOExcept.MESSAGE"),
                                                mapName, except.getMessage());
 
-                Logger.logThrowable(except); //TODO: Log in PxPack instead?
+                Logger.logThrowable(except);
             }
             else {
                 title = Messages.getString("MapEditTab.OpenParseExcept.TITLE");
@@ -226,7 +220,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
         setId(mapName);
         setText(mapName);
 
-        //TODO: ensure updates to description reflected in tooltip
+        //TODO: ensure updates to description in PropertyEditTab reflected in tooltip
         setTooltip(new Tooltip(fullMapPath + "\n" +
                                Messages.getString("MapEditTab.TOOLTIP_DESCRIPTION_LABEL") + map.getHead().getDescription()));
 
@@ -237,7 +231,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                                                     File.separatorChar + "text" +
                                                     File.separatorChar + map.getName() + ".pxeve"), this);
 
-        tabPane = new TabPane(tileEditTab, scriptEditTab, new PropertyEditTab());
+        tabPane = new TabPane(tileEditTab, scriptEditTab, new PropertyEditTab(this));
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
         //TODO: Context menu? rename...
@@ -274,12 +268,12 @@ public final class MapEditTab extends FXUtil.FileEditTab {
         selectedLayer.set(layer);
     }
 
-    public static void setDrawMode(final KeroEdit.DrawMode mode) {
-        drawMode.set(mode);
+    public static void setDrawMode(final DrawMode mode) {
+        drawMode = mode;
     }
 
-    public static void bindShowTileTypes(final BooleanProperty property) {
-        showTileTypes.bind(property);
+    public static void bindViewSettings(final IntegerProperty property) {
+        viewSettings.bind(property);
     }
 
     @Override
@@ -324,7 +318,9 @@ public final class MapEditTab extends FXUtil.FileEditTab {
     @Override
     public void setChanged(final boolean changed) {
         super.setChanged(changed);
-        tileEditTab.setChanged(changed);
+        if (!changed) {
+            tileEditTab.setChanged(false);
+        }
     }
 
     /**
@@ -375,6 +371,8 @@ public final class MapEditTab extends FXUtil.FileEditTab {
     }
 
     private final class TileEditTab extends FXUtil.FileEditTab {
+        //TODO: Move pxAttrs into here?
+
         private final PxPack.Head head; //ensure updates to head reflected in PropertyEditTab
         private final ArrayList <PxPack.Entity> entities;
 
@@ -389,12 +387,12 @@ public final class MapEditTab extends FXUtil.FileEditTab {
             super(Messages.getString("MapEditTab.TileEditTab.TITLE"));
             this.parent = parent;
 
-            selectedTiles = new int[map.getTileLayers().length][1][1];
+            selectedTiles = new int[PxPack.NUM_LAYERS][1][1];
 
             head = map.getHead(); //TODO: Store same head as properties tab in order to automatically update properties
             entities = map.getEntities();
 
-            //TODO: background on map pane
+            //TODO: background on map pane (purple checkerboard?)
             final SplitPane sPane = new SplitPane(tilesetPane = new TilesetPane(), mapPane = new MapPane());
             sPane.setOrientation(Orientation.VERTICAL);
             sPane.setDividerPositions(0.1);
@@ -432,7 +430,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                  * immediately (or ever?) set its parent to null. If it is not set to null, an exception will be thrown
                  * when an attempt is made to make the Node (in this case tilesetPane) the root of a Scene. This code
                  * will make a Pane the Node's parent, then remove the Node so that the Node's parent is null and the
-                 * Node is ready to be made the root of a Scene. The bug should be fixed in Java/JavaFX 9
+                 * Node is ready to be made the root of a Scene. The bug should be fixed in Java/JavaFX 9.
                  * https://bugs.openjdk.java.net/browse/JDK-8148828
                  * https://bugs.openjdk.java.net/browse/JDK-8132898
                  */
@@ -495,7 +493,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
             private final Rectangle2D[] selectedRegions;
 
             private Image[] tilesets;
-            private ArrayList <ReadOnlyObjectProperty <PxAttrManager.PxAttr>> pxAttrs; //put this up in TileEditTab?
+            private ArrayList <ReadOnlyObjectProperty <PxAttrManager.PxAttr>> pxAttrs; //TODO: Move this up to TileEditTab?
 
             private Service <Void> redrawTileTypes;
             private Service <Void> drawSelectedTiles;
@@ -514,7 +512,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                 tileTypeCanvas.widthProperty().bind(tilesetCanvas.widthProperty());
                 tileTypeCanvas.heightProperty().bind(tilesetCanvas.heightProperty());
 
-                tileTypeCanvas.visibleProperty().bind(showTileTypes);
+                tileTypeCanvas.setVisible(ViewFlag.TILE_TYPES.flag == (viewSettings.get() & ViewFlag.TILE_TYPES.flag));
                 tileTypeCanvas.setOnMouseClicked(tilesetCanvas::fireEvent);
 
                 selectedRectCanvas = new Canvas();
@@ -668,8 +666,11 @@ public final class MapEditTab extends FXUtil.FileEditTab {
 
                     drawSelectedTiles.start();
 
-                    for (int i = 0; i < mapPane.tileLayers.length; ++i) {
-                        mapPane.redrawLayer(i);
+                    //when both of the Services are complete, redraw layers
+                    if (!loadPxAttrs.isRunning()) {
+                        for (int i = 0; i < mapPane.tileLayers.length; ++i) {
+                            mapPane.redrawLayer(i);
+                        }
                     }
                 });
 
@@ -709,9 +710,21 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                         };
                     }
                 };
+                loadPxAttrs.setOnSucceeded(event -> {
+                    //when both of the Services are complete, redraw layers
+                    if (!loadTilesets.isRunning()) {
+                        for (int i = 0; i < mapPane.tileLayers.length; ++i) {
+                            mapPane.redrawLayer(i);
+                        }
+                    }
+                });
             }
 
             private void initEventHandlers() {
+                viewSettings.addListener((observable, oldValue, newValue) -> {
+                    tileTypeCanvas.setVisible(ViewFlag.TILE_TYPES.flag == (newValue.intValue() & ViewFlag.TILE_TYPES.flag));
+                });
+
                 selectedLayer.addListener((observable, oldValue, newValue) -> {
                     redrawTileTypes.restart(); //do this before tileset redraw for speed
                     redrawTileset();
@@ -835,11 +848,6 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                                             0, 0, tilesetCanvas.getWidth(), tilesetCanvas.getHeight());*/
             }
 
-            private void fixSize() {
-                tilesetCanvas.setWidth(TILESET_WIDTH * tilesetZoom.get());
-                tilesetCanvas.setHeight(TILESET_HEIGHT * tilesetZoom.get());
-            }
-
             private void redrawSelectedRect() {
                 final GraphicsContext selectedRectGContext = selectedRectCanvas.getGraphicsContext2D();
                 selectedRectGContext.clearRect(0, 0, selectedRectCanvas.getWidth(), selectedRectCanvas.getHeight());
@@ -851,12 +859,16 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                                                      TILE_HEIGHT * selectedRect.getHeight() * tilesetZoom.get(),
                                                      10, 10);
             }
+
+            private void fixSize() {
+                tilesetCanvas.setWidth(TILESET_WIDTH * tilesetZoom.get());
+                tilesetCanvas.setHeight(TILESET_HEIGHT * tilesetZoom.get());
+            }
         }
 
         private class MapPane extends ScrollPane {
             private final SimpleObjectProperty <Color> bgColor;
 
-            //TODO: Add listener for size for when a layer is resized?
             private final PxPack.TileLayer[] tileLayers;
 
             private final Canvas[] mapCanvases;
@@ -907,21 +919,30 @@ public final class MapEditTab extends FXUtil.FileEditTab {
              * {@code Canvas}es in this {@code ScrollPane}
              */
             private void initEventHandlers() {
-                displayedLayers.addListener(((observable, oldValue, newValue) -> {
+                displayedLayers.addListener((observable, oldValue, newValue) -> {
                     for (int i = 0; i < LayerFlag.values().length; ++i) {
                         mapCanvases[i].setVisible(LayerFlag.values()[i].flag ==
                                                   (newValue.intValue() & LayerFlag.values()[i].flag));
                     }
-                }));
+                });
 
                 selectedLayer.addListener((observable, oldValue, newValue) -> {
-                    if (showTileTypes.get()) {
+                    if (ViewFlag.TILE_TYPES.flag == (viewSettings.get() & ViewFlag.TILE_TYPES.flag)) {
                         redrawLayer(oldValue.intValue()); //"undraw" tiletypes from previously selected layer
                         redrawLayer(newValue.intValue()); //draw tiletypes onto new selected layer
                     }
                 });
 
-                showTileTypes.addListener((observable, oldValue, newValue) -> redrawLayer(selectedLayer.get()));
+                viewSettings.addListener((observable, oldValue, newValue) -> {
+                    //if it was disabled then enabled or enabled then disabled
+                    //TODO: Use XOR?
+                    if ((ViewFlag.TILE_TYPES.flag == (oldValue.intValue() & ViewFlag.TILE_TYPES.flag) &&
+                         ViewFlag.TILE_TYPES.flag != (newValue.intValue() & ViewFlag.TILE_TYPES.flag)) ||
+                        (ViewFlag.TILE_TYPES.flag != (oldValue.intValue() & ViewFlag.TILE_TYPES.flag) &&
+                         ViewFlag.TILE_TYPES.flag == (newValue.intValue() & ViewFlag.TILE_TYPES.flag))) {
+                        redrawLayer(selectedLayer.get());
+                    }
+                });
 
                 mapZoom.addListener((observable, oldValue, newValue) -> {
                     fixCanvasSizes();
@@ -946,7 +967,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
 
                             final GraphicsContext cursorGContext = cursorCanvas.getGraphicsContext2D();
                             cursorGContext.clearRect(0, 0, cursorCanvas.getWidth(), cursorCanvas.getHeight());
-                            switch (drawMode.get()) {
+                            switch (drawMode) {
                                 case DRAW:
                                     //TODO: account for rects of seleced tiles
                                     final int[][] tilesRect = selectedTiles[selectedLayer.get()];
@@ -1152,14 +1173,20 @@ public final class MapEditTab extends FXUtil.FileEditTab {
              */
             private void redrawTile(final int layer, final int x, final int y) {
                 try {
+                    //TODO: Create new Service subclass that takes layer, x, and y params in constructor and can be restarted on demand?
                     new Task <Void>() {
                         @Override
                         protected Void call() throws Exception {
-                            //TODO: remove tileset name check?
                             final int[][] tiles = tileLayers[layer].getTiles();
-                            if (null == tiles || null == head.getTilesetNames()[layer]) {
+                            if (null == tiles) {
                                 return null;
                             }
+
+                            final PixelReader tilesetReader = tilesetPane.tilesets[layer].getPixelReader();
+                            if (null == tilesetReader) { //this should handle empty/nonexistent images
+                                return null;
+                            }
+
                             final int tileIndex = tiles[y][x];
 
                             final Image tileImg;
@@ -1168,7 +1195,8 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                             final int[][] attributes;
                             final boolean drawTileType;
 
-                            if (showTileTypes.get() && selectedLayer.get() == layer) {
+                            if (ViewFlag.TILE_TYPES.flag == (viewSettings.get() & ViewFlag.TILE_TYPES.flag) &&
+                                selectedLayer.get() == layer) {
                                 attributes = tilesetPane.pxAttrs.get(selectedLayer.get()).get().getAttributes();
                                 drawTileType = null != attributes;
                             }
@@ -1180,10 +1208,9 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                             final int tilesetX = tileIndex % (TILESET_WIDTH / TILE_WIDTH);
                             final int tilesetY = tileIndex / (TILESET_HEIGHT / TILE_HEIGHT);
 
-                            tileImg = FXUtil.scaleImage(new WritableImage(tilesetPane.tilesets[layer].getPixelReader(),
+                            tileImg = FXUtil.scaleImage(new WritableImage(tilesetReader,
                                                                           tilesetX * TILE_WIDTH, tilesetY * TILE_HEIGHT,
-                                                                          TILE_WIDTH, TILE_HEIGHT),
-                                                        mapZoom.get());
+                                                                          TILE_WIDTH, TILE_HEIGHT), mapZoom.get());
                             if (drawTileType) {
                                 final int attributesX = attributes[tilesetY][tilesetX] %
                                                         (PXATTR_IMAGE_WIDTH / PXATTR_TILE_WIDTH);
@@ -1231,55 +1258,59 @@ public final class MapEditTab extends FXUtil.FileEditTab {
              */
             private void redrawLayer(final int layer) {
                 try {
+                    //TODO: Create new Service subclass that takes layer param in constructor and can be restarted on demand?
                     new Task <Void>() {
                         @Override
                         protected Void call() throws Exception {
                             final int[][] tiles = tileLayers[layer].getTiles();
-                            //TODO: remove tileset name check?
-                            if (null == tiles || null == head.getTilesetNames()[layer]) {
+                            if (null == tiles) {
                                 return null;
                             }
-
-                            final WritablePixelFormat <ByteBuffer> pxFormat = PixelFormat.getByteBgraInstance();
 
                             final PixelReader tilesetReader = tilesetPane.tilesets[layer].getPixelReader();
                             if (null == tilesetReader) { //this should handle empty/nonexistent images
                                 return null;
                             }
 
+                            final WritablePixelFormat <ByteBuffer> pxFormat = PixelFormat.getByteBgraInstance();
+
                             final WritableImage tmpLayerImg = new WritableImage(tiles[0].length * TILE_WIDTH,
                                                                                 tiles.length * TILE_HEIGHT);
                             final PixelWriter tmpLayerImgWriter = tmpLayerImg.getPixelWriter();
 
                             ////////////////////////////////////////////////////////////////////////////////////////////
-                            final PixelReader pxAttrImgReader;
-                            final WritableImage tmpTileTypeImg;
-                            final PixelWriter tmpTileTypeImgWriter;
-                            final int[][] attributes;
-                            final byte[] attrTile;
+                            PixelReader pxAttrImgReader = null;
+                            WritableImage tmpTileTypeImg = null;
+                            PixelWriter tmpTileTypeImgWriter = null;
+                            int[][] attributes = null;
+                            byte[] attrTile = null;
 
-                            final boolean drawTileTypes;
+                            boolean drawTileTypes = false;
 
-                            if (showTileTypes.get() && selectedLayer.get() == layer) {
-                                pxAttrImgReader = pxAttrImg.getPixelReader();
-                                tmpTileTypeImg = new WritableImage((int)tmpLayerImg.getWidth() * 2,
-                                                                   (int)tmpLayerImg.getHeight() * 2);
-                                tmpTileTypeImgWriter = tmpTileTypeImg.getPixelWriter();
-
+                            if (ViewFlag.TILE_TYPES.flag == (viewSettings.get() & ViewFlag.TILE_TYPES.flag) &&
+                                selectedLayer.get() == layer) {
                                 attributes = tilesetPane.pxAttrs.get(selectedLayer.get()).get().getAttributes();
-                                attrTile = new byte[PXATTR_TILE_WIDTH * PXATTR_TILE_HEIGHT * 4];
 
-                                drawTileTypes = null != attributes;
+                                if (drawTileTypes = (null != attributes)) {
+                                    pxAttrImgReader = pxAttrImg.getPixelReader();
+                                    tmpTileTypeImg = new WritableImage((int)tmpLayerImg.getWidth() * 2,
+                                                                       (int)tmpLayerImg.getHeight() * 2);
+                                    tmpTileTypeImgWriter = tmpTileTypeImg.getPixelWriter();
+
+                                    attrTile = new byte[PXATTR_TILE_WIDTH * PXATTR_TILE_HEIGHT * 4];
+                                }
+                                else {
+                                    tmpTileTypeImg = null;
+                                }
                             }
-                            else {
+
+                            /*if (!drawTileTypes) {
                                 pxAttrImgReader = null;
                                 tmpTileTypeImg = null;
                                 tmpTileTypeImgWriter = null;
                                 attributes = null;
                                 attrTile = null;
-
-                                drawTileTypes = false;
-                            }
+                            }*/
                             ////////////////////////////////////////////////////////////////////////////////////////////
 
                             final byte[] tile = new byte[TILE_WIDTH * TILE_HEIGHT * 4];
@@ -1316,6 +1347,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                                 }
                             }
 
+                            final Image typeImg = FXUtil.scaleImage(tmpTileTypeImg, mapZoom.get() / 2);
                             Platform.runLater(() -> {
                                 final GraphicsContext layerGContext = mapCanvases[layer].getGraphicsContext2D();
 
@@ -1323,7 +1355,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
 
                                 layerGContext.drawImage(FXUtil.scaleImage(tmpLayerImg, mapZoom.get()), 0, 0);
                                 //null images ignored
-                                layerGContext.drawImage(FXUtil.scaleImage(tmpTileTypeImg, mapZoom.get() / 2), 0, 0);
+                                layerGContext.drawImage(typeImg, 0, 0);
                             });
 
                             return null;
@@ -1546,13 +1578,26 @@ public final class MapEditTab extends FXUtil.FileEditTab {
 
         private final PxPack.Head head;
 
-        PropertyEditTab() {
+        private final MapEditTab parent;
+
+        PropertyEditTab(final MapEditTab parent) {
             super(Messages.getString("MapEditTab.PropertyEditTab.TITLE"));
+            this.parent = parent;
 
             head = map.getHead();
 
             mainGridPane = new GridPane();
         }
+    }
+
+    public enum DrawMode implements ArrayIndexEnum <DrawMode> {
+        DRAW,
+        RECT,
+        COPY,
+        FILL,
+        REPLACE;
+
+        public static final EnumMap <DrawMode, Integer> arrIndexEnumMap = DRAW.enumMap(DrawMode.class);
     }
 
     public enum LayerFlag {
