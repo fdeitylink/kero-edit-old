@@ -29,7 +29,7 @@ import io.fdeitylink.keroedit.Messages;
 public final class PxPack {
     public static final int NUM_LAYERS = 3;
 
-    private Path mapPath;
+    private Path path;
 
     private final Head head;
     private final TileLayer[] tileLayers;
@@ -45,7 +45,7 @@ public final class PxPack {
      * @throws ParseException if the mapFile format was somehow incorrect
      */
     public PxPack(final Path inPath) throws IOException, ParseException {
-        mapPath = inPath;
+        path = inPath;
 
         if (!inPath.toString().endsWith(".pxpack")) {
             throw new IllegalArgumentException("File " + inPath.toAbsolutePath() + " does not end with .pxpack extension");
@@ -62,7 +62,7 @@ public final class PxPack {
              * All images named must exist
              * Only first tileset is required
              * Use most common values for defaults
-             * Is spritesheet required?? (I don't think so...)
+             * Is spritesheet required? (I don't think so...)
              */
 
             tileLayers = new TileLayer[NUM_LAYERS];
@@ -153,8 +153,8 @@ public final class PxPack {
                 final int width = buf.getShort() & 0xFFFF;
                 final int height = buf.getShort() & 0xFFFF;
                 if (width * height > 0) {
-                    chan.position(chan.position() + 1); //skip a byte (always 0)
                     //TODO: Find if it is ever not 0 (might've already checked but make sure)
+                    chan.position(chan.position() + 1); //skip a byte (always 0)
 
                     buf = ByteBuffer.allocate(width * height);
                     chan.read(buf);
@@ -213,11 +213,11 @@ public final class PxPack {
      * @throws IOException if there was an error saving the PXPACK file
      */
     public void save() throws IOException {
-        try (SeekableByteChannel chan = Files.newByteChannel(mapPath,
+        try (SeekableByteChannel chan = Files.newByteChannel(path,
                                                              StandardOpenOption.WRITE,
                                                              StandardOpenOption.TRUNCATE_EXISTING,
                                                              StandardOpenOption.CREATE)) {
-            ByteBuffer buf = ByteBuffer.wrap(Head.HEADER_STRING.getBytes());
+            ByteBuffer buf = ByteBuffer.wrap(Head.HEADER_STRING.getBytes("SJIS"));
             chan.write(buf);
 
             writeString(chan, head.getDescription());
@@ -251,7 +251,7 @@ public final class PxPack {
             }
 
             for (final TileLayer layer : tileLayers) {
-                buf = ByteBuffer.wrap(TileLayer.HEADER_STRING.getBytes());
+                buf = ByteBuffer.wrap(TileLayer.HEADER_STRING.getBytes("SJIS"));
                 chan.write(buf);
 
                 final int[][] layerData = layer.getTiles();
@@ -275,8 +275,8 @@ public final class PxPack {
                     chan.write(buf);
 
                     buf = ByteBuffer.allocate((width & 0xFFFF) * (height & 0xFFFF)); //& 0xFFFF treats as unsigned when converted to int
-                    for (int[] row : layerData) {
-                        for (int tile : row) {
+                    for (final int[] row : layerData) {
+                        for (final int tile : row) {
                             buf.put((byte)tile);
                         }
                     }
@@ -313,18 +313,19 @@ public final class PxPack {
                 writeString(chan, e.getName());
             }
         }
-        catch (final FileNotFoundException except) {
+        //shouldn't happen since StandardOpenOption.CREATE is set
+        /*catch (final FileNotFoundException except) {
             //TODO: create the file
-        }
+        }*/
     }
 
     public String getName() {
-        final String mapFname = mapPath.getFileName().toString();
+        final String mapFname = path.getFileName().toString();
         return mapFname.substring(0, mapFname.lastIndexOf(".pxpack"));
     }
 
     public void rename(final String newName) throws IOException {
-        mapPath = Files.move(mapPath, mapPath.resolveSibling(newName + ".pxpack"));
+        path = Files.move(path, path.resolveSibling(newName + ".pxpack"));
     }
 
     public Head getHead() {
@@ -397,7 +398,7 @@ public final class PxPack {
     public String toString() {
         final StringBuilder result = new StringBuilder();
 
-        result.append("Name: ").append(mapPath.getFileName()).append('\n');
+        result.append("Name: ").append(path.getFileName()).append('\n');
 
         result.append(head).append('\n');
 

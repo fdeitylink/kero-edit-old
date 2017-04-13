@@ -107,4 +107,9 @@ public final class ScriptEditTab extends FXUtil.FileEditTab {
                                                     script.getFileName(), except.getMessage())).showAndWait();
         }
     }
+
+    @Override
+    public void setChanged(final boolean changed) {
+        super.setChanged(changed);
+    }
 }

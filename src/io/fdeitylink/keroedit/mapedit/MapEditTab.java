@@ -7,10 +7,7 @@
  * - https://bugs.openjdk.java.net/browse/JDK-8089835
  * Show error on tileset load for 0 dimension? (only if first tileset?)
  * Make method for redrawing subset/region of map
- * Improve multiple selection in tileset
- * Put exception strings in messages.properties?
- * Handle images not existing...
- *  - Figure out what Image does if file doesn't exist
+ * Improve multiple selection in tileset (store startX, startY, and cursorX, cursorY)
  */
 
 package io.fdeitylink.keroedit.mapedit;
@@ -175,8 +172,9 @@ public final class MapEditTab extends FXUtil.FileEditTab {
 
     private final TileEditTab tileEditTab;
     private final ScriptEditTab scriptEditTab;
+    private final PropertyEditTab propertyEditTab;
 
-    private /*final*/ PxPack map;
+    private final PxPack map;
 
     public MapEditTab(final String mapName) throws IOException, ParseException {
         if (null == mapName) {
@@ -231,7 +229,9 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                                                     File.separatorChar + "text" +
                                                     File.separatorChar + map.getName() + ".pxeve"), this);
 
-        tabPane = new TabPane(tileEditTab, scriptEditTab, new PropertyEditTab(this));
+        propertyEditTab = new PropertyEditTab(this);
+
+        tabPane = new TabPane(tileEditTab, scriptEditTab, propertyEditTab);
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
         //TODO: Context menu? rename...
@@ -295,7 +295,6 @@ public final class MapEditTab extends FXUtil.FileEditTab {
     @Override
     public void save() {
         try {
-            //TODO: save PxAttrs
             map.save();
 
             /*
@@ -320,6 +319,8 @@ public final class MapEditTab extends FXUtil.FileEditTab {
         super.setChanged(changed);
         if (!changed) {
             tileEditTab.setChanged(false);
+            scriptEditTab.setChanged(false);
+            propertyEditTab.setChanged(false);
         }
     }
 
@@ -669,7 +670,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                     //when both of the Services are complete, redraw layers
                     if (!loadPxAttrs.isRunning()) {
                         for (int i = 0; i < mapPane.tileLayers.length; ++i) {
-                            mapPane.redrawLayer(i);
+                            mapPane.redrawAllLayers();
                         }
                     }
                 });
@@ -714,7 +715,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                     //when both of the Services are complete, redraw layers
                     if (!loadTilesets.isRunning()) {
                         for (int i = 0; i < mapPane.tileLayers.length; ++i) {
-                            mapPane.redrawLayer(i);
+                            mapPane.redrawAllLayers();
                         }
                     }
                 });
@@ -934,22 +935,21 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                 });
 
                 viewSettings.addListener((observable, oldValue, newValue) -> {
-                    //if it was disabled then enabled or enabled then disabled
-                    //TODO: Use XOR?
-                    if ((ViewFlag.TILE_TYPES.flag == (oldValue.intValue() & ViewFlag.TILE_TYPES.flag) &&
-                         ViewFlag.TILE_TYPES.flag != (newValue.intValue() & ViewFlag.TILE_TYPES.flag)) ||
-                        (ViewFlag.TILE_TYPES.flag != (oldValue.intValue() & ViewFlag.TILE_TYPES.flag) &&
-                         ViewFlag.TILE_TYPES.flag == (newValue.intValue() & ViewFlag.TILE_TYPES.flag))) {
+                    /*
+                     * Only one flag is changed at a time, so
+                     * oldValue ^ newValue
+                     * will always yield the flag just set.
+                     */
+                    //TODO: use switch statement if possible
+                    if (ViewFlag.TILE_TYPES.flag == (oldValue.intValue() ^ newValue.intValue())) {
                         redrawLayer(selectedLayer.get());
                     }
                 });
 
                 mapZoom.addListener((observable, oldValue, newValue) -> {
+                    //TODO: redraw cursor so it fixes size immediately
                     fixCanvasSizes();
-                    for (int i = 0; i < mapCanvases.length; ++i) {
-                        redrawLayer(i);
-                        //TODO: redraw cursor so it fixes size immediately
-                    }
+                    redrawAllLayers();
                 });
 
                 cursorCanvas.setOnMouseMoved(new EventHandler <MouseEvent>() {
@@ -1064,7 +1064,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                 final MenuItem[] menuItems = {new MenuItem(Messages.getString("MapEditTab.TileEditTab.Resize.MENU_TEXT")),
                                               new MenuItem(Messages.getString("MapEditTab.TileEditTab.BgColor.MENU_TEXT"))};
 
-                menuItems[MapPaneMenuItem.arrIndexEnumMap.get(MapPaneMenuItem.RESIZE)].setOnAction(event -> {
+                menuItems[MapPaneMenuItem.arrayIndexMap.get(MapPaneMenuItem.RESIZE)].setOnAction(event -> {
                     final int layer = selectedLayer.get();
 
                     final String layerName;
@@ -1136,7 +1136,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                     });
                 });
 
-                menuItems[MapPaneMenuItem.arrIndexEnumMap.get(MapPaneMenuItem.BG_COLOR)].setOnAction(event -> {
+                menuItems[MapPaneMenuItem.arrayIndexMap.get(MapPaneMenuItem.BG_COLOR)].setOnAction(event -> {
                     final ColorPicker cPicker = new ColorPicker(mapPane.bgColor.get());
                     cPicker.setOnAction(ev -> {
                         if (!cPicker.getValue().isOpaque()) {
@@ -1165,7 +1165,8 @@ public final class MapEditTab extends FXUtil.FileEditTab {
             }
 
             /**
-             * Redraws a single tile at the given coordinates on a given layer
+             * Redraws a single tile at the given coordinates on a given layer.
+             * Also draws its tile type if those are set to be visible.
              *
              * @param layer The layer the tile to redraw is in
              * @param x The x coordinate of the tile to redraw
@@ -1252,7 +1253,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
             }
 
             /**
-             * Redraws an entire given layer, including tile types if they are set to be visible
+             * Redraws an entire given layer, including tile types if they are set to be visible.
              *
              * @param layer The layer to redraw
              */
@@ -1364,6 +1365,15 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                 }
                 catch (final Exception except) {
                     Logger.logThrowable("Exception in redrawLayer(" + layer + ")", except);
+                }
+            }
+
+            /**
+             * Redraws all layers, including tile types if they are set to be visible.
+             */
+            private void redrawAllLayers() {
+                for (int i = 0; i < tileLayers.length; ++i) {
+                    redrawLayer(i);
                 }
             }
 
@@ -1573,7 +1583,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
     }
 
     //TODO: Make this extend FileEditTab?
-    private final class PropertyEditTab extends Tab {
+    private final class PropertyEditTab extends FXUtil.FileEditTab {
         private final GridPane mainGridPane;
 
         private final PxPack.Head head;
@@ -1587,6 +1597,27 @@ public final class MapEditTab extends FXUtil.FileEditTab {
             head = map.getHead();
 
             mainGridPane = new GridPane();
+        }
+
+        @Override
+        public void undo() {
+            //does nothing
+        }
+
+        @Override
+        public void redo() {
+            //does nothing
+        }
+
+        @Override
+        public void save() {
+            //does nothing
+        }
+
+        //Overridden so the parent MapEditTab can call it in save()
+        @Override
+        public void setChanged(final boolean changed) {
+            super.setChanged(changed);
         }
     }
 
@@ -1630,6 +1661,6 @@ public final class MapEditTab extends FXUtil.FileEditTab {
         RESIZE,
         BG_COLOR;
 
-        static final EnumMap <MapPaneMenuItem, Integer> arrIndexEnumMap = RESIZE.enumMap(MapPaneMenuItem.class);
+        static final EnumMap <MapPaneMenuItem, Integer> arrayIndexMap = RESIZE.enumMap(MapPaneMenuItem.class);
     }
 }

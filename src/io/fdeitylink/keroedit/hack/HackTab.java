@@ -123,16 +123,17 @@ public final class HackTab extends FXUtil.FileEditTab {
 
     @Override
     public void undo() {
-
+        //does nothing
     }
 
     @Override
     public void redo() {
-
+        //does nothing
     }
 
     @Override
     public void save() {
+        //TODO: Actually save EXE
         setChanged(false);
         System.out.println("exe saved");
     }

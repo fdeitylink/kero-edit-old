@@ -235,9 +235,9 @@ public final class KeroEdit extends Application {
                                       new MenuItem(Messages.getString("KeroEdit.FileMenu.CLOSE_ALL_TABS"))};
         fileMenu.getItems().addAll(menuItems);
 
-        menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.OPEN)]
+        menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.OPEN)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
-        menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.OPEN)].setOnAction(event -> {
+        menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.OPEN)].setOnAction(event -> {
             //if user didn't cancel any attempted tab closes and definitely wants to load new mod
             if (!closeTabs(true)) {
                 wipeLoaded();
@@ -259,58 +259,58 @@ public final class KeroEdit extends Application {
             }
         });
 
-        menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.OPEN_LAST)]
+        menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.OPEN_LAST)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN));
-        menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.OPEN_LAST)].setOnAction(event -> {
+        menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.OPEN_LAST)].setOnAction(event -> {
             //if user didn't cancel any attempted tab closes and definitely wants to load last mod
             if (!closeTabs(true)) {
                 wipeLoaded();
                 loadMod(Paths.get(Config.lastExeLoc));
             }
         });
-        menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.OPEN_LAST)]
+        menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.OPEN_LAST)]
                 .setDisable(!Config.lastExeLoc.endsWith(".exe")); //Disabled if there is no last mod
-        openLast = menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.OPEN_LAST)];
+        openLast = menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.OPEN_LAST)];
 
-        menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.SAVE)]
+        menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.SAVE)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
-        menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.SAVE)].setOnAction(event -> {
+        menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.SAVE)].setOnAction(event -> {
             final Tab selectedTab = mainTabPane.getSelectionModel().getSelectedItem();
             if (selectedTab instanceof FXUtil.FileEditTab) {
                 ((FXUtil.FileEditTab)selectedTab).save();
             }
         });
-        menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.SAVE)].setDisable(true);
-        enableOnLoadItems.add(menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.SAVE)]);
+        menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.SAVE)].setDisable(true);
+        enableOnLoadItems.add(menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.SAVE)]);
 
-        menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.SAVE_ALL)]
+        menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.SAVE_ALL)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHIFT_DOWN, KeyCombination.CONTROL_DOWN));
-        menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.SAVE_ALL)].setOnAction(event -> {
+        menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.SAVE_ALL)].setOnAction(event -> {
             for (final Tab tab : mainTabPane.getTabs()) {
                 if (tab instanceof FXUtil.FileEditTab) {
                     ((FXUtil.FileEditTab)tab).save();
                 }
             }
         });
-        menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.SAVE_ALL)].setDisable(true);
-        enableOnLoadItems.add(menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.SAVE_ALL)]);
+        menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.SAVE_ALL)].setDisable(true);
+        enableOnLoadItems.add(menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.SAVE_ALL)]);
 
-        menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.CLOSE_TAB)]
+        menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.CLOSE_TAB)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN));
-        menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.CLOSE_TAB)].setOnAction(event -> {
+        menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.CLOSE_TAB)].setOnAction(event -> {
             final int tabIndex = mainTabPane.getSelectionModel().getSelectedIndex();
             if (-1 != tabIndex && mainTabPane.getTabs().get(tabIndex) != notepadTab) {
                 FXUtil.closeTab(mainTabPane.getTabs().get(tabIndex));
             }
         });
-        menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.CLOSE_TAB)].setDisable(true);
-        enableOnLoadItems.add(menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.CLOSE_TAB)]);
+        menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.CLOSE_TAB)].setDisable(true);
+        enableOnLoadItems.add(menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.CLOSE_TAB)]);
 
-        menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.CLOSE_ALL_TABS)]
+        menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.CLOSE_ALL_TABS)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.SHIFT_DOWN, KeyCombination.CONTROL_DOWN));
-        menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.CLOSE_ALL_TABS)].setOnAction(event -> closeTabs(false));
-        menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.CLOSE_ALL_TABS)].setDisable(true);
-        enableOnLoadItems.add(menuItems[FileMenuItem.arrIndexEnumMap.get(FileMenuItem.CLOSE_ALL_TABS)]);
+        menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.CLOSE_ALL_TABS)].setOnAction(event -> closeTabs(false));
+        menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.CLOSE_ALL_TABS)].setDisable(true);
+        enableOnLoadItems.add(menuItems[FileMenuItem.arrayIndexMap.get(FileMenuItem.CLOSE_ALL_TABS)]);
 
         return fileMenu;
     }
@@ -480,29 +480,29 @@ public final class KeroEdit extends Application {
                                       new MenuItem(Messages.getString("KeroEdit.EditMenu.REDO"))};
         editMenu.getItems().addAll(menuItems);
 
-        menuItems[EditMenuItem.arrIndexEnumMap.get(EditMenuItem.UNDO)]
+        menuItems[EditMenuItem.arrayIndexMap.get(EditMenuItem.UNDO)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN));
-        menuItems[EditMenuItem.arrIndexEnumMap.get(EditMenuItem.UNDO)].setOnAction(event -> {
+        menuItems[EditMenuItem.arrayIndexMap.get(EditMenuItem.UNDO)].setOnAction(event -> {
             final Tab selectedTab = mainTabPane.getSelectionModel().getSelectedItem();
             if (selectedTab instanceof FXUtil.FileEditTab) {
                 ((FXUtil.FileEditTab)selectedTab).undo();
             }
         });
-        menuItems[EditMenuItem.arrIndexEnumMap.get(EditMenuItem.UNDO)]
+        menuItems[EditMenuItem.arrayIndexMap.get(EditMenuItem.UNDO)]
                 .setDisable(true); //Disable until valid mod opened
-        enableOnLoadItems.add(menuItems[EditMenuItem.arrIndexEnumMap.get(EditMenuItem.UNDO)]);
+        enableOnLoadItems.add(menuItems[EditMenuItem.arrayIndexMap.get(EditMenuItem.UNDO)]);
 
-        menuItems[EditMenuItem.arrIndexEnumMap.get(EditMenuItem.REDO)]
+        menuItems[EditMenuItem.arrayIndexMap.get(EditMenuItem.REDO)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN));
-        menuItems[EditMenuItem.arrIndexEnumMap.get(EditMenuItem.REDO)].setOnAction(event -> {
+        menuItems[EditMenuItem.arrayIndexMap.get(EditMenuItem.REDO)].setOnAction(event -> {
             final Tab selectedTab = mainTabPane.getSelectionModel().getSelectedItem();
             if (selectedTab instanceof FXUtil.FileEditTab) {
                 ((FXUtil.FileEditTab)selectedTab).redo();
             }
         });
-        menuItems[EditMenuItem.arrIndexEnumMap.get(EditMenuItem.REDO)]
+        menuItems[EditMenuItem.arrayIndexMap.get(EditMenuItem.REDO)]
                 .setDisable(true); //Disable until valid mod opened
-        enableOnLoadItems.add(menuItems[EditMenuItem.arrIndexEnumMap.get(EditMenuItem.REDO)]);
+        enableOnLoadItems.add(menuItems[EditMenuItem.arrayIndexMap.get(EditMenuItem.REDO)]);
 
         return editMenu;
     }
@@ -527,7 +527,7 @@ public final class KeroEdit extends Application {
             mapZoomMItem.setOnAction(event -> MapEditTab.setMapZoom(Config.mapZoom = z));
             zoom += 2;
         }
-        ((Menu)menuItems[ViewMenuItem.arrIndexEnumMap.get(ViewMenuItem.MAP_ZOOM)]).getItems().addAll(mapZoomMenuItems);
+        ((Menu)menuItems[ViewMenuItem.arrayIndexMap.get(ViewMenuItem.MAP_ZOOM)]).getItems().addAll(mapZoomMenuItems);
 
         final RadioMenuItem[] tilesetZoomMenuItems = buildZoomSubmenu(Config.tilesetZoom);
         zoom = 2;
@@ -536,10 +536,10 @@ public final class KeroEdit extends Application {
             tilesetZoomMItem.setOnAction(event -> MapEditTab.setTilesetZoom(Config.tilesetZoom = z));
             zoom += 2;
         }
-        ((Menu)menuItems[ViewMenuItem.arrIndexEnumMap.get(ViewMenuItem.TILESET_ZOOM)])
+        ((Menu)menuItems[ViewMenuItem.arrayIndexMap.get(ViewMenuItem.TILESET_ZOOM)])
                 .getItems().addAll(tilesetZoomMenuItems);
 
-        menuItems[ViewMenuItem.arrIndexEnumMap.get(ViewMenuItem.TILESET_BG_COLOR)].setOnAction(event -> {
+        menuItems[ViewMenuItem.arrayIndexMap.get(ViewMenuItem.TILESET_BG_COLOR)].setOnAction(event -> {
             final ColorPicker cPicker = new ColorPicker(Config.tilesetBgColor);
             cPicker.setOnAction(ev -> MapEditTab.setTilesetBgColor(Config.tilesetBgColor = cPicker.getValue()));
 
@@ -594,7 +594,7 @@ public final class KeroEdit extends Application {
                                       new MenuItem(Messages.getString("KeroEdit.ActionsMenu.WAFFLE"))};
         actionsMenu.getItems().addAll(menuItems);
 
-        menuItems[ActionsMenuItem.arrIndexEnumMap.get(ActionsMenuItem.RUN_GAME)].setOnAction(event -> {
+        menuItems[ActionsMenuItem.arrayIndexMap.get(ActionsMenuItem.RUN_GAME)].setOnAction(event -> {
             final Runtime run = Runtime.getRuntime();
             try {
                 run.exec(GameData.getExecutable().toAbsolutePath().toString());
@@ -605,10 +605,10 @@ public final class KeroEdit extends Application {
                                    Messages.getString("KeroEdit.RunGame.IOExcept.MESSAGE"));
             }
         });
-        menuItems[ActionsMenuItem.arrIndexEnumMap.get(ActionsMenuItem.RUN_GAME)].setDisable(true);
-        enableOnLoadItems.add(menuItems[ActionsMenuItem.arrIndexEnumMap.get(ActionsMenuItem.RUN_GAME)]);
+        menuItems[ActionsMenuItem.arrayIndexMap.get(ActionsMenuItem.RUN_GAME)].setDisable(true);
+        enableOnLoadItems.add(menuItems[ActionsMenuItem.arrayIndexMap.get(ActionsMenuItem.RUN_GAME)]);
 
-        menuItems[ActionsMenuItem.arrIndexEnumMap.get(ActionsMenuItem.EDIT_GLOBAL_SCRIPT)].setOnAction(event -> {
+        menuItems[ActionsMenuItem.arrayIndexMap.get(ActionsMenuItem.EDIT_GLOBAL_SCRIPT)].setOnAction(event -> {
             final FileChooser scrChooser = new FileChooser();
             scrChooser.setTitle(Messages.getString("KeroEdit.GlobalScript.TITLE"));
 
@@ -654,10 +654,10 @@ public final class KeroEdit extends Application {
                 }
             }
         });
-        menuItems[ActionsMenuItem.arrIndexEnumMap.get(ActionsMenuItem.EDIT_GLOBAL_SCRIPT)].setDisable(true);
-        enableOnLoadItems.add(menuItems[ActionsMenuItem.arrIndexEnumMap.get(ActionsMenuItem.EDIT_GLOBAL_SCRIPT)]);
+        menuItems[ActionsMenuItem.arrayIndexMap.get(ActionsMenuItem.EDIT_GLOBAL_SCRIPT)].setDisable(true);
+        enableOnLoadItems.add(menuItems[ActionsMenuItem.arrayIndexMap.get(ActionsMenuItem.EDIT_GLOBAL_SCRIPT)]);
 
-        menuItems[ActionsMenuItem.arrIndexEnumMap.get(ActionsMenuItem.HACK_EXECUTABLE)].setOnAction(event -> {
+        menuItems[ActionsMenuItem.arrayIndexMap.get(ActionsMenuItem.HACK_EXECUTABLE)].setOnAction(event -> {
             /*for (final Tab tab : mainTabPane.getTabs()) {
                 if (tab instanceof HackTab) {
                     mainTabPane.getSelectionModel().select(tab);
@@ -673,10 +673,10 @@ public final class KeroEdit extends Application {
             mainTabPane.requestFocus();
 
         });
-        menuItems[ActionsMenuItem.arrIndexEnumMap.get(ActionsMenuItem.HACK_EXECUTABLE)].setDisable(true);
-        enableOnLoadItems.add(menuItems[ActionsMenuItem.arrIndexEnumMap.get(ActionsMenuItem.HACK_EXECUTABLE)]);
+        menuItems[ActionsMenuItem.arrayIndexMap.get(ActionsMenuItem.HACK_EXECUTABLE)].setDisable(true);
+        enableOnLoadItems.add(menuItems[ActionsMenuItem.arrayIndexMap.get(ActionsMenuItem.HACK_EXECUTABLE)]);
 
-        menuItems[ActionsMenuItem.arrIndexEnumMap.get(ActionsMenuItem.WAFFLE)].setOnAction(event -> {
+        menuItems[ActionsMenuItem.arrayIndexMap.get(ActionsMenuItem.WAFFLE)].setOnAction(event -> {
             final Image waffleImg = FXUtil.scaleImage(ResourceManager.getImage("waffle.png"), 16);
             final PrinterJob printJob = PrinterJob.createPrinterJob();
             if (null != printJob) {
@@ -710,7 +710,7 @@ public final class KeroEdit extends Application {
         helpMenu.getItems().addAll(menuItems);
 
 
-        menuItems[HelpMenuItem.arrIndexEnumMap.get(HelpMenuItem.ABOUT)].setOnAction(event -> {
+        menuItems[HelpMenuItem.arrayIndexMap.get(HelpMenuItem.ABOUT)].setOnAction(event -> {
             final Alert aboutAlert = FXUtil.createAlert(Alert.AlertType.INFORMATION,
                                                         Messages.getString("KeroEdit.HelpMenu.About.TITLE"), null,
                                                         MessageFormat.format(Messages.getString("KeroEdit.HelpMenu.About.MESSAGE"),
@@ -721,7 +721,7 @@ public final class KeroEdit extends Application {
             aboutAlert.showAndWait();
         });
 
-        menuItems[HelpMenuItem.arrIndexEnumMap.get(HelpMenuItem.GUIDE)]
+        menuItems[HelpMenuItem.arrayIndexMap.get(HelpMenuItem.GUIDE)]
                 .setOnAction(event -> FXUtil.createAlert(Alert.AlertType.INFORMATION,
                                                          Messages.getString("KeroEdit.HelpMenu.GUIDE").replace("_", ""),
                                                          null, Messages.getString("KeroEdit.NOT_IMPLEMENTED"))
@@ -753,9 +753,9 @@ public final class KeroEdit extends Application {
         mapListView.setContextMenu(contextMenu);
 
         //TODO: Change accelerator text from an arrow to "Enter"
-        contextMenuItems[MapListMenuItem.arrIndexEnumMap.get(MapListMenuItem.OPEN)]
+        contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.OPEN)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.ENTER));
-        contextMenuItems[MapListMenuItem.arrIndexEnumMap.get(MapListMenuItem.OPEN)].setOnAction(event -> {
+        contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.OPEN)].setOnAction(event -> {
             for (final String mapName : mapListView.getSelectionModel().getSelectedItems()) {
                 boolean isAlreadyOpen = false;
                 for (final Tab tab : mainTabPane.getTabs()) {
@@ -781,23 +781,23 @@ public final class KeroEdit extends Application {
                 }
             }
         });
-        contextMenuItems[MapListMenuItem.arrIndexEnumMap.get(MapListMenuItem.OPEN)].setDisable(true);
-        enableOnLoadItems.add(contextMenuItems[MapListMenuItem.arrIndexEnumMap.get(MapListMenuItem.OPEN)]);
+        contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.OPEN)].setDisable(true);
+        enableOnLoadItems.add(contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.OPEN)]);
 
-        contextMenuItems[MapListMenuItem.arrIndexEnumMap.get(MapListMenuItem.NEW)]
+        contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.NEW)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN));
         //TODO: Create dialog asking for mapname
-        contextMenuItems[MapListMenuItem.arrIndexEnumMap.get(MapListMenuItem.NEW)]
+        contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.NEW)]
                 .setOnAction(event -> FXUtil.createAlert(Alert.AlertType.INFORMATION,
                                                          Messages.getString("KeroEdit.MapListView.ContextMenu.NEW_MAP")
                                                                  .replace("_", ""),
                                                          null, Messages.getString("KeroEdit.NOT_IMPLEMENTED")).showAndWait());
-        contextMenuItems[MapListMenuItem.arrIndexEnumMap.get(MapListMenuItem.NEW)].setDisable(true);
-        enableOnLoadItems.add(contextMenuItems[MapListMenuItem.arrIndexEnumMap.get(MapListMenuItem.NEW)]);
+        contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.NEW)].setDisable(true);
+        enableOnLoadItems.add(contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.NEW)]);
 
-        contextMenuItems[MapListMenuItem.arrIndexEnumMap.get(MapListMenuItem.DELETE)]
+        contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.DELETE)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.DELETE));
-        contextMenuItems[MapListMenuItem.arrIndexEnumMap.get(MapListMenuItem.DELETE)].setOnAction(event -> {
+        contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.DELETE)].setOnAction(event -> {
             //This code works similarly to that in the closeTabs() method so reading that may help you to understand this
 
             //reference completely new list to avoid list being modified because of deleted and deselected items
@@ -842,26 +842,26 @@ public final class KeroEdit extends Application {
 
             mapListView.getSelectionModel().clearSelection();
         });
-        contextMenuItems[MapListMenuItem.arrIndexEnumMap.get(MapListMenuItem.DELETE)].setDisable(true);
-        enableOnLoadItems.add(contextMenuItems[MapListMenuItem.arrIndexEnumMap.get(MapListMenuItem.DELETE)]);
+        contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.DELETE)].setDisable(true);
+        enableOnLoadItems.add(contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.DELETE)]);
 
         //TODO: Create prompt for new mapname
-        contextMenuItems[MapListMenuItem.arrIndexEnumMap.get(MapListMenuItem.RENAME)]
+        contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.RENAME)]
                 .setOnAction(event -> FXUtil.createAlert(Alert.AlertType.INFORMATION,
                                                          Messages.getString("KeroEdit.MapListView.ContextMenu.RENAME_MAP")
                                                                  .replace("_", ""),
                                                          null, Messages.getString("KeroEdit.NOT_IMPLEMENTED")).showAndWait());
-        contextMenuItems[MapListMenuItem.arrIndexEnumMap.get(MapListMenuItem.RENAME)].setDisable(true);
-        enableOnLoadItems.add(contextMenuItems[MapListMenuItem.arrIndexEnumMap.get(MapListMenuItem.RENAME)]);
+        contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.RENAME)].setDisable(true);
+        enableOnLoadItems.add(contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.RENAME)]);
 
         //TODO: Create prompt for new mapname
-        contextMenuItems[MapListMenuItem.arrIndexEnumMap.get(MapListMenuItem.DUPLICATE)]
+        contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.DUPLICATE)]
                 .setOnAction(event -> FXUtil.createAlert(Alert.AlertType.INFORMATION,
                                                          Messages.getString("KeroEdit.MapListView.ContextMenu.DUPLICATE_MAP")
                                                                  .replace("_", ""),
                                                          null, Messages.getString("KeroEdit.NOT_IMPLEMENTED")).showAndWait());
-        contextMenuItems[MapListMenuItem.arrIndexEnumMap.get(MapListMenuItem.DUPLICATE)].setDisable(true);
-        enableOnLoadItems.add(contextMenuItems[MapListMenuItem.arrIndexEnumMap.get(MapListMenuItem.DUPLICATE)]);
+        contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.DUPLICATE)].setDisable(true);
+        enableOnLoadItems.add(contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.DUPLICATE)]);
 
         mapListView.setOnKeyPressed(event -> {
             /*
@@ -885,7 +885,7 @@ public final class KeroEdit extends Application {
             }*/
 
             //This is the only one that doesn't seem to be triggered by keypresses on map list, IDK why
-            final MenuItem openMap = contextMenuItems[MapListMenuItem.arrIndexEnumMap.get(MapListMenuItem.OPEN)];
+            final MenuItem openMap = contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.OPEN)];
             if (openMap.getAccelerator().match(event)) {
                 openMap.getOnAction().handle(new ActionEvent());
             }
@@ -893,7 +893,7 @@ public final class KeroEdit extends Application {
 
         mapListView.setOnMouseClicked(event -> {
             if (event.getButton().equals(MouseButton.PRIMARY) && 2 == event.getClickCount()) {
-                contextMenuItems[MapListMenuItem.arrIndexEnumMap.get(MapListMenuItem.OPEN)].getOnAction().handle(new ActionEvent());
+                contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.OPEN)].getOnAction().handle(new ActionEvent());
             }
         });
 
@@ -1165,14 +1165,14 @@ public final class KeroEdit extends Application {
         CLOSE_TAB,
         CLOSE_ALL_TABS;
 
-        static final EnumMap <FileMenuItem, Integer> arrIndexEnumMap = OPEN.enumMap(FileMenuItem.class);
+        static final EnumMap <FileMenuItem, Integer> arrayIndexMap = OPEN.enumMap(FileMenuItem.class);
     }
 
     private enum EditMenuItem implements ArrayIndexEnum <EditMenuItem> {
         UNDO,
         REDO;
 
-        static final EnumMap <EditMenuItem, Integer> arrIndexEnumMap = UNDO.enumMap(EditMenuItem.class);
+        static final EnumMap <EditMenuItem, Integer> arrayIndexMap = UNDO.enumMap(EditMenuItem.class);
     }
 
     private enum ViewMenuItem implements ArrayIndexEnum <ViewMenuItem> {
@@ -1180,7 +1180,7 @@ public final class KeroEdit extends Application {
         TILESET_ZOOM,
         TILESET_BG_COLOR;
 
-        static final EnumMap <ViewMenuItem, Integer> arrIndexEnumMap = MAP_ZOOM.enumMap(ViewMenuItem.class);
+        static final EnumMap <ViewMenuItem, Integer> arrayIndexMap = MAP_ZOOM.enumMap(ViewMenuItem.class);
     }
 
     private enum ActionsMenuItem implements ArrayIndexEnum <ActionsMenuItem> {
@@ -1189,14 +1189,14 @@ public final class KeroEdit extends Application {
         HACK_EXECUTABLE,
         WAFFLE;
 
-        static final EnumMap <ActionsMenuItem, Integer> arrIndexEnumMap = RUN_GAME.enumMap(ActionsMenuItem.class);
+        static final EnumMap <ActionsMenuItem, Integer> arrayIndexMap = RUN_GAME.enumMap(ActionsMenuItem.class);
     }
 
     private enum HelpMenuItem implements ArrayIndexEnum <HelpMenuItem> {
         ABOUT,
         GUIDE;
 
-        static final EnumMap <HelpMenuItem, Integer> arrIndexEnumMap = ABOUT.enumMap(HelpMenuItem.class);
+        static final EnumMap <HelpMenuItem, Integer> arrayIndexMap = ABOUT.enumMap(HelpMenuItem.class);
     }
 
     private enum MapListMenuItem implements ArrayIndexEnum <MapListMenuItem> {
@@ -1206,6 +1206,6 @@ public final class KeroEdit extends Application {
         DUPLICATE,
         RENAME; //TODO: remove this?
 
-        static final EnumMap <MapListMenuItem, Integer> arrIndexEnumMap = OPEN.enumMap(MapListMenuItem.class);
+        static final EnumMap <MapListMenuItem, Integer> arrayIndexMap = OPEN.enumMap(MapListMenuItem.class);
     }
 }

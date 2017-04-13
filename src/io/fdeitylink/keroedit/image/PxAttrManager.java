@@ -62,6 +62,7 @@ public final class PxAttrManager {
             if (null == mpt00) {
                 path = Paths.get(path.getParent().toAbsolutePath().toString() + File.separatorChar + "mpt00.pxattr");
                 if (!Files.exists(path)) { //mpt00 file doesn't exist
+                    //return null instead?
                     throw new FileNotFoundException(Messages.getString("PxAttrManager.PxAttr.DEFAULT_MISSING"));
                 }
                 mpt00 = new PxAttr(path);
@@ -78,16 +79,17 @@ public final class PxAttrManager {
         return pxAttrProp.getReadOnlyProperty();
     }
 
-    public static void setAttribute(final String tilesetName, final int x, final int y, final int attribute) {
+    public static void setAttribute(final String tilesetName, final int x, final int y, final int attribute)
+            throws IOException {
         final ReadOnlyPxAttrWrapper pxAttrProp = pxAttrsMap.get(tilesetName);
         if (!"mpt00".equals(tilesetName) && pxAttrProp.get() == mpt00) {
             final Path path = Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
                                         File.separatorChar + "img" + File.separatorChar +
                                         tilesetName + ".pxattr");
-            final PxAttr pxAttr = new PxAttr(mpt00, path);
-            pxAttrProp.set(pxAttr);
+            pxAttrProp.set(new PxAttr(mpt00, path));
         }
         pxAttrProp.setAttribute(x, y, attribute);
+        pxAttrProp.get().save();
     }
 
     public static void wipe() {
@@ -114,7 +116,6 @@ public final class PxAttrManager {
 
             try (SeekableByteChannel chan = Files.newByteChannel(inPath, StandardOpenOption.READ)) {
                 ByteBuffer buf = ByteBuffer.allocate(HEADER_STRING.length());
-                buf.order(ByteOrder.BIG_ENDIAN);
                 chan.read(buf);
 
                 if (!(new String(buf.array()).equals(HEADER_STRING))) {
@@ -133,6 +134,7 @@ public final class PxAttrManager {
                 final int height = buf.getShort();
 
                 if (width * height > 0) {
+                    //TODO: Find if it is ever not 0 (might've already checked but make sure)
                     chan.position(chan.position() + 1);
 
                     buf = ByteBuffer.allocate(width * height);
@@ -178,9 +180,43 @@ public final class PxAttrManager {
             attributes[y][x] = attribute;
         }
 
-        void save() {
-            //create file if nonexistent
-            System.out.println("pxattr " + path.getFileName() + " saved");
+        void save() throws IOException {
+            try (SeekableByteChannel chan = Files.newByteChannel(path,
+                                                                 StandardOpenOption.WRITE,
+                                                                 StandardOpenOption.TRUNCATE_EXISTING,
+                                                                 StandardOpenOption.CREATE)) {
+                ByteBuffer buf = ByteBuffer.wrap(HEADER_STRING.getBytes("SJIS"));
+                chan.write(buf);
+
+                if (null == attributes) {
+                    buf = ByteBuffer.allocate(4);
+                    buf.putShort((short)0).putShort((short)0);
+                    buf.flip();
+
+                    chan.write(buf);
+                }
+                else {
+                    short width = (short)attributes[0].length;
+                    short height = (short)attributes.length;
+
+                    buf = ByteBuffer.allocate(5);
+                    buf.order(ByteOrder.LITTLE_ENDIAN);
+                    buf.putShort(width).putShort(height);
+                    buf.put((byte)0);
+                    buf.flip();
+
+                    chan.write(buf);
+
+                    buf = ByteBuffer.allocate((width & 0xFFFF) * (height & 0xFFFF)); //& 0xFFFF treats as unsigned when converted to int
+                    for (final int[] row : attributes) {
+                        for (final int attr : row) {
+                            buf.put((byte)attr);
+                        }
+                    }
+                    buf.flip();
+                    chan.write(buf);
+                }
+            }
         }
     }
 

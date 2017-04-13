@@ -13,7 +13,17 @@ import io.fdeitylink.keroedit.gamedata.GameData;
 import javafx.beans.property.ReadOnlyObjectWrapper;*/
 
 public final class ImageManager {
+    //TODO: Cater to images in localize folder
+    /**
+     * Associates a filename (sans ".png") with an {@code Image}, which can
+     * either be a tileset or spritesheet.
+     */
     private static final HashMap <String, Image> imagesMap = new HashMap <>();
+    /**
+     * An {@code Image} with a width and height of that is put into
+     * {@code imagesMap} when a loaded image has such dimensions
+     * in order to reduce memory usage.
+     */
     private static final Image emptyImage = new Image("file:///");
 
     private ImageManager() {
@@ -51,6 +61,11 @@ public final class ImageManager {
         return image;
     }
 
+    /**
+     * Clears {@code imagesMap} so no {@code Images} that have been
+     * loaded in the past are accessible anymore. They will need to
+     * be reloaded to make them available again.
+     */
     public static void wipe() {
         imagesMap.clear();
     }
