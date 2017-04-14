@@ -8,6 +8,7 @@
  * Show error on tileset load for 0 dimension? (only if first tileset?)
  * Make method for redrawing subset/region of map
  * Improve multiple selection in tileset (store startX, startY, and cursorX, cursorY)
+ * Use EnumSet or BitSet for flags?
  */
 
 package io.fdeitylink.keroedit.mapedit;
@@ -139,8 +140,8 @@ public final class MapEditTab extends FXUtil.FileEditTab {
     private static Image pxAttrImg;
     private static Image entityImg;
 
-    private static final Stage tilesetStage; //TODO: Change to Dialog when adding (not setting) event handlers is allowed
-    //(or rework how the stage works)
+    //TODO: Change to Dialog when adding (not setting) event handlers is allowed (or rework how the stage works)
+    private static final Stage tilesetStage;
 
     static {
         mapZoom = new SimpleIntegerProperty(Config.mapZoom);
@@ -314,6 +315,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
         }
     }
 
+    //Made public so the child ScriptEditTab can call it
     @Override
     public void setChanged(final boolean changed) {
         super.setChanged(changed);
@@ -372,8 +374,6 @@ public final class MapEditTab extends FXUtil.FileEditTab {
     }
 
     private final class TileEditTab extends FXUtil.FileEditTab {
-        //TODO: Move pxAttrs into here?
-
         private final PxPack.Head head; //ensure updates to head reflected in PropertyEditTab
         private final ArrayList <PxPack.Entity> entities;
 
@@ -408,7 +408,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
             //does nothing
         }
 
-        //Overridden so the parent MapEditTab can call it in save()
+        //Made public so the parent MapEditTab can call it in save()
         @Override
         public void setChanged(final boolean changed) {
             super.setChanged(changed);
@@ -494,7 +494,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
             private final Rectangle2D[] selectedRegions;
 
             private Image[] tilesets;
-            private ArrayList <ReadOnlyObjectProperty <PxAttrManager.PxAttr>> pxAttrs; //TODO: Move this up to TileEditTab?
+            private ArrayList <ReadOnlyObjectProperty <PxAttrManager.PxAttr>> pxAttrs;
 
             private Service <Void> redrawTileTypes;
             private Service <Void> drawSelectedTiles;
@@ -555,8 +555,8 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                                                                           tileTypeCanvas.getHeight()));
 
                                 final int[][] attributes = pxAttrs.get(selectedLayer.get()).get().getAttributes();
-                                if (null != attributes) {
-                                    final PixelReader pxAttrImgReader = pxAttrImg.getPixelReader();
+                                final PixelReader pxAttrImgReader = pxAttrImg.getPixelReader();
+                                if (null != attributes && null != pxAttrImgReader) {
                                     final WritableImage tmpTileTypeImg = new WritableImage((int)tileTypeCanvas.getWidth() *
                                                                                            (PXATTR_IMAGE_WIDTH / TILESET_WIDTH),
                                                                                            (int)tileTypeCanvas.getHeight() *
@@ -606,9 +606,6 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                                 final int layer = selectedLayer.get();
 
                                 final int[][] selectedTilesRect = selectedTiles[layer];
-                                /*if (null == selectedTilesRect || null == head.getTilesetNames()[layer]) {
-                                    return null;
-                                }*/
 
                                 final WritablePixelFormat <ByteBuffer> pxFormat = PixelFormat.getByteBgraInstance();
 
@@ -663,15 +660,13 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                     setDividerPositions(0.5);
 
                     redrawTileset();
-                    redrawTileTypes.start();
+                    redrawTileTypes.start(); //move into if block below?
 
                     drawSelectedTiles.start();
 
                     //when both of the Services are complete, redraw layers
                     if (!loadPxAttrs.isRunning()) {
-                        for (int i = 0; i < mapPane.tileLayers.length; ++i) {
-                            mapPane.redrawAllLayers();
-                        }
+                        mapPane.redrawAllLayers();
                     }
                 });
 
@@ -714,9 +709,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                 loadPxAttrs.setOnSucceeded(event -> {
                     //when both of the Services are complete, redraw layers
                     if (!loadTilesets.isRunning()) {
-                        for (int i = 0; i < mapPane.tileLayers.length; ++i) {
-                            mapPane.redrawAllLayers();
-                        }
+                        mapPane.redrawAllLayers();
                     }
                 });
             }
@@ -873,7 +866,9 @@ public final class MapEditTab extends FXUtil.FileEditTab {
             private final PxPack.TileLayer[] tileLayers;
 
             private final Canvas[] mapCanvases;
+            //private final Canvas tileTypesCanvas;
             private final Canvas entityCanvas;
+            private final Canvas gridCanvas;
             private final Canvas cursorCanvas;
             private final StackPane mapStackPane;
 
@@ -889,18 +884,22 @@ public final class MapEditTab extends FXUtil.FileEditTab {
 
                 entityCanvas = new Canvas();
 
+                gridCanvas = new Canvas();
+                gridCanvas.setVisible(ViewFlag.GRID.flag == (viewSettings.get() & ViewFlag.GRID.flag));
+
                 cursorCanvas = new Canvas();
                 cursorCanvas.getGraphicsContext2D().setStroke(Color.WHITE);
                 cursorCanvas.getGraphicsContext2D().setLineWidth(2.0);
 
                 fixCanvasSizes();
+                redrawGrid();
 
                 mapStackPane = new StackPane();
                 mapStackPane.setAlignment(Pos.TOP_LEFT);
-                for (int i = mapCanvases.length - 1; i > -1; --i) {
+                for (int i = mapCanvases.length - 1; i >= 0; --i) {
                     mapStackPane.getChildren().add(mapCanvases[i]);
                 }
-                mapStackPane.getChildren().addAll(entityCanvas, cursorCanvas);
+                mapStackPane.getChildren().addAll(entityCanvas, gridCanvas, cursorCanvas);
 
                 bgColor = new SimpleObjectProperty <>(head.getBgColor());
                 bgColor.addListener((observable, oldValue, newValue) -> FXUtil.setBackgroundColor(mapStackPane, newValue));
@@ -916,8 +915,10 @@ public final class MapEditTab extends FXUtil.FileEditTab {
             }
 
             /**
-             * Binds {@code EventHandler}s to all the {@code Pane}s and
-             * {@code Canvas}es in this {@code ScrollPane}
+             * Binds and initializes {@code EventHandlers} for clicks
+             * on the {@code Canvases} and {@code Panes} as well as
+             * changes to the various static SimpleIntegerProperties
+             * initialized and controlled by the MapEditTab class.
              */
             private void initEventHandlers() {
                 displayedLayers.addListener((observable, oldValue, newValue) -> {
@@ -938,11 +939,14 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                     /*
                      * Only one flag is changed at a time, so
                      * oldValue ^ newValue
-                     * will always yield the flag just set.
+                     * will always yield the flag just set or unset.
                      */
-                    //TODO: use switch statement if possible
-                    if (ViewFlag.TILE_TYPES.flag == (oldValue.intValue() ^ newValue.intValue())) {
+                    final int changedFlag = oldValue.intValue() ^ newValue.intValue();
+                    if (ViewFlag.TILE_TYPES.flag == changedFlag) {
                         redrawLayer(selectedLayer.get());
+                    }
+                    else if (ViewFlag.GRID.flag == changedFlag) {
+                        gridCanvas.setVisible(ViewFlag.GRID.flag == (newValue.intValue() & ViewFlag.GRID.flag));
                     }
                 });
 
@@ -950,6 +954,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                     //TODO: redraw cursor so it fixes size immediately
                     fixCanvasSizes();
                     redrawAllLayers();
+                    redrawGrid();
                 });
 
                 cursorCanvas.setOnMouseMoved(new EventHandler <MouseEvent>() {
@@ -969,13 +974,13 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                             cursorGContext.clearRect(0, 0, cursorCanvas.getWidth(), cursorCanvas.getHeight());
                             switch (drawMode) {
                                 case DRAW:
-                                    //TODO: account for rects of seleced tiles
                                     final int[][] tilesRect = selectedTiles[selectedLayer.get()];
                                     cursorGContext.strokeRoundRect(x * TILE_WIDTH * mapZoom.get(),
                                                                    y * TILE_HEIGHT * mapZoom.get(),
                                                                    TILE_WIDTH * tilesRect[0].length * mapZoom.get(),
                                                                    TILE_HEIGHT * tilesRect.length * mapZoom.get(),
                                                                    10, 10);
+                                    break;
                             }
                         }
                     }
@@ -1381,7 +1386,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                 try {
                     new Task <Void>() {
                         @Override
-                        protected Void call() {
+                        protected Void call() throws Exception {
                             final PixelReader entitiesReader = entityImg.getPixelReader();
                             for (final PxPack.Entity entity : entities) {
                                 //pull sprite
@@ -1399,6 +1404,20 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                     entityCanvas.getGraphicsContext2D().strokeRect(e.getX() * TILE_WIDTH * mapZoom.get(),
                                                                    e.getY() * TILE_WIDTH * mapZoom.get(),
                                                                    TILE_WIDTH * mapZoom.get(), TILE_HEIGHT * mapZoom.get());
+                }
+            }
+
+            private void redrawGrid() {
+                final GraphicsContext gridGraphicsContext = gridCanvas.getGraphicsContext2D();
+                gridGraphicsContext.clearRect(0, 0, gridCanvas.getWidth(), gridCanvas.getHeight());
+                gridGraphicsContext.setStroke(Color.WHITE);
+                gridGraphicsContext.setLineWidth(1.0);
+
+                for (int y = 0; y < gridCanvas.getHeight(); y += (TILE_HEIGHT * mapZoom.get())) {
+                    gridGraphicsContext.strokeLine(0, y, gridCanvas.getWidth() - 1, y);
+                }
+                for (int x = 0; x < gridCanvas.getWidth(); x += (TILE_WIDTH * mapZoom.get())) {
+                    gridGraphicsContext.strokeLine(x, 0, x, gridCanvas.getHeight() - 1);
                 }
             }
 
@@ -1429,11 +1448,14 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                     mapCanvases[i].setHeight(height);
                 }
 
+                entityCanvas.setWidth(maxWidth);
+                entityCanvas.setHeight(maxHeight);
+
                 cursorCanvas.setWidth(maxWidth);
                 cursorCanvas.setHeight(maxHeight);
 
-                entityCanvas.setWidth(maxWidth);
-                entityCanvas.setHeight(maxHeight);
+                gridCanvas.setWidth(maxWidth);
+                gridCanvas.setHeight(maxHeight);
             }
 
             private final class UndoableMapDrawEdit implements UndoableEdit {
@@ -1582,7 +1604,6 @@ public final class MapEditTab extends FXUtil.FileEditTab {
         }
     }
 
-    //TODO: Make this extend FileEditTab?
     private final class PropertyEditTab extends FXUtil.FileEditTab {
         private final GridPane mainGridPane;
 
@@ -1614,7 +1635,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
             //does nothing
         }
 
-        //Overridden so the parent MapEditTab can call it in save()
+        //Made public so the parent MapEditTab can call it in save()
         @Override
         public void setChanged(final boolean changed) {
             super.setChanged(changed);

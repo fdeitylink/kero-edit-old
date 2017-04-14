@@ -346,67 +346,72 @@ public final class KeroEdit extends Application {
      * @throws NullArgumentException if {@code executable} is null
      */
     private void loadMod(final Path executable) {
-        new Task <Void>() {
-            @Override
-            protected Void call() {
-                if (null == executable) {
-                    throw new NullArgumentException("loadMod", "executable");
-                }
-                if (!executable.toString().endsWith(".exe")) {
-                    Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.ERROR,
-                                                               Messages.getString("KeroEdit.LoadMod.NotExe.TITLE"), null,
-                                                               MessageFormat.format(Messages.getString("KeroEdit.LoadMod.NotExe.MESSAGE"),
-                                                                                    executable.toAbsolutePath())).showAndWait());
-                    return null;
-                }
-
-                try {
-                    GameData.init(executable);
-                    Config.lastExeLoc = executable.toAbsolutePath().toString();
-
-                    HackTab.init();
-
-                    final File executableParent = executable.getParent().toAbsolutePath().toFile();
-                    boolean hasRWXPermissions = executableParent.canRead() && executableParent.canWrite() &&
-                                                executableParent.canExecute();
-                    if (!hasRWXPermissions) {
-                        if (!(hasRWXPermissions = executableParent.setReadable(true) &&
-                                                  executableParent.setWritable(true) &&
-                                                  executableParent.setExecutable(true))) {
-                            Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.INFORMATION,
-                                                                       Messages.getString("KeroEdit.LoadMod.StrictPermissions.TITLE"),
-                                                                       null,
-                                                                       Messages.getString("KeroEdit.LoadMod.StrictPermissions.MESSAGE"))
-                                                          .showAndWait());
-                        }
+        try {
+            new Task <Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    if (null == executable) {
+                        throw new NullArgumentException("loadMod", "executable");
                     }
-                    if (hasRWXPermissions) {
-                        createAssistFolder();
+                    if (!executable.toString().endsWith(".exe")) {
+                        Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.ERROR,
+                                                                   Messages.getString("KeroEdit.LoadMod.NotExe.TITLE"), null,
+                                                                   MessageFormat.format(Messages.getString("KeroEdit.LoadMod.NotExe.MESSAGE"),
+                                                                                        executable.toAbsolutePath())).showAndWait());
+                        return null;
                     }
 
-                    Platform.runLater(() -> {
-                        setTitle(executable.getParent().toAbsolutePath().toString() + File.separatorChar);
+                    try {
+                        GameData.init(executable);
+                        Config.lastExeLoc = executable.toAbsolutePath().toString();
 
-                        openLast.setDisable(false);
-                        mapList.setItems(FXCollections.observableArrayList(GameData.getMapList()));
-                        mapList.requestFocus();
+                        HackTab.init();
 
-                        for (final MenuItem mItem : enableOnLoadItems) {
-                            if (mItem.isDisable()) {
-                                mItem.setDisable(false);
+                        final File executableParent = executable.getParent().toAbsolutePath().toFile();
+                        boolean hasRWXPermissions = executableParent.canRead() && executableParent.canWrite() &&
+                                                    executableParent.canExecute();
+                        if (!hasRWXPermissions) {
+                            if (!(hasRWXPermissions = executableParent.setReadable(true) &&
+                                                      executableParent.setWritable(true) &&
+                                                      executableParent.setExecutable(true))) {
+                                Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.INFORMATION,
+                                                                           Messages.getString("KeroEdit.LoadMod.StrictPermissions.TITLE"),
+                                                                           null,
+                                                                           Messages.getString("KeroEdit.LoadMod.StrictPermissions.MESSAGE"))
+                                                              .showAndWait());
                             }
                         }
-                    });
-                }
-                catch (final IOException except) {
-                    Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.ERROR,
-                                                               Messages.getString("KeroEdit.LoadMod.IOExcept.TITLE"), null,
-                                                               except.getMessage()).showAndWait());
-                }
+                        if (hasRWXPermissions) {
+                            createAssistFolder();
+                        }
 
-                return null;
-            }
-        }.call();
+                        Platform.runLater(() -> {
+                            setTitle(executable.getParent().toAbsolutePath().toString() + File.separatorChar);
+
+                            openLast.setDisable(false);
+                            mapList.setItems(FXCollections.observableArrayList(GameData.getMapList()));
+                            mapList.requestFocus();
+
+                            for (final MenuItem mItem : enableOnLoadItems) {
+                                if (mItem.isDisable()) {
+                                    mItem.setDisable(false);
+                                }
+                            }
+                        });
+                    }
+                    catch (final IOException except) {
+                        Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.ERROR,
+                                                                   Messages.getString("KeroEdit.LoadMod.IOExcept.TITLE"), null,
+                                                                   except.getMessage()).showAndWait());
+                    }
+
+                    return null;
+                }
+            }.call();
+        }
+        catch (final Exception except) {
+            //do nothing?
+        }
     }
 
     /**
@@ -786,7 +791,7 @@ public final class KeroEdit extends Application {
 
         contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.NEW)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN));
-        //TODO: Create dialog asking for mapname
+        //TODO: Create prompt for new mapname
         contextMenuItems[MapListMenuItem.arrayIndexMap.get(MapListMenuItem.NEW)]
                 .setOnAction(event -> FXUtil.createAlert(Alert.AlertType.INFORMATION,
                                                          Messages.getString("KeroEdit.MapListView.ContextMenu.NEW_MAP")
@@ -1109,9 +1114,9 @@ public final class KeroEdit extends Application {
 
             final SimpleIntegerProperty viewSettings = new SimpleIntegerProperty(Config.viewSettings);
 
-            final CheckBox[] cBoxes = {new CheckBox(Messages.getString("KeroEdit.SettingsPane.TILE_TYPES"))/*,
+            final CheckBox[] cBoxes = {new CheckBox(Messages.getString("KeroEdit.SettingsPane.TILE_TYPES")),
                                        new CheckBox(Messages.getString("KeroEdit.SettingsPane.GRID")),
-                                       new CheckBox(Messages.getString("KeroEdit.SettingsPane.ENTITY_BOXES")),
+                                       /*new CheckBox(Messages.getString("KeroEdit.SettingsPane.ENTITY_BOXES")),
                                        new CheckBox(Messages.getString("KeroEdit.SettingsPane.ENTITY_SPRITES")),
                                        new CheckBox(Messages.getString("KeroEdit.SettingsPane.ENTITY_NAMES"))*/};
 

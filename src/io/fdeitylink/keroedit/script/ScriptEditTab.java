@@ -44,8 +44,12 @@ public final class ScriptEditTab extends FXUtil.FileEditTab {
             scriptText = lineStream.collect(Collectors.joining("\n"));
         }
         catch (final FileNotFoundException except) {
-            //TODO: Create new script file
-            System.err.println("ERROR: Could not locate PXEVE file " + inScript.toAbsolutePath());
+            try {
+                Files.createFile(inScript);
+            }
+            catch (final IOException ex) {
+                //do nothing
+            }
         }
         catch (final IOException except) {
             FXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("ScriptEditTab.IOExcept.TITLE"), null,
@@ -108,6 +112,7 @@ public final class ScriptEditTab extends FXUtil.FileEditTab {
         }
     }
 
+    //Made public so the parent MapEditTab can call it in save()
     @Override
     public void setChanged(final boolean changed) {
         super.setChanged(changed);

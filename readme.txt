@@ -1,7 +1,7 @@
 KeroEdit - the Kero Blaster editor!
 by FDeityLink
 v0.0.1
-Last updated 2017-04-13
+Last updated 2017-04-14
 
 This is a Kero Blaster editor that allows you to edit Pink Hour, Pink Heaven, and of course Kero Blaster games so you
 can make your own games based on those engines. To start, you just have to load a game executable, open a map, and start editing!

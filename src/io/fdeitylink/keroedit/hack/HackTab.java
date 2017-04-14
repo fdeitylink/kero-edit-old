@@ -94,13 +94,16 @@ public final class HackTab extends FXUtil.FileEditTab {
 
         hacksTree.getRoot().getChildren().add(stringsTreeItem);
 
-        //Get first item of root, which ends up just having children, and then get the first item of that "subroot",
-        //which also only has children
+        /*
+         * Get first item of root, which only has children
+         * and then get the first item of that "subroot",
+         * which also only has children.
+         */
         inst.sPane.getItems().addAll(hacksTree, ((HackTreeItem)hacksTree.getRoot().getChildren().get(0)
                                                                         .getChildren().get(0)).hackPane);
         inst.sPane.setDividerPositions(0.2);
 
-        //inst.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE, ButtonType.APPLY, ButtonType.CANCEL);
+        //TODO: Apply button
 
         inst.setText(Messages.getString("HackTab.TITLE"));
         inst.setTooltip(new Tooltip(GameData.getExecutable().toAbsolutePath().toString()));

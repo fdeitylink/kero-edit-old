@@ -82,6 +82,18 @@ public final class PxAttrManager {
     public static void setAttribute(final String tilesetName, final int x, final int y, final int attribute)
             throws IOException {
         final ReadOnlyPxAttrWrapper pxAttrProp = pxAttrsMap.get(tilesetName);
+
+        /*
+         * Since mpt00.pxattr is used as a default PXATTR when no PXATTR
+         * file exists for a given tileset, if a request to change one
+         * of its attributes is made and the tileset mpt00.pxattr is being
+         * used for is not mpt00.png, we copy mpt00's attributes into a
+         * new PxAttr object with a different file path, and change the
+         * attribute on that one. If mpt00 was not being used for this
+         * tileset, then the following if block is not run since there
+         * is already a specific PXATTR file for this tileset, and the
+         * attribute can just be changed on that one.
+         */
         if (!"mpt00".equals(tilesetName) && pxAttrProp.get() == mpt00) {
             final Path path = Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
                                         File.separatorChar + "img" + File.separatorChar +
@@ -89,6 +101,8 @@ public final class PxAttrManager {
             pxAttrProp.set(new PxAttr(mpt00, path));
         }
         pxAttrProp.setAttribute(x, y, attribute);
+
+        //TODO: Supress exception?
         pxAttrProp.get().save();
     }
 
