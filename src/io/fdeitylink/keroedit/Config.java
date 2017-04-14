@@ -3,9 +3,13 @@ package io.fdeitylink.keroedit;
 import java.util.prefs.Preferences;
 import java.util.prefs.BackingStoreException;
 
+import java.util.EnumSet;
+
 import javafx.scene.paint.Color;
 
 import io.fdeitylink.keroedit.util.Logger;
+
+import io.fdeitylink.keroedit.util.SafeOrdinalEnum;
 
 import io.fdeitylink.keroedit.util.FXUtil;
 
@@ -26,12 +30,12 @@ public final class Config {
     public static int tilesetZoom;
     public static Color tilesetBgColor;
 
-    public static int displayedLayers;
+    public static EnumSet <MapEditTab.LayerFlag> displayedLayers;
     public static int selectedLayer;
 
     public static MapEditTab.DrawMode drawMode;
 
-    public static int viewSettings;
+    public static EnumSet <MapEditTab.ViewFlag> viewSettings;
 
     private Config() {
 
@@ -44,16 +48,18 @@ public final class Config {
 
         mapZoom = prefs.getInt("MAP_ZOOM", 2);
         tilesetZoom = prefs.getInt("TILESET_ZOOM", 2);
-        tilesetBgColor = Color.web(prefs.get("TILESET_BG_COLOR", FXUtil.colorToString(Color.MAGENTA)));
+
+        final String colStr = prefs.get("TILESET_BG_COLOR", null);
+        tilesetBgColor = null == colStr ? Color.MAGENTA : Color.web(colStr);
 
         //0b0000_0111 -> inits as all layers displayed
-        displayedLayers = prefs.getInt("DISPLAYED_LAYERS", 0b0000_0111);
+        displayedLayers = decode(prefs.getInt("DISPLAYED_LAYERS", 0b0000_0111), MapEditTab.LayerFlag.class);
         selectedLayer = prefs.getInt("SELECTED_LAYER", 0);
 
         drawMode = MapEditTab.DrawMode.values()[prefs.getInt("DRAW_MODE", 0)];
 
         //0b0000_0000 -> inits as nothing on
-        viewSettings = prefs.getInt("VIEW_SETTINGS", 0b0000_0000);
+        viewSettings = decode(prefs.getInt("VIEW_SETTINGS", 0b0000_0000), MapEditTab.ViewFlag.class);
     }
 
     static void savePrefs() {
@@ -66,17 +72,44 @@ public final class Config {
             prefs.putInt("TILESET_ZOOM", tilesetZoom);
             prefs.put("TILESET_BG_COLOR", FXUtil.colorToString(tilesetBgColor));
 
-            prefs.putInt("DISPLAYED_LAYERS", displayedLayers);
+            prefs.putInt("DISPLAYED_LAYERS", encode(displayedLayers, MapEditTab.LayerFlag.class));
             prefs.putInt("SELECTED_LAYER", selectedLayer);
 
-            prefs.putInt("DRAW_MODE", MapEditTab.DrawMode.arrIndexEnumMap.get(drawMode));
+            prefs.putInt("DRAW_MODE", MapEditTab.DrawMode.ordinalMap.get(drawMode));
 
-            prefs.putInt("VIEW_SETTINGS", viewSettings);
+            prefs.putInt("VIEW_SETTINGS", encode(viewSettings, MapEditTab.ViewFlag.class));
 
             prefs.flush();
         }
         catch (final BackingStoreException except) {
             Logger.logThrowable("Failed to save preferences", except);
         }
+    }
+
+    private static <E extends Enum <E> & SafeOrdinalEnum <E>> int encode(final EnumSet <E> set, final Class <E> enumClass) {
+        //http://stackoverflow.com/a/2199486
+
+        int flags = 0;
+        for (E val : set) {
+            flags |= (1 << val.ordinalMap(enumClass).get(val));
+        }
+
+        return flags;
+    }
+
+    private static <E extends Enum <E> & SafeOrdinalEnum <E>> EnumSet <E> decode(final int encoded, final Class <E> enumClass) {
+        //http://stackoverflow.com/a/2199486
+        final EnumSet <E> set = EnumSet.noneOf(enumClass);
+        int ordinal = 0;
+
+        //Repeatedly left-shift i to go through every bit
+        for (int i = 1; i != 0 && ordinal < enumClass.getEnumConstants().length; i <<= 1) {
+            if ((i & encoded) != 0) {
+                set.add(enumClass.getEnumConstants()[ordinal]);
+            }
+            ordinal++;
+        }
+
+        return set;
     }
 }

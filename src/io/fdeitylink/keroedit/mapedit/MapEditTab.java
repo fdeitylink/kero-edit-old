@@ -8,7 +8,7 @@
  * Show error on tileset load for 0 dimension? (only if first tileset?)
  * Make method for redrawing subset/region of map
  * Improve multiple selection in tileset (store startX, startY, and cursorX, cursorY)
- * Use EnumSet or BitSet for flags?
+ * Use EnumSet for flags
  */
 
 package io.fdeitylink.keroedit.mapedit;
@@ -27,6 +27,7 @@ import java.text.ParseException;
 
 import java.text.MessageFormat;
 
+import io.fdeitylink.keroedit.util.SafeOrdinalEnum;
 import javafx.stage.Stage;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
@@ -58,7 +59,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.ColorPicker;
 
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -80,6 +80,7 @@ import javafx.scene.image.WritablePixelFormat;
 import javafx.scene.image.PixelFormat;
 
 import java.nio.ByteBuffer;
+import java.util.EnumSet;
 
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -92,8 +93,6 @@ import io.fdeitylink.keroedit.util.NullArgumentException;
 import io.fdeitylink.keroedit.Messages;
 
 import io.fdeitylink.keroedit.util.Logger;
-
-import io.fdeitylink.keroedit.util.ArrayIndexEnum;
 
 import io.fdeitylink.keroedit.util.MathUtil;
 
@@ -130,12 +129,12 @@ public final class MapEditTab extends FXUtil.FileEditTab {
 
     private static final SimpleObjectProperty <Color> tilesetBgColor;
 
-    private static final SimpleIntegerProperty displayedLayers;
+    private static final SimpleObjectProperty <EnumSet <LayerFlag>> displayedLayers;
     private static final SimpleIntegerProperty selectedLayer;
 
     private static DrawMode drawMode;
 
-    private static final SimpleIntegerProperty viewSettings;
+    private static final SimpleObjectProperty <EnumSet <ViewFlag>> viewSettings;
 
     private static Image pxAttrImg;
     private static Image entityImg;
@@ -148,12 +147,12 @@ public final class MapEditTab extends FXUtil.FileEditTab {
         tilesetZoom = new SimpleIntegerProperty(Config.tilesetZoom);
         tilesetBgColor = new SimpleObjectProperty <>(Config.tilesetBgColor);
 
-        displayedLayers = new SimpleIntegerProperty(Config.displayedLayers);
+        displayedLayers = new SimpleObjectProperty <>(Config.displayedLayers);
         selectedLayer = new SimpleIntegerProperty(Config.selectedLayer);
 
         drawMode = Config.drawMode;
 
-        viewSettings = new SimpleIntegerProperty(Config.viewSettings);
+        viewSettings = new SimpleObjectProperty <>(Config.viewSettings);
 
         final Pane emptyPane = new Pane(); //null not accepted as scene roots, so this is used when tileset stage is not shown
 
@@ -258,8 +257,8 @@ public final class MapEditTab extends FXUtil.FileEditTab {
         tilesetBgColor.set(color);
     }
 
-    public static void bindDisplayedLayers(final SimpleIntegerProperty property) {
-        displayedLayers.bind(property);
+    public static void setDisplayedLayers(final EnumSet <LayerFlag> flags) {
+        displayedLayers.set(EnumSet.copyOf(flags));
     }
 
     public static void setSelectedLayer(final int layer) {
@@ -273,8 +272,8 @@ public final class MapEditTab extends FXUtil.FileEditTab {
         drawMode = mode;
     }
 
-    public static void bindViewSettings(final IntegerProperty property) {
-        viewSettings.bind(property);
+    public static void setViewSettings(final EnumSet <ViewFlag> flags) {
+        viewSettings.set(EnumSet.copyOf(flags));
     }
 
     @Override
@@ -513,7 +512,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                 tileTypeCanvas.widthProperty().bind(tilesetCanvas.widthProperty());
                 tileTypeCanvas.heightProperty().bind(tilesetCanvas.heightProperty());
 
-                tileTypeCanvas.setVisible(ViewFlag.TILE_TYPES.flag == (viewSettings.get() & ViewFlag.TILE_TYPES.flag));
+                tileTypeCanvas.setVisible(viewSettings.get().contains(ViewFlag.TILE_TYPES));
                 tileTypeCanvas.setOnMouseClicked(tilesetCanvas::fireEvent);
 
                 selectedRectCanvas = new Canvas();
@@ -716,7 +715,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
 
             private void initEventHandlers() {
                 viewSettings.addListener((observable, oldValue, newValue) -> {
-                    tileTypeCanvas.setVisible(ViewFlag.TILE_TYPES.flag == (newValue.intValue() & ViewFlag.TILE_TYPES.flag));
+                    tileTypeCanvas.setVisible(newValue.contains(ViewFlag.TILE_TYPES));
                 });
 
                 selectedLayer.addListener((observable, oldValue, newValue) -> {
@@ -878,14 +877,13 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                 mapCanvases = new Canvas[tileLayers.length];
                 for (int i = 0; i < mapCanvases.length; ++i) {
                     mapCanvases[i] = new Canvas();
-                    mapCanvases[i].setVisible(LayerFlag.values()[i].flag ==
-                                              (displayedLayers.get() & LayerFlag.values()[i].flag));
+                    mapCanvases[i].setVisible(displayedLayers.get().contains(LayerFlag.values()[i]));
                 }
 
                 entityCanvas = new Canvas();
 
                 gridCanvas = new Canvas();
-                gridCanvas.setVisible(ViewFlag.GRID.flag == (viewSettings.get() & ViewFlag.GRID.flag));
+                gridCanvas.setVisible(viewSettings.get().contains(ViewFlag.GRID));
 
                 cursorCanvas = new Canvas();
                 cursorCanvas.getGraphicsContext2D().setStroke(Color.WHITE);
@@ -923,30 +921,27 @@ public final class MapEditTab extends FXUtil.FileEditTab {
             private void initEventHandlers() {
                 displayedLayers.addListener((observable, oldValue, newValue) -> {
                     for (int i = 0; i < LayerFlag.values().length; ++i) {
-                        mapCanvases[i].setVisible(LayerFlag.values()[i].flag ==
-                                                  (newValue.intValue() & LayerFlag.values()[i].flag));
+                        mapCanvases[i].setVisible(newValue.contains(LayerFlag.values()[i]));
                     }
                 });
 
                 selectedLayer.addListener((observable, oldValue, newValue) -> {
-                    if (ViewFlag.TILE_TYPES.flag == (viewSettings.get() & ViewFlag.TILE_TYPES.flag)) {
+                    if (viewSettings.get().contains(ViewFlag.TILE_TYPES)) {
                         redrawLayer(oldValue.intValue()); //"undraw" tiletypes from previously selected layer
                         redrawLayer(newValue.intValue()); //draw tiletypes onto new selected layer
                     }
                 });
 
                 viewSettings.addListener((observable, oldValue, newValue) -> {
-                    /*
-                     * Only one flag is changed at a time, so
-                     * oldValue ^ newValue
-                     * will always yield the flag just set or unset.
-                     */
-                    final int changedFlag = oldValue.intValue() ^ newValue.intValue();
-                    if (ViewFlag.TILE_TYPES.flag == changedFlag) {
+                    //Only one flag is changed at a time
+                    //TODO: Find more efficient method (complement?)
+                    if ((oldValue.contains(ViewFlag.TILE_TYPES) && !newValue.contains(ViewFlag.TILE_TYPES)) ||
+                        (!oldValue.contains(ViewFlag.TILE_TYPES) && newValue.contains(ViewFlag.TILE_TYPES))) {
                         redrawLayer(selectedLayer.get());
                     }
-                    else if (ViewFlag.GRID.flag == changedFlag) {
-                        gridCanvas.setVisible(ViewFlag.GRID.flag == (newValue.intValue() & ViewFlag.GRID.flag));
+                    else if ((oldValue.contains(ViewFlag.GRID) && !newValue.contains(ViewFlag.GRID)) ||
+                             (!oldValue.contains(ViewFlag.GRID) && newValue.contains(ViewFlag.GRID))) {
+                        gridCanvas.setVisible(newValue.contains(ViewFlag.GRID));
                     }
                 });
 
@@ -1069,7 +1064,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                 final MenuItem[] menuItems = {new MenuItem(Messages.getString("MapEditTab.TileEditTab.Resize.MENU_TEXT")),
                                               new MenuItem(Messages.getString("MapEditTab.TileEditTab.BgColor.MENU_TEXT"))};
 
-                menuItems[MapPaneMenuItem.arrayIndexMap.get(MapPaneMenuItem.RESIZE)].setOnAction(event -> {
+                menuItems[MapPaneMenuItem.ordinalMap.get(MapPaneMenuItem.RESIZE)].setOnAction(event -> {
                     final int layer = selectedLayer.get();
 
                     final String layerName;
@@ -1141,7 +1136,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                     });
                 });
 
-                menuItems[MapPaneMenuItem.arrayIndexMap.get(MapPaneMenuItem.BG_COLOR)].setOnAction(event -> {
+                menuItems[MapPaneMenuItem.ordinalMap.get(MapPaneMenuItem.BG_COLOR)].setOnAction(event -> {
                     final ColorPicker cPicker = new ColorPicker(mapPane.bgColor.get());
                     cPicker.setOnAction(ev -> {
                         if (!cPicker.getValue().isOpaque()) {
@@ -1201,7 +1196,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
                             final int[][] attributes;
                             final boolean drawTileType;
 
-                            if (ViewFlag.TILE_TYPES.flag == (viewSettings.get() & ViewFlag.TILE_TYPES.flag) &&
+                            if (viewSettings.get().contains(ViewFlag.TILE_TYPES) &&
                                 selectedLayer.get() == layer) {
                                 attributes = tilesetPane.pxAttrs.get(selectedLayer.get()).get().getAttributes();
                                 drawTileType = null != attributes;
@@ -1293,7 +1288,7 @@ public final class MapEditTab extends FXUtil.FileEditTab {
 
                             boolean drawTileTypes = false;
 
-                            if (ViewFlag.TILE_TYPES.flag == (viewSettings.get() & ViewFlag.TILE_TYPES.flag) &&
+                            if (viewSettings.get().contains(ViewFlag.TILE_TYPES) &&
                                 selectedLayer.get() == layer) {
                                 attributes = tilesetPane.pxAttrs.get(selectedLayer.get()).get().getAttributes();
 
@@ -1642,46 +1637,38 @@ public final class MapEditTab extends FXUtil.FileEditTab {
         }
     }
 
-    public enum DrawMode implements ArrayIndexEnum <DrawMode> {
+    public enum DrawMode implements SafeOrdinalEnum <DrawMode> {
         DRAW,
         RECT,
         COPY,
         FILL,
         REPLACE;
 
-        public static final EnumMap <DrawMode, Integer> arrIndexEnumMap = DRAW.enumMap(DrawMode.class);
+        public static final EnumMap <DrawMode, Integer> ordinalMap = DRAW.ordinalMap(DrawMode.class);
     }
 
-    public enum LayerFlag {
-        FOREGROUND(0b0000_0001),
-        MIDDLEGROUND(0b0000_0010),
-        BACKGROUND(0b0000_0100);
+    public enum LayerFlag implements SafeOrdinalEnum <LayerFlag> {
+        FOREGROUND,
+        MIDDLEGROUND,
+        BACKGROUND;
 
-        public final int flag;
-
-        LayerFlag(final int flag) {
-            this.flag = flag;
-        }
+        static final EnumMap <LayerFlag, Integer> ordinalMap = FOREGROUND.ordinalMap(LayerFlag.class);
     }
 
-    public enum ViewFlag {
-        TILE_TYPES(0b0000_0001),
-        GRID(0b0000_0010),
-        ENTITY_BOXES(0b0000_0100),
-        ENTITY_SPRITES(0b0000_1000),
-        ENTITY_NAMES(0b0001_0000);
+    public enum ViewFlag implements SafeOrdinalEnum <ViewFlag> {
+        TILE_TYPES,
+        GRID,
+        ENTITY_BOXES,
+        ENTITY_SPRITES,
+        ENTITY_NAMES;
 
-        public final int flag;
-
-        ViewFlag(final int flag) {
-            this.flag = flag;
-        }
+        static final EnumMap <ViewFlag, Integer> ordinalMap = TILE_TYPES.ordinalMap(ViewFlag.class);
     }
 
-    private enum MapPaneMenuItem implements ArrayIndexEnum <MapPaneMenuItem> {
+    private enum MapPaneMenuItem implements SafeOrdinalEnum <MapPaneMenuItem> {
         RESIZE,
         BG_COLOR;
 
-        static final EnumMap <MapPaneMenuItem, Integer> arrayIndexMap = RESIZE.enumMap(MapPaneMenuItem.class);
+        static final EnumMap <MapPaneMenuItem, Integer> ordinalMap = RESIZE.ordinalMap(MapPaneMenuItem.class);
     }
 }
