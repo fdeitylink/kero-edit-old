@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import java.io.File;
 
+import io.fdeitylink.keroedit.util.NullArgumentException;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 
@@ -24,7 +25,7 @@ public final class ImageManager {
      * {@code imagesMap} when a loaded image has such dimensions
      * in order to reduce memory usage.
      */
-    private static final Image emptyImage = new Image("file:///");
+    private static final Image EMPTY_IMAGE = new Image("file:///");
 
     private ImageManager() {
 
@@ -35,23 +36,23 @@ public final class ImageManager {
             throw new IllegalStateException("Attempt to retrieve image file when GameData has not been properly initialized yet");
         }
 
+        NullArgumentException.requireNonNull(imageName, "getImage", "imageName");
+
         if (imagesMap.containsKey(imageName)) {
             return imagesMap.get(imageName);
         }
-        Image image = new Image("file:///" + GameData.getResourceFolder().toAbsolutePath().toString() +
+        Image image = new Image("file:///" + GameData.getResourceFolder() +
                                 File.separator + "img" + File.separatorChar +
                                 imageName + ".png", false);
 
         //TODO: Detect if image is not square? (only for tilesets?)
+        //TODO: Detect if size is smaller than 128px by 128px (is 128 x 128 required?)
 
         if (0 == image.getWidth() || 0 == image.getHeight()) {
-            image = emptyImage;
+            image = EMPTY_IMAGE;
         }
-        //if this is a tileset and it is larger than necessary, take only relevant portion
-        //if code in this block runs, image is definitely larger than 0x0
-        if (isTileset &&
-            (ImageDimension.TILESET_WIDTH < image.getWidth() ||
-             ImageDimension.TILESET_HEIGHT < image.getHeight())) {
+        else if (isTileset && //if this is a tileset and it is larger than necessary, take only relevant portion
+                 (ImageDimension.TILESET_WIDTH < image.getWidth() || ImageDimension.TILESET_HEIGHT < image.getHeight())) {
             //crop down to useful portion (tilesets sometimes have more data than necessary for some reason)
             image = new WritableImage(image.getPixelReader(), 0, 0,
                                       ImageDimension.TILESET_WIDTH, ImageDimension.TILESET_HEIGHT);

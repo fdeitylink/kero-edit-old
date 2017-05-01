@@ -1,12 +1,7 @@
-package io.fdeitylink.keroedit.util;
+package io.fdeitylink.keroedit.util.fx;
 
-import java.util.ArrayDeque;
-
-import io.fdeitylink.keroedit.Messages;
 import javafx.scene.layout.Region;
 import javafx.geometry.Insets;
-
-import javafx.scene.Node;
 
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -16,7 +11,6 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.CornerRadii;
 
-import javafx.scene.control.TabPane;
 import com.sun.javafx.scene.control.skin.TabPaneSkin;
 import com.sun.javafx.scene.control.behavior.TabPaneBehavior;
 import javafx.scene.control.Tab;
@@ -39,9 +33,43 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.image.PixelWriter;
 
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+
+import java.util.concurrent.Callable;
+
+import io.fdeitylink.keroedit.util.NullArgumentException;
+
+import io.fdeitylink.keroedit.util.Tuple;
+
 public final class FXUtil {
     private FXUtil() {
 
+    }
+
+    public static <T> Task <T> task(final Callable <T> callable) {
+        NullArgumentException.requireNonNull(callable, "task", "callable");
+        return new Task <T>() {
+            @Override
+            protected T call() throws Exception {
+                return callable.call();
+            }
+        };
+    }
+
+    public static <V> Service <V> service(final Callable <V> callable) {
+        NullArgumentException.requireNonNull(callable, "service", "callable");
+        return new Service <V>() {
+            @Override
+            protected Task <V> createTask() {
+                return new Task <V>() {
+                    @Override
+                    protected V call() throws Exception {
+                        return callable.call();
+                    }
+                };
+            }
+        };
     }
 
     /**
@@ -53,9 +81,7 @@ public final class FXUtil {
      * @throws NullArgumentException if {@code tab} is null
      */
     public static void closeTab(final Tab tab) {
-        if (null == tab) {
-            throw new NullArgumentException("closeTab", "tab");
-        }
+        NullArgumentException.requireNonNull(tab, "closeTab", "tab");
         if (null == tab.getTabPane()) {
             return;
         }
@@ -77,9 +103,7 @@ public final class FXUtil {
      * @throws IllegalArgumentException if {@code len} is negative
      */
     public static void setTextControlLength(final TextInputControl input, final int len) {
-        if (null == input) {
-            throw new NullArgumentException("setTextControlLength", "input");
-        }
+        NullArgumentException.requireNonNull(input, "setTextControlLength", "input");
         if (len < 0) {
             throw new IllegalArgumentException("Attempt to set max length of TextInputControl to negative value");
         }
@@ -99,12 +123,8 @@ public final class FXUtil {
      * @throws NullArgumentException if {@code image} or {@code region} is null
      */
     public static void setBackgroundImage(final Region region, final Image image) {
-        if (null == region) {
-            throw new NullArgumentException("setBackgroundImage", "region");
-        }
-        if (null == image) {
-            throw new NullArgumentException("setBackgroundImage", "image");
-        }
+        NullArgumentException.requireNonNull(region, "setBackgroundImage", "region");
+        NullArgumentException.requireNonNull(image, "setBackgroundImage", "image");
         region.setBackground(new Background(new BackgroundImage(image, null, null, null, null)));
     }
 
@@ -117,9 +137,7 @@ public final class FXUtil {
      * @throws NullArgumentException if {@code region} is null
      */
     public static void setBackgroundColor(final Region region, final Color color) {
-        if (null == region) {
-            throw new NullArgumentException("setBackgroundColor", "region");
-        }
+        NullArgumentException.requireNonNull(region, "setBackgroundColor", "region");
         region.setBackground(new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
     }
 
@@ -135,7 +153,7 @@ public final class FXUtil {
      */
     public static String colorToString(final Color color) {
         if (null == color) {
-            throw new NullArgumentException("colorToString", "color");
+            return ("0x000000"); //TODO: return transparent, not black
         }
 
         return String.format("0x%02X%02X%02X",
@@ -279,89 +297,5 @@ public final class FXUtil {
                                            new Tuple <>(firstField.getText(), secondField.getText()) :
                                            null);
         return dialog;
-    }
-
-    public static abstract class FileEditTab extends Tab {
-        private final ArrayDeque <UndoableEdit> undoStack = new ArrayDeque <>();
-        private final ArrayDeque <UndoableEdit> redoStack = new ArrayDeque <>();
-
-        private boolean changed;
-
-        public FileEditTab() {
-            this(null, null);
-        }
-
-        public FileEditTab(final String text) {
-            this(text, null);
-        }
-
-        public FileEditTab(final String text, final Node content) {
-            super(text, content);
-            changed = false;
-
-            setOnCloseRequest(event -> {
-                if (isChanged()) {
-                    final String title = getText();
-                    final Alert alert = createAlert(Alert.AlertType.NONE,
-                                                    title.substring(0, title.lastIndexOf('*')), null,
-                                                    Messages.getString("FXUtil.FileEditTab.UNSAVED_CHANGES"));
-
-                    alert.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-
-                    alert.showAndWait().ifPresent(result -> {
-                        if (ButtonType.YES == result) {
-                            save();
-                        }
-                        else if (ButtonType.CANCEL == result) {
-                            event.consume();
-                        }
-                    });
-                }
-            });
-        }
-
-        public void undo() {
-            if (!undoStack.isEmpty()) {
-                final UndoableEdit edit = undoStack.removeFirst();
-                redoStack.addFirst(edit);
-                edit.undo();
-            }
-        }
-
-        public void redo() {
-            if (!redoStack.isEmpty()) {
-                final UndoableEdit edit = redoStack.removeFirst();
-                undoStack.addFirst(edit);
-                edit.redo();
-            }
-        }
-
-        //TODO: default implementation here marks unchanged but is required to be overloaded?
-        public abstract void save();
-
-        protected boolean isChanged() {
-            return changed;
-        }
-
-        protected void setChanged(final boolean changed) {
-            this.changed = changed;
-            if (getText().endsWith("*")) {
-                if (!changed) {
-                    final String text = getText();
-                    setText(text.substring(0, text.lastIndexOf('*')));
-                }
-            }
-            else if (changed) {
-                setText(getText() + "*");
-            }
-        }
-
-        protected ArrayDeque <UndoableEdit> getUndoStack() {
-            return undoStack;
-        }
-
-        protected ArrayDeque <UndoableEdit> getRedoStack() {
-            return redoStack;
-        }
     }
 }

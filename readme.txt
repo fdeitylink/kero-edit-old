@@ -1,13 +1,27 @@
-KeroEdit - the Kero Blaster editor!
-by FDeityLink
-v0.0.1
-Last updated 2017-04-14
+/*------------------------------------*\
+|-------------- KeroEdit --------------|
+|--------------------------------------|
+|------- A Kero Blaster editor! -------|
+|--------------------------------------|
+|------------- FDeityLink -------------|
+|--------------- v0.0.2 ---------------|
+|------------- 2017-05-01 -------------|
+\*------------------------------------*/
 
-This is a Kero Blaster editor that allows you to edit Pink Hour, Pink Heaven, and of course Kero Blaster games so you
-can make your own games based on those engines. To start, you just have to load a game executable, open a map, and start editing!
+/*------------------------------------*\
+|--------------------------------------|
+|---------------- About ---------------|
+|--------------------------------------|
+\*------------------------------------*/
+KeroEdit is a Kero Blaster editor. It allows you to create mods based on Pink Hour, Pink Heaven, and Kero Blaster.
+To start modding, load a game executable, open a map, and start editing!
 
 Documentation will be coming for file formats, writing PXEVE scripts, map features, and finally KeroEdit itself.
 
-CREDITS
+/*------------------------------------*\
+|--------------------------------------|
+|--------------- Credits --------------|
+|--------------------------------------|
+\*------------------------------------*/
 jmickle - first person to look into KB file formats so some of my research comes from him
 zxin & The Cyber Sleuth - beta testing and suggestions

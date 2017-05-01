@@ -6,9 +6,6 @@ import java.util.logging.Level;
 
 import java.io.IOException;
 
-import io.fdeitylink.keroedit.Messages;
-import javafx.scene.control.Alert;
-
 //TODO: Specify log Levels?
 
 public final class Logger {
@@ -23,7 +20,7 @@ public final class Logger {
             logFile.close();
         }
         catch (final IOException except) {
-
+            System.err.println("Error: " + message);
         }
     }
 
@@ -32,15 +29,11 @@ public final class Logger {
     }
 
     public static void logThrowable(final String message, final Throwable t) {
-        final StringBuilder sBuilder = new StringBuilder(message);
-        sBuilder.append('\n');
-        sBuilder.append(t.getClass().getName());
-        sBuilder.append(": ");
-        sBuilder.append(t.getMessage());
+        final StringBuilder sBuilder = new StringBuilder(message).append('\n');
+        sBuilder.append(t.getClass().getName()).append(": ").append(t.getMessage());
 
         for (final StackTraceElement element : t.getStackTrace()) {
-            sBuilder.append("\n\t");
-            sBuilder.append(element);
+            sBuilder.append("\n\t").append(element);
         }
         final String finalMessage = sBuilder.toString();
 
@@ -50,7 +43,7 @@ public final class Logger {
             logFile.close();
         }
         catch (final IOException ex) {
-
+            System.err.println(finalMessage);
         }
     }
 }

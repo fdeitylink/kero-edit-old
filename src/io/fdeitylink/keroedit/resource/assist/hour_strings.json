@@ -106,7 +106,7 @@
                     "default": "toL2",
                     "len": 7,
                     "offset": 1121460,
-                    "label": "Left Exit"
+                    "label": "Left exit"
                 },
                 {
                     "default": "toR2",

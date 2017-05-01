@@ -11,7 +11,7 @@ import io.fdeitylink.keroedit.util.Logger;
 
 import io.fdeitylink.keroedit.util.SafeOrdinalEnum;
 
-import io.fdeitylink.keroedit.util.FXUtil;
+import io.fdeitylink.keroedit.util.fx.FXUtil;
 
 import io.fdeitylink.keroedit.mapedit.MapEditTab;
 
@@ -26,6 +26,7 @@ public final class Config {
     static String lastExeLoc;
     static String notepadText;
 
+    //TODO: Make all of the following Properties that can be bound to?
     public static int mapZoom;
     public static int tilesetZoom;
     public static Color tilesetBgColor;
@@ -36,6 +37,8 @@ public final class Config {
     public static MapEditTab.DrawMode drawMode;
 
     public static EnumSet <MapEditTab.ViewFlag> viewSettings;
+
+    public static boolean tilesetStageShowing;
 
     private Config() {
 
@@ -52,14 +55,18 @@ public final class Config {
         final String colStr = prefs.get("TILESET_BG_COLOR", null);
         tilesetBgColor = null == colStr ? Color.MAGENTA : Color.web(colStr);
 
-        //0b0000_0111 -> inits as all layers displayed
+        //TODO: Should check int flags for validity if possible
+
+        //0b0000_0111 -> initializes as all layers displayed
         displayedLayers = decode(prefs.getInt("DISPLAYED_LAYERS", 0b0000_0111), MapEditTab.LayerFlag.class);
         selectedLayer = prefs.getInt("SELECTED_LAYER", 0);
 
         drawMode = MapEditTab.DrawMode.values()[prefs.getInt("DRAW_MODE", 0)];
 
-        //0b0000_0000 -> inits as nothing on
+        //0b0000_0000 -> initializes as nothing on
         viewSettings = decode(prefs.getInt("VIEW_SETTINGS", 0b0000_0000), MapEditTab.ViewFlag.class);
+
+        tilesetStageShowing = prefs.getBoolean("TILESET_STAGE_SHOWING", false);
     }
 
     static void savePrefs() {
@@ -78,6 +85,8 @@ public final class Config {
             prefs.putInt("DRAW_MODE", MapEditTab.DrawMode.ordinalMap.get(drawMode));
 
             prefs.putInt("VIEW_SETTINGS", encode(viewSettings, MapEditTab.ViewFlag.class));
+
+            prefs.putBoolean("TILESET_STAGE_SHOWING", tilesetStageShowing);
 
             prefs.flush();
         }
@@ -98,6 +107,8 @@ public final class Config {
     }
 
     private static <E extends Enum <E> & SafeOrdinalEnum <E>> EnumSet <E> decode(final int encoded, final Class <E> enumClass) {
+        //Assumes only 32 bits (uses int)
+
         //http://stackoverflow.com/a/2199486
         final EnumSet <E> set = EnumSet.noneOf(enumClass);
         int ordinal = 0;

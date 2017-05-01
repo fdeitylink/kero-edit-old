@@ -1,3 +1,10 @@
+/*
+ * TODO:
+ * Ensure all 2D array arguments have rows with equal lengths
+ * Allow null arguments for string setters? (instead of setting to null, set to "")
+ * toBuf() methods in Head, TileLayer, and Entity that return ByteBuffer (to make save() easier)
+ */
+
 package io.fdeitylink.keroedit.map;
 
 import java.util.ArrayList;
@@ -14,7 +21,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import java.io.IOException;
-import java.io.FileNotFoundException;
 import java.text.ParseException;
 
 import javafx.scene.paint.Color;
@@ -45,7 +51,7 @@ public final class PxPack {
      * @throws ParseException if the mapFile format was somehow incorrect
      */
     public PxPack(final Path inPath) throws IOException, ParseException {
-        path = inPath;
+        path = NullArgumentException.requireNonNull(inPath, "PxPack", "inPath").toAbsolutePath();
 
         if (!inPath.toString().endsWith(".pxpack")) {
             throw new IllegalArgumentException("File " + inPath.toAbsolutePath() + " does not end with .pxpack extension");
@@ -53,12 +59,15 @@ public final class PxPack {
 
         //TODO: Test this
         if (!Files.exists(inPath)) {
-            //TODO: set inPath to an internal default pxpack file and parse that?
-            //clone internal file to outside?
+            /*
+             * TODO:
+             * Set inPath to an internal default PXPACK file and parse that?
+             * Clone internal file to outside?
+             */
             head = new Head("", new String[]{"", "", "", ""}, "", new byte[]{0, 0, 0, 0, 0}, Color.BLACK,
                             new String[]{"mpt00", "", ""}, new byte[]{2, 2, 2}, new byte[]{0, 0, 1});
-
             /*
+             * TODO:
              * All images named must exist
              * Only first tileset is required
              * Use most common values for defaults
@@ -83,14 +92,14 @@ public final class PxPack {
                                                               inPath.getFileName()), (int)chan.position());
             }
 
-            final String description = readString(chan, 31, "description");
+            final String description = readString(chan, Head.DESCRIPTION_MAX_LEN, "description");
 
             final String[] mapNames = new String[Head.NUM_REF_MAPS];
             for (int i = 0; i < mapNames.length; ++i) {
-                mapNames[i] = readString(chan, 15, "map name");
+                mapNames[i] = readString(chan, Head.FILENAME_MAX_LEN, "map name");
             }
 
-            final String spritesheetName = readString(chan, 15, "spritesheet name");
+            final String spritesheetName = readString(chan, Head.FILENAME_MAX_LEN, "spritesheet name");
 
             buf = ByteBuffer.allocate(8);
             chan.read(buf);
@@ -108,7 +117,7 @@ public final class PxPack {
             final byte[] visibilityTypes = new byte[NUM_LAYERS];
             final byte[] scrollTypes = new byte[NUM_LAYERS];
             for (int i = 0; i < tilesetNames.length; ++i) {
-                tilesetNames[i] = readString(chan, 15, "tileset name");
+                tilesetNames[i] = readString(chan, Head.FILENAME_MAX_LEN, "tileset name");
 
                 if (0 == i && tilesetNames[i].isEmpty()) {
                     throw new ParseException(MessageFormat.format(Messages.getString("PxPack.MISSING_FIRST_TILESET"),
@@ -200,7 +209,7 @@ public final class PxPack {
                 final byte[] entityData = new byte[2];
                 buf.get(entityData);
 
-                final String name = readString(chan, 15, "entity name");
+                final String name = readString(chan, Entity.NAME_MAX_LEN, "entity name");
 
                 entities.add(new Entity(flag, type, unknownByte, x, y, entityData, name));
             }
@@ -213,8 +222,7 @@ public final class PxPack {
      * @throws IOException if there was an error saving the PXPACK file
      */
     public void save() throws IOException {
-        try (SeekableByteChannel chan = Files.newByteChannel(path,
-                                                             StandardOpenOption.WRITE,
+        try (SeekableByteChannel chan = Files.newByteChannel(path, StandardOpenOption.WRITE,
                                                              StandardOpenOption.TRUNCATE_EXISTING,
                                                              StandardOpenOption.CREATE)) {
             ByteBuffer buf = ByteBuffer.wrap(Head.HEADER_STRING.getBytes("SJIS"));
@@ -268,8 +276,7 @@ public final class PxPack {
 
                     buf = ByteBuffer.allocate(5);
                     buf.order(ByteOrder.LITTLE_ENDIAN);
-                    buf.putShort(width).putShort(height);
-                    buf.put((byte)0);
+                    buf.putShort(width).putShort(height).put((byte)0);
                     buf.flip();
 
                     chan.write(buf);
@@ -313,10 +320,6 @@ public final class PxPack {
                 writeString(chan, e.getName());
             }
         }
-        //shouldn't happen since StandardOpenOption.CREATE is set
-        /*catch (final FileNotFoundException except) {
-            //TODO: create the file
-        }*/
     }
 
     public String getName() {
@@ -324,7 +327,18 @@ public final class PxPack {
         return mapFname.substring(0, mapFname.lastIndexOf(".pxpack"));
     }
 
+    public Path getPath() {
+        return path;
+    }
+
     public void rename(final String newName) throws IOException {
+        NullArgumentException.requireNonNull(newName, "rename", "newName");
+        if (newName.length() > Head.FILENAME_MAX_LEN) {
+            throw new IllegalArgumentException("Attempt to rename PxPack when arg has length " +
+                                               newName.length() + " when max length is " + Head.FILENAME_MAX_LEN +
+                                               " (newName: " + newName + ')');
+        }
+
         path = Files.move(path, path.resolveSibling(newName + ".pxpack"));
     }
 
@@ -338,9 +352,12 @@ public final class PxPack {
     }
 
     public ArrayList <Entity> getEntities() {
-        //TODO: disallow null elements
-        //(maybe have this return deep copy unmodifiable list and provide set/add methods)
-        //also cap length to 0xFFFF
+        /*
+         * TODO:
+         * Disallow null elements
+         * Maybe return an unmodifiable deep-copied list and provide set/addEntity() methods
+         * Cap size at 0xFFFF
+         */
         return entities;
     }
 
@@ -413,9 +430,13 @@ public final class PxPack {
     }
 
     public static final class Head {
-        //TODO: Subclass to store tileset name, visibility, and scroll?
+        //TODO: Static inner class to store tileset name, visibility type, and scroll type?
+
+        public static final int NUM_REF_MAPS = 4;
+        public static final int DESCRIPTION_MAX_LEN = 31;
+        public static final int FILENAME_MAX_LEN = 15;
+
         static final String HEADER_STRING = "PXPACK121127a**\0";
-        static final int NUM_REF_MAPS = 4;
 
         private String description;
         private final String[] mapNames;
@@ -523,49 +544,43 @@ public final class PxPack {
         }
 
         public void setDescription(final String description) {
-            if (null == description) {
-                throw new NullArgumentException("setDescription", "description");
-            }
-            if (description.length() > 31) {
+            NullArgumentException.requireNonNull(description, "setDescription", "description");
+            if (description.length() > DESCRIPTION_MAX_LEN) {
                 throw new IllegalArgumentException("Attempt to set description when arg has length " +
-                                                   description.length() + " when max length is 31 " +
-                                                   "(description: " + description + ")");
+                                                   description.length() + " when max length is " + DESCRIPTION_MAX_LEN +
+                                                   " (description: " + description + ')');
             }
             this.description = description;
         }
 
         public void setMapName(final int index, final String mapName) {
-            if (null == mapName) {
-                throw new NullArgumentException("setMapName", "mapName");
-            }
-            if (mapName.length() > 15) {
+            NullArgumentException.requireNonNull(mapName, "setMapName", "mapName");
+            if (mapName.length() > FILENAME_MAX_LEN) {
                 throw new IllegalArgumentException("Attempt to set mapName when arg has length " +
-                                                   mapName.length() + " when max length is 15 " +
-                                                   "(mapName: " + mapName + ")");
+                                                   mapName.length() + " when max length is " + FILENAME_MAX_LEN +
+                                                   " (mapName: " + mapName + ')');
             }
             if (mapName.contains(" ")) {
                 throw new IllegalArgumentException("Attempt to set mapName when arg has spaces when spaces are not allowed " +
-                                                   "(mapName: " + mapName + ")");
+                                                   "(mapName: " + mapName + ')');
             }
             if (0 > index || mapNames.length <= index) {
                 throw new ArrayIndexOutOfBoundsException("Attempt to set mapName when index arg is out of bounds " +
-                                                         "(index: " + index + ")");
+                                                         "(index: " + index + ')');
             }
             this.mapNames[index] = mapName;
         }
 
         public void setSpritesheetName(final String spritesheetName) {
-            if (null == spritesheetName) {
-                throw new NullArgumentException("setSpritesheetName", "spritesheetName");
-            }
-            if (spritesheetName.length() > 15) {
+            NullArgumentException.requireNonNull(spritesheetName, "setSpritesheetName", "spritesheetName");
+            if (spritesheetName.length() > FILENAME_MAX_LEN) {
                 throw new IllegalArgumentException("Attempt to set spritesheetName when arg has length " +
-                                                   spritesheetName.length() + " when max length is 15 " +
-                                                   "(spritesheetName: " + spritesheetName + ")");
+                                                   spritesheetName.length() + " when max length is " + FILENAME_MAX_LEN +
+                                                   " (spritesheetName: " + spritesheetName + ')');
             }
             if (spritesheetName.contains(" ")) {
                 throw new IllegalArgumentException("Attempt to set spritesheetName when arg has spaces when spaces are not allowed " +
-                                                   "(spritesheetName: " + spritesheetName + ")");
+                                                   "(spritesheetName: " + spritesheetName + ')');
             }
             this.spritesheetName = spritesheetName;
         }
@@ -573,7 +588,7 @@ public final class PxPack {
         public void setData(final int index, final byte unknownByte) {
             if (0 > index || data.length <= index) {
                 throw new ArrayIndexOutOfBoundsException("Attempt to set data when index arg is out of bounds " +
-                                                         "(index: " + index + ")");
+                                                         "(index: " + index + ')');
             }
 
             //TODO: validate (how?)
@@ -581,37 +596,33 @@ public final class PxPack {
         }
 
         public void setBgColor(final Color color) {
-            if (null == color) {
-                throw new NullArgumentException("setBgColor", "color");
-            }
+            NullArgumentException.requireNonNull(color, "setBgColor", "color");
             //TODO: verify kero blaster doesn't support bg opacity
             if (!color.isOpaque()) {
                 throw new IllegalArgumentException("Attempt to set background color to non-opaque color " +
-                                                   "(color: " + color + ")");
+                                                   "(color: " + color + ')');
             }
             bgColor = color;
         }
 
         public void setTilesetName(final int index, final String tilesetName) {
-            if (null == tilesetName) {
-                throw new NullArgumentException("setTilesetName", "tilesetName");
-            }
+            NullArgumentException.requireNonNull(tilesetName, "setTilesetName", "tilesetName");
             //only first is required
             if (0 == index && tilesetName.isEmpty()) {
                 throw new IllegalArgumentException("Attempt to set first tilesetName to empty string");
             }
-            if (tilesetName.length() > 15) {
+            if (tilesetName.length() > FILENAME_MAX_LEN) {
                 throw new IllegalArgumentException("Attempt to set tilesetName when arg has length " +
-                                                   tilesetName.length() + " when max length is 15 " +
-                                                   "(tilesetName: " + tilesetName + ")");
+                                                   tilesetName.length() + " when max length is " + FILENAME_MAX_LEN +
+                                                   " (tilesetName: " + tilesetName + ')');
             }
             if (tilesetName.contains(" ")) {
                 throw new IllegalArgumentException("Attempt to set tilesetName when arg has spaces when spaces are not allowed " +
-                                                   "(tilesetName: " + tilesetName + ")");
+                                                   "(tilesetName: " + tilesetName + ')');
             }
             if (0 > index || tilesetNames.length <= index) {
                 throw new ArrayIndexOutOfBoundsException("Attempt to set tilesetName when index arg is out of bounds " +
-                                                         "(index: " + index + ")");
+                                                         "(index: " + index + ')');
             }
             this.tilesetNames[index] = tilesetName;
         }
@@ -619,11 +630,11 @@ public final class PxPack {
         public void setVisibilityType(final int index, final byte visibilityType) {
             if (0 > visibilityType || 32 < visibilityType) {
                 throw new IllegalArgumentException("Attempt to set visibilityType to value outside range 0 - 32" +
-                                                   "(visibilityType: " + visibilityType + ")");
+                                                   "(visibilityType: " + visibilityType + ')');
             }
             if (0 > index || visibilityTypes.length <= index) {
                 throw new ArrayIndexOutOfBoundsException("Attempt to set visibilityType when index arg is out of bounds " +
-                                                         "(index: " + index + ")");
+                                                         "(index: " + index + ')');
             }
             visibilityTypes[index] = visibilityType;
         }
@@ -631,11 +642,11 @@ public final class PxPack {
         public void setScrollType(final int index, final byte scrollType) {
             if (0 > scrollType || 9 < scrollType) {
                 throw new IllegalArgumentException("Attempt to set scrollType to value outside range 0 - 9 " +
-                                                   "(scrollType: " + scrollType + ")");
+                                                   "(scrollType: " + scrollType + ')');
             }
             if (0 > index || scrollTypes.length <= index) {
                 throw new ArrayIndexOutOfBoundsException("Attempt to set scrollType when index arg is out of bounds " +
-                                                         "(index: " + index + ")");
+                                                         "(index: " + index + ')');
             }
             scrollTypes[index] = scrollType;
         }
@@ -644,22 +655,22 @@ public final class PxPack {
         public String toString() {
             final StringBuilder result = new StringBuilder();
 
-            result.append("Description: ").append(description).append('\n');
+            result.append(String.format("Description: %s\n", description));
 
             for (int i = 0; i < mapNames.length; ++i) {
-                result.append("Mapname ").append(i).append(": ").append(mapNames[i]).append('\n');
+                result.append(String.format("Mapname %d: %s\n", i, mapNames[i]));
             }
 
-            result.append("Spritesheet Name: ").append(spritesheetName).append('\n');
+            result.append(String.format("Spritesheet Name: %s\n", spritesheetName));
 
             for (int i = 0; i < data.length; ++i) {
-                result.append("Byte ").append(i).append(": ").append(String.format("%02X", data[i])).append('\n');
+                result.append(String.format("Byte %d: %02X", i, data[i]));
             }
 
-            result.append("Background Color: ").append(bgColor).append('\n');
+            result.append(String.format("Background Color: %s\n", bgColor));
 
             for (int i = 0; i < tilesetNames.length; ++i) {
-                result.append("Tileset Name ").append(i).append(": ").append(tilesetNames[i]).append('\n');
+                result.append(String.format("Tileset Name %d: %s\n", i, tilesetNames[i]));
             }
 
             return result.toString();
@@ -672,7 +683,7 @@ public final class PxPack {
         private int[][] tiles;
 
         TileLayer() {
-
+            tiles = null;
         }
 
         TileLayer(final int[][] tiles) {
@@ -681,7 +692,7 @@ public final class PxPack {
                 final int width = tiles[0].length;
                 if (0xFFFF < width || 0xFFFF < height) {
                     throw new IllegalArgumentException("Attempt to create tile layer with dimensions greater than max of 65,535 " +
-                                                       "(width: " + width + ", height: " + height + ")");
+                                                       "(width: " + width + ", height: " + height + ')');
                 }
 
                 this.tiles = new int[height][width];
@@ -700,11 +711,11 @@ public final class PxPack {
         public void resize(final int width, final int height) {
             if (0 > width || 0 > height) {
                 throw new IllegalArgumentException("Attempt to resize tile layer to have negative dimensions " +
-                                                   "(width: " + width + ", height: " + height + ")");
+                                                   "(width: " + width + ", height: " + height + ')');
             }
             if (0xFFFF < width || 0xFFFF < height) {
                 throw new IllegalArgumentException("Attempt to resize tile layer to have dimensions greater than max of 65,535 " +
-                                                   "(width: " + width + ", height: " + height + ")");
+                                                   "(width: " + width + ", height: " + height + ')');
             }
 
             if (null == tiles) {
@@ -751,7 +762,7 @@ public final class PxPack {
         public void setTile(final int x, final int y, final int tile) {
             if (0 > tile || 0xFF < tile) {
                 throw new IllegalArgumentException("Attempt to set tile at (" + x + ", " + y + ") " +
-                                                   "to value outside range 0 - 255 (tile: " + tile + ")");
+                                                   "to value outside range 0 - 255 (tile: " + tile + ')');
             }
             tiles[y][x] = tile;
         }
@@ -761,16 +772,16 @@ public final class PxPack {
             final StringBuilder result = new StringBuilder();
 
             if (null == tiles) {
-                result.append("Width: 00").append('\n');
-                result.append("Height: 00").append('\n');
+                result.append("Width: 00\n")
+                      .append("Height: 00\n");
             }
             else {
-                result.append("\tWidth: ").append(String.format("%02X", tiles[0].length)).append('\n');
-                result.append("\tHeight: ").append(String.format("%02X", tiles.length)).append('\n');
+                result.append(String.format("\tWidth: %02X\n", tiles[0].length))
+                      .append(String.format("\tHeight: %02X\n", tiles.length));
                 for (final int[] row : tiles) {
                     result.append('\t');
                     for (final int tile : row) {
-                        result.append(String.format("%02X", tile)).append(' ');
+                        result.append(String.format("%02X ", tile));
                     }
                     result.append('\n');
                 }
@@ -780,6 +791,8 @@ public final class PxPack {
     }
 
     public static final class Entity {
+        public static final int NAME_MAX_LEN = 15;
+
         private static final int NUM_TYPES = 175;
 
         private int type;
@@ -844,9 +857,9 @@ public final class PxPack {
             if (0 > type || 0xFF < type/* || NUM_TYPES <= type*/) {
                 //an entity type in 00title is 177 but unittype.txt only has 175 entities...
                 /*throw new IllegalArgumentException("Attempt to set type to value outside range 0 - " + (NUM_TYPES - 1) +
-                                                   " (type: " + type + ")");*/
+                                                   " (type: " + type + ')');*/
                 throw new IllegalArgumentException("Attempt to set type to value outside range 0 - 255 " +
-                                                   "(type: " + type + ")");
+                                                   "(type: " + type + ')');
             }
             this.type = type;
         }
@@ -858,7 +871,7 @@ public final class PxPack {
         public void setX(final int x) {
             if (0 > x || 0xFFFF < x) {
                 throw new IllegalArgumentException("Attempt to set x coordinate to value outside range 0 - 65,535 " +
-                                                   "(x: " + x + ")");
+                                                   "(x: " + x + ')');
             }
             this.x = x;
         }
@@ -866,7 +879,7 @@ public final class PxPack {
         public void setY(final int y) {
             if (0 > y || 0xFFFF < y) {
                 throw new IllegalArgumentException("Attempt to set y coordinate to value outside range 0 - 65,535 " +
-                                                   "(y: " + y + ")");
+                                                   "(y: " + y + ')');
             }
             this.y = y;
         }
@@ -879,18 +892,17 @@ public final class PxPack {
         public void setData(final int index, final byte data) {
             if (0 > index || this.data.length <= index) {
                 throw new ArrayIndexOutOfBoundsException("Attempt to set data when index arg is out of bounds " +
-                                                         "(index: " + index + ")");
+                                                         "(index: " + index + ')');
             }
             this.data[index] = data;
         }
 
         public void setName(final String entityName) {
-            if (null == entityName) {
-                throw new NullArgumentException("setName", "entityName");
-            }
-            if (entityName.length() > 15) {
+            NullArgumentException.requireNonNull(entityName, "setName", "entityName");
+            if (entityName.length() > NAME_MAX_LEN) {
                 throw new IllegalArgumentException("Attempt to set entityName when arg has length " +
-                                                   entityName.length() + " when max length is 15");
+                                                   entityName.length() + " when max length is " + NAME_MAX_LEN +
+                                                   " (entityName: " + entityName + ')');
             }
             if (entityName.contains(" ")) {
                 throw new IllegalArgumentException("Attempt to set entityName when arg has spaces when spaces are not allowed");
@@ -902,18 +914,18 @@ public final class PxPack {
         public String toString() {
             final StringBuilder result = new StringBuilder();
 
-            result.append("Flag: ").append(String.format("%02X", flag)).append('\n');
-            result.append("Type: ").append(String.format("%02X", type)).append('\n');
-            result.append("Unknown Byte: ").append(String.format("%02X", unknownByte)).append('\n');
+            result.append(String.format("Flag: %02X\n", flag))
+                  .append(String.format("Type: %02X\n", type))
+                  .append(String.format("Unknown Byte: %02X\n", unknownByte))
 
-            result.append("X: ").append(String.format("%02X", x)).append('\n');
-            result.append("Y: ").append(String.format("%02X", y)).append('\n');
+                  .append(String.format("X: %02X\n", x))
+                  .append(String.format("Y: %02X\n", y));
 
             for (int i = 0; i < data.length; ++i) {
-                result.append("Data ").append(i).append(": ").append(String.format("%02X", data[i])).append('\n');
+                result.append(String.format("Data %d: %02X\n", i, data[i]));
             }
 
-            result.append("Name: ").append(name).append('\n');
+            result.append(String.format("Name: %s\n", name));
 
             return result.toString();
         }

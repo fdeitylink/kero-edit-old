@@ -6,16 +6,28 @@
  *  - Reload tilesets in open maps on save (or on edit?)
  * Ctrl +/- and scroll wheel for zoom
  * Resort map ListView alphabetically when map is added, and select and open the new map
- * Draggable tabs (and allow popping out into a window)
  * Scaling map down
  * Lower memory usage and stuffs
- * Play pxtone files
- * Will need something for GameData changes to notify objects using it (i.e. maplist changes)
- *  - ObservableList?
+ * Play pxtone files (javafx.scene.media? javax.sound.sampled?)
  * In script editor, eventually put in an autocompleter for stuff like entity names
  * Add @throws to JavaDoc comments for runtime exceptions
  * Use the n-dimensional array copy method?
  * Throw IllegalAccessExceptions in private constructors for classes not intended to be instantiated?
+ * Window menu for tab closing and other stuff?
+ * Verify default uncaught exception handler works
+ * Throw EOFExceptions if EOF met during PXPACK or PXATTR parsing (chan.read() returns -1 if it met EOF)
+ *   - Create wrapper channel class that throws EOFException?
+ * Allow drag/drop in mod executable? (other files?)
+ * Acquire FileLocks on files being read and saved?
+ * Use direct ByteBuffer? (only for EXE?)
+ * Break up messages.properties into individual files? (one for each class or package)
+ * Throw OutOfBoundsExceptions instead of IllegalArgumentExceptions for values outside ranges?
+ * LRU cache for ImageManager and PxAttrManager?
+ * Use FXUtil.task() and FXUtil.service() to shorten verbose anonymous Task and Service classes
+ * Use temp variables in for/for-each loops rather than repeatedly calling method
+ * Use WatchService in GameData (and in PxAttr/ImageManager?)
+ * Why is the scrollbar sometimes super tiny on the mapListView?
+ * Change mapName capit
  */
 
 package io.fdeitylink.keroedit;
@@ -23,7 +35,6 @@ package io.fdeitylink.keroedit;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.EnumSet;
 
 import java.util.stream.Stream;
 import java.util.stream.Collectors;
@@ -43,10 +54,8 @@ import java.nio.file.DirectoryStream;
 
 import java.nio.charset.Charset;
 
-import io.fdeitylink.keroedit.util.SafeOrdinalEnum;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 
 import javafx.stage.Stage;
 import javafx.scene.control.Dialog;
@@ -78,7 +87,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ColorPicker;
 
 import javafx.collections.ObservableList;
-import javafx.collections.FXCollections;
 
 import javafx.scene.control.Alert;
 
@@ -109,20 +117,26 @@ import io.fdeitylink.keroedit.util.NullArgumentException;
 
 import io.fdeitylink.keroedit.util.Logger;
 
+import io.fdeitylink.keroedit.util.SafeOrdinalEnum;
+
 import io.fdeitylink.keroedit.resource.ResourceManager;
 
-import io.fdeitylink.keroedit.util.FXUtil;
+import io.fdeitylink.keroedit.util.fx.FXUtil;
 
 import io.fdeitylink.keroedit.gamedata.GameData;
 
 import io.fdeitylink.keroedit.image.ImageManager;
 import io.fdeitylink.keroedit.image.PxAttrManager;
 
+import io.fdeitylink.keroedit.util.fx.FileEditTab;
+
 import io.fdeitylink.keroedit.hack.HackTab;
 import io.fdeitylink.keroedit.mapedit.MapEditTab;
 import io.fdeitylink.keroedit.script.ScriptEditTab;
 
 public final class KeroEdit extends Application {
+    private final String baseTitleStr = MessageFormat.format(Messages.getString("KeroEdit.APP_TITLE"),
+                                                             Messages.getString("KeroEdit.VERSION"));
     private ArrayList <MenuItem> enableOnLoadItems;
 
     private Stage mainStage;
@@ -139,24 +153,24 @@ public final class KeroEdit extends Application {
     }
 
     /**
-     * Starts running the KeroEdit program and sets up its stage
-     *
-     * @param primaryStage The {@code Stage} to run the KeroEdit program in
+     * {@inheritDoc}
      */
     @Override
     public void start(final Stage primaryStage) {
         final Thread.UncaughtExceptionHandler fxDefExceptHandler = Thread.currentThread().getUncaughtExceptionHandler();
-        Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
+        final Thread.UncaughtExceptionHandler exceptHandler = (thread, throwable) -> {
             fxDefExceptHandler.uncaughtException(thread, throwable);
-            Logger.logThrowable(throwable);
-        });
+            Logger.logThrowable("Uncaught exception: ", throwable);
+        };
+        Thread.currentThread().setUncaughtExceptionHandler(exceptHandler);
+        //Thread.setDefaultUncaughtExceptionHandler(exceptHandler);
 
         Config.loadPrefs();
 
         mainStage = primaryStage;
         mainStage.setOnCloseRequest(event -> {
             //if user didn't cancel any attempted tab closes and definitely wants to close program
-            if (!closeTabs(true)) {
+            if (!closeTabs()) {
                 Config.notepadText = notepadTab.notepad.getText();
                 Config.savePrefs();
 
@@ -190,6 +204,21 @@ public final class KeroEdit extends Application {
         mainStage.requestFocus();
 
         showLicense();
+
+        /* ****************************************** Testing PoppableTab ******************************************* */
+        /*final ImageView node = new ImageView(ResourceManager.getImage("fdl_logo.png"));
+        final PoppableTab tab = new PoppableTab("Test Poppable Tab", node);
+        tab.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!tab.isSelected()) {
+                tab.setContent(null);
+                tab.setText("");
+            }
+            else {
+                tab.setContent(node);
+                tab.setText("Test Poppable Tab");
+            }
+        });
+        mainTabPane.getTabs().add(tab);*/
     }
 
     /**
@@ -197,9 +226,8 @@ public final class KeroEdit extends Application {
      *
      * @param str The string to append to the title
      */
-    public void setTitle(final String str) {
-        mainStage.setTitle(MessageFormat.format(Messages.getString("KeroEdit.APP_TITLE"),
-                                                Messages.getString("KeroEdit.VERSION")) + " - " + str);
+    private void setTitle(final String str) {
+        mainStage.setTitle(baseTitleStr + str);
     }
 
     /**
@@ -236,7 +264,7 @@ public final class KeroEdit extends Application {
                 .setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
         menuItems[FileMenuItem.ordinalMap.get(FileMenuItem.OPEN)].setOnAction(event -> {
             //if user didn't cancel any attempted tab closes and definitely wants to load new mod
-            if (!closeTabs(true)) {
+            if (!closeTabs()) {
                 wipeLoaded();
 
                 final FileChooser exeChooser = new FileChooser();
@@ -251,7 +279,7 @@ public final class KeroEdit extends Application {
 
                 final File exeFile = exeChooser.showOpenDialog(mainStage);
                 if (null != exeFile) {
-                    loadMod(exeFile.toPath());
+                    loadMod(exeFile.toPath().toAbsolutePath());
                 }
             }
         });
@@ -260,21 +288,21 @@ public final class KeroEdit extends Application {
                 .setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN));
         menuItems[FileMenuItem.ordinalMap.get(FileMenuItem.OPEN_LAST)].setOnAction(event -> {
             //if user didn't cancel any attempted tab closes and definitely wants to load last mod
-            if (!closeTabs(true)) {
+            if (!closeTabs()) {
                 wipeLoaded();
-                loadMod(Paths.get(Config.lastExeLoc));
+                loadMod(Paths.get(Config.lastExeLoc).toAbsolutePath());
             }
         });
-        menuItems[FileMenuItem.ordinalMap.get(FileMenuItem.OPEN_LAST)]
-                .setDisable(!Config.lastExeLoc.endsWith(".exe")); //Disabled if there is no last mod
+        //Disabled if there is no last mod
+        menuItems[FileMenuItem.ordinalMap.get(FileMenuItem.OPEN_LAST)].setDisable(!Config.lastExeLoc.endsWith(".exe"));
         openLast = menuItems[FileMenuItem.ordinalMap.get(FileMenuItem.OPEN_LAST)];
 
         menuItems[FileMenuItem.ordinalMap.get(FileMenuItem.SAVE)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
         menuItems[FileMenuItem.ordinalMap.get(FileMenuItem.SAVE)].setOnAction(event -> {
             final Tab selectedTab = mainTabPane.getSelectionModel().getSelectedItem();
-            if (selectedTab instanceof FXUtil.FileEditTab) {
-                ((FXUtil.FileEditTab)selectedTab).save();
+            if (selectedTab instanceof FileEditTab) {
+                ((FileEditTab)selectedTab).save();
             }
         });
         menuItems[FileMenuItem.ordinalMap.get(FileMenuItem.SAVE)].setDisable(true);
@@ -284,8 +312,8 @@ public final class KeroEdit extends Application {
                 .setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHIFT_DOWN, KeyCombination.CONTROL_DOWN));
         menuItems[FileMenuItem.ordinalMap.get(FileMenuItem.SAVE_ALL)].setOnAction(event -> {
             for (final Tab tab : mainTabPane.getTabs()) {
-                if (tab instanceof FXUtil.FileEditTab) {
-                    ((FXUtil.FileEditTab)tab).save();
+                if (tab instanceof FileEditTab) {
+                    ((FileEditTab)tab).save();
                 }
             }
         });
@@ -305,7 +333,7 @@ public final class KeroEdit extends Application {
 
         menuItems[FileMenuItem.ordinalMap.get(FileMenuItem.CLOSE_ALL_TABS)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.SHIFT_DOWN, KeyCombination.CONTROL_DOWN));
-        menuItems[FileMenuItem.ordinalMap.get(FileMenuItem.CLOSE_ALL_TABS)].setOnAction(event -> closeTabs(false));
+        menuItems[FileMenuItem.ordinalMap.get(FileMenuItem.CLOSE_ALL_TABS)].setOnAction(event -> closeTabs());
         menuItems[FileMenuItem.ordinalMap.get(FileMenuItem.CLOSE_ALL_TABS)].setDisable(true);
         enableOnLoadItems.add(menuItems[FileMenuItem.ordinalMap.get(FileMenuItem.CLOSE_ALL_TABS)]);
 
@@ -338,76 +366,74 @@ public final class KeroEdit extends Application {
     /**
      * Loads a mod, checking if it is valid. Also creates its assist folder.
      *
-     * @param executable A {@code Path} that references the executable for a mod
+     * @param executable A {@code Path} that references the exe for a mod.
      *
      * @throws NullArgumentException if {@code executable} is null
      */
     private void loadMod(final Path executable) {
+        final Path exe = NullArgumentException.requireNonNull(executable, "loadMod", "executable").toAbsolutePath();
         try {
-            new Task <Void>() {
-                @Override
-                protected Void call() throws Exception {
-                    if (null == executable) {
-                        throw new NullArgumentException("loadMod", "executable");
-                    }
-                    if (!executable.toString().endsWith(".exe")) {
-                        Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.ERROR,
-                                                                   Messages.getString("KeroEdit.LoadMod.NotExe.TITLE"), null,
-                                                                   MessageFormat.format(Messages.getString("KeroEdit.LoadMod.NotExe.MESSAGE"),
-                                                                                        executable.toAbsolutePath())).showAndWait());
-                        return null;
-                    }
-
-                    try {
-                        GameData.init(executable);
-                        Config.lastExeLoc = executable.toAbsolutePath().toString();
-
-                        HackTab.init();
-
-                        final File executableParent = executable.getParent().toAbsolutePath().toFile();
-                        boolean hasRWXPermissions = executableParent.canRead() && executableParent.canWrite() &&
-                                                    executableParent.canExecute();
-                        if (!hasRWXPermissions) {
-                            if (!(hasRWXPermissions = executableParent.setReadable(true) &&
-                                                      executableParent.setWritable(true) &&
-                                                      executableParent.setExecutable(true))) {
-                                Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.INFORMATION,
-                                                                           Messages.getString("KeroEdit.LoadMod.StrictPermissions.TITLE"),
-                                                                           null,
-                                                                           Messages.getString("KeroEdit.LoadMod.StrictPermissions.MESSAGE"))
-                                                              .showAndWait());
-                            }
-                        }
-                        if (hasRWXPermissions) {
-                            createAssistFolder();
-                        }
-
-                        Platform.runLater(() -> {
-                            setTitle(executable.getParent().toAbsolutePath().toString() + File.separatorChar);
-
-                            openLast.setDisable(false);
-                            mapList.setItems(FXCollections.observableArrayList(GameData.getMapList()));
-                            mapList.requestFocus();
-
-                            for (final MenuItem mItem : enableOnLoadItems) {
-                                if (mItem.isDisable()) {
-                                    mItem.setDisable(false);
-                                }
-                            }
-                        });
-                    }
-                    catch (final IOException except) {
-                        Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.ERROR,
-                                                                   Messages.getString("KeroEdit.LoadMod.IOExcept.TITLE"), null,
-                                                                   except.getMessage()).showAndWait());
-                    }
-
+            FXUtil.task(() -> {
+                if (!exe.toString().endsWith(".exe")) {
+                    Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.ERROR,
+                                                               Messages.getString("KeroEdit.LoadMod.NotExe.TITLE"),
+                                                               null,
+                                                               MessageFormat.format(Messages.getString("KeroEdit.LoadMod.NotExe.MESSAGE"),
+                                                                                    exe.toAbsolutePath())).showAndWait());
                     return null;
                 }
-            }.call();
+
+                try {
+                    GameData.init(exe);
+                    Config.lastExeLoc = exe.toString();
+
+                    HackTab.init();
+
+                    final File executableParent = exe.getParent().toAbsolutePath().toFile();
+                    boolean hasRWXPermissions = executableParent.canRead() && executableParent.canWrite() &&
+                                                executableParent.canExecute();
+                    if (!hasRWXPermissions) {
+                        if (!(hasRWXPermissions = executableParent.setReadable(true) &&
+                                                  executableParent.setWritable(true) &&
+                                                  executableParent.setExecutable(true))) {
+                            Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.INFORMATION,
+                                                                       Messages.getString("KeroEdit.LoadMod.StrictPermissions.TITLE"),
+                                                                       null,
+                                                                       Messages.getString("KeroEdit.LoadMod.StrictPermissions.MESSAGE"))
+                                                          .showAndWait());
+                        }
+                    }
+                    if (hasRWXPermissions) {
+                        createAssistFolder();
+                    }
+
+                    Platform.runLater(() -> {
+                        setTitle(" - " + exe.getParent().toAbsolutePath() + File.separatorChar);
+
+                        openLast.setDisable(false);
+
+                        mapList.setItems(GameData.getMapList());
+                        mapList.requestFocus();
+
+                        for (final MenuItem mItem : enableOnLoadItems) {
+                            if (mItem.isDisable()) {
+                                mItem.setDisable(false);
+                            }
+                        }
+                    });
+                }
+                catch (final IOException except) {
+                    Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.ERROR,
+                                                               Messages.getString("KeroEdit.LoadMod.IOExcept.TITLE"),
+                                                               null, except.getMessage()).showAndWait());
+                }
+
+                return null;
+            }).run();
+            //TODO: Use Service subclass
         }
         catch (final Exception except) {
-            //do nothing?
+            Logger.logThrowable("Error during mod loading", except);
         }
     }
 
@@ -486,24 +512,22 @@ public final class KeroEdit extends Application {
                 .setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN));
         menuItems[EditMenuItem.ordinalMap.get(EditMenuItem.UNDO)].setOnAction(event -> {
             final Tab selectedTab = mainTabPane.getSelectionModel().getSelectedItem();
-            if (selectedTab instanceof FXUtil.FileEditTab) {
-                ((FXUtil.FileEditTab)selectedTab).undo();
+            if (selectedTab instanceof FileEditTab) {
+                ((FileEditTab)selectedTab).undo();
             }
         });
-        menuItems[EditMenuItem.ordinalMap.get(EditMenuItem.UNDO)]
-                .setDisable(true); //Disable until valid mod opened
+        menuItems[EditMenuItem.ordinalMap.get(EditMenuItem.UNDO)].setDisable(true); //Disable until valid mod opened
         enableOnLoadItems.add(menuItems[EditMenuItem.ordinalMap.get(EditMenuItem.UNDO)]);
 
         menuItems[EditMenuItem.ordinalMap.get(EditMenuItem.REDO)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN));
         menuItems[EditMenuItem.ordinalMap.get(EditMenuItem.REDO)].setOnAction(event -> {
             final Tab selectedTab = mainTabPane.getSelectionModel().getSelectedItem();
-            if (selectedTab instanceof FXUtil.FileEditTab) {
-                ((FXUtil.FileEditTab)selectedTab).redo();
+            if (selectedTab instanceof FileEditTab) {
+                ((FileEditTab)selectedTab).redo();
             }
         });
-        menuItems[EditMenuItem.ordinalMap.get(EditMenuItem.REDO)]
-                .setDisable(true); //Disable until valid mod opened
+        menuItems[EditMenuItem.ordinalMap.get(EditMenuItem.REDO)].setDisable(true); //Disable until valid mod opened
         enableOnLoadItems.add(menuItems[EditMenuItem.ordinalMap.get(EditMenuItem.REDO)]);
 
         return editMenu;
@@ -568,11 +592,14 @@ public final class KeroEdit extends Application {
         final ToggleGroup zoomToggleGroup = new ToggleGroup();
         final RadioMenuItem[] zoomMenuItems = new RadioMenuItem[3];
 
-        //from 200, 400, 600% since attribute.png and unittype.png are are 16px by 16px but tiles are 8px by 8px
-        //and I don't have a half-scale image scaler yet
+        /*
+         * 200, 400, 600% since attribute.png and unittype.png
+         * are 16px by 16px but tiles are 8px by 8px
+         * and I don't have a half-scale image scaler yet
+         */
         int zoom = 2;
         for (int i = 0; i < zoomMenuItems.length; ++i) {
-            zoomMenuItems[i] = new RadioMenuItem(String.valueOf(zoom * 100) + '%');
+            zoomMenuItems[i] = new RadioMenuItem(Integer.toString(zoom * 100) + '%');
             zoomMenuItems[i].setToggleGroup(zoomToggleGroup);
             zoomMenuItems[i].setSelected(defaultZoom == zoom);
 
@@ -597,9 +624,8 @@ public final class KeroEdit extends Application {
         actionsMenu.getItems().addAll(menuItems);
 
         menuItems[ActionsMenuItem.ordinalMap.get(ActionsMenuItem.RUN_GAME)].setOnAction(event -> {
-            final Runtime run = Runtime.getRuntime();
             try {
-                run.exec(GameData.getExecutable().toAbsolutePath().toString());
+                Runtime.getRuntime().exec(GameData.getExecutable().toString());
             }
             catch (final IOException except) {
                 FXUtil.createAlert(Alert.AlertType.ERROR,
@@ -625,12 +651,16 @@ public final class KeroEdit extends Application {
             final List <File> scriptFiles = scrChooser.showOpenMultipleDialog(mainStage);
             if (null != scriptFiles) {
                 for (final File f : scriptFiles) {
-                    final Path scriptPath = f.toPath();
+                    final Path scriptPath = f.toPath().toAbsolutePath();
+                    String scriptFname = scriptPath.getFileName().toString();
+                    scriptFname = scriptFname.substring(0, scriptFname.lastIndexOf(".pxeve"));
 
                     boolean isAlreadyOpen = false;
                     for (final Tab tab : mainTabPane.getTabs()) {
-                        if (tab instanceof ScriptEditTab &&
-                            tab.getId().equals(scriptPath.toAbsolutePath().toString())) {
+                        //If the script is already open somewhere
+                        //MapEditTab's ID is name of map, and map's script's name is equivalent to map's name
+                        if ((tab instanceof ScriptEditTab && tab.getId().equals(scriptPath.toString())) ||
+                            (tab instanceof MapEditTab && tab.getId().equals(scriptFname))) {
                             mainTabPane.getSelectionModel().select(tab);
                             mainTabPane.requestFocus();
                             isAlreadyOpen = true;
@@ -646,11 +676,11 @@ public final class KeroEdit extends Application {
                             mainTabPane.requestFocus();
                         }
                         catch (final IOException except) {
-                        /*
-                         * Do nothing - the exception just signals that there was a script reading issue
-                         * and prevents us from adding the ScriptEditTab to the tab pane.
-                         * A dialog was already shown to the user via the ScriptEditTab constructor.
-                         */
+                            /*
+                             * Do nothing - exception just signals that there was a script reading issue
+                             * and prevents us from adding the ScriptEditTab to the tab pane.
+                             * A dialog was already shown to the user via the ScriptEditTab constructor.
+                             */
                         }
                     }
                 }
@@ -660,23 +690,15 @@ public final class KeroEdit extends Application {
         enableOnLoadItems.add(menuItems[ActionsMenuItem.ordinalMap.get(ActionsMenuItem.EDIT_GLOBAL_SCRIPT)]);
 
         menuItems[ActionsMenuItem.ordinalMap.get(ActionsMenuItem.HACK_EXECUTABLE)].setOnAction(event -> {
-            /*for (final Tab tab : mainTabPane.getTabs()) {
-                if (tab instanceof HackTab) {
-                    mainTabPane.getSelectionModel().select(tab);
-                    mainTabPane.requestFocus();
-                    return;
-                }
-            }*/
             if (!mainTabPane.getTabs().contains(HackTab.getInst())) {
                 mainTabPane.getTabs().add(HackTab.getInst());
             }
-
             mainTabPane.getSelectionModel().select(HackTab.getInst());
             mainTabPane.requestFocus();
-
         });
         menuItems[ActionsMenuItem.ordinalMap.get(ActionsMenuItem.HACK_EXECUTABLE)].setDisable(true);
-        enableOnLoadItems.add(menuItems[ActionsMenuItem.ordinalMap.get(ActionsMenuItem.HACK_EXECUTABLE)]);
+        //Disabled until I give it more functionality and the ability to load and save the executable
+        //enableOnLoadItems.add(menuItems[ActionsMenuItem.ordinalMap.get(ActionsMenuItem.HACK_EXECUTABLE)]);
 
         menuItems[ActionsMenuItem.ordinalMap.get(ActionsMenuItem.WAFFLE)].setOnAction(event -> {
             final Image waffleImg = FXUtil.scaleImage(ResourceManager.getImage("waffle.png"), 16);
@@ -711,7 +733,6 @@ public final class KeroEdit extends Application {
                                       new MenuItem(Messages.getString("KeroEdit.HelpMenu.GUIDE"))};
         helpMenu.getItems().addAll(menuItems);
 
-
         menuItems[HelpMenuItem.ordinalMap.get(HelpMenuItem.ABOUT)].setOnAction(event -> {
             final Alert aboutAlert = FXUtil.createAlert(Alert.AlertType.INFORMATION,
                                                         Messages.getString("KeroEdit.HelpMenu.About.TITLE"), null,
@@ -719,7 +740,7 @@ public final class KeroEdit extends Application {
                                                                              Messages.getString("KeroEdit.LAST_UPDATE"),
                                                                              Messages.getString("KeroEdit.VERSION")));
 
-            aboutAlert.getDialogPane().setGraphic(new ImageView(ResourceManager.getImage("fdl_logo.png")));
+            aboutAlert.setGraphic(new ImageView(ResourceManager.getImage("fdl_logo.png")));
             aboutAlert.showAndWait();
         });
 
@@ -737,22 +758,18 @@ public final class KeroEdit extends Application {
      * @return The created {@code ListView}
      */
     private ListView <String> initMapList() {
+        //TODO: Make cells editable (and rename maps after user is done editing cell)?
         final ListView <String> mapListView = new ListView <>();
         mapListView.setOrientation(Orientation.VERTICAL);
-
-        mapListView.setMinWidth(125);
-        mapListView.setPrefWidth(125);
-
         mapListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-        final MenuItem[] contextMenuItems = {new MenuItem(Messages.getString("KeroEdit.MapListView.ContextMenu.OPEN_MAP")),
-                                             new MenuItem(Messages.getString("KeroEdit.MapListView.ContextMenu.NEW_MAP")),
-                                             new MenuItem(Messages.getString("KeroEdit.MapListView.ContextMenu.DELETE_MAP")),
-                                             new MenuItem(Messages.getString("KeroEdit.MapListView.ContextMenu.RENAME_MAP")),
-                                             new MenuItem(Messages.getString("KeroEdit.MapListView.ContextMenu.DUPLICATE_MAP"))};
+        final MenuItem[] contextMenuItems = {new MenuItem(Messages.getString("KeroEdit.MapList.OPEN")),
+                                             new MenuItem(Messages.getString("KeroEdit.MapList.NEW")),
+                                             new MenuItem(Messages.getString("KeroEdit.MapList.DELETE")),
+                                             new MenuItem(Messages.getString("KeroEdit.MapList.RENAME")),
+                                             new MenuItem(Messages.getString("KeroEdit.MapList.DUPLICATE"))};
 
-        final ContextMenu contextMenu = new ContextMenu(contextMenuItems);
-        mapListView.setContextMenu(contextMenu);
+        mapListView.setContextMenu(new ContextMenu(contextMenuItems));
 
         //TODO: Change accelerator text from an arrow to "Enter"
         contextMenuItems[MapListMenuItem.ordinalMap.get(MapListMenuItem.OPEN)]
@@ -771,14 +788,29 @@ public final class KeroEdit extends Application {
 
                 if (!isAlreadyOpen) {
                     try {
+                        //If script for this map open in mainTabPane, close it so two copies aren't open.
+                        //map's name == map's script's name
+                        for (final Tab tab : mainTabPane.getTabs()) {
+                            if (tab instanceof ScriptEditTab &&
+                                ((ScriptEditTab)tab).getScriptPath().getFileName().toString()
+                                                    .equals(mapName + ".pxeve")) {
+                                mainTabPane.getTabs().remove(tab); //TODO: Use closeTab(tab) to trigger onCloseRequest()?
+                                break;
+                            }
+                        }
+
                         final MapEditTab mapEditTab = new MapEditTab(mapName);
                         mainTabPane.getTabs().add(mapEditTab);
                         mainTabPane.getSelectionModel().select(mapEditTab);
                         mainTabPane.requestFocus();
                     }
                     catch (final IOException | ParseException except) {
-                        //do nothing - the exception just signals that there was a map parsing or script reading issue
-                        //dialog box already shown via the MapEditTab constructor
+                        /*
+                         * Do nothing - exception just signals that there was a map parsing
+                         * or script reading issue and prevents us from adding the MapEditTab
+                         * to the tab pane. A dialog was already shown to the user via the
+                         * MapEditTab constructor.
+                         */
                     }
                 }
             }
@@ -791,7 +823,7 @@ public final class KeroEdit extends Application {
         //TODO: Create prompt for new mapname
         contextMenuItems[MapListMenuItem.ordinalMap.get(MapListMenuItem.NEW)]
                 .setOnAction(event -> FXUtil.createAlert(Alert.AlertType.INFORMATION,
-                                                         Messages.getString("KeroEdit.MapListView.ContextMenu.NEW_MAP")
+                                                         Messages.getString("KeroEdit.MapList.NEW")
                                                                  .replace("_", ""),
                                                          null, Messages.getString("KeroEdit.NOT_IMPLEMENTED")).showAndWait());
         contextMenuItems[MapListMenuItem.ordinalMap.get(MapListMenuItem.NEW)].setDisable(true);
@@ -800,9 +832,13 @@ public final class KeroEdit extends Application {
         contextMenuItems[MapListMenuItem.ordinalMap.get(MapListMenuItem.DELETE)]
                 .setAccelerator(new KeyCodeCombination(KeyCode.DELETE));
         contextMenuItems[MapListMenuItem.ordinalMap.get(MapListMenuItem.DELETE)].setOnAction(event -> {
-            //This code works similarly to that in the closeTabs() method so reading that may help you to understand this
+            //This code works similarly to that in closeTabs() so reading that may help you to understand this
 
-            //reference completely new list to avoid list being modified because of deleted and deselected items
+            /*
+             * Reference new list to avoid list being modified because of deleted and deselected items
+             * the List maintained by the ListView's SelectionModel doesn't properly adjust to insertions
+             * and deletions and ends up being a pain to work with
+             */
             final ArrayList <String> selectedMapNames =
                     new ArrayList <>(mapListView.getSelectionModel().getSelectedItems());
             for (int i = 0; i < selectedMapNames.size() && 0 < selectedMapNames.size(); ) {
@@ -812,7 +848,10 @@ public final class KeroEdit extends Application {
                                    Messages.getString("KeroEdit.DeleteMap.MESSAGE")).showAndWait()
                       .ifPresent(result -> {
                           if (ButtonType.OK == result) {
-                              GameData.removeMap(mapName);
+                              /*
+                               * GameData.getMapList()is the backing list for the ListView,
+                               * so changes to the ListView's items affect GameData and vice versa.
+                               */
                               mapListView.getItems().remove(mapName);
                               selectedMapNames.remove(mapName);
 
@@ -820,8 +859,8 @@ public final class KeroEdit extends Application {
                                   if (tab instanceof MapEditTab && tab.getId().equals(mapName)) {
                                       /*
                                        * Don't use FXUtil.closeTab() as we've already confirmed
-                                       * the user wants to delete the map, and thus doesn't care
-                                       * about unsaved changes.
+                                       * the user wants to delete the map, and thus that they
+                                       * don't care about unsaved changes.
                                        */
                                       mainTabPane.getTabs().remove(tab);
                                       break;
@@ -829,16 +868,10 @@ public final class KeroEdit extends Application {
                               }
                           }
                       });
-                /*
-                 * If user canceled map deletion, i++ moves onto the next
-                 * index where the following selected map name will be.
-                 * If map was deleted, then i, which used to point to the
-                 * map name that was just removed, will now point to the next
-                 * selected map name (or none if we've iterated through
-                 * every selected map name).
-                 */
+
+                //If user canceled map deletion, don't attempt to delete any others
                 if (selectedMapNames.contains(mapName)) {
-                    i++;
+                    return;
                 }
             }
 
@@ -850,7 +883,7 @@ public final class KeroEdit extends Application {
         //TODO: Create prompt for new mapname
         contextMenuItems[MapListMenuItem.ordinalMap.get(MapListMenuItem.RENAME)]
                 .setOnAction(event -> FXUtil.createAlert(Alert.AlertType.INFORMATION,
-                                                         Messages.getString("KeroEdit.MapListView.ContextMenu.RENAME_MAP")
+                                                         Messages.getString("KeroEdit.MapList.RENAME")
                                                                  .replace("_", ""),
                                                          null, Messages.getString("KeroEdit.NOT_IMPLEMENTED")).showAndWait());
         contextMenuItems[MapListMenuItem.ordinalMap.get(MapListMenuItem.RENAME)].setDisable(true);
@@ -859,33 +892,13 @@ public final class KeroEdit extends Application {
         //TODO: Create prompt for new mapname
         contextMenuItems[MapListMenuItem.ordinalMap.get(MapListMenuItem.DUPLICATE)]
                 .setOnAction(event -> FXUtil.createAlert(Alert.AlertType.INFORMATION,
-                                                         Messages.getString("KeroEdit.MapListView.ContextMenu.DUPLICATE_MAP")
+                                                         Messages.getString("KeroEdit.MapList.DUPLICATE")
                                                                  .replace("_", ""),
                                                          null, Messages.getString("KeroEdit.NOT_IMPLEMENTED")).showAndWait());
         contextMenuItems[MapListMenuItem.ordinalMap.get(MapListMenuItem.DUPLICATE)].setDisable(true);
         enableOnLoadItems.add(contextMenuItems[MapListMenuItem.ordinalMap.get(MapListMenuItem.DUPLICATE)]);
 
         mapListView.setOnKeyPressed(event -> {
-            /*
-             * This code is from before when it seemed that the MenuItems
-             * in the context menu weren't being triggered by keypresses
-             * on the map list itself. Now it seems they get triggered so
-             * I don't think this is necessary anymore, but it's being kept
-             * in case it is needed for whatever reason.
-             */
-            //Retrieves MenuItem in the context menu that the key is bound to
-            /*MenuItem menuItem = null;
-            for (final MenuItem mItem : contextMenuItems) {
-                final KeyCombination keyCombo = mItem.getAccelerator();
-                if (null != keyCombo && keyCombo.match(event)) {
-                    menuItem = mItem;
-                    break;
-                }
-            }
-            if (null != menuItem) {
-                menuItem.getOnAction().handle(new ActionEvent());
-            }*/
-
             //This is the only one that doesn't seem to be triggered by keypresses on map list, IDK why
             final MenuItem openMap = contextMenuItems[MapListMenuItem.ordinalMap.get(MapListMenuItem.OPEN)];
             if (openMap.getAccelerator().match(event)) {
@@ -894,7 +907,7 @@ public final class KeroEdit extends Application {
         });
 
         mapListView.setOnMouseClicked(event -> {
-            if (event.getButton().equals(MouseButton.PRIMARY) && 2 == event.getClickCount()) {
+            if (MouseButton.PRIMARY == event.getButton() && 2 == event.getClickCount()) {
                 contextMenuItems[MapListMenuItem.ordinalMap.get(MapListMenuItem.OPEN)].getOnAction().handle(new ActionEvent());
             }
         });
@@ -921,15 +934,12 @@ public final class KeroEdit extends Application {
      * is an instance of {@code FileEditTab}, the tab's {@code onCloseRequest} property
      * will be invoked so that if the tab has unsaved changes, the user will be asked
      * if they want to save the changes, discard them, or cancel closing the tab.
+     * If a single tab closing is canceled, the method quits immediately and returns true,
+     * thereby not attempting to close any more tabs.
      *
-     * @param cancelAll True if the first time a user hits cancel on a tab close dialog
-     * should cancel all additional attempts to close a tab and return true, or false if
-     * all tab closes are completely independent of each other and canceling one tab closing
-     * should not cancel attempts to close others.
-     *
-     * @return true if {@code cancelAll} is true and at least one tab closing was canceled by the user.
+     * @return true if a tab closing was canceled by the user, false otherwise.
      */
-    private boolean closeTabs(final boolean cancelAll) {
+    private boolean closeTabs() {
         final ObservableList <Tab> tabs = mainTabPane.getTabs();
         for (int i = 0; i < tabs.size() && 0 < tabs.size(); ) {
             final Tab tab = tabs.get(i);
@@ -943,17 +953,11 @@ public final class KeroEdit extends Application {
 
             /*
              * If tab is a FileEditTab it won't actually close if the user presses
-             * cancel on the unsaved changes prompt. So the i++ moves onto the next
-             * index where the following tab will be. If the tab did close, then i,
-             * which used to point to the tab that was just closed, will now point
-             * to the next tab (or none if we've iterated through every tab). This
-             * is also how the i++ in the if-statement above works.
+             * cancel on the unsaved changes prompt. So if they did cancel closing
+             * a tab, quit immediately.
              */
             if (tabs.contains(tab)) {
-                if (cancelAll) {
-                    return true;
-                }
-                i++;
+                return true;
             }
         }
 
@@ -982,6 +986,7 @@ public final class KeroEdit extends Application {
                       .ifPresent(result -> {
                           Config.licenseRead = ButtonType.OK == result;
                           if (!Config.licenseRead) {
+                              Config.savePrefs();
                               Platform.exit();
                               System.exit(0);
                           }
@@ -1023,39 +1028,27 @@ public final class KeroEdit extends Application {
                                        new CheckBox(Messages.getString("PxPack.LayerNames.MIDDLEGROUND")),
                                        new CheckBox(Messages.getString("PxPack.LayerNames.BACKGROUND"))};
 
-            final EnumSet <MapEditTab.LayerFlag> displayedLayers = EnumSet.copyOf(Config.displayedLayers);
-
             for (int i = 0; i < cBoxes.length; ++i) {
                 cBoxes[i].setAllowIndeterminate(false);
                 //selected if the flag is set
                 cBoxes[i].setSelected(Config.displayedLayers.contains(MapEditTab.LayerFlag.values()[i]));
 
                 final int layer = i;
-                cBoxes[i].selectedProperty().addListener((observable, oldValue, newValue) -> {
-                    //int newDispLayersFlag = displayedLayers.get();
+                cBoxes[i].setOnAction(event -> {
                     final MapEditTab.LayerFlag flag = MapEditTab.LayerFlag.values()[layer];
-                    if (newValue) {
-                        displayedLayers.add(flag);
+                    if (cBoxes[layer].isSelected()) {
                         Config.displayedLayers.add(flag);
-                        //enable flag
-                        //newDispLayersFlag |= MapEditTab.LayerFlag.values()[layer].flag;
                     }
                     else {
-                        displayedLayers.remove(flag);
                         Config.displayedLayers.remove(flag);
-                        //disable flag
-                        //newDispLayersFlag &= MapEditTab.LayerFlag.values()[layer].flag ^ 0b1111_1111;
                     }
-
-                    MapEditTab.setDisplayedLayers(displayedLayers);
-                    /*displayedLayers.set(newDispLayersFlag);
-                    Config.displayedLayers = newDispLayersFlag;*/
+                    MapEditTab.setDisplayedLayers(Config.displayedLayers);
                 });
 
                 add(cBoxes[i], x, y++);
             }
 
-            MapEditTab.setDisplayedLayers(displayedLayers);
+            MapEditTab.setDisplayedLayers(Config.displayedLayers);
         }
 
         private void initSelectedLayer(int x) {
@@ -1095,8 +1088,8 @@ public final class KeroEdit extends Application {
             add(label, x, y++);
 
             final ToggleGroup toggleGroup = new ToggleGroup();
-            final RadioButton[] radioButtons = {new RadioButton(Messages.getString("KeroEdit.SettingsPane.DRAW"))/*,
-                                                new RadioButton(Messages.getString("KeroEdit.SettingsPane.RECT")),
+            final RadioButton[] radioButtons = {new RadioButton(Messages.getString("KeroEdit.SettingsPane.DRAW")),
+                                                /*new RadioButton(Messages.getString("KeroEdit.SettingsPane.RECT")),
                                                 new RadioButton(Messages.getString("KeroEdit.SettingsPane.COPY")),
                                                 new RadioButton(Messages.getString("KeroEdit.SettingsPane.FILL")),
                                                 new RadioButton(Messages.getString("KeroEdit.SettingsPane.REPLACE"))*/};
@@ -1104,13 +1097,15 @@ public final class KeroEdit extends Application {
             radioButtons[MapEditTab.DrawMode.ordinalMap.get(Config.drawMode)].setSelected(true);
 
             for (int i = 0; i < radioButtons.length; ++i) {
+                radioButtons[i].setToggleGroup(toggleGroup);
+
                 final int modeIndex = i;
-                radioButtons[i].setOnAction(event -> {
+                radioButtons[i].selectedProperty().addListener((observable, oldValue, newValue) -> {
                     final MapEditTab.DrawMode mode = MapEditTab.DrawMode.values()[modeIndex];
                     MapEditTab.setDrawMode(mode);
                     Config.drawMode = mode;
                 });
-                radioButtons[i].setToggleGroup(toggleGroup);
+
                 add(radioButtons[i], x, y++);
             }
         }
@@ -1122,13 +1117,11 @@ public final class KeroEdit extends Application {
             label.setFont(Font.font(null, FontWeight.BOLD, 15));
             add(label, x, y++);
 
-            final EnumSet <MapEditTab.ViewFlag> viewSettings = EnumSet.copyOf(Config.viewSettings);
-
             final CheckBox[] cBoxes = {new CheckBox(Messages.getString("KeroEdit.SettingsPane.TILE_TYPES")),
                                        new CheckBox(Messages.getString("KeroEdit.SettingsPane.GRID")),
-                                       /*new CheckBox(Messages.getString("KeroEdit.SettingsPane.ENTITY_BOXES")),
+                                       new CheckBox(Messages.getString("KeroEdit.SettingsPane.ENTITY_BOXES")),
                                        new CheckBox(Messages.getString("KeroEdit.SettingsPane.ENTITY_SPRITES")),
-                                       new CheckBox(Messages.getString("KeroEdit.SettingsPane.ENTITY_NAMES"))*/};
+                                       /*new CheckBox(Messages.getString("KeroEdit.SettingsPane.ENTITY_NAMES"))*/};
 
             for (int i = 0; i < cBoxes.length; ++i) {
                 cBoxes[i].setAllowIndeterminate(false);
@@ -1136,48 +1129,27 @@ public final class KeroEdit extends Application {
                 cBoxes[i].setSelected(Config.viewSettings.contains(MapEditTab.ViewFlag.values()[i]));
 
                 final int index = i;
-                cBoxes[i].selectedProperty().addListener((observable, oldValue, newValue) -> {
-                    /*int newViewSettingsFlag = viewSettings.get();
-                    if (newValue) {
-                        //enable flag
-                        newViewSettingsFlag |= MapEditTab.ViewFlag.values()[index].flag;
-                    }
-                    else {
-                        //disable flag
-                        newViewSettingsFlag &= MapEditTab.ViewFlag.values()[index].flag ^ 0b1111_1111;
-                    }
-
-                    viewSettings.set(newViewSettingsFlag);
-                    Config.viewSettings = newViewSettingsFlag;*/
-                    //int newDispLayersFlag = displayedLayers.get();
+                cBoxes[i].setOnAction(event -> {
                     final MapEditTab.ViewFlag flag = MapEditTab.ViewFlag.values()[index];
-                    if (newValue) {
-                        viewSettings.add(flag);
+                    if (cBoxes[index].isSelected()) {
                         Config.viewSettings.add(flag);
-                        //enable flag
-                        //newDispLayersFlag |= MapEditTab.LayerFlag.values()[layer].flag;
                     }
                     else {
-                        viewSettings.remove(flag);
                         Config.viewSettings.remove(flag);
-                        //disable flag
-                        //newDispLayersFlag &= MapEditTab.LayerFlag.values()[layer].flag ^ 0b1111_1111;
                     }
 
-                    MapEditTab.setViewSettings(viewSettings);
-                    /*displayedLayers.set(newDispLayersFlag);
-                    Config.displayedLayers = newDispLayersFlag;*/
+                    MapEditTab.setViewSettings(Config.viewSettings);
                 });
 
                 add(cBoxes[i], x, y++);
             }
 
-            MapEditTab.setViewSettings(viewSettings);
+            MapEditTab.setViewSettings(Config.viewSettings);
         }
     }
 
     private static final class NotepadTab extends Tab {
-        private final TextArea notepad;
+        final TextArea notepad;
 
         NotepadTab() {
             super(Messages.getString("KeroEdit.NOTEPAD_TITLE"));

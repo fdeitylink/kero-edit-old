@@ -1,6 +1,10 @@
 package io.fdeitylink.keroedit.util;
 
 public final class MathUtil {
+    private MathUtil() {
+
+    }
+
     /**
      * Returns either the given number or
      * the lower limit if the number is less than the lower limit or
@@ -13,8 +17,7 @@ public final class MathUtil {
      * @return A number within the specified bounds
      */
     public static int bound(final int num, final int lower, final int upper) {
+        //TODO: Overload for float, double, long
         return Math.max(lower, Math.min(num, upper));
     }
-
-    //TODO: overload bound() for float double, long
 }

@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
+import io.fdeitylink.keroedit.util.fx.FileEditTab;
 import javafx.scene.control.Alert;
 
 import javafx.scene.control.Tooltip;
@@ -24,37 +25,52 @@ import io.fdeitylink.keroedit.util.NullArgumentException;
 
 import io.fdeitylink.keroedit.Messages;
 
-import io.fdeitylink.keroedit.util.FXUtil;
+import io.fdeitylink.keroedit.util.fx.FXUtil;
 
 import io.fdeitylink.keroedit.mapedit.MapEditTab;
 
-//TODO: Make this a static inner class of MapEditTab?
-public final class ScriptEditTab extends FXUtil.FileEditTab {
-    private final Path script;
+public final class ScriptEditTab extends FileEditTab {
+    private final Path scriptPath;
 
     private MapEditTab parent;
 
     private final TextArea textArea;
 
-    public ScriptEditTab(final Path inScript) throws IOException {
-        script = inScript;
+    public ScriptEditTab(final Path inPath) throws IOException {
+        /*
+         * TODO: Fix this weird exception that I can't seem to get myself
+         * java.io.UncheckedIOException: java.nio.charset.MalformedInputException: Input length = 1
+	     * java.io.BufferedReader$1.hasNext(Unknown Source)
+	     * java.util.Iterator.forEachRemaining(Unknown Source)
+         * java.util.Spliterators$IteratorSpliterator.forEachRemaining(Unknown Source)
+         * java.util.stream.AbstractPipeline.copyInto(Unknown Source)
+         * java.util.stream.AbstractPipeline.wrapAndCopyInto(Unknown Source)
+         * java.util.stream.ReduceOps$ReduceOp.evaluateSequential(Unknown Source)
+         * java.util.stream.AbstractPipeline.evaluate(Unknown Source)
+         * java.util.stream.ReferencePipeline.collect(Unknown Source)
+         * io.fdeitylink.keroedit.script.ScriptEditTab.<init>(ScriptEditTab.java:44)
+         *  - scriptText = lineStream.collect(Collectors.joining("\n"));
+         */
+
+        //TODO: Check if this is actually within the mod folder and throw except if not?
+        scriptPath = NullArgumentException.requireNonNull(inPath, "ScriptEditTab", "inPath").toAbsolutePath();
 
         String scriptText = "";
-        try (Stream <String> lineStream = Files.lines(inScript, Charset.forName("SJIS"))) {
+        try (Stream <String> lineStream = Files.lines(inPath, Charset.forName("Shift_JIS"))) {
             scriptText = lineStream.collect(Collectors.joining("\n"));
         }
         catch (final FileNotFoundException except) {
             try {
-                Files.createFile(inScript);
+                Files.createFile(inPath);
             }
             catch (final IOException ex) {
-                //do nothing
+                //do nothing or throw except?
             }
         }
         catch (final IOException except) {
             FXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("ScriptEditTab.IOExcept.TITLE"), null,
                                MessageFormat.format(Messages.getString("ScriptEditTab.IOExcept.MESSAGE"),
-                                                    inScript.getFileName(), except.getMessage())).showAndWait();
+                                                    inPath.getFileName(), except.getMessage())).showAndWait();
             throw except;
         }
 
@@ -69,24 +85,26 @@ public final class ScriptEditTab extends FXUtil.FileEditTab {
             }
         });
 
-        setId(inScript.toAbsolutePath().toString());
+        setId(scriptPath.toString());
 
         //assume this tab is not inside MapEditTab - other constructor will call setText() if it is inside MapEditTab
-        setText(inScript.getFileName().toString());
-        setTooltip(new Tooltip(inScript.toAbsolutePath().toString()));
+        setText(inPath.getFileName().toString());
+        setTooltip(new Tooltip(scriptPath.toString()));
 
         setContent(textArea);
     }
 
-    public ScriptEditTab(final Path inScript, final MapEditTab parent) throws IOException {
-        this(inScript);
+    public ScriptEditTab(final Path inPath, final MapEditTab parent) throws IOException {
+        //throws NullArgumentException if inPath == null
+        this(inPath);
 
-        if (null == parent) {
-            throw new NullArgumentException("ScriptEditTab", "parent");
-        }
-
+        NullArgumentException.requireNonNull(parent, "ScriptEditTab", "parent");
         this.parent = parent;
         setText(Messages.getString("ScriptEditTab.TITLE"));
+    }
+
+    public Path getScriptPath() {
+        return scriptPath;
     }
 
     @Override
@@ -102,13 +120,13 @@ public final class ScriptEditTab extends FXUtil.FileEditTab {
     @Override
     public void save() {
         try {
-            Files.write(script, textArea.getParagraphs(), Charset.forName("SJIS"));
+            Files.write(scriptPath, textArea.getParagraphs(), Charset.forName("Shift_JIS"));
             setChanged(false);
         }
         catch (final IOException except) {
             FXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("ScriptEditTab.Save.IOExcept.TITLE"), null,
                                MessageFormat.format(Messages.getString("ScriptEditTab.Save.IOExcept.MESSAGE"),
-                                                    script.getFileName(), except.getMessage())).showAndWait();
+                                                    scriptPath.getFileName(), except.getMessage())).showAndWait();
         }
     }
 

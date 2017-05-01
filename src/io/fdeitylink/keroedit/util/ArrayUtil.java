@@ -3,6 +3,10 @@ package io.fdeitylink.keroedit.util;
 import java.lang.reflect.Array;
 
 public final class ArrayUtil {
+    private ArrayUtil() {
+
+    }
+
     public static <T> void copyNDimensional(final T src, final T dest) {
         if (!src.getClass().isArray() || !dest.getClass().isArray()) {
             throw new IllegalArgumentException("Attempt to copy n-dimensional array when at least one argument is not an array");
@@ -12,14 +16,14 @@ public final class ArrayUtil {
         final int destDimensions = getNumDimensions(dest);
         if (srcDimensions != destDimensions) {
             throw new IllegalArgumentException("Attempt to copy src into dest when they have an unequal amount of dimensions " +
-                                               "(src: " + srcDimensions + ", " + "dest: " + destDimensions + ")");
+                                               "(src: " + srcDimensions + ", " + "dest: " + destDimensions + ')');
         }
 
         final int srcLen = Array.getLength(src);
         final int destLen = Array.getLength(dest);
         if (srcLen != destLen) {
             throw new IllegalArgumentException("Attempt to copy src into dest when at least one of their lengths are unequal " +
-                                               "(src: " + srcLen + ", " + "dest: " + destLen + ")");
+                                               "(src: " + srcLen + ", " + "dest: " + destLen + ')');
         }
 
         //Base case: 1D array

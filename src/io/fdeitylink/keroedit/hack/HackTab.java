@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.nio.charset.Charset;
 
+import io.fdeitylink.keroedit.util.fx.FileEditTab;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -34,11 +35,11 @@ import io.fdeitylink.keroedit.Messages;
 
 import io.fdeitylink.keroedit.resource.ResourceManager;
 
-import io.fdeitylink.keroedit.util.FXUtil;
+import io.fdeitylink.keroedit.util.fx.FXUtil;
 
 import io.fdeitylink.keroedit.gamedata.GameData;
 
-public final class HackTab extends FXUtil.FileEditTab {
+public final class HackTab extends FileEditTab {
     private static HackTab inst;
 
     private SplitPane sPane;
