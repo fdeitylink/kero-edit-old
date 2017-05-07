@@ -455,27 +455,27 @@ public final class PxPack {
             if (NUM_REF_MAPS != mapNames.length) {
                 throw new IllegalArgumentException("Attempt to set mapNames[] when arg has length " + mapNames.length +
                                                    " when length of " + NUM_REF_MAPS + " is expected " +
-                                                   "(mapNames: " + Arrays.toString(mapNames) + ")");
+                                                   "(mapNames: " + Arrays.toString(mapNames) + ')');
             }
             if (5 != data.length) {
                 throw new IllegalArgumentException("Attempt to set data[] when arg has length " + data.length +
                                                    " when length of 5 is expected " +
-                                                   "(data: " + Arrays.toString(data) + ")");
+                                                   "(data: " + Arrays.toString(data) + ')');
             }
             if (NUM_LAYERS != tilesetNames.length) {
                 throw new IllegalArgumentException("Attempt to set tilesetNames[] when arg has length " + tilesetNames.length +
                                                    " when length of " + NUM_LAYERS + " is expected " +
-                                                   "(tilesetNames: " + Arrays.toString(tilesetNames) + ")");
+                                                   "(tilesetNames: " + Arrays.toString(tilesetNames) + ')');
             }
             if (NUM_LAYERS != visibilityTypes.length) {
                 throw new IllegalArgumentException("Attempt to set visibilityTypes[] when arg has length " + visibilityTypes.length +
                                                    " when length of " + NUM_LAYERS + " is expected " +
-                                                   "(visibilityTypes: " + Arrays.toString(visibilityTypes) + ")");
+                                                   "(visibilityTypes: " + Arrays.toString(visibilityTypes) + ')');
             }
             if (NUM_LAYERS != scrollTypes.length) {
                 throw new IllegalArgumentException("Attempt to set scrollTypes[] when arg has length " + scrollTypes.length +
                                                    " when length of " + NUM_LAYERS + " is expected " +
-                                                   "(scrollTypes: " + Arrays.toString(scrollTypes) + ")");
+                                                   "(scrollTypes: " + Arrays.toString(scrollTypes) + ')');
             }
 
             //TODO: check if these method calls are bad practice

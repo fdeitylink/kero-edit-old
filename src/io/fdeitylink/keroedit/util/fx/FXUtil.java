@@ -105,7 +105,8 @@ public final class FXUtil {
     public static void setTextControlLength(final TextInputControl input, final int len) {
         NullArgumentException.requireNonNull(input, "setTextControlLength", "input");
         if (len < 0) {
-            throw new IllegalArgumentException("Attempt to set max length of TextInputControl to negative value");
+            throw new IllegalArgumentException("Attempt to set max length of TextInputControl to negative value " +
+                                               "(len: " + len + ')');
         }
         input.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.length() > len) {
@@ -118,9 +119,9 @@ public final class FXUtil {
      * Sets the background image of a given {@code Region}
      *
      * @param region The {@code Region} to apply the background image to
-     * @param image The image of the background
+     * @param image The {@code Image} to apply as the background
      *
-     * @throws NullArgumentException if {@code image} or {@code region} is null
+     * @throws NullArgumentException if {@code region} or {@code image} is null
      */
     public static void setBackgroundImage(final Region region, final Image image) {
         NullArgumentException.requireNonNull(region, "setBackgroundImage", "region");
@@ -142,7 +143,8 @@ public final class FXUtil {
     }
 
     /**
-     * Returns a {@code String} representation of the Color suitable for {@code Color.web()} or {@code Color.valueOf()}.
+     * Returns a {@code String} representation of the Color suitable
+     * for {@code Color.web()} or {@code Color.valueOf()}.
      * Note that it disregards opacity
      *
      * @param color The {@code Color} to convert to a web string
@@ -152,15 +154,12 @@ public final class FXUtil {
      * @throws NullArgumentException if {@code color} is null
      */
     public static String colorToString(final Color color) {
-        if (null == color) {
-            return ("0x000000"); //TODO: return transparent, not black
-        }
-
-        return String.format("0x%02X%02X%02X",
+        NullArgumentException.requireNonNull(color, "colorToString", "color");
+        return String.format("0x%02X%02X%02X%02X",
                              (int)(color.getRed() * 255),
                              (int)(color.getGreen() * 255),
-                             (int)(color.getBlue() * 255));
-        //TODO: opacity? (int)(color.getOpacity() * 255)
+                             (int)(color.getBlue() * 255),
+                             (int)(color.getOpacity() * 255));
     }
 
     /**
@@ -237,7 +236,8 @@ public final class FXUtil {
      * @return The created {@code Alert}
      */
     public static Alert createTextboxAlert(final Alert.AlertType type, final String title, final String headerText,
-                                           final String message, final String textAreaContent, final boolean editable) {
+                                           final String message, final String textAreaContent,
+                                           final boolean editable) {
         final Alert alert = createAlert(type, title, headerText, message);
 
         final TextArea textArea = new TextArea(textAreaContent);
@@ -271,7 +271,8 @@ public final class FXUtil {
      * @return The created {@code Dialog <Pair <String, String>>}
      */
     public static Dialog <Tuple <String, String>> createDualTextFieldDialog(final String title, final String headerText,
-                                                                            final String firstLabel, final String secondLabel) {
+                                                                            final String firstLabel,
+                                                                            final String secondLabel) {
         final Dialog <Tuple <String, String>> dialog = new Dialog <>();
         dialog.setTitle(title);
         dialog.setHeaderText(headerText);

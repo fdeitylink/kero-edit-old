@@ -202,13 +202,13 @@ public final class HackTab extends FileEditTab {
         }
     }
 
+    //TODO: Make this extend GridPane to align text and fields
     private static final class HackField extends HBox {
         private final Text label;
         private final TextField field;
         private final int offset;
 
         HackField(final String labelText, final String currentVal, final String defaultVal, final int len, final int offset) {
-            //TODO: align text and fields in rows and columns (have this extend GridPane?
             super(10);
 
             this.offset = offset;

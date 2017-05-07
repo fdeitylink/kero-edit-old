@@ -215,6 +215,7 @@ public final class GameData {
 
     private static ObservableList <String> getFileList(final String pathFromRsc, final String ext)
             throws IOException {
+        //TODO: Omit '.' from ext in calls in init(), put '.' in glob in DirectoryStream below
         final Path basePath = Paths.get(inst.resourceFolder.toAbsolutePath().toString() +
                                         File.separatorChar + pathFromRsc);
 

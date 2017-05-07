@@ -14,12 +14,14 @@
  * Offset tile and grid drawing by width/2 (check how the game displays tiles - by middle or top-left corner)
  * Skip loading PxAttr if tileset is not present?
  * Show error if tileset file doesn't exist? (do this in PxPack?)
+ * Error check layer, coordinate arguments for UndoableEdit and PxAttrPopup constructors
+ * Why doesn't selected rect draw on tileset until after user makes first click or changes layer?
+ * Glob draw edits together based on single mouse drag/click
  */
 
 package io.fdeitylink.keroedit.mapedit;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 
 import java.io.File;
 
@@ -112,7 +114,7 @@ import io.fdeitylink.keroedit.util.Logger;
 
 import io.fdeitylink.keroedit.util.MathUtil;
 
-import io.fdeitylink.keroedit.util.SafeOrdinalEnum;
+import io.fdeitylink.keroedit.util.SafeEnum;
 
 import io.fdeitylink.keroedit.util.fx.FXUtil;
 import io.fdeitylink.keroedit.util.fx.FileEditTab;
@@ -281,14 +283,14 @@ public final class MapEditTab extends FileEditTab {
 
     public static void setMapZoom(final int zoom) {
         if (0 >= zoom) {
-            throw new IllegalArgumentException("Attempt to set map zoom level to be <= 0 (zoom: " + zoom + ")");
+            throw new IllegalArgumentException("Attempt to set map zoom level to be <= 0 (zoom: " + zoom + ')');
         }
         mapZoom.set(zoom);
     }
 
     public static void setTilesetZoom(final int zoom) {
         if (0 >= zoom) {
-            throw new IllegalArgumentException("Attempt to set tileset zoom level to be <= 0 (zoom: " + zoom + ")");
+            throw new IllegalArgumentException("Attempt to set tileset zoom level to be <= 0 (zoom: " + zoom + ')');
         }
         tilesetZoom.set(zoom);
     }
@@ -305,7 +307,7 @@ public final class MapEditTab extends FileEditTab {
 
     public static void setSelectedLayer(final int layer) {
         if (layer < 0 || layer > 2) {
-            throw new IllegalArgumentException("Attempt to set selected layer to value outside range 0 - 2 (layer: " + layer + ")");
+            throw new IllegalArgumentException("Attempt to set selected layer to value outside range 0 - 2 (layer: " + layer + ')');
         }
         selectedLayer.set(layer);
     }
@@ -1080,7 +1082,7 @@ public final class MapEditTab extends FileEditTab {
 
                 viewSettings.addListener((observable, oldValue, newValue) -> {
                     //Only one flag is changed at a time
-                    //TODO: Find more efficient method (complement?)
+                    //TODO: Find more efficient method (complement? noneOf?)
                     if ((oldValue.contains(ViewFlag.TILE_TYPES) && !newValue.contains(ViewFlag.TILE_TYPES)) ||
                         (!oldValue.contains(ViewFlag.TILE_TYPES) && newValue.contains(ViewFlag.TILE_TYPES))) {
                         redrawTileLayer(selectedLayer.get());
@@ -1199,8 +1201,8 @@ public final class MapEditTab extends FileEditTab {
 
                                         MapEditTab.this.setChanged(true);
 
-                                        getRedoStack().clear();
-                                        getUndoStack().addFirst(new UndoableMapDrawEdit(layer, x, y, oldTiles, newTiles));
+                                        redoStack.clear();
+                                        undoStack.addFirst(new UndoableMapDrawEdit(layer, x, y, oldTiles, newTiles));
                                     }
                                 }
                             }
@@ -1225,7 +1227,7 @@ public final class MapEditTab extends FileEditTab {
                 final MenuItem[] menuItems = {new MenuItem(Messages.getString("MapEditTab.TileEditTab.Resize.MENU_TEXT")),
                                               new MenuItem(Messages.getString("MapEditTab.TileEditTab.BgColor.MENU_TEXT"))};
 
-                menuItems[MapPaneMenuItem.ordinalMap.get(MapPaneMenuItem.RESIZE)].setOnAction(event -> {
+                menuItems[MapPaneMenuItem.RESIZE.ordinal()].setOnAction(event -> {
                     final int layer = selectedLayer.get();
 
                     final String layerName;
@@ -1293,13 +1295,13 @@ public final class MapEditTab extends FileEditTab {
 
                             MapEditTab.this.setChanged(true);
 
-                            getRedoStack().clear();
-                            getUndoStack().addFirst(new UndoableMapResizeEdit(layer, oldTiles, tileLayers[layer].getTiles()));
+                            redoStack.clear();
+                            undoStack.addFirst(new UndoableMapResizeEdit(layer, oldTiles, tileLayers[layer].getTiles()));
                         }
                     });
                 });
 
-                menuItems[MapPaneMenuItem.ordinalMap.get(MapPaneMenuItem.BG_COLOR)].setOnAction(event -> {
+                menuItems[MapPaneMenuItem.BG_COLOR.ordinal()].setOnAction(event -> {
                     final ColorPicker cPicker = new ColorPicker(mapPane.bgColor.get());
                     cPicker.setOnAction(ev -> {
                         if (!cPicker.getValue().isOpaque()) {
@@ -1413,7 +1415,7 @@ public final class MapEditTab extends FileEditTab {
                     }).run();
                 }
                 catch (final Exception except) {
-                    Logger.logThrowable("Exception in redrawTile(" + layer + ", " + x + ", " + y + ", " + ")", except);
+                    Logger.logThrowable("Exception in redrawTile(" + layer + ", " + x + ", " + y + ", " + ')', except);
                 }
             }
 
@@ -1516,7 +1518,7 @@ public final class MapEditTab extends FileEditTab {
                     }).run();
                 }
                 catch (final Exception except) {
-                    Logger.logThrowable("Exception in redrawTileLayer(" + layer + ")", except);
+                    Logger.logThrowable("Exception in redrawTileLayer(" + layer + ')', except);
                 }
             }
 
@@ -1802,6 +1804,8 @@ public final class MapEditTab extends FileEditTab {
         }
 
         private GridPane initGridPane() {
+            //TODO: For values that can be blank, put a "Clear" button next to them that sets the value to blank and selects a blank item
+
             final GridPane gPane = new GridPane();
             gPane.setPadding(new Insets(10, 10, 10, 10));
             gPane.setVgap(10);
@@ -1903,10 +1907,11 @@ public final class MapEditTab extends FileEditTab {
             /* ******************************************** Scroll Types ******************************************** */
             //TODO: Scroll types
 
-            gPane.add(descriptionLabel, 0, 0);
-            gPane.add(descriptionTextField, 1, 0);
+            int y = 0;
+            gPane.add(descriptionLabel, 0, y);
+            gPane.add(descriptionTextField, 1, y++);
 
-            for (int i = 0, y = 1; i < labels.size(); ++i, ++y) {
+            for (int i = 0; i < labels.size(); ++i, ++y) {
                 gPane.add(labels.get(i), 0, y);
                 gPane.add(fields.get(i), 1, y);
             }
@@ -1936,38 +1941,30 @@ public final class MapEditTab extends FileEditTab {
         }
     }
 
-    public enum DrawMode implements SafeOrdinalEnum <DrawMode> {
+    public enum DrawMode implements SafeEnum <DrawMode> {
         DRAW,
         RECT,
         COPY,
         FILL,
-        REPLACE;
-
-        public static final EnumMap <DrawMode, Integer> ordinalMap = DRAW.ordinalMap(DrawMode.class);
+        REPLACE
     }
 
-    public enum LayerFlag implements SafeOrdinalEnum <LayerFlag> {
+    public enum LayerFlag implements SafeEnum <LayerFlag> {
         FOREGROUND,
         MIDDLEGROUND,
-        BACKGROUND;
-
-        static final EnumMap <LayerFlag, Integer> ordinalMap = FOREGROUND.ordinalMap(LayerFlag.class);
+        BACKGROUND
     }
 
-    public enum ViewFlag implements SafeOrdinalEnum <ViewFlag> {
+    public enum ViewFlag implements SafeEnum <ViewFlag> {
         TILE_TYPES,
         GRID,
         ENTITY_BOXES,
         ENTITY_SPRITES,
-        ENTITY_NAMES;
-
-        static final EnumMap <ViewFlag, Integer> ordinalMap = TILE_TYPES.ordinalMap(ViewFlag.class);
+        ENTITY_NAMES
     }
 
-    private enum MapPaneMenuItem implements SafeOrdinalEnum <MapPaneMenuItem> {
+    private enum MapPaneMenuItem implements SafeEnum <MapPaneMenuItem> {
         RESIZE,
-        BG_COLOR;
-
-        static final EnumMap <MapPaneMenuItem, Integer> ordinalMap = RESIZE.ordinalMap(MapPaneMenuItem.class);
+        BG_COLOR
     }
 }

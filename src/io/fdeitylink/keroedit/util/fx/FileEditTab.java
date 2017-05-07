@@ -12,11 +12,12 @@ import javafx.scene.control.ButtonType;
 
 import io.fdeitylink.keroedit.Messages;
 
+//TODO: Add abstract getPath(), rename() methods?
 //TODO: Extend PoppableTab
 public abstract class FileEditTab extends Tab {
     //TODO: Store undo pointer to mark unchanged on undo/redo if same state as when saved is met
-    private final ArrayDeque <UndoableEdit> undoStack = new ArrayDeque <>();
-    private final ArrayDeque <UndoableEdit> redoStack = new ArrayDeque <>();
+    protected final ArrayDeque <UndoableEdit> undoStack = new ArrayDeque <>();
+    protected final ArrayDeque <UndoableEdit> redoStack = new ArrayDeque <>();
 
     private boolean changed;
 
@@ -88,13 +89,5 @@ public abstract class FileEditTab extends Tab {
                 setText(getText() + '*');
             }
         }
-    }
-
-    protected ArrayDeque <UndoableEdit> getUndoStack() {
-        return undoStack;
-    }
-
-    protected ArrayDeque <UndoableEdit> getRedoStack() {
-        return redoStack;
     }
 }

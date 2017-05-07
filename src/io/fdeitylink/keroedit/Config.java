@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 
 import io.fdeitylink.keroedit.util.Logger;
 
-import io.fdeitylink.keroedit.util.SafeOrdinalEnum;
+import io.fdeitylink.keroedit.util.SafeEnum;
 
 import io.fdeitylink.keroedit.util.fx.FXUtil;
 
@@ -79,12 +79,12 @@ public final class Config {
             prefs.putInt("TILESET_ZOOM", tilesetZoom);
             prefs.put("TILESET_BG_COLOR", FXUtil.colorToString(tilesetBgColor));
 
-            prefs.putInt("DISPLAYED_LAYERS", encode(displayedLayers, MapEditTab.LayerFlag.class));
+            prefs.putInt("DISPLAYED_LAYERS", encode(displayedLayers));
             prefs.putInt("SELECTED_LAYER", selectedLayer);
 
-            prefs.putInt("DRAW_MODE", MapEditTab.DrawMode.ordinalMap.get(drawMode));
+            prefs.putInt("DRAW_MODE", drawMode.ordinal());
 
-            prefs.putInt("VIEW_SETTINGS", encode(viewSettings, MapEditTab.ViewFlag.class));
+            prefs.putInt("VIEW_SETTINGS", encode(viewSettings));
 
             prefs.putBoolean("TILESET_STAGE_SHOWING", tilesetStageShowing);
 
@@ -95,28 +95,31 @@ public final class Config {
         }
     }
 
-    private static <E extends Enum <E> & SafeOrdinalEnum <E>> int encode(final EnumSet <E> set, final Class <E> enumClass) {
+    private static <E extends Enum <E> & SafeEnum <E>> int encode(final EnumSet <E> set) {
+        //Assumes only 32 bits (uses int)
         //http://stackoverflow.com/a/2199486
 
         int flags = 0;
-        for (E val : set) {
-            flags |= (1 << val.ordinalMap(enumClass).get(val));
+        for (final E val : set) {
+            flags |= 1 << val.ordinal();
+            //flags |= (1 << val.ordinalMap(enumClass).get(val));
         }
 
         return flags;
     }
 
-    private static <E extends Enum <E> & SafeOrdinalEnum <E>> EnumSet <E> decode(final int encoded, final Class <E> enumClass) {
+    private static <E extends Enum <E> & SafeEnum <E>> EnumSet <E> decode(final int encoded, final Class <E> enumClass) {
         //Assumes only 32 bits (uses int)
-
         //http://stackoverflow.com/a/2199486
+
         final EnumSet <E> set = EnumSet.noneOf(enumClass);
         int ordinal = 0;
 
+        final E[] constants = enumClass.getEnumConstants();
         //Repeatedly left-shift i to go through every bit
         for (int i = 1; i != 0 && ordinal < enumClass.getEnumConstants().length; i <<= 1) {
-            if ((i & encoded) != 0) {
-                set.add(enumClass.getEnumConstants()[ordinal]);
+            if (0 != (i & encoded)) {
+                set.add(constants[ordinal]);
             }
             ordinal++;
         }

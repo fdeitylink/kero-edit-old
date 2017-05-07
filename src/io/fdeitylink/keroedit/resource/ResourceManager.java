@@ -65,7 +65,7 @@ public final class ResourceManager {
     }
 
     public static Image getImage(final String filename) {
-        //TODO: Return empty image if null?
+        //TODO: Return empty image if filename is null?
         NullArgumentException.requireNonNull(filename, "getImage", "filename");
 
         final Path p = getPath(filename);
