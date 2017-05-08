@@ -17,6 +17,7 @@
  * Error check layer, coordinate arguments for UndoableEdit and PxAttrPopup constructors
  * Why doesn't selected rect draw on tileset until after user makes first click or changes layer?
  * Glob draw edits together based on single mouse drag/click
+ * Make redrawing entities a Service
  */
 
 package io.fdeitylink.keroedit.mapedit;
@@ -340,6 +341,8 @@ public final class MapEditTab extends FileEditTab {
     public void save() {
         try {
             map.save();
+            tileEditTab.markUnchanged();
+            propertyEditTab.markUnchanged();
 
             /*
              * If an IOException is thrown in ScriptEditTab's save() method,
@@ -350,7 +353,7 @@ public final class MapEditTab extends FileEditTab {
             scriptEditTab.save();
 
             if (!scriptEditTab.isChanged()) {
-                setChanged(false);
+                markUnchanged();
             }
         }
         catch (final IOException except) {
@@ -362,13 +365,16 @@ public final class MapEditTab extends FileEditTab {
 
     //Made public so the child ScriptEditTab can call it
     @Override
-    public void setChanged(final boolean changed) {
-        super.setChanged(changed);
-        if (!changed) {
-            tileEditTab.setChanged(false);
-            scriptEditTab.setChanged(false);
-            propertyEditTab.setChanged(false);
-        }
+    public void markChanged() {
+        super.markChanged();
+    }
+
+    @Override
+    protected void markUnchanged() {
+        super.markUnchanged();
+        tileEditTab.markUnchanged();
+        scriptEditTab.markUnchanged();
+        propertyEditTab.markUnchanged();
     }
 
     /**
@@ -440,10 +446,10 @@ public final class MapEditTab extends FileEditTab {
             //does nothing
         }
 
-        //Made public so the parent MapEditTab can call it in save()
+        //Made public so the parent MapEditTab can call it
         @Override
-        public void setChanged(final boolean changed) {
-            super.setChanged(changed);
+        public void markUnchanged() {
+            super.markUnchanged();
         }
 
         /**
@@ -1196,13 +1202,10 @@ public final class MapEditTab extends FileEditTab {
                                         }
                                     }
 
-                                    if (!oldEqualsNew/*Arrays.deepEquals(oldTiles, newTiles)*/) {
-                                        setChanged(true);
+                                    if (!oldEqualsNew) {
+                                        MapEditTab.this.markChanged();
 
-                                        MapEditTab.this.setChanged(true);
-
-                                        redoStack.clear();
-                                        undoStack.addFirst(new UndoableMapDrawEdit(layer, x, y, oldTiles, newTiles));
+                                        addUndo(new UndoableMapDrawEdit(layer, x, y, oldTiles, newTiles));
                                     }
                                 }
                             }
@@ -1291,12 +1294,9 @@ public final class MapEditTab extends FileEditTab {
                             redrawTileLayer(layer);
                             redrawGridLayer();
 
-                            setChanged(true);
+                            MapEditTab.this.markChanged();
 
-                            MapEditTab.this.setChanged(true);
-
-                            redoStack.clear();
-                            undoStack.addFirst(new UndoableMapResizeEdit(layer, oldTiles, tileLayers[layer].getTiles()));
+                            addUndo(new UndoableMapResizeEdit(layer, oldTiles, tileLayers[layer].getTiles()));
                         }
                     });
                 });
@@ -1314,9 +1314,9 @@ public final class MapEditTab extends FileEditTab {
                         else {
                             head.setBgColor(cPicker.getValue());
                             bgColor.set(cPicker.getValue());
-                            setChanged(true);
+                            markChanged();
 
-                            MapEditTab.this.setChanged(true);
+                            MapEditTab.this.markChanged();
                         }
                     });
 
@@ -1842,8 +1842,8 @@ public final class MapEditTab extends FileEditTab {
             FXUtil.setTextControlLength(descriptionTextField, PxPack.Head.DESCRIPTION_MAX_LEN);
             descriptionTextField.textProperty().addListener((observable, oldValue, newValue) -> {
                 head.setDescription(newValue);
-                setChanged(true);
-                MapEditTab.this.setChanged(true);
+                markChanged();
+                MapEditTab.this.markChanged();
                 tooltip.setText(map.getPath().toString() + '\n' +
                                 Messages.getString("MapEditTab.TOOLTIP_DESCRIPTION_LABEL") + newValue);
             });
@@ -1858,8 +1858,8 @@ public final class MapEditTab extends FileEditTab {
                 fieldSelectModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                     //TODO: Potential bug with null selected vals
                     head.setMapName(index, newValue);
-                    setChanged(true);
-                    MapEditTab.this.setChanged(true);
+                    markChanged();
+                    MapEditTab.this.markChanged();
                 });
             }
 
@@ -1870,8 +1870,8 @@ public final class MapEditTab extends FileEditTab {
             spritesheetSelectModel.select(head.getSpritesheetName());
             spritesheetSelectModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 head.setSpritesheetName(newValue);
-                setChanged(true);
-                MapEditTab.this.setChanged(true);
+                markChanged();
+                MapEditTab.this.markChanged();
                 /*
                  * TODO:
                  * When I start pulling entity sprites directly from
@@ -1892,8 +1892,8 @@ public final class MapEditTab extends FileEditTab {
                 final int index = i;
                 fieldSelectModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                     head.setTilesetName(index, newValue);
-                    setChanged(true);
-                    MapEditTab.this.setChanged(true);
+                    markChanged();
+                    MapEditTab.this.markChanged();
 
                     //TODO: Only reload affected tileset, not all of them
                     tileEditTab.tilesetPane.loadTilesets.restart();
@@ -1936,8 +1936,8 @@ public final class MapEditTab extends FileEditTab {
 
         //Made public so the parent MapEditTab can call it in save()
         @Override
-        public void setChanged(final boolean changed) {
-            super.setChanged(changed);
+        public void markUnchanged() {
+            super.markUnchanged();
         }
     }
 

@@ -178,7 +178,6 @@ public final class KeroEdit extends Application {
 
         enableOnLoadItems = new ArrayList <>();
 
-        //TODO: Vertical SplitPane, not BorderPane
         /*
          * Note to self - keep these as BorderPanes - while a VBox may conceptually seem
          * more fit for this it does not resize well and there's a whole load of sizing issues.

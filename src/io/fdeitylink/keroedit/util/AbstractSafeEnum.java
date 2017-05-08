@@ -4,6 +4,7 @@
  * Custom Set implementation similar to EnumSet?
  * Require fields inside constant to be transient (normal enums do not maintain state)
  *  - Or create specific serialization method that cannot be changed in subclasses
+ * Figure out how serialization should work
  */
 
 package io.fdeitylink.keroedit.util;

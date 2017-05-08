@@ -138,8 +138,7 @@ public final class HackTab extends FileEditTab {
     @Override
     public void save() {
         //TODO: Actually save EXE
-        setChanged(false);
-        System.out.println("exe saved");
+        markUnchanged();
     }
 
     private static HackTreeItem parseHackFile(final Path hackPath, final String subrootName) {

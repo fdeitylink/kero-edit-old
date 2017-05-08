@@ -79,9 +79,9 @@ public final class ScriptEditTab extends FileEditTab {
         textArea.setFont(new Font("Consolas", 12));
 
         textArea.textProperty().addListener((observable, oldValue, newValue) -> {
-            setChanged(true);
+            markChanged();
             if (null != parent) {
-                parent.setChanged(true);
+                parent.markChanged();
             }
         });
 
@@ -95,8 +95,7 @@ public final class ScriptEditTab extends FileEditTab {
     }
 
     public ScriptEditTab(final Path inPath, final MapEditTab parent) throws IOException {
-        //throws NullArgumentException if inPath == null
-        this(inPath);
+        this(inPath); //throws NullArgumentException if inPath == null
 
         NullArgumentException.requireNonNull(parent, "ScriptEditTab", "parent");
         this.parent = parent;
@@ -121,7 +120,7 @@ public final class ScriptEditTab extends FileEditTab {
     public void save() {
         try {
             Files.write(scriptPath, textArea.getParagraphs(), Charset.forName("Shift_JIS"));
-            setChanged(false);
+            markUnchanged();
         }
         catch (final IOException except) {
             FXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("ScriptEditTab.Save.IOExcept.TITLE"), null,
@@ -130,9 +129,9 @@ public final class ScriptEditTab extends FileEditTab {
         }
     }
 
-    //Made public so the parent MapEditTab can call it in save()
+    //Made public so the parent MapEditTab can call it
     @Override
-    public void setChanged(final boolean changed) {
-        super.setChanged(changed);
+    public void markUnchanged() {
+        super.markUnchanged();
     }
 }

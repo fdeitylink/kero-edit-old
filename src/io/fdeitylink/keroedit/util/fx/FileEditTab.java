@@ -16,8 +16,8 @@ import io.fdeitylink.keroedit.Messages;
 //TODO: Extend PoppableTab
 public abstract class FileEditTab extends Tab {
     //TODO: Store undo pointer to mark unchanged on undo/redo if same state as when saved is met
-    protected final ArrayDeque <UndoableEdit> undoStack = new ArrayDeque <>();
-    protected final ArrayDeque <UndoableEdit> redoStack = new ArrayDeque <>();
+    private final ArrayDeque <UndoableEdit> undoStack = new ArrayDeque <>();
+    private final ArrayDeque <UndoableEdit> redoStack = new ArrayDeque <>();
 
     private boolean changed;
 
@@ -69,25 +69,36 @@ public abstract class FileEditTab extends Tab {
         }
     }
 
-    //TODO: default implementation here marks unchanged but is required to be overloaded?
+    //TODO: default implementation here that calls markUnchanged() but is required to be overloaded?
     public abstract void save();
 
     public boolean isChanged() {
         return changed;
     }
 
-    protected void setChanged(final boolean changed) {
-        if (changed != this.changed) {
-            this.changed = changed;
-            if (getText().endsWith("*")) {
-                if (!changed) {
-                    final String text = getText();
-                    setText(text.substring(0, text.lastIndexOf('*')));
-                }
-            }
-            else if (changed) {
-                setText(getText() + '*');
+    protected void markChanged() {
+        if (!changed) {
+            changed = true;
+            final String text = getText();
+            if (!text.endsWith("*")) {
+                setText(text + '*');
             }
         }
+    }
+
+    protected void markUnchanged() {
+        if (changed) {
+            changed = false;
+            final String text = getText();
+            if (text.endsWith("*")) {
+                setText(text.substring(0, text.lastIndexOf('*')));
+            }
+        }
+    }
+
+    protected void addUndo(final UndoableEdit edit) {
+        markChanged();
+        redoStack.clear();
+        undoStack.addFirst(edit);
     }
 }
