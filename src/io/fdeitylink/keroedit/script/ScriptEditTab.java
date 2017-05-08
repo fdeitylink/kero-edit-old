@@ -32,8 +32,6 @@ import io.fdeitylink.keroedit.mapedit.MapEditTab;
 public final class ScriptEditTab extends FileEditTab {
     private final Path scriptPath;
 
-    private MapEditTab parent;
-
     private final TextArea textArea;
 
     public ScriptEditTab(final Path inPath) throws IOException {
@@ -78,13 +76,6 @@ public final class ScriptEditTab extends FileEditTab {
         textArea.requestFocus();
         textArea.setFont(new Font("Consolas", 12));
 
-        textArea.textProperty().addListener((observable, oldValue, newValue) -> {
-            markChanged();
-            if (null != parent) {
-                parent.markChanged();
-            }
-        });
-
         setId(scriptPath.toString());
 
         //assume this tab is not inside MapEditTab - other constructor will call setText() if it is inside MapEditTab
@@ -98,7 +89,11 @@ public final class ScriptEditTab extends FileEditTab {
         this(inPath); //throws NullArgumentException if inPath == null
 
         NullArgumentException.requireNonNull(parent, "ScriptEditTab", "parent");
-        this.parent = parent;
+        textArea.textProperty().addListener((observable, oldValue, newValue) -> {
+            markChanged();
+            parent.markChanged();
+        });
+
         setText(Messages.getString("ScriptEditTab.TITLE"));
     }
 

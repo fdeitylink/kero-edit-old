@@ -131,8 +131,10 @@ import io.fdeitylink.keroedit.mapedit.MapEditTab;
 import io.fdeitylink.keroedit.script.ScriptEditTab;
 
 public final class KeroEdit extends Application {
-    private final String baseTitleStr = MessageFormat.format(Messages.getString("KeroEdit.APP_TITLE"),
-                                                             Messages.getString("KeroEdit.VERSION"));
+    private static KeroEdit inst;
+
+    private static final String baseTitleStr = MessageFormat.format(Messages.getString("KeroEdit.APP_TITLE"),
+                                                                    Messages.getString("KeroEdit.VERSION"));
     private ArrayList <MenuItem> enableOnLoadItems;
 
     private Stage mainStage;
@@ -153,6 +155,8 @@ public final class KeroEdit extends Application {
      */
     @Override
     public void start(final Stage primaryStage) {
+        inst = this;
+
         final Thread.UncaughtExceptionHandler fxDefExceptHandler = Thread.currentThread().getUncaughtExceptionHandler();
         final Thread.UncaughtExceptionHandler exceptHandler = (thread, throwable) -> {
             fxDefExceptHandler.uncaughtException(thread, throwable);
@@ -222,8 +226,18 @@ public final class KeroEdit extends Application {
      *
      * @param str The string to append to the title
      */
-    private void setTitle(final String str) {
-        mainStage.setTitle(baseTitleStr + str);
+    public static void setTitle(final String str) {
+        inst.mainStage.setTitle(baseTitleStr + str);
+    }
+
+    /**
+     * Returns the {@code String} that has been appended to the base title of the program's {@code Stage}
+     *
+     * @return the {@code String} that has been appended to the base title of the program's {@code Stage}
+     */
+    public static String getTitle() {
+        final String fullTitle = inst.mainStage.getTitle();
+        return null == fullTitle ? "" : fullTitle.substring(baseTitleStr.length());
     }
 
     /**

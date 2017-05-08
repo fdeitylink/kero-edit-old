@@ -35,6 +35,7 @@ import java.text.ParseException;
 
 import java.text.MessageFormat;
 
+import io.fdeitylink.keroedit.KeroEdit;
 import javafx.stage.Stage;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
@@ -153,7 +154,7 @@ import static io.fdeitylink.keroedit.image.ImageDimension.PXATTR_TILE_HEIGHT;
 import static io.fdeitylink.keroedit.image.ImageDimension.PXATTR_TILES_PER_ROW;
 
 public final class MapEditTab extends FileEditTab {
-    private static int numInstances; //used to tell if this is the last MapEditTab open
+    //private static int numInstances; //used to tell if this is the last MapEditTab open
 
     private static final SimpleIntegerProperty mapZoom;
     private static final SimpleIntegerProperty tilesetZoom;
@@ -279,7 +280,7 @@ public final class MapEditTab extends FileEditTab {
 
         setContent(tabPane);
 
-        numInstances++;
+        //numInstances++;
     }
 
     public static void setMapZoom(final int zoom) {
@@ -428,7 +429,7 @@ public final class MapEditTab extends FileEditTab {
 
             selectedTiles = new int[PxPack.NUM_LAYERS][1][1];
 
-            head = map.getHead(); //TODO: Store same head as properties tab in order to automatically update properties
+            head = map.getHead();
             entities = map.getEntities();
 
             //TODO: background on map pane (purple checkerboard?)
@@ -439,6 +440,18 @@ public final class MapEditTab extends FileEditTab {
             initTilesetStage(sPane);
 
             setContent(sPane);
+        }
+
+        @Override
+        public void undo() {
+            super.undo();
+            MapEditTab.this.markChanged();
+        }
+
+        @Override
+        public void redo() {
+            super.redo();
+            MapEditTab.this.markChanged();
         }
 
         @Override
@@ -516,16 +529,6 @@ public final class MapEditTab extends FileEditTab {
                     tilesetStage.getScene().setRoot(EMPTY_PANE);
                     tilesetStage.setIconified(true);
                 }*/
-            });
-
-            MapEditTab.this.setOnClosed(event -> {
-                tilesetStage.removeEventHandler(WindowEvent.WINDOW_SHOWING, beforeShowingEvent);
-                tilesetStage.removeEventHandler(WindowEvent.WINDOW_HIDDEN, afterHiddenEvent);
-                //if no more MapEditTabs are open, clear tilesetStage
-                if (0 == --numInstances) {
-                    tilesetStage.getScene().setRoot(EMPTY_PANE);
-                }
-                //TODO: Clear on close if new selected tab is not MapEditTab, not just if this was the last MapEditTab
             });
 
             //if the tilesetStage is being shown on init, change shown tilesetPane to this one
@@ -1132,7 +1135,15 @@ public final class MapEditTab extends FileEditTab {
                             prevX = x;
                             prevY = y;
 
-                            //TODO: Display coordinates of cursor in KeroEdit title bar
+                            //TODO: Remove coords from title on tab close
+                            final String title = KeroEdit.getTitle();
+                            final int coordsIndex = title.indexOf(" - ("); //TODO: Use regex for - (x, y)
+                            if (-1 == coordsIndex) {
+                                KeroEdit.setTitle(title + " - (" + x + ", " + y + ')');
+                            }
+                            else {
+                                KeroEdit.setTitle(title.substring(0, coordsIndex) + " - (" + x + ", " + y + ')');
+                            }
 
                             final GraphicsContext cursorGContext = cursorCanvas.getGraphicsContext2D();
                             cursorGContext.clearRect(0, 0, cursorCanvas.getWidth(), cursorCanvas.getHeight());
@@ -1803,6 +1814,27 @@ public final class MapEditTab extends FileEditTab {
             setContent(initGridPane());
         }
 
+        @Override
+        public void undo() {
+            //does nothing
+        }
+
+        @Override
+        public void redo() {
+            //does nothing
+        }
+
+        @Override
+        public void save() {
+            //does nothing
+        }
+
+        //Made public so the parent MapEditTab can call it in save()
+        @Override
+        public void markUnchanged() {
+            super.markUnchanged();
+        }
+
         private GridPane initGridPane() {
             //TODO: For values that can be blank, put a "Clear" button next to them that sets the value to blank and selects a blank item
 
@@ -1917,27 +1949,6 @@ public final class MapEditTab extends FileEditTab {
             }
 
             return gPane;
-        }
-
-        @Override
-        public void undo() {
-            //does nothing
-        }
-
-        @Override
-        public void redo() {
-            //does nothing
-        }
-
-        @Override
-        public void save() {
-            //does nothing
-        }
-
-        //Made public so the parent MapEditTab can call it in save()
-        @Override
-        public void markUnchanged() {
-            super.markUnchanged();
         }
     }
 

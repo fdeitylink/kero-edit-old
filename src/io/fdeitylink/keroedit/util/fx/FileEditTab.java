@@ -55,6 +55,7 @@ public abstract class FileEditTab extends Tab {
 
     public void undo() {
         if (!undoStack.isEmpty()) {
+            markChanged();
             final UndoableEdit edit = undoStack.removeFirst();
             redoStack.addFirst(edit);
             edit.undo();
@@ -63,6 +64,7 @@ public abstract class FileEditTab extends Tab {
 
     public void redo() {
         if (!redoStack.isEmpty()) {
+            markChanged();
             final UndoableEdit edit = redoStack.removeFirst();
             undoStack.addFirst(edit);
             edit.redo();
@@ -75,6 +77,8 @@ public abstract class FileEditTab extends Tab {
     public boolean isChanged() {
         return changed;
     }
+
+    //TODO: Handle subclass tabs that have "*" in their name normally (not as a marker of changes)
 
     protected void markChanged() {
         if (!changed) {
@@ -96,7 +100,7 @@ public abstract class FileEditTab extends Tab {
         }
     }
 
-    protected void addUndo(final UndoableEdit edit) {
+    protected final void addUndo(final UndoableEdit edit) {
         markChanged();
         redoStack.clear();
         undoStack.addFirst(edit);
