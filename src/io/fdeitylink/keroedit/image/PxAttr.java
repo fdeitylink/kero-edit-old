@@ -81,9 +81,9 @@ public final class PxAttr {
     }
 
     //for cloning into new PxAttr
-    PxAttr(final PxAttr pxAttr, final Path path) {
+    PxAttr(final PxAttr pxAttr, final Path inPath) {
         attributes = NullArgumentException.requireNonNull(pxAttr, "PxAttr", "pxAttr").getAttributes();
-        this.path = NullArgumentException.requireNonNull(path, "PxAttr", "path").toAbsolutePath();
+        path = NullArgumentException.requireNonNull(inPath, "PxAttr", "inPath").toAbsolutePath();
     }
 
     public int[][] getAttributes() {

@@ -18,6 +18,7 @@ public final class MathUtil {
      */
     public static int bound(final int num, final int lower, final int upper) {
         //TODO: Overload for float, double, long
+        //TODO: Follow convention of lower being inclusive, upper being exclusive
         return Math.max(lower, Math.min(num, upper));
     }
 }

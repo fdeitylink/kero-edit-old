@@ -38,6 +38,8 @@ public final class Config {
 
     public static EnumSet <MapEditTab.ViewFlag> viewSettings;
 
+    public static MapEditTab.EditMode editMode;
+
     public static boolean tilesetStageShowing;
 
     private Config() {
@@ -66,6 +68,8 @@ public final class Config {
         //0b0000_0000 -> initializes as nothing on
         viewSettings = decode(prefs.getInt("VIEW_SETTINGS", 0b0000_0000), MapEditTab.ViewFlag.class);
 
+        editMode = MapEditTab.EditMode.values()[prefs.getInt("EDIT_MODE", 0)];
+
         tilesetStageShowing = prefs.getBoolean("TILESET_STAGE_SHOWING", false);
     }
 
@@ -85,6 +89,8 @@ public final class Config {
             prefs.putInt("DRAW_MODE", drawMode.ordinal());
 
             prefs.putInt("VIEW_SETTINGS", encode(viewSettings));
+
+            prefs.putInt("EDIT_MODE", editMode.ordinal());
 
             prefs.putBoolean("TILESET_STAGE_SHOWING", tilesetStageShowing);
 

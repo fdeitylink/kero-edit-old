@@ -25,7 +25,8 @@
  * Use WatchService in GameData (and in PxAttr/ImageManager?)
  * Why is the scrollbar sometimes super tiny on the mapListView?
  * Change mapName capitalization to mapname?
- * Use Externalizable interface for PxPack, PxAttr?
+ * App icon (also use it for child windows)
+ * Make sure all Alert creations are accompanied by showAndWait() calls (some are missing)
  */
 
 package io.fdeitylink.keroedit;
@@ -370,7 +371,7 @@ public final class KeroEdit extends Application {
         HackTab.wipe();
         ImageManager.wipe();
         PxAttrManager.wipe();
-        MapEditTab.wipeImages();
+        MapEditTab.wipeResources();
     }
 
     /**
@@ -479,8 +480,9 @@ public final class KeroEdit extends Application {
 
             final DirectoryStream <Path> assistPaths = Files.newDirectoryStream(internalAssistPath);
             for (final Path p : assistPaths) {
-                //skip if wrong *_strings.json file
-                if (p.toString().endsWith("_strings.json") && !p.getFileName().toString().equals(stringsFname)) {
+                //skip if wrong *_strings.json file or if unittype.txt (not really necessary anymore)
+                if ((p.toString().endsWith("_strings.json") && !p.getFileName().toString().equals(stringsFname)) ||
+                    "unittype.txt".equals(p.getFileName().toString())) {
                     continue;
                 }
 
@@ -641,7 +643,7 @@ public final class KeroEdit extends Application {
             catch (final IOException except) {
                 FXUtil.createAlert(Alert.AlertType.ERROR,
                                    Messages.getString("KeroEdit.RunGame.IOExcept.TITLE"), null,
-                                   Messages.getString("KeroEdit.RunGame.IOExcept.MESSAGE"));
+                                   Messages.getString("KeroEdit.RunGame.IOExcept.MESSAGE")).showAndWait();
             }
         });
         menuItems[ActionsMenuItem.RUN_GAME.ordinal()].setDisable(true);
@@ -1018,6 +1020,8 @@ public final class KeroEdit extends Application {
     }
 
     private static final class SettingsPane extends GridPane {
+        private static final Font font = Font.font(null, FontWeight.BOLD, 15);
+
         SettingsPane() {
             setPadding(new Insets(10, 10, 10, 10));
             setVgap(10);
@@ -1027,14 +1031,15 @@ public final class KeroEdit extends Application {
             initDisplayedLayers(x++);
             initSelectedLayer(x++);
             initDrawModes(x++);
-            initViewSettings(x);
+            initViewSettings(x++);
+            initEditMode(x);
         }
 
         private void initDisplayedLayers(int x) {
             int y = 0;
 
             final Text label = new Text(Messages.getString("KeroEdit.SettingsPane.DISPLAYED_LAYERS"));
-            label.setFont(Font.font(null, FontWeight.BOLD, 15));
+            label.setFont(font);
             add(label, x, y++);
 
             final CheckBox[] cBoxes = {new CheckBox(Messages.getString("PxPack.LayerNames.FOREGROUND")),
@@ -1068,7 +1073,7 @@ public final class KeroEdit extends Application {
             int y = 0;
 
             final Text label = new Text(Messages.getString("KeroEdit.SettingsPane.SELECTED_LAYER"));
-            label.setFont(Font.font(null, FontWeight.BOLD, 15));
+            label.setFont(font);
             add(label, x, y++);
 
             final ToggleGroup toggleGroup = new ToggleGroup();
@@ -1097,7 +1102,7 @@ public final class KeroEdit extends Application {
             int y = 0;
 
             final Text label = new Text(Messages.getString("KeroEdit.SettingsPane.DRAW_MODE"));
-            label.setFont(Font.font(null, FontWeight.BOLD, 15));
+            label.setFont(font);
             add(label, x, y++);
 
             final ToggleGroup toggleGroup = new ToggleGroup();
@@ -1127,7 +1132,7 @@ public final class KeroEdit extends Application {
             int y = 0;
 
             final Text label = new Text(Messages.getString("KeroEdit.SettingsPane.VIEW_SETTINGS"));
-            label.setFont(Font.font(null, FontWeight.BOLD, 15));
+            label.setFont(font);
             add(label, x, y++);
 
             final CheckBox[] cBoxes = {new CheckBox(Messages.getString("KeroEdit.SettingsPane.TILE_TYPES")),
@@ -1158,6 +1163,33 @@ public final class KeroEdit extends Application {
             }
 
             MapEditTab.setViewSettings(Config.viewSettings);
+        }
+
+        private void initEditMode(int x) {
+            int y = 0;
+
+            final Text label = new Text(Messages.getString("KeroEdit.SettingsPane.EDIT_MODE"));
+            label.setFont(font);
+            add(label, x, y++);
+
+            final ToggleGroup toggleGroup = new ToggleGroup();
+            final RadioButton[] radioButtons = {new RadioButton(Messages.getString("KeroEdit.SettingsPane.TILE")),
+                                                new RadioButton(Messages.getString("KeroEdit.SettingsPane.ENTITY"))};
+
+            radioButtons[Config.editMode.ordinal()].setSelected(true);
+
+            for (int i = 0; i < radioButtons.length; ++i) {
+                radioButtons[i].setToggleGroup(toggleGroup);
+
+                final int modeIndex = i;
+                radioButtons[i].selectedProperty().addListener((observable, oldValue, newValue) -> {
+                    final MapEditTab.EditMode mode = MapEditTab.EditMode.values()[modeIndex];
+                    MapEditTab.setEditMode(mode);
+                    Config.editMode = mode;
+                });
+
+                add(radioButtons[i], x, y++);
+            }
         }
     }
 

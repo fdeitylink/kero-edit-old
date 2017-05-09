@@ -8,6 +8,7 @@
  * Show error on tileset load for 0 dimension? (only if first tileset?)
  * Make method for redrawing subset/region of map
  * Put map loading into Task or Service
+ * Make initResources() a Service?
  * Use image.getWidth()/Height() instead of TILESET_WIDTH/HEIGHT constants?
  * Have resize remove entities (if resize makes map smaller in a dimension)
  * Put PxAttr attribute setting into Task? (since it saves on every change)
@@ -22,6 +23,8 @@
 
 package io.fdeitylink.keroedit.mapedit;
 
+import java.io.BufferedReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import java.io.File;
@@ -35,7 +38,6 @@ import java.text.ParseException;
 
 import java.text.MessageFormat;
 
-import io.fdeitylink.keroedit.KeroEdit;
 import javafx.stage.Stage;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
@@ -79,6 +81,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.SingleSelectionModel;
 
+import javafx.scene.control.ListView;
+import javafx.scene.control.ListCell;
+
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -108,6 +113,9 @@ import javafx.concurrent.Service;
 import javafx.geometry.Rectangle2D;
 import javafx.geometry.Point2D;
 
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonArray;
+
 import io.fdeitylink.keroedit.util.NullArgumentException;
 
 import io.fdeitylink.keroedit.Messages;
@@ -122,6 +130,8 @@ import io.fdeitylink.keroedit.util.fx.FXUtil;
 import io.fdeitylink.keroedit.util.fx.FileEditTab;
 
 import io.fdeitylink.keroedit.util.fx.UndoableEdit;
+
+import io.fdeitylink.keroedit.KeroEdit;
 
 import io.fdeitylink.keroedit.resource.ResourceManager;
 
@@ -168,8 +178,11 @@ public final class MapEditTab extends FileEditTab {
 
     private static final SimpleObjectProperty <EnumSet <ViewFlag>> viewSettings;
 
+    private static final SimpleObjectProperty <EditMode> editMode;
+
     private static Image pxAttrImage;
     private static Image entityImage;
+    private static String[] entityNames;
 
     //TODO: Change to Dialog when adding (not setting) event handlers is allowed (or rework how the stage works)
     private static final Stage tilesetStage;
@@ -187,6 +200,8 @@ public final class MapEditTab extends FileEditTab {
         drawMode = new SimpleObjectProperty <>(Config.drawMode);
 
         viewSettings = new SimpleObjectProperty <>(Config.viewSettings);
+
+        editMode = new SimpleObjectProperty <>(Config.editMode);
 
         /* ********************************************** Tileset Stage ********************************************* */
         EMPTY_PANE = new Pane(); //null not accepted as scene root, so this is used when tileset stage is not shown
@@ -226,7 +241,7 @@ public final class MapEditTab extends FileEditTab {
 
         NullArgumentException.requireNonNull(mapName, "MapEditTab", "mapName");
 
-        initImages();
+        initResources();
 
         final Path mapPath = Paths.get(GameData.getResourceFolder().toString() +
                                        File.separatorChar + "field" + File.separatorChar +
@@ -322,6 +337,10 @@ public final class MapEditTab extends FileEditTab {
         viewSettings.set(EnumSet.copyOf(flags));
     }
 
+    public static void setEditMode(final EditMode mode) {
+        editMode.set(mode);
+    }
+
     @Override
     public void undo() {
         final Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
@@ -381,18 +400,19 @@ public final class MapEditTab extends FileEditTab {
     /**
      * Wipes the stored PxAttr attribute and entity images from memory
      */
-    public static void wipeImages() {
+    public static void wipeResources() {
         pxAttrImage = null;
         entityImage = null;
+        entityNames = null;
     }
 
     /**
      * Initializes the {@code pxAttrImage} and {@code entityImage} variables
      */
-    private void initImages() {
+    private void initResources() {
         //TODO: Should ImageManager handle pxAttrImage & entityImage?
         if (null == pxAttrImage) {
-            final Path attrPath = Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
+            final Path attrPath = Paths.get(GameData.getResourceFolder().toString() +
                                             File.separatorChar + "assist" + File.separatorChar +
                                             "attribute.png");
             if (Files.exists(attrPath)) {
@@ -403,14 +423,35 @@ public final class MapEditTab extends FileEditTab {
             }
         }
         if (null == entityImage) {
-            final Path unittypePath = Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
-                                                File.separatorChar + "assist" + File.separatorChar +
-                                                "unittype.png");
-            if (Files.exists(unittypePath)) {
-                entityImage = new Image(unittypePath.toUri().toString(), false);
+            final Path entityPath = Paths.get(GameData.getResourceFolder().toString() +
+                                              File.separatorChar + "assist" + File.separatorChar +
+                                              "unittype.png");
+            if (Files.exists(entityPath)) {
+                entityImage = new Image(entityPath.toUri().toString(), false);
             }
             else {
                 entityImage = ResourceManager.getImage("assist/unittype.png");
+            }
+        }
+        if (null == entityNames) {
+            Path namesPath = Paths.get(GameData.getResourceFolder().toString() +
+                                       File.separatorChar + "assist" + File.separatorChar +
+                                       "unittype.json");
+            if (!Files.exists(namesPath)) {
+                namesPath = ResourceManager.getPath("assist/unittype.json");
+            }
+
+            //TODO: Handle namesPath being null somehow
+            try (BufferedReader namesReader = Files.newBufferedReader(namesPath, Charset.forName("UTF-8"))) {
+                final JsonArray names = Json.parse(namesReader).asObject().get("entities").asArray();
+                entityNames = new String[names.size()];
+                for (int i = 0; i < names.size(); ++i) {
+                    entityNames[i] = names.get(i).asString();
+                }
+
+            }
+            catch (final IOException except) {
+
             }
         }
     }
@@ -419,8 +460,9 @@ public final class MapEditTab extends FileEditTab {
         private final PxPack.Head head;
         private final ArrayList <PxPack.Entity> entities;
 
-        private final MapPane mapPane;
         private final TilesetPane tilesetPane;
+        private final EntityPane entityPane;
+        private final MapPane mapPane;
 
         private final int[][][] selectedTiles;
 
@@ -432,10 +474,40 @@ public final class MapEditTab extends FileEditTab {
             head = map.getHead();
             entities = map.getEntities();
 
+            tilesetPane = new TilesetPane();
+            entityPane = new EntityPane();
+            mapPane = new MapPane();
+
             //TODO: background on map pane (purple checkerboard?)
-            final SplitPane sPane = new SplitPane(tilesetPane = new TilesetPane(), mapPane = new MapPane());
-            sPane.setOrientation(Orientation.VERTICAL);
-            sPane.setDividerPositions(0.1);
+            final SplitPane sPane = new SplitPane();
+
+            if (EditMode.TILE == editMode.get()) {
+                sPane.getItems().add(tilesetPane);
+                sPane.setOrientation(Orientation.VERTICAL);
+                sPane.setDividerPositions(0.1);
+            }
+            else {
+                sPane.getItems().add(entityPane);
+                sPane.setOrientation(Orientation.HORIZONTAL);
+                sPane.setDividerPositions(0.2);
+            }
+
+            sPane.getItems().add(mapPane);
+
+            editMode.addListener((observable, oldValue, newValue) -> {
+                if (EditMode.TILE == newValue) {
+                    sPane.getItems().set(0, tilesetPane);
+                    sPane.setOrientation(Orientation.VERTICAL);
+                    sPane.setDividerPositions(0.1);
+                }
+                else {
+                    sPane.getItems().set(0, entityPane);
+                    sPane.setOrientation(Orientation.HORIZONTAL);
+                    sPane.setDividerPositions(0.2);
+                }
+
+                sPane.setDividerPositions(0.1);
+            });
 
             initTilesetStage(sPane);
 
@@ -473,6 +545,8 @@ public final class MapEditTab extends FileEditTab {
          * between the main {@code Stage} and a secondary {@code Stage}
          */
         private void initTilesetStage(final SplitPane sPane) {
+            //TODO: Hide tilesetStage when editing entities, show when editing tiles
+
             //tilesetPane in EVERY MapEditTab will be removed from sPane when tilesetStage is shown
             final EventHandler <? super WindowEvent> beforeShowingEvent = event -> {
                 sPane.getItems().remove(tilesetPane);
@@ -1008,6 +1082,103 @@ public final class MapEditTab extends FileEditTab {
             }
         }
 
+        //TODO: Undocking (similar to tilesetStage)
+        private final class EntityPane extends SplitPane {
+            private final EntityEditorPane editorPane;
+            private final ListView <Integer> entityList;
+
+            EntityPane() {
+                editorPane = new EntityEditorPane();
+
+                //TODO: Add click listener to allow changing entity type
+                entityList = new ListView <>();
+                entityList.setCellFactory(listView -> new ListCell <Integer>() {
+                    private final ImageView entityImageView = new ImageView();
+
+                    @Override
+                    public void updateItem(final Integer entityIndex, final boolean empty) {
+                        super.updateItem(entityIndex, empty);
+                        if (empty) {
+                            setText(null);
+                            //setGraphic(null);
+                            entityImageView.setImage(null);
+                            return;
+                        }
+
+                        //TODO: Pull from spritesheets (when I figure out framerects)
+                        final int x = (entityIndex % ENTITIES_PER_ROW) * ENTITY_WIDTH;
+                        final int y = (entityIndex / ENTITIES_PER_ROW) * ENTITY_HEIGHT;
+
+                        entityImageView.setImage(FXUtil.scaleImage(new WritableImage(entityImage.getPixelReader(), x, y,
+                                                                                     ENTITY_WIDTH, ENTITY_HEIGHT), 2));
+                        setText(String.format("#%d - " + entityNames[entityIndex], entityIndex));
+                        setGraphic(entityImageView);
+                    }
+                });
+                entityList.setDisable(true);
+
+                for (int i = 0; i < entityNames.length; ++i) {
+                    entityList.getItems().add(i);
+                }
+
+                setOrientation(Orientation.VERTICAL);
+                setDividerPositions(0.2);
+                getItems().addAll(editorPane, entityList);
+            }
+
+            void setEntity(final PxPack.Entity entity) {
+                editorPane.setEntity(entity);
+                entityList.setDisable(null == entity);
+
+                //TODO: Sometimes the types exceed what seems to be the limit, so handle that
+                if (null == entity) {
+                    entityList.getSelectionModel().clearSelection();
+                    entityList.scrollTo(0);
+                }
+                else {
+                    entityList.getSelectionModel().select(entity.getType());
+                    entityList.scrollTo(entity.getType());
+                }
+            }
+
+            private final class EntityEditorPane extends GridPane {
+                //TODO: Allow editing draw order
+                private PxPack.Entity currentlyEditingEntity;
+                private final TextField nameField;
+
+                EntityEditorPane() {
+                    setPadding(new Insets(10, 10, 10, 10));
+                    setVgap(10);
+                    setHgap(20);
+
+                    final Font font = Font.font(null, FontWeight.NORMAL, 12);
+
+                    final Text label = new Text("Name");
+                    label.setFont(font);
+                    add(label, 0, 0);
+
+                    nameField = new TextField();
+                    FXUtil.setTextControlLength(nameField, PxPack.Entity.NAME_MAX_LEN);
+                    nameField.textProperty().addListener((observable, oldValue, newValue) -> {
+                        if (nameField.isFocused()) {
+                            currentlyEditingEntity.setName(newValue);
+                            markChanged();
+                            MapEditTab.this.markChanged();
+                        }
+                    });
+                    nameField.setDisable(true);
+
+                    add(nameField, 1, 0);
+                }
+
+                void setEntity(final PxPack.Entity entity) {
+                    currentlyEditingEntity = entity;
+                    nameField.setDisable(null == entity);
+                    nameField.setText(null == entity ? "" : entity.getName());
+                }
+            }
+        }
+
         private final class MapPane extends ScrollPane {
             private final SimpleObjectProperty <Color> bgColor;
 
@@ -1020,7 +1191,7 @@ public final class MapEditTab extends FileEditTab {
             private final Canvas gridCanvas;
             private final Canvas cursorCanvas;
 
-            private final StackPane mapStackPane;
+            private final StackPane stackPane;
 
             MapPane() {
                 tileLayers = map.getTileLayers();
@@ -1035,6 +1206,7 @@ public final class MapEditTab extends FileEditTab {
                 //Always visible - what is drawn is changed when viewSettings changes
                 entityCanvas = new Canvas();
                 entityCanvas.getGraphicsContext2D().setStroke(Color.LIME);
+                entityCanvas.getGraphicsContext2D().setFill(Color.WHITE);
                 entityCanvas.getGraphicsContext2D().setLineWidth(2);
 
                 gridCanvas = new Canvas();
@@ -1043,6 +1215,7 @@ public final class MapEditTab extends FileEditTab {
                 gridCanvas.getGraphicsContext2D().setLineWidth(1);
 
                 cursorCanvas = new Canvas();
+                cursorCanvas.setVisible(EditMode.TILE == editMode.get());
                 cursorCanvas.getGraphicsContext2D().setStroke(Color.WHITE);
                 cursorCanvas.getGraphicsContext2D().setLineWidth(2);
 
@@ -1051,22 +1224,22 @@ public final class MapEditTab extends FileEditTab {
                 redrawEntityLayer();
 
                 /* ******************************************** StackPane ******************************************* */
-                mapStackPane = new StackPane();
-                mapStackPane.setAlignment(Pos.TOP_LEFT);
+                stackPane = new StackPane();
+                stackPane.setAlignment(Pos.TOP_LEFT);
                 for (int i = mapCanvases.length - 1; i >= 0; --i) {
-                    mapStackPane.getChildren().add(mapCanvases[i]);
+                    stackPane.getChildren().add(mapCanvases[i]);
                 }
-                mapStackPane.getChildren().addAll(entityCanvas, gridCanvas, cursorCanvas);
+                stackPane.getChildren().addAll(entityCanvas, gridCanvas, cursorCanvas);
 
                 bgColor = new SimpleObjectProperty <>(head.getBgColor());
-                bgColor.addListener((observable, oldValue, newValue) -> FXUtil.setBackgroundColor(mapStackPane, newValue));
-                FXUtil.setBackgroundColor(mapStackPane, bgColor.get());
+                bgColor.addListener((observable, oldValue, newValue) -> FXUtil.setBackgroundColor(stackPane, newValue));
+                FXUtil.setBackgroundColor(stackPane, bgColor.get());
 
                 initEventHandlers();
 
                 setPannable(false);
                 setContextMenu(initContextMenu());
-                setContent(mapStackPane);
+                setContent(stackPane);
             }
 
             /**
@@ -1102,16 +1275,22 @@ public final class MapEditTab extends FileEditTab {
                     }
                     //If any of the entity flags changed
                     //TODO: Is the if necessary or can I just leave it as an else?
-                    else if (((oldValue.contains(ViewFlag.ENTITY_BOXES) && !newValue.contains(ViewFlag.ENTITY_BOXES)) ||
-                              (!oldValue.contains(ViewFlag.ENTITY_BOXES) && newValue.contains(ViewFlag.ENTITY_BOXES))) ||
+                    else if (EditMode.ENTITY != editMode.get() &&
+                             (((oldValue.contains(ViewFlag.ENTITY_BOXES) && !newValue.contains(ViewFlag.ENTITY_BOXES)) ||
+                               (!oldValue.contains(ViewFlag.ENTITY_BOXES) && newValue.contains(ViewFlag.ENTITY_BOXES))) ||
 
-                             ((oldValue.contains(ViewFlag.ENTITY_SPRITES) && !newValue.contains(ViewFlag.ENTITY_SPRITES)) ||
-                              (!oldValue.contains(ViewFlag.ENTITY_SPRITES) && newValue.contains(ViewFlag.ENTITY_SPRITES))) ||
+                              ((oldValue.contains(ViewFlag.ENTITY_SPRITES) && !newValue.contains(ViewFlag.ENTITY_SPRITES)) ||
+                               (!oldValue.contains(ViewFlag.ENTITY_SPRITES) && newValue.contains(ViewFlag.ENTITY_SPRITES))) ||
 
-                             ((oldValue.contains(ViewFlag.ENTITY_NAMES) && !newValue.contains(ViewFlag.ENTITY_NAMES)) ||
-                              (!oldValue.contains(ViewFlag.ENTITY_NAMES) && newValue.contains(ViewFlag.ENTITY_NAMES)))) {
+                              ((oldValue.contains(ViewFlag.ENTITY_NAMES) && !newValue.contains(ViewFlag.ENTITY_NAMES)) ||
+                               (!oldValue.contains(ViewFlag.ENTITY_NAMES) && newValue.contains(ViewFlag.ENTITY_NAMES))))) {
                         redrawEntityLayer();
                     }
+                });
+
+                editMode.addListener((observable, oldValue, newValue) -> {
+                    redrawEntityLayer();
+                    cursorCanvas.setVisible(EditMode.TILE == newValue);
                 });
 
                 mapZoom.addListener((observable, oldValue, newValue) -> {
@@ -1135,7 +1314,7 @@ public final class MapEditTab extends FileEditTab {
                             prevX = x;
                             prevY = y;
 
-                            //TODO: Remove coords from title on tab close
+                            //TODO: Remove coords from title on tab close and when this is hidden
                             final String title = KeroEdit.getTitle();
                             final int coordsIndex = title.indexOf(" - ("); //TODO: Use regex for - (x, y)
                             if (-1 == coordsIndex) {
@@ -1164,72 +1343,99 @@ public final class MapEditTab extends FileEditTab {
                 //Note to self - don't use cursorCanvas::fireEvent - causes StackOverflowException (infinite recursion I think)
                 cursorCanvas.setOnMouseDragged(cursorCanvas.getOnMouseMoved());
 
-                mapStackPane.setOnMouseClicked(event -> {
-                    try {
-                        FXUtil.task(() -> {
-                            final int layer = selectedLayer.get();
+                stackPane.setOnMouseClicked(event -> {
+                    if (EditMode.TILE == editMode.get()) {
+                        try {
+                            FXUtil.task(() -> {
+                                final int layer = selectedLayer.get();
 
-                            if (mapCanvases[layer].isVisible() &&
-                                MouseButton.PRIMARY == event.getButton()) {
-                                final int[][] tiles = tileLayers[layer].getTiles();
+                                if (mapCanvases[layer].isVisible() &&
+                                    MouseButton.PRIMARY == event.getButton()) {
+                                    final int[][] tiles = tileLayers[layer].getTiles();
 
-                                if (null != tiles) {
-                                    //grabs x & y and bounds them to be within map
-                                    final int x = MathUtil.bound((int)event.getX(), 0,
-                                                                 (int)(mapCanvases[layer].getWidth() - 1)) /
-                                                  mapZoom.get() / TILE_WIDTH;
-                                    final int y = MathUtil.bound((int)event.getY(), 0,
-                                                                 (int)(mapCanvases[layer].getHeight() - 1)) /
-                                                  mapZoom.get() / TILE_HEIGHT;
+                                    if (null != tiles) {
+                                        //grabs x & y and bounds them to be within map
+                                        final int x = MathUtil.bound((int)event.getX(), 0,
+                                                                     (int)(mapCanvases[layer].getWidth() - 1)) /
+                                                      mapZoom.get() / TILE_WIDTH;
+                                        final int y = MathUtil.bound((int)event.getY(), 0,
+                                                                     (int)(mapCanvases[layer].getHeight() - 1)) /
+                                                      mapZoom.get() / TILE_HEIGHT;
 
                                     /*
                                      * Caps newTiles.length in the event that x or y is close enough
                                      * to the map edge that selectedTiles goes off the edge
                                      */
-                                    final int hLen = Math.min(tiles[0].length - x, selectedTiles[layer][0].length);
-                                    final int vLen = Math.min(tiles.length - y, selectedTiles[layer].length);
+                                        final int hLen = Math.min(tiles[0].length - x, selectedTiles[layer][0].length);
+                                        final int vLen = Math.min(tiles.length - y, selectedTiles[layer].length);
 
-                                    final int[][] newTiles = new int[vLen][hLen];
+                                        final int[][] newTiles = new int[vLen][hLen];
 
-                                    //newTiles potentially smaller in either dimension than selectedTiles, as per hLen & vLen
-                                    for (int r = 0; r < newTiles.length; ++r) {
-                                        System.arraycopy(selectedTiles[layer][r], 0, newTiles[r], 0, newTiles[r].length);
-                                    }
+                                        //newTiles potentially smaller in either dimension than selectedTiles, as per hLen & vLen
+                                        for (int r = 0; r < newTiles.length; ++r) {
+                                            System.arraycopy(selectedTiles[layer][r], 0, newTiles[r], 0, newTiles[r].length);
+                                        }
 
-                                    final int[][] oldTiles = new int[newTiles.length][newTiles[0].length];
+                                        final int[][] oldTiles = new int[newTiles.length][newTiles[0].length];
 
-                                    boolean oldEqualsNew = true;
+                                        boolean oldEqualsNew = true;
 
-                                    for (int r = y; r < y + newTiles.length /*&& r < tiles.length*/; ++r) {
-                                        //oldTiles stores only the tiles being replaced, a subset of the whole map
-                                        System.arraycopy(tiles[r], x, oldTiles[r - y], 0, oldTiles[r - y].length);
+                                        for (int r = y; r < y + newTiles.length /*&& r < tiles.length*/; ++r) {
+                                            //oldTiles stores only the tiles being replaced, a subset of the whole map
+                                            System.arraycopy(tiles[r], x, oldTiles[r - y], 0, oldTiles[r - y].length);
 
-                                        for (int c = x; c < x + newTiles[r - y].length /*&& c < tiles[r].length*/; ++c) {
-                                            if (oldTiles[r - y][c - x] != newTiles[r - y][c - x]) {
-                                                oldEqualsNew = false;
-                                                tileLayers[layer].setTile(c, r, newTiles[r - y][c - x]);
-                                                redrawTile(layer, c, r);
+                                            for (int c = x; c < x + newTiles[r - y].length /*&& c < tiles[r].length*/; ++c) {
+                                                if (oldTiles[r - y][c - x] != newTiles[r - y][c - x]) {
+                                                    oldEqualsNew = false;
+                                                    tileLayers[layer].setTile(c, r, newTiles[r - y][c - x]);
+                                                    redrawTile(layer, c, r);
+                                                }
                                             }
                                         }
-                                    }
 
-                                    if (!oldEqualsNew) {
-                                        MapEditTab.this.markChanged();
+                                        if (!oldEqualsNew) {
+                                            MapEditTab.this.markChanged();
 
-                                        addUndo(new UndoableMapDrawEdit(layer, x, y, oldTiles, newTiles));
+                                            addUndo(new UndoableMapDrawEdit(layer, x, y, oldTiles, newTiles));
+                                        }
                                     }
                                 }
-                            }
-                            return null;
-                        }).run();
-                    }
-                    catch (final Exception except) {
-                        Logger.logThrowable("Exception in mapStackPane.setOnMouseClicked()", except);
+                                return null;
+                            }).run();
+                        }
+                        catch (final Exception except) {
+                            Logger.logThrowable("Exception in stackPane.setOnMouseClicked()", except);
+                        }
                     }
                 });
-                //Note to self - don't use mapStackPane::fireEvent - causes StackOverflowException (infinite recursion I think)
+                //Note to self - don't use stackPane::fireEvent - causes StackOverflowException (infinite recursion I think)
                 //TODO: MouseDrag has its own handler as it will need one (e.g. for DrawMode.RECT)
-                mapStackPane.setOnMouseDragged(mapStackPane.getOnMouseClicked());
+                stackPane.setOnMouseDragged(stackPane.getOnMouseClicked());
+
+                entityCanvas.setOnMouseClicked(event -> {
+                    if (EditMode.ENTITY == editMode.get()) {
+                        //TODO: Do I need to use MathUtil.bound() for this?
+
+                        final int x = (int)event.getX() / mapZoom.get() / TILE_WIDTH;
+                        final int y = (int)event.getY() / mapZoom.get() / TILE_HEIGHT;
+
+                        for (final PxPack.Entity e : entities) {
+                            if (x == e.getX() && y == e.getY()) {
+                                //TODO: Draw box or something around selected entity
+                                entityPane.setEntity(e);
+                                return;
+                            }
+                        }
+
+                        entityPane.setEntity(null);
+                    }
+                });
+
+                gridCanvas.setOnMouseClicked(event -> {
+                    if (EditMode.ENTITY == editMode.get()) {
+                        entityCanvas.fireEvent(event);
+                    }
+                });
             }
 
             /**
@@ -1545,6 +1751,8 @@ public final class MapEditTab extends FileEditTab {
             private void redrawEntityLayer() {
                 try {
                     FXUtil.task(() -> {
+                        //TODO: Two of these just call Platform.runLater(), so should only sprite drawing go in a Task?
+
                         //TODO: Single image that is modified, then scaled and drawn onto Canvas?
                         final GraphicsContext gContext = entityCanvas.getGraphicsContext2D();
 
@@ -1552,7 +1760,7 @@ public final class MapEditTab extends FileEditTab {
                                                                    entityCanvas.getHeight()));
 
                         /* ************************************* Entity Sprites ************************************* */
-                        if (viewSettings.get().contains(ViewFlag.ENTITY_SPRITES)) {
+                        if (EditMode.ENTITY == editMode.get() || viewSettings.get().contains(ViewFlag.ENTITY_SPRITES)) {
                             final PixelReader entitiesImgReader = entityImage.getPixelReader();
                             if (null != entitiesImgReader) {
                                 final WritablePixelFormat <ByteBuffer> pxFormat = PixelFormat.getByteBgraInstance();
@@ -1566,8 +1774,10 @@ public final class MapEditTab extends FileEditTab {
                                  * double that of tiles in a tileset, which are 8px by 8px.
                                  */
                                 final WritableImage entitiesImg =
-                                        new WritableImage(((int)entityCanvas.getWidth() / mapZoom.get()) * 2,
-                                                          ((int)entityCanvas.getHeight() / mapZoom.get()) * 2);
+                                        new WritableImage(((int)entityCanvas.getWidth() / mapZoom.get()) *
+                                                          (ENTITY_WIDTH / TILE_WIDTH),
+                                                          ((int)entityCanvas.getHeight() / mapZoom.get()) *
+                                                          (ENTITY_HEIGHT / TILE_HEIGHT));
                                 final PixelWriter entitiesImgWriter = entitiesImg.getPixelWriter();
 
                                 final byte[] entityBuf = new byte[ENTITY_WIDTH * ENTITY_HEIGHT * 4];
@@ -1585,25 +1795,41 @@ public final class MapEditTab extends FileEditTab {
                                                                 pxFormat, entityBuf, 0, ENTITY_WIDTH * 4);
                                 }
 
-                                Platform.runLater(() -> gContext.drawImage(FXUtil.scaleImage(entitiesImg, mapZoom.get() / 2),
+                                Platform.runLater(() -> gContext.drawImage(FXUtil.scaleImage(entitiesImg,
+                                                                                             mapZoom.get() /
+                                                                                             (ENTITY_WIDTH / TILE_WIDTH)),
                                                                            0, 0));
                             }
                         }
 
                         /* ************************************** Entity Boxes ************************************** */
-                        if (viewSettings.get().contains(ViewFlag.ENTITY_BOXES)) {
+                        if (EditMode.ENTITY == editMode.get() || viewSettings.get().contains(ViewFlag.ENTITY_BOXES)) {
                             Platform.runLater(() -> {
                                 for (final PxPack.Entity e : entities) {
                                     gContext.strokeRect(e.getX() * TILE_WIDTH * mapZoom.get(),
-                                                        e.getY() * TILE_WIDTH * mapZoom.get(),
+                                                        e.getY() * TILE_HEIGHT * mapZoom.get(),
                                                         TILE_WIDTH * mapZoom.get(), TILE_HEIGHT * mapZoom.get());
                                 }
                             });
                         }
 
+                        /*
+                         * TODO:
+                         * Text is drawn above the entity - change the baseline attribute to fix this
+                         * Split text onto multiple lines as needed rather than squising it
+                         * Redraw layer (at least names) when a name is changed
+                         * Change size as mapZoom changes?
+                         */
                         /* ************************************** Entity Names ************************************** */
-                        /*if (viewSettings.get().contains(ViewFlag.ENTITY_NAMES)) {
-
+                        /*if (EditMode.ENTITY == editMode.get() || viewSettings.get().contains(ViewFlag.ENTITY_NAMES)) {
+                            Platform.runLater(() -> {
+                                for (final PxPack.Entity e : entities) {
+                                    gContext.fillText(e.getName(),
+                                                      e.getX() * TILE_WIDTH * mapZoom.get(),
+                                                      e.getY() * TILE_HEIGHT * mapZoom.get(),
+                                                      TILE_WIDTH * mapZoom.get());
+                                }
+                            });
                         }*/
 
                         return null;
@@ -1811,7 +2037,7 @@ public final class MapEditTab extends FileEditTab {
         PropertyEditTab() {
             super(Messages.getString("MapEditTab.PropertyEditTab.TITLE"));
             head = map.getHead();
-            setContent(initGridPane());
+            setContent(initEditorPane());
         }
 
         @Override
@@ -1835,13 +2061,15 @@ public final class MapEditTab extends FileEditTab {
             super.markUnchanged();
         }
 
-        private GridPane initGridPane() {
+        private GridPane initEditorPane() {
             //TODO: For values that can be blank, put a "Clear" button next to them that sets the value to blank and selects a blank item
 
             final GridPane gPane = new GridPane();
             gPane.setPadding(new Insets(10, 10, 10, 10));
             gPane.setVgap(10);
             gPane.setHgap(20);
+
+            final Font font = Font.font(null, FontWeight.NORMAL, 12);
 
             /* ******************************************* ComboBox Labels ****************************************** */
             final ArrayList <Text> labels = new ArrayList <>(1 + PxPack.Head.NUM_REF_MAPS + 1 + PxPack.NUM_LAYERS);
@@ -1854,7 +2082,7 @@ public final class MapEditTab extends FileEditTab {
             }
 
             for (final Text label : labels) {
-                label.setFont(Font.font(null, FontWeight.NORMAL, 12));
+                label.setFont(font);
             }
 
             /* ********************************************* ComboBoxes ********************************************* */
@@ -1972,6 +2200,11 @@ public final class MapEditTab extends FileEditTab {
         ENTITY_BOXES,
         ENTITY_SPRITES,
         ENTITY_NAMES
+    }
+
+    public enum EditMode implements SafeEnum <EditMode> {
+        TILE,
+        ENTITY
     }
 
     private enum MapPaneMenuItem implements SafeEnum <MapPaneMenuItem> {

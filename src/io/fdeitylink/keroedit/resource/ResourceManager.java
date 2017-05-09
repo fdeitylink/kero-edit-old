@@ -46,7 +46,7 @@ public final class ResourceManager {
                     final HashMap <String, String> env = new HashMap <>();
                     env.put("create", "true");
                     jarFS = FileSystems.newFileSystem(uri, env);
-                    return Paths.get(uri);
+                    return Paths.get(uri).toAbsolutePath();
                 }
                 catch (final IOException ex) {
                     return null;
