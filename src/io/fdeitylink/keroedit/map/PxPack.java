@@ -355,7 +355,7 @@ public final class PxPack {
         /*
          * TODO:
          * Disallow null elements
-         * Maybe return an unmodifiable deep-copied list and provide set/addEntity() methods
+         * Maybe return an unmodifiable backing list and provide set/addEntity() methods
          * Cap size at 0xFFFF
          */
         return entities;
@@ -429,7 +429,7 @@ public final class PxPack {
         return result.toString();
     }
 
-    public static final class Head {
+    public final class Head {
         //TODO: Static inner class to store tileset name, visibility type, and scroll type?
 
         public static final int NUM_REF_MAPS = 4;
@@ -677,7 +677,7 @@ public final class PxPack {
         }
     }
 
-    public static final class TileLayer {
+    public final class TileLayer {
         static final String HEADER_STRING = "pxMAP01\0";
 
         private int[][] tiles;
@@ -790,7 +790,7 @@ public final class PxPack {
         }
     }
 
-    public static final class Entity {
+    public final class Entity {
         public static final int NAME_MAX_LEN = 15;
 
         private static final int NUM_TYPES = 175;

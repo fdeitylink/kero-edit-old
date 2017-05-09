@@ -19,6 +19,7 @@
  * Why doesn't selected rect draw on tileset until after user makes first click or changes layer?
  * Glob draw edits together based on single mouse drag/click
  * Make redrawing entities a Service
+ * Method for redrawing a single entity?
  */
 
 package io.fdeitylink.keroedit.mapedit;
@@ -515,20 +516,14 @@ public final class MapEditTab extends FileEditTab {
         }
 
         @Override
-        public void undo() {
-            super.undo();
-            MapEditTab.this.markChanged();
-        }
-
-        @Override
-        public void redo() {
-            super.redo();
-            MapEditTab.this.markChanged();
-        }
-
-        @Override
         public void save() {
             //does nothing
+        }
+
+        @Override
+        protected void markChanged() {
+            super.markChanged();
+            MapEditTab.this.markChanged();
         }
 
         //Made public so the parent MapEditTab can call it
@@ -1090,7 +1085,6 @@ public final class MapEditTab extends FileEditTab {
             EntityPane() {
                 editorPane = new EntityEditorPane();
 
-                //TODO: Add click listener to allow changing entity type
                 entityList = new ListView <>();
                 entityList.setCellFactory(listView -> new ListCell <Integer>() {
                     private final ImageView entityImageView = new ImageView();
@@ -1113,6 +1107,13 @@ public final class MapEditTab extends FileEditTab {
                                                                                      ENTITY_WIDTH, ENTITY_HEIGHT), 2));
                         setText(String.format("#%d - " + entityNames[entityIndex], entityIndex));
                         setGraphic(entityImageView);
+                    }
+                });
+                entityList.setOnMouseClicked(event -> {
+                    if (MouseButton.PRIMARY == event.getButton() && 2 == event.getClickCount()) {
+                        //TODO: Redraw entity
+                        editorPane.getEntity().setType(entityList.getSelectionModel().getSelectedItem());
+                        markChanged();
                     }
                 });
                 entityList.setDisable(true);
@@ -1142,7 +1143,7 @@ public final class MapEditTab extends FileEditTab {
             }
 
             private final class EntityEditorPane extends GridPane {
-                //TODO: Allow editing draw order
+                //TODO: Allow editing draw order (index in entities list)
                 private PxPack.Entity currentlyEditingEntity;
                 private final TextField nameField;
 
@@ -1160,15 +1161,26 @@ public final class MapEditTab extends FileEditTab {
                     nameField = new TextField();
                     FXUtil.setTextControlLength(nameField, PxPack.Entity.NAME_MAX_LEN);
                     nameField.textProperty().addListener((observable, oldValue, newValue) -> {
+                        /*
+                         * textProperty() will also change if the user selects a
+                         * different entity, so make sure that the reason it changed
+                         * was because the user typed something in. Otherwise we're
+                         * needlessly setting the name and marking the tab as changed
+                         * when no changes were made
+                         */
                         if (nameField.isFocused()) {
+                            //TODO: Redraw entity
                             currentlyEditingEntity.setName(newValue);
                             markChanged();
-                            MapEditTab.this.markChanged();
                         }
                     });
                     nameField.setDisable(true);
 
                     add(nameField, 1, 0);
+                }
+
+                PxPack.Entity getEntity() {
+                    return currentlyEditingEntity;
                 }
 
                 void setEntity(final PxPack.Entity entity) {
@@ -1394,8 +1406,6 @@ public final class MapEditTab extends FileEditTab {
                                         }
 
                                         if (!oldEqualsNew) {
-                                            MapEditTab.this.markChanged();
-
                                             addUndo(new UndoableMapDrawEdit(layer, x, y, oldTiles, newTiles));
                                         }
                                     }
@@ -1511,8 +1521,6 @@ public final class MapEditTab extends FileEditTab {
                             redrawTileLayer(layer);
                             redrawGridLayer();
 
-                            MapEditTab.this.markChanged();
-
                             addUndo(new UndoableMapResizeEdit(layer, oldTiles, tileLayers[layer].getTiles()));
                         }
                     });
@@ -1532,8 +1540,6 @@ public final class MapEditTab extends FileEditTab {
                             head.setBgColor(cPicker.getValue());
                             bgColor.set(cPicker.getValue());
                             markChanged();
-
-                            MapEditTab.this.markChanged();
                         }
                     });
 
@@ -2055,6 +2061,12 @@ public final class MapEditTab extends FileEditTab {
             //does nothing
         }
 
+        @Override
+        protected void markChanged() {
+            super.markChanged();
+            MapEditTab.this.markChanged();
+        }
+
         //Made public so the parent MapEditTab can call it in save()
         @Override
         public void markUnchanged() {
@@ -2103,7 +2115,6 @@ public final class MapEditTab extends FileEditTab {
             descriptionTextField.textProperty().addListener((observable, oldValue, newValue) -> {
                 head.setDescription(newValue);
                 markChanged();
-                MapEditTab.this.markChanged();
                 tooltip.setText(map.getPath().toString() + '\n' +
                                 Messages.getString("MapEditTab.TOOLTIP_DESCRIPTION_LABEL") + newValue);
             });
@@ -2119,7 +2130,6 @@ public final class MapEditTab extends FileEditTab {
                     //TODO: Potential bug with null selected vals
                     head.setMapName(index, newValue);
                     markChanged();
-                    MapEditTab.this.markChanged();
                 });
             }
 
@@ -2131,7 +2141,6 @@ public final class MapEditTab extends FileEditTab {
             spritesheetSelectModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 head.setSpritesheetName(newValue);
                 markChanged();
-                MapEditTab.this.markChanged();
                 /*
                  * TODO:
                  * When I start pulling entity sprites directly from
@@ -2153,7 +2162,6 @@ public final class MapEditTab extends FileEditTab {
                 fieldSelectModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                     head.setTilesetName(index, newValue);
                     markChanged();
-                    MapEditTab.this.markChanged();
 
                     //TODO: Only reload affected tileset, not all of them
                     tileEditTab.tilesetPane.loadTilesets.restart();
