@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import java.io.File;
 
-import io.fdeitylink.keroedit.util.NullArgumentException;
+import io.fdeitylink.util.NullArgumentException;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 

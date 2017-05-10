@@ -18,7 +18,7 @@ import java.net.URISyntaxException;
 
 import javafx.scene.image.Image;
 
-import io.fdeitylink.keroedit.util.NullArgumentException;
+import io.fdeitylink.util.NullArgumentException;
 
 public final class ResourceManager {
     private static FileSystem jarFS;

@@ -3,7 +3,7 @@ package io.fdeitylink.keroedit;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 
-import io.fdeitylink.keroedit.util.Logger;
+import io.fdeitylink.util.Logger;
 
 public final class Messages {
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("io.fdeitylink.keroedit.messages");

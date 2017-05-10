@@ -117,20 +117,20 @@ import javafx.geometry.Point2D;
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonArray;
 
-import io.fdeitylink.keroedit.util.NullArgumentException;
+import io.fdeitylink.util.NullArgumentException;
 
 import io.fdeitylink.keroedit.Messages;
 
-import io.fdeitylink.keroedit.util.Logger;
+import io.fdeitylink.util.Logger;
 
-import io.fdeitylink.keroedit.util.MathUtil;
+import io.fdeitylink.util.MathUtil;
 
-import io.fdeitylink.keroedit.util.SafeEnum;
+import io.fdeitylink.util.SafeEnum;
 
-import io.fdeitylink.keroedit.util.fx.FXUtil;
-import io.fdeitylink.keroedit.util.fx.FileEditTab;
+import io.fdeitylink.util.fx.FXUtil;
+import io.fdeitylink.util.fx.FileEditTab;
 
-import io.fdeitylink.keroedit.util.fx.UndoableEdit;
+import io.fdeitylink.util.fx.UndoableEdit;
 
 import io.fdeitylink.keroedit.KeroEdit;
 

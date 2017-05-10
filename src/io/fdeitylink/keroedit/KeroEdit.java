@@ -110,22 +110,22 @@ import javafx.stage.FileChooser;
 import javafx.print.PrinterJob;
 import javafx.scene.image.ImageView;
 
-import io.fdeitylink.keroedit.util.NullArgumentException;
+import io.fdeitylink.util.NullArgumentException;
 
-import io.fdeitylink.keroedit.util.Logger;
+import io.fdeitylink.util.Logger;
 
-import io.fdeitylink.keroedit.util.SafeEnum;
+import io.fdeitylink.util.SafeEnum;
 
 import io.fdeitylink.keroedit.resource.ResourceManager;
 
-import io.fdeitylink.keroedit.util.fx.FXUtil;
+import io.fdeitylink.util.fx.FXUtil;
 
 import io.fdeitylink.keroedit.gamedata.GameData;
 
 import io.fdeitylink.keroedit.image.ImageManager;
 import io.fdeitylink.keroedit.image.PxAttrManager;
 
-import io.fdeitylink.keroedit.util.fx.FileEditTab;
+import io.fdeitylink.util.fx.FileEditTab;
 
 import io.fdeitylink.keroedit.hack.HackTab;
 import io.fdeitylink.keroedit.mapedit.MapEditTab;

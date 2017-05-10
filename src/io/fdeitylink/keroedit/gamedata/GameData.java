@@ -18,7 +18,7 @@ import java.text.MessageFormat;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import io.fdeitylink.keroedit.util.NullArgumentException;
+import io.fdeitylink.util.NullArgumentException;
 
 import io.fdeitylink.keroedit.Messages;
 

@@ -15,7 +15,7 @@ import java.io.FileNotFoundException;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
-import io.fdeitylink.keroedit.util.NullArgumentException;
+import io.fdeitylink.util.NullArgumentException;
 
 import io.fdeitylink.keroedit.Messages;
 

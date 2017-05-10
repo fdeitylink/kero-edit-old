@@ -7,11 +7,11 @@ import java.util.EnumSet;
 
 import javafx.scene.paint.Color;
 
-import io.fdeitylink.keroedit.util.Logger;
+import io.fdeitylink.util.Logger;
 
-import io.fdeitylink.keroedit.util.SafeEnum;
+import io.fdeitylink.util.SafeEnum;
 
-import io.fdeitylink.keroedit.util.fx.FXUtil;
+import io.fdeitylink.util.fx.FXUtil;
 
 import io.fdeitylink.keroedit.mapedit.MapEditTab;
 

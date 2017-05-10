@@ -25,7 +25,7 @@ import java.text.ParseException;
 
 import javafx.scene.paint.Color;
 
-import io.fdeitylink.keroedit.util.NullArgumentException;
+import io.fdeitylink.util.NullArgumentException;
 
 import io.fdeitylink.keroedit.Messages;
 

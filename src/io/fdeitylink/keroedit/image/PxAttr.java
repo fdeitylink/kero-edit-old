@@ -14,7 +14,7 @@ import java.nio.ByteOrder;
 import java.io.IOException;
 import java.text.ParseException;
 
-import io.fdeitylink.keroedit.util.NullArgumentException;
+import io.fdeitylink.util.NullArgumentException;
 
 import io.fdeitylink.keroedit.Messages;
 
