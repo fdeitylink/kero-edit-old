@@ -32,7 +32,7 @@ public final class ImageManager {
     }
 
     public static Image getImage(final String imageName, final boolean isTileset) {
-        if (!GameData.isInitialized()) {
+        if (!GameData.INSTANCE.isInitialized()) {
             throw new IllegalStateException("Attempt to retrieve image file when GameData has not been properly initialized yet");
         }
 
@@ -41,7 +41,7 @@ public final class ImageManager {
         if (imagesMap.containsKey(imageName)) {
             return imagesMap.get(imageName);
         }
-        Image image = new Image("file:///" + GameData.getResourceFolder() +
+        Image image = new Image("file:///" + GameData.INSTANCE.getResourceFolder() +
                                 File.separator + "img" + File.separatorChar +
                                 imageName + ".png", false);
 

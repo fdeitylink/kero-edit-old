@@ -23,13 +23,29 @@ import io.fdeitylink.util.NullArgumentException;
 import io.fdeitylink.keroedit.Messages;
 
 /**
- * Singleton class for storing about a Kero Blaster mod
+ * Singleton class for storing info about a Kero Blaster mod
  */
-public final class GameData {
-    //TODO: private static final Strings for folder names?
+public enum GameData {
+    INSTANCE;
+
+    public static final String bgmFolder = "bgm";
+    public static final String bgmExt = ".ptcop";
+
+    public static final String mapFolder = "field";
+    public static final String mapExt = ".pxpack";
+
+    public static final String imageFolder = "img";
+    public static final String imageExt = ".png";
+
+    public static final String sfxFolder = "se";
+    public static final String sfxExt = ".ptnoise";
+
+    public static final String scriptFolder = "text";
+    public static final String scriptExt = ".pxeve";
+
     //TODO: Filter out files with names that are too long and that contain spaces
 
-    private static GameData inst;
+    private boolean initialized = false;
 
     private MOD_TYPE modType;
 
@@ -50,7 +66,7 @@ public final class GameData {
 
     private ObservableList <String> scripts;
 
-    private GameData() {
+    GameData() {
 
     }
 
@@ -76,8 +92,8 @@ public final class GameData {
                                                                executable.toAbsolutePath()));
         }
 
-        inst = new GameData();
-        inst.executable = executable.toAbsolutePath();
+        INSTANCE.wipe();
+        INSTANCE.executable = executable.toAbsolutePath();
 
         boolean rscExists = false;
         //TODO: Use path matching? - "/*/"
@@ -85,40 +101,40 @@ public final class GameData {
                                                                         entry -> Files.isDirectory(entry))) {
             for (final Path p : dirPaths) {
                 if (p.endsWith("rsc_k")) {
-                    inst.resourceFolder = p.toAbsolutePath();
-                    inst.modType = MOD_TYPE.KERO_BLASTER;
+                    INSTANCE.resourceFolder = p.toAbsolutePath();
+                    INSTANCE.modType = MOD_TYPE.KERO_BLASTER;
                     rscExists = true;
                     break;
                 }
                 else if (p.endsWith("rsc_p")) {
-                    inst.resourceFolder = p.toAbsolutePath();
-                    inst.modType = MOD_TYPE.PINK_HOUR; //TODO: Detect or ask if Pink Heaven
+                    INSTANCE.resourceFolder = p.toAbsolutePath();
+                    INSTANCE.modType = MOD_TYPE.PINK_HOUR; //TODO: Detect or ask if Pink Heaven
                     rscExists = true;
                     break;
                 }
             }
         }
         catch (final IOException except) {
-            inst = null;
+            INSTANCE.wipe();
             throw new IOException(MessageFormat.format(Messages.getString("GameData.ListFilesIOExcept.MESSAGE"),
                                                        executable.toAbsolutePath()), except);
         }
 
         if (!rscExists) {
-            inst = null;
+            INSTANCE.wipe();
             throw new NoSuchFileException(MessageFormat.format(Messages.getString("GameData.MISSING_RSC"),
                                                                executable.toAbsolutePath()));
         }
 
         try {
-            inst.bgms = getFileList("bgm", ".ptcop");
+            INSTANCE.bgms = INSTANCE.getFileList(bgmFolder, bgmExt);
 
-            inst.maps = getFileList("field", ".pxpack");
-            /*inst.maps.addListener((final ListChangeListener.Change <? extends String> c) -> {
+            INSTANCE.maps = INSTANCE.getFileList(mapFolder, mapExt);
+            /*INSTANCE.maps.addListener((final ListChangeListener.Change <? extends String> c) -> {
                 //TODO: Should I go back to returning immutable ObservableLists in getX() and provide removeX() methods?
                 for (final String fname : c.getRemoved()) {
                     try {
-                        Files.deleteIfExists(Paths.get(inst.resourceFolder.toString() +
+                        Files.deleteIfExists(Paths.get(INSTANCE.resourceFolder.toString() +
                                                        File.separator + "field" + File.separatorChar +
                                                        fname + ".pxpack"));
                     }
@@ -129,94 +145,107 @@ public final class GameData {
             });*/
 
             //TODO: Separate image lists (tilesets, spritesheets, etc.)
-            inst.images = getFileList("img", ".png");
+            INSTANCE.images = INSTANCE.getFileList(imageFolder, imageExt);
 
-            inst.soundFX = getFileList("se", ".ptnoise");
+            INSTANCE.soundFX = INSTANCE.getFileList(sfxFolder, sfxExt);
 
-            inst.scripts = getFileList("text", ".pxeve");
+            INSTANCE.scripts = INSTANCE.getFileList(scriptFolder, scriptExt);
         }
         catch (final IOException except) {
-            inst = null;
+            INSTANCE.wipe();
             throw except;
         }
+
+        INSTANCE.initialized = true;
     }
 
-    public static boolean isInitialized() {
-        return null != inst;
+    public boolean isInitialized() {
+        return initialized;
     }
 
-    public static void wipe() {
-        inst = null;
+    public void wipe() {
+        initialized = false;
+
+        modType = null;
+
+        executable = null;
+        resourceFolder = null;
+
+        bgms = null;
+        maps = null;
+        images = null;
+        soundFX = null;
+        scripts = null;
     }
 
-    public static Path getExecutable() {
+    public Path getExecutable() {
         if (!isInitialized()) {
             throw new IllegalStateException("Attempt to retrieve information from GameData " +
                                             "when it has not been properly initialized yet");
         }
-        return inst.executable;
+        return executable;
     }
 
-    public static Path getResourceFolder() {
+    public Path getResourceFolder() {
         if (!isInitialized()) {
             throw new IllegalStateException("Attempt to retrieve information from GameData " +
                                             "when it has not been properly initialized yet");
         }
-        return inst.resourceFolder;
+        return resourceFolder;
     }
 
-    public static MOD_TYPE getModType() {
+    public MOD_TYPE getModType() {
         if (!isInitialized()) {
             throw new IllegalStateException("Attempt to retrieve information from GameData " +
                                             "when it has not been properly initialized yet");
         }
-        return inst.modType;
+        return modType;
     }
 
-    public static ObservableList <String> getBgmList() {
+    public ObservableList <String> getBgmList() {
         if (!isInitialized()) {
             throw new IllegalStateException("Attempt to retrieve information from GameData " +
                                             "when it has not been properly initialized yet");
         }
-        return inst.bgms;
+        return bgms;
     }
 
-    public static ObservableList <String> getMapList() {
+    public ObservableList <String> getMapList() {
         if (!isInitialized()) {
             throw new IllegalStateException("Attempt to retrieve information from GameData " +
                                             "when it has not been properly initialized yet");
         }
-        return inst.maps;
+        return maps;
     }
 
-    public static ObservableList <String> getImageList() {
+    public ObservableList <String> getImageList() {
         if (!isInitialized()) {
             throw new IllegalStateException("Attempt to retrieve information from GameData " +
                                             "when it has not been properly initialized yet");
         }
-        return inst.images;
+        return images;
     }
 
-    public static ObservableList <String> getSoundFXList() {
+    public ObservableList <String> getSoundFXList() {
         if (!isInitialized()) {
             throw new IllegalStateException("Attempt to retrieve information from GameData " +
                                             "when it has not been properly initialized yet");
         }
-        return inst.soundFX;
+        return soundFX;
     }
 
-    public static ObservableList <String> getScriptList() {
+    public ObservableList <String> getScriptList() {
         if (!isInitialized()) {
             throw new IllegalStateException("Attempt to retrieve information from GameData " +
                                             "when it has not been properly initialized yet");
         }
-        return inst.scripts;
+        return scripts;
     }
 
-    private static ObservableList <String> getFileList(final String pathFromRsc, final String ext)
+    private ObservableList <String> getFileList(final String pathFromRsc, final String ext)
             throws IOException {
         //TODO: Omit '.' from ext in calls in init(), put '.' in glob in DirectoryStream below
-        final Path basePath = Paths.get(inst.resourceFolder.toAbsolutePath().toString() +
+        final Path basePath = Paths.get(resourceFolder.toAbsolutePath().toString() +
                                         File.separatorChar + pathFromRsc);
 
         final ObservableList <String> nameList = FXCollections.observableList(new ArrayList <>());
@@ -228,7 +257,7 @@ public final class GameData {
         }
         catch (final IOException except) {
             throw new IOException(MessageFormat.format(Messages.getString("GameData.ListFilesIOExcept.MESSAGE"),
-                                                       inst.executable), except);
+                                                       executable), except);
         }
 
         return nameList;

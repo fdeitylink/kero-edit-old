@@ -367,7 +367,7 @@ public final class KeroEdit extends Application {
             }
         }
 
-        GameData.wipe();
+        GameData.INSTANCE.wipe();
         HackTab.wipe();
         ImageManager.wipe();
         PxAttrManager.wipe();
@@ -423,7 +423,7 @@ public final class KeroEdit extends Application {
 
                         openLast.setDisable(false);
 
-                        mapList.setItems(GameData.getMapList());
+                        mapList.setItems(GameData.INSTANCE.getMapList());
                         mapList.requestFocus();
 
                         for (final MenuItem mItem : enableOnLoadItems) {
@@ -453,7 +453,7 @@ public final class KeroEdit extends Application {
      */
     private void createAssistFolder() {
         try {
-            final Path modAssistPath = Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
+            final Path modAssistPath = Paths.get(GameData.INSTANCE.getResourceFolder().toString() +
                                                  File.separatorChar + "assist");
             if (!Files.exists(modAssistPath)) {
                 Files.createDirectory(modAssistPath);
@@ -465,7 +465,7 @@ public final class KeroEdit extends Application {
             }
 
             final String stringsFname;
-            switch (GameData.getModType()) {
+            switch (GameData.INSTANCE.getModType()) {
                 case KERO_BLASTER:
                     stringsFname = "kero_strings.json";
                     break;
@@ -638,7 +638,7 @@ public final class KeroEdit extends Application {
         menuItems[ActionsMenuItem.RUN_GAME.ordinal()].setOnAction(event -> {
             try {
                 //TODO: Prompt to save unsaved tabs before running?
-                Runtime.getRuntime().exec(GameData.getExecutable().toString());
+                Runtime.getRuntime().exec(GameData.INSTANCE.getExecutable().toString());
             }
             catch (final IOException except) {
                 FXUtil.createAlert(Alert.AlertType.ERROR,
@@ -653,7 +653,7 @@ public final class KeroEdit extends Application {
             final FileChooser scrChooser = new FileChooser();
             scrChooser.setTitle(Messages.getString("KeroEdit.GlobalScript.TITLE"));
 
-            scrChooser.setInitialDirectory(new File(GameData.getResourceFolder().toAbsolutePath().toString()));
+            scrChooser.setInitialDirectory(new File(GameData.INSTANCE.getResourceFolder().toString()));
 
             final FileChooser.ExtensionFilter[] extFilters =
                     {new FileChooser.ExtensionFilter(Messages.getString("KeroEdit.GlobalScript.SCRIPT_FILTER"), "*.pxeve"),

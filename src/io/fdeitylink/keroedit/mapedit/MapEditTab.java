@@ -236,15 +236,13 @@ public final class MapEditTab extends FileEditTab {
     private final PxPack map;
 
     public MapEditTab(final String mapName) throws IOException, ParseException {
-        if (!GameData.isInitialized()) {
+        if (!GameData.INSTANCE.isInitialized()) {
             throw new IllegalStateException("Attempt to create MapEditTab when GameData has not been properly initialized yet");
         }
 
         NullArgumentException.requireNonNull(mapName, "MapEditTab", "mapName");
 
-        initResources();
-
-        final Path mapPath = Paths.get(GameData.getResourceFolder().toString() +
+        final Path mapPath = Paths.get(GameData.INSTANCE.getResourceFolder().toString() +
                                        File.separatorChar + "field" + File.separatorChar +
                                        mapName + ".pxpack");
         try {
@@ -272,6 +270,8 @@ public final class MapEditTab extends FileEditTab {
             throw except;
         }
 
+        initResources();
+
         setId(mapName);
         setText(mapName);
 
@@ -284,7 +284,7 @@ public final class MapEditTab extends FileEditTab {
         tileEditTab = new TileEditTab();
 
         //TODO: Don't fail/escalate except if ScriptEditTab() throws IOException?
-        scriptEditTab = new ScriptEditTab(Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
+        scriptEditTab = new ScriptEditTab(Paths.get(GameData.INSTANCE.getResourceFolder().toString() +
                                                     File.separatorChar + "text" +
                                                     File.separatorChar + map.getName() + ".pxeve"), this);
         propertyEditTab = new PropertyEditTab();
@@ -295,7 +295,6 @@ public final class MapEditTab extends FileEditTab {
         //TODO: Context menu? rename...
 
         setContent(tabPane);
-
         //numInstances++;
     }
 
@@ -413,7 +412,7 @@ public final class MapEditTab extends FileEditTab {
     private void initResources() {
         //TODO: Should ImageManager handle pxAttrImage & entityImage?
         if (null == pxAttrImage) {
-            final Path attrPath = Paths.get(GameData.getResourceFolder().toString() +
+            final Path attrPath = Paths.get(GameData.INSTANCE.getResourceFolder().toString() +
                                             File.separatorChar + "assist" + File.separatorChar +
                                             "attribute.png");
             if (Files.exists(attrPath)) {
@@ -424,7 +423,7 @@ public final class MapEditTab extends FileEditTab {
             }
         }
         if (null == entityImage) {
-            final Path entityPath = Paths.get(GameData.getResourceFolder().toString() +
+            final Path entityPath = Paths.get(GameData.INSTANCE.getResourceFolder().toString() +
                                               File.separatorChar + "assist" + File.separatorChar +
                                               "unittype.png");
             if (Files.exists(entityPath)) {
@@ -435,7 +434,7 @@ public final class MapEditTab extends FileEditTab {
             }
         }
         if (null == entityNames) {
-            Path namesPath = Paths.get(GameData.getResourceFolder().toString() +
+            Path namesPath = Paths.get(GameData.INSTANCE.getResourceFolder().toString() +
                                        File.separatorChar + "assist" + File.separatorChar +
                                        "unittype.json");
             if (!Files.exists(namesPath)) {
@@ -443,6 +442,7 @@ public final class MapEditTab extends FileEditTab {
             }
 
             //TODO: Handle namesPath being null somehow
+            //TODO: Catch ParseException, handle invalid input
             try (BufferedReader namesReader = Files.newBufferedReader(namesPath, Charset.forName("UTF-8"))) {
                 final JsonArray names = Json.parse(namesReader).asObject().get("entities").asArray();
                 entityNames = new String[names.size()];
@@ -2101,11 +2101,11 @@ public final class MapEditTab extends FileEditTab {
             //TODO: Enum for indexes?
             final ArrayList <ComboBox <String>> fields = new ArrayList <>(labels.size());
             for (int i = 0; i < PxPack.Head.NUM_REF_MAPS; ++i) {
-                fields.add(new ComboBox <>(GameData.getMapList())); //TODO: Add option to leave blank
+                fields.add(new ComboBox <>(GameData.INSTANCE.getMapList())); //TODO: Add option to leave blank
             }
-            fields.add(new ComboBox <>(GameData.getImageList()));
+            fields.add(new ComboBox <>(GameData.INSTANCE.getImageList()));
             for (int i = 0; i < PxPack.NUM_LAYERS; ++i) {
-                fields.add(new ComboBox <>(GameData.getImageList())); //TODO: Add option to leave second two blank
+                fields.add(new ComboBox <>(GameData.INSTANCE.getImageList())); //TODO: Add option to leave second two blank
             }
 
             /* ******************************************** Description ********************************************* */

@@ -39,6 +39,7 @@ import io.fdeitylink.util.fx.FXUtil;
 
 import io.fdeitylink.keroedit.gamedata.GameData;
 
+//TODO: Singleton enum (like GameData?)
 public final class HackTab extends FileEditTab {
     private static HackTab inst;
 
@@ -50,14 +51,14 @@ public final class HackTab extends FileEditTab {
 
     //TODO: don't init() until getInst(), where it is initialized if null?
     public static void init() {
-        if (!GameData.isInitialized()) {
+        if (!GameData.INSTANCE.isInitialized()) {
             throw new IllegalStateException("Attempt to create HackTab when GameData has not been properly initialized yet");
         }
 
         inst = new HackTab();
 
         final String stringsFname;
-        switch (GameData.getModType()) {
+        switch (GameData.INSTANCE.getModType()) {
             case KERO_BLASTER:
                 stringsFname = "kero_strings.json";
                 break;
@@ -69,7 +70,7 @@ public final class HackTab extends FileEditTab {
                 stringsFname = "heaven_strings.json";
                 break;
         }
-        Path stringsPath = Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
+        Path stringsPath = Paths.get(GameData.INSTANCE.getResourceFolder().toString() +
                                      File.separatorChar + "assist" + File.separatorChar + stringsFname);
         if (!Files.exists(stringsPath)) {
             stringsPath = ResourceManager.getPath("assist/" + stringsFname);
@@ -107,7 +108,7 @@ public final class HackTab extends FileEditTab {
         //TODO: Apply button
 
         inst.setText(Messages.getString("HackTab.TITLE"));
-        inst.setTooltip(new Tooltip(GameData.getExecutable().toAbsolutePath().toString()));
+        inst.setTooltip(new Tooltip(GameData.INSTANCE.getExecutable().toString()));
 
         inst.setContent(inst.sPane);
     }

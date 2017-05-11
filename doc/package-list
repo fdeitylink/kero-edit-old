@@ -6,3 +6,5 @@ io.fdeitylink.keroedit.map
 io.fdeitylink.keroedit.mapedit
 io.fdeitylink.keroedit.resource
 io.fdeitylink.keroedit.script
+io.fdeitylink.util
+io.fdeitylink.util.fx

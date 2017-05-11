@@ -39,7 +39,7 @@ public final class PxAttrManager {
 
     public static ReadOnlyObjectProperty <PxAttr> getPxAttr(final String tilesetName)
             throws IOException, ParseException {
-        if (!GameData.isInitialized()) {
+        if (!GameData.INSTANCE.isInitialized()) {
             throw new IllegalStateException("Attempt to retrieve PxAttr file when GameData has not been properly initialized yet");
         }
 
@@ -49,7 +49,7 @@ public final class PxAttrManager {
             return pxAttrsMap.get(tilesetName).getReadOnlyProperty();
         }
 
-        Path path = Paths.get(GameData.getResourceFolder().toString() +
+        Path path = Paths.get(GameData.INSTANCE.getResourceFolder().toString() +
                               File.separatorChar + "img" + File.separatorChar +
                               tilesetName + ".pxattr");
 
@@ -100,7 +100,7 @@ public final class PxAttrManager {
          * attribute can just be changed on that one.
          */
         if (!"mpt00".equals(tilesetName) && pxAttrProp.get() == mpt00) {
-            pxAttrProp.set(new PxAttr(mpt00, Paths.get(GameData.getResourceFolder().toAbsolutePath().toString() +
+            pxAttrProp.set(new PxAttr(mpt00, Paths.get(GameData.INSTANCE.getResourceFolder().toString() +
                                                        File.separatorChar + "img" + File.separatorChar +
                                                        tilesetName + ".pxattr")));
         }
