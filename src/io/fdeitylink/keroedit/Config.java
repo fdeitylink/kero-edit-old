@@ -27,8 +27,8 @@ public final class Config {
     static String notepadText;
 
     //TODO: Make all of the following Properties that can be bound to?
-    public static int mapZoom;
-    public static int tilesetZoom;
+    public static double mapZoom;
+    public static double tilesetZoom;
     public static Color tilesetBgColor;
 
     public static EnumSet <MapEditTab.LayerFlag> displayedLayers;
@@ -51,8 +51,8 @@ public final class Config {
         lastExeLoc = prefs.get("LAST_EXECUTABLE_LOCATION", System.getProperty("user.dir"));
         notepadText = prefs.get("NOTEPAD_TEXT", Messages.getString("Config.NOTEPAD_TEXT_DEFAULT"));
 
-        mapZoom = prefs.getInt("MAP_ZOOM", 2);
-        tilesetZoom = prefs.getInt("TILESET_ZOOM", 2);
+        mapZoom = prefs.getDouble("MAP_ZOOM", 2);
+        tilesetZoom = prefs.getDouble("TILESET_ZOOM", 2);
 
         final String colStr = prefs.get("TILESET_BG_COLOR", null);
         tilesetBgColor = null == colStr ? Color.MAGENTA : Color.web(colStr);
@@ -79,8 +79,8 @@ public final class Config {
             prefs.put("LAST_EXECUTABLE_LOCATION", lastExeLoc);
             prefs.put("NOTEPAD_TEXT", notepadText);
 
-            prefs.putInt("MAP_ZOOM", mapZoom);
-            prefs.putInt("TILESET_ZOOM", tilesetZoom);
+            prefs.putDouble("MAP_ZOOM", mapZoom);
+            prefs.putDouble("TILESET_ZOOM", tilesetZoom);
             prefs.put("TILESET_BG_COLOR", FXUtil.colorToString(tilesetBgColor));
 
             prefs.putInt("DISPLAYED_LAYERS", encode(displayedLayers));

@@ -6,7 +6,6 @@
  *  - Reload tilesets in open maps on save (or on edit?)
  * Ctrl +/- and scroll wheel for zoom
  * Resort map ListView alphabetically when map is added, and select and open the new map
- * Scaling map down (float scale)
  * Lower memory usage and stuffs
  * Play pxtone files (javafx.scene.media? javax.sound.sampled?)
  * In script editor, eventually put in an autocompleter for stuff like entity names
@@ -27,6 +26,7 @@
  * Change mapName capitalization to mapname?
  * App icon (also use it for child windows)
  * Make sure all Alert creations are accompanied by showAndWait() calls (some are missing)
+ * Have any empty catch blocks log the exception with Logger.logThrowable()
  */
 
 package io.fdeitylink.keroedit;
@@ -559,23 +559,23 @@ public final class KeroEdit extends Application {
         viewMenu.getItems().addAll(menuItems);
 
         final RadioMenuItem[] mapZoomMenuItems = buildZoomSubmenu(Config.mapZoom);
-        int zoom = 2;
+
+        double zoom = 0.5;
         for (final RadioMenuItem mapZoomMItem : mapZoomMenuItems) {
-            final int z = zoom;
+            final double z = zoom;
             mapZoomMItem.setOnAction(event -> MapEditTab.setMapZoom(Config.mapZoom = z));
-            zoom += 2;
+            zoom += 0.5;
         }
         ((Menu)menuItems[ViewMenuItem.MAP_ZOOM.ordinal()]).getItems().addAll(mapZoomMenuItems);
 
         final RadioMenuItem[] tilesetZoomMenuItems = buildZoomSubmenu(Config.tilesetZoom);
-        zoom = 2;
+        zoom = 0.5;
         for (final RadioMenuItem tilesetZoomMItem : tilesetZoomMenuItems) {
-            final int z = zoom;
+            final double z = zoom;
             tilesetZoomMItem.setOnAction(event -> MapEditTab.setTilesetZoom(Config.tilesetZoom = z));
-            zoom += 2;
+            zoom += 0.5;
         }
-        ((Menu)menuItems[ViewMenuItem.TILESET_ZOOM.ordinal()])
-                .getItems().addAll(tilesetZoomMenuItems);
+        ((Menu)menuItems[ViewMenuItem.TILESET_ZOOM.ordinal()]).getItems().addAll(tilesetZoomMenuItems);
 
         menuItems[ViewMenuItem.TILESET_BG_COLOR.ordinal()].setOnAction(event -> {
             final ColorPicker cPicker = new ColorPicker(Config.tilesetBgColor);
@@ -600,22 +600,17 @@ public final class KeroEdit extends Application {
      * to set a zoom level. None of them are bound to an {@code EventHandler <ActionEvent>},
      * so that must be done after they are created
      */
-    private RadioMenuItem[] buildZoomSubmenu(final int defaultZoom) {
-        final ToggleGroup zoomToggleGroup = new ToggleGroup();
-        final RadioMenuItem[] zoomMenuItems = new RadioMenuItem[3];
+    private RadioMenuItem[] buildZoomSubmenu(final double defaultZoom) {
+        final ToggleGroup toggleGroup = new ToggleGroup();
+        final RadioMenuItem[] zoomMenuItems = new RadioMenuItem[8];
 
-        /*
-         * 200, 400, 600% since attribute.png and unittype.png
-         * are 16px by 16px but tiles are 8px by 8px
-         * and I don't have a half-scale image scaler yet
-         */
-        int zoom = 2;
+        double zoom = 0.5;
         for (int i = 0; i < zoomMenuItems.length; ++i) {
-            zoomMenuItems[i] = new RadioMenuItem(Integer.toString(zoom * 100) + '%');
-            zoomMenuItems[i].setToggleGroup(zoomToggleGroup);
+            zoomMenuItems[i] = new RadioMenuItem(Integer.toString((int)(zoom * 100)) + '%');
+            zoomMenuItems[i].setToggleGroup(toggleGroup);
             zoomMenuItems[i].setSelected(defaultZoom == zoom);
 
-            zoom += 2;
+            zoom += 0.5;
         }
 
         return zoomMenuItems;

@@ -2,7 +2,7 @@
  * TODO:
  * Ensure all 2D array arguments have rows with equal lengths
  * Allow null arguments for string setters? (instead of setting to null, set to "")
- * toBuf() methods in Head, TileLayer, and Entity that return ByteBuffer (to make save() easier)
+ * toBuff() methods in Head, TileLayer, and Entity that return ByteBuffer (to make save() easier)
  */
 
 package io.fdeitylink.keroedit.map;

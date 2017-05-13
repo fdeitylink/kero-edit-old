@@ -29,13 +29,14 @@ import javafx.scene.control.TextArea;
 import javafx.application.Platform;
 
 import javafx.scene.image.Image;
-import javafx.scene.image.PixelReader;
-import javafx.scene.image.WritableImage;
-import javafx.scene.image.PixelWriter;
+import javafx.embed.swing.SwingFXUtils;
 
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
 import java.util.concurrent.Callable;
 
 import io.fdeitylink.util.NullArgumentException;
@@ -169,9 +170,9 @@ public final class FXUtil {
      * @param scale The scale factor to scale the image by
      *
      * @return The result of scaling the given image by the given scale factor.
-     * If src is null or the scale is 1, src is returned.
+     * If src is null, one of its dimensions is 0, or scale is 1, src is returned.
      */
-    public static Image scaleImage(final Image src, final int scale) {
+    public static Image scaleImage(final Image src, final double scale) {
         if (null == src || 1 == scale) {
             return src;
         }
@@ -180,27 +181,17 @@ public final class FXUtil {
         final int srcHeight = (int)src.getHeight();
 
         if (0 == srcWidth || 0 == srcHeight) {
-            return null;
+            return src;
         }
 
-        final WritableImage dest = new WritableImage(srcWidth * scale, srcHeight * scale);
+        final BufferedImage dest = new BufferedImage((int)(srcWidth * scale), (int)(srcHeight * scale), BufferedImage.TYPE_INT_ARGB);
+        final BufferedImage bufferedSrc = SwingFXUtils.fromFXImage(src, null);
 
-        final PixelReader srcReader = src.getPixelReader();
-        final PixelWriter destWriter = dest.getPixelWriter();
+        final AffineTransform trans = new AffineTransform();
+        trans.scale(scale, scale);
+        new AffineTransformOp(trans, AffineTransformOp.TYPE_NEAREST_NEIGHBOR).filter(bufferedSrc, dest);
 
-        for (int srcY = 0; srcY < srcHeight; ++srcY) {
-            for (int srcX = 0; srcX < srcWidth; ++srcX) {
-                final int pix = srcReader.getArgb(srcX, srcY);
-
-                for (int dy = 0; dy < scale; ++dy) {
-                    for (int dx = 0; dx < scale; ++dx) {
-                        destWriter.setArgb((srcX * scale) + dx, (srcY * scale) + dy, pix);
-                    }
-                }
-            }
-        }
-
-        return dest;
+        return SwingFXUtils.toFXImage(dest, null);
     }
 
     /**

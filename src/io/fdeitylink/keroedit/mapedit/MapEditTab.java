@@ -20,6 +20,7 @@
  * Glob draw edits together based on single mouse drag/click
  * Make redrawing entities a Service
  * Method for redrawing a single entity?
+ * Pixel renders the game at 2x (so 200% zoom looks like it would in the game assuming the scale there is set to 1x)
  */
 
 package io.fdeitylink.keroedit.mapedit;
@@ -39,6 +40,7 @@ import java.text.ParseException;
 
 import java.text.MessageFormat;
 
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.stage.Stage;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
@@ -167,8 +169,8 @@ import static io.fdeitylink.keroedit.image.ImageDimension.PXATTR_TILES_PER_ROW;
 public final class MapEditTab extends FileEditTab {
     //private static int numInstances; //used to tell if this is the last MapEditTab open
 
-    private static final SimpleIntegerProperty mapZoom;
-    private static final SimpleIntegerProperty tilesetZoom;
+    private static final SimpleDoubleProperty mapZoom;
+    private static final SimpleDoubleProperty tilesetZoom;
 
     private static final SimpleObjectProperty <Color> tilesetBgColor;
 
@@ -191,8 +193,8 @@ public final class MapEditTab extends FileEditTab {
 
     static {
         /* *********************************************** Properties *********************************************** */
-        mapZoom = new SimpleIntegerProperty(Config.mapZoom);
-        tilesetZoom = new SimpleIntegerProperty(Config.tilesetZoom);
+        mapZoom = new SimpleDoubleProperty(Config.mapZoom);
+        tilesetZoom = new SimpleDoubleProperty(Config.tilesetZoom);
         tilesetBgColor = new SimpleObjectProperty <>(Config.tilesetBgColor);
 
         displayedLayers = new SimpleObjectProperty <>(Config.displayedLayers);
@@ -298,14 +300,14 @@ public final class MapEditTab extends FileEditTab {
         //numInstances++;
     }
 
-    public static void setMapZoom(final int zoom) {
+    public static void setMapZoom(final double zoom) {
         if (0 >= zoom) {
             throw new IllegalArgumentException("Attempt to set map zoom level to be <= 0 (zoom: " + zoom + ')');
         }
         mapZoom.set(zoom);
     }
 
-    public static void setTilesetZoom(final int zoom) {
+    public static void setTilesetZoom(final double zoom) {
         if (0 >= zoom) {
             throw new IllegalArgumentException("Attempt to set tileset zoom level to be <= 0 (zoom: " + zoom + ')');
         }
@@ -872,8 +874,8 @@ public final class MapEditTab extends FileEditTab {
                                 pxAttrPopup.hide();
                             }
 
-                            final int tilesetX = (int)event.getX() / tilesetZoom.get() / TILE_WIDTH;
-                            final int tilesetY = (int)event.getY() / tilesetZoom.get() / TILE_HEIGHT;
+                            final int tilesetX = (int)(event.getX() / tilesetZoom.get() / TILE_WIDTH);
+                            final int tilesetY = (int)(event.getY() / tilesetZoom.get() / TILE_HEIGHT);
                             pxAttrPopup = new PxAttrPopup(selectedLayer.get(), tilesetX, tilesetY);
 
                             pxAttrPopup.show(tilesetPane, event.getScreenX(), event.getScreenY());
@@ -896,10 +898,10 @@ public final class MapEditTab extends FileEditTab {
                             }
 
                             //grabs x & y and bounds them to be within tileset
-                            final int x = MathUtil.bound((int)event.getX(), 0, (int)tilesetCanvas.getWidth() - 1) /
-                                          tilesetZoom.get() / TILE_WIDTH;
-                            final int y = MathUtil.bound((int)event.getY(), 0, (int)tilesetCanvas.getHeight() - 1) /
-                                          tilesetZoom.get() / TILE_HEIGHT;
+                            final int x = (int)(MathUtil.bound((int)event.getX(), 0, (int)tilesetCanvas.getWidth() - 1) /
+                                                tilesetZoom.get() / TILE_WIDTH);
+                            final int y = (int)(MathUtil.bound((int)event.getY(), 0, (int)tilesetCanvas.getHeight() - 1) /
+                                                tilesetZoom.get() / TILE_HEIGHT);
 
                             if (x != prevX || y != prevY) {
                                 prevX = x;
@@ -1367,12 +1369,12 @@ public final class MapEditTab extends FileEditTab {
 
                                     if (null != tiles) {
                                         //grabs x & y and bounds them to be within map
-                                        final int x = MathUtil.bound((int)event.getX(), 0,
-                                                                     (int)(mapCanvases[layer].getWidth() - 1)) /
-                                                      mapZoom.get() / TILE_WIDTH;
-                                        final int y = MathUtil.bound((int)event.getY(), 0,
-                                                                     (int)(mapCanvases[layer].getHeight() - 1)) /
-                                                      mapZoom.get() / TILE_HEIGHT;
+                                        final int x = (int)(MathUtil.bound((int)event.getX(), 0,
+                                                                           (int)(mapCanvases[layer].getWidth() - 1)) /
+                                                            mapZoom.get() / TILE_WIDTH);
+                                        final int y = (int)(MathUtil.bound((int)event.getY(), 0,
+                                                                           (int)(mapCanvases[layer].getHeight() - 1)) /
+                                                            mapZoom.get() / TILE_HEIGHT);
 
                                     /*
                                      * Caps newTiles.length in the event that x or y is close enough
@@ -1426,8 +1428,8 @@ public final class MapEditTab extends FileEditTab {
                     if (EditMode.ENTITY == editMode.get()) {
                         //TODO: Do I need to use MathUtil.bound() for this?
 
-                        final int x = (int)event.getX() / mapZoom.get() / TILE_WIDTH;
-                        final int y = (int)event.getY() / mapZoom.get() / TILE_HEIGHT;
+                        final int x = (int)(event.getX() / mapZoom.get() / TILE_WIDTH);
+                        final int y = (int)(event.getY() / mapZoom.get() / TILE_HEIGHT);
 
                         for (final PxPack.Entity e : entities) {
                             if (x == e.getX() && y == e.getY()) {
@@ -1621,17 +1623,17 @@ public final class MapEditTab extends FileEditTab {
 
                         //TODO: Fix misalignment bug
                         Platform.runLater(() -> {
-                            final GraphicsContext layerGContext = mapCanvases[layer].getGraphicsContext2D();
+                            final GraphicsContext gContext = mapCanvases[layer].getGraphicsContext2D();
 
-                            final int calcX = x * TILE_WIDTH * mapZoom.get();
-                            final int calcY = y * TILE_HEIGHT * mapZoom.get();
+                            final double calcX = x * TILE_WIDTH * mapZoom.get();
+                            final double calcY = y * TILE_HEIGHT * mapZoom.get();
 
-                            layerGContext.clearRect(calcX, calcY, tileImg.getWidth(), tileImg.getHeight());
+                            gContext.clearRect(calcX, calcY, tileImg.getWidth(), tileImg.getHeight());
 
-                            layerGContext.drawImage(tileImg, calcX, calcY);
+                            gContext.drawImage(tileImg, calcX, calcY);
 
                             //null images ignored
-                            layerGContext.drawImage(tileTypeImg, calcX, calcY);
+                            gContext.drawImage(tileTypeImg, calcX, calcY);
                         });
 
                         return null;
@@ -1780,9 +1782,9 @@ public final class MapEditTab extends FileEditTab {
                                  * double that of tiles in a tileset, which are 8px by 8px.
                                  */
                                 final WritableImage entitiesImg =
-                                        new WritableImage(((int)entityCanvas.getWidth() / mapZoom.get()) *
+                                        new WritableImage((int)(entityCanvas.getWidth() / mapZoom.get()) *
                                                           (ENTITY_WIDTH / TILE_WIDTH),
-                                                          ((int)entityCanvas.getHeight() / mapZoom.get()) *
+                                                          (int)(entityCanvas.getHeight() / mapZoom.get()) *
                                                           (ENTITY_HEIGHT / TILE_HEIGHT));
                                 final PixelWriter entitiesImgWriter = entitiesImg.getPixelWriter();
 
@@ -1862,7 +1864,7 @@ public final class MapEditTab extends FileEditTab {
              * Fixes the sizes of the {@code Canvas}es
              */
             private void fixCanvasSizes() {
-                int maxWidth = 0, maxHeight = 0;
+                double maxWidth = 0, maxHeight = 0;
                 for (int i = 0; i < tileLayers.length; ++i) {
                     final int[][] tiles = tileLayers[i].getTiles();
                     if (null == tiles) {
@@ -1871,8 +1873,8 @@ public final class MapEditTab extends FileEditTab {
                         continue;
                     }
 
-                    final int width = tiles[0].length * TILE_WIDTH * mapZoom.get();
-                    final int height = tiles.length * TILE_HEIGHT * mapZoom.get();
+                    final double width = tiles[0].length * TILE_WIDTH * mapZoom.get();
+                    final double height = tiles.length * TILE_HEIGHT * mapZoom.get();
 
                     if (width > maxWidth) {
                         maxWidth = width;
