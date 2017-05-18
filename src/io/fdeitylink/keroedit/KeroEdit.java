@@ -23,10 +23,11 @@
  * Use temp variables in for/for-each loops rather than repeatedly calling method
  * Use WatchService in GameData (and in PxAttr/ImageManager?)
  * Why is the scrollbar sometimes super tiny on the mapListView?
- * Change mapName capitalization to mapname?
  * App icon (also use it for child windows)
  * Make sure all Alert creations are accompanied by showAndWait() calls (some are missing)
  * Have any empty catch blocks log the exception with Logger.logThrowable()
+ * Keep any MenuItems with unimplemented features disabled (like what I did for HackTab)
+ * Convert to Kotlin?
  */
 
 package io.fdeitylink.keroedit;
@@ -67,6 +68,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 
 import javafx.scene.control.ListView;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.SelectionMode;
 
 import javafx.geometry.Orientation;
@@ -145,7 +147,7 @@ public final class KeroEdit extends Application {
 
     private NotepadTab notepadTab;
 
-    private ListView <String> mapList;
+    private ListView <Path> mapList;
 
     public static void main(final String[] args) {
         launch(args);
@@ -395,7 +397,7 @@ public final class KeroEdit extends Application {
                 }
 
                 try {
-                    GameData.init(exe);
+                    GameData.INSTANCE.init(exe);
                     Config.lastExeLoc = exe.toString();
 
                     HackTab.init();
@@ -660,17 +662,14 @@ public final class KeroEdit extends Application {
             if (null != scriptFiles) {
                 for (final File f : scriptFiles) {
                     final Path scriptPath = f.toPath().toAbsolutePath();
-                    String scriptFname = scriptPath.getFileName().toString();
-                    scriptFname = scriptFname.substring(0, scriptFname.lastIndexOf(".pxeve"));
-
                     boolean isAlreadyOpen = false;
-                    for (final Tab tab : mainTabPane.getTabs()) {
-                        //If the script is already open somewhere
-                        //MapEditTab's ID is name of map, and map's script's name is equivalent to map's name
-                        if ((tab instanceof ScriptEditTab && tab.getId().equals(scriptPath.toString())) ||
-                            (tab instanceof MapEditTab && tab.getId().equals(scriptFname))) {
+
+                    final ObservableList <Tab> tabs = mainTabPane.getTabs();
+                    for (final Tab tab : tabs) {
+                        if ((tab instanceof ScriptEditTab && ((ScriptEditTab)tab).getPath().equals(scriptPath)) ||
+                            (tab instanceof MapEditTab && ((MapEditTab)tab).getScriptPath().equals(scriptPath))) {
                             mainTabPane.getSelectionModel().select(tab);
-                            mainTabPane.requestFocus();
+                            mainTabPane.requestFocus(); //TODO: Select ScriptEditTab in the MapEditTab?
                             isAlreadyOpen = true;
                             break;
                         }
@@ -679,6 +678,7 @@ public final class KeroEdit extends Application {
                     if (!isAlreadyOpen) {
                         try {
                             final ScriptEditTab sEditTab = new ScriptEditTab(scriptPath);
+
                             mainTabPane.getTabs().add(sEditTab);
                             mainTabPane.getSelectionModel().select(sEditTab);
                             mainTabPane.requestFocus();
@@ -769,11 +769,19 @@ public final class KeroEdit extends Application {
      *
      * @return The created {@code ListView}
      */
-    private ListView <String> initMapList() {
+    private ListView <Path> initMapList() {
         //TODO: Make cells editable (and rename maps after user is done editing cell)?
-        final ListView <String> mapListView = new ListView <>();
+        final ListView <Path> mapListView = new ListView <>();
         mapListView.setOrientation(Orientation.VERTICAL);
         mapListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        mapListView.setCellFactory(listView -> new ListCell <Path>() {
+            @Override
+            public void updateItem(final Path map, final boolean empty) {
+                super.updateItem(map, empty);
+                setText(empty ? null : GameData.baseFilename(map, GameData.mapExtension));
+            }
+        });
 
         final MenuItem[] contextMenuItems = {new MenuItem(Messages.getString("KeroEdit.MapList.OPEN")),
                                              new MenuItem(Messages.getString("KeroEdit.MapList.NEW")),
@@ -786,10 +794,11 @@ public final class KeroEdit extends Application {
         //TODO: Change accelerator text from an arrow to "Enter"
         contextMenuItems[MapListMenuItem.OPEN.ordinal()].setAccelerator(new KeyCodeCombination(KeyCode.ENTER));
         contextMenuItems[MapListMenuItem.OPEN.ordinal()].setOnAction(event -> {
-            for (final String mapName : mapListView.getSelectionModel().getSelectedItems()) {
+            final ObservableList <Path> selectedItems = mapListView.getSelectionModel().getSelectedItems();
+            for (final Path map : selectedItems) {
                 boolean isAlreadyOpen = false;
                 for (final Tab tab : mainTabPane.getTabs()) {
-                    if (tab instanceof MapEditTab && tab.getId().equals(mapName)) {
+                    if (tab instanceof MapEditTab && ((MapEditTab)tab).getPath().equals(map)) {
                         mainTabPane.getSelectionModel().select(tab);
                         mainTabPane.requestFocus();
                         isAlreadyOpen = true;
@@ -799,18 +808,22 @@ public final class KeroEdit extends Application {
 
                 if (!isAlreadyOpen) {
                     try {
-                        //If script for this map open in mainTabPane, close it so two copies aren't open.
-                        //map's name == map's script's name
+                        /*
+                         * If the script for this map is already open in mainTabPane, close it so that
+                         * two copies aren't open. The map's filename (sans extension) is equivalent to
+                         * the script's filename (sans extension)
+                         */
                         for (final Tab tab : mainTabPane.getTabs()) {
                             if (tab instanceof ScriptEditTab &&
-                                ((ScriptEditTab)tab).getScriptPath().getFileName().toString()
-                                                    .equals(mapName + ".pxeve")) {
+                                GameData.baseFilename(((ScriptEditTab)tab).getPath(), GameData.scriptExtension)
+                                        .equals(GameData.baseFilename(map, GameData.mapExtension))) {
                                 mainTabPane.getTabs().remove(tab); //TODO: Use closeTab(tab) to trigger onCloseRequest()?
                                 break;
                             }
                         }
 
-                        final MapEditTab mapEditTab = new MapEditTab(mapName);
+                        final MapEditTab mapEditTab = new MapEditTab(map);
+
                         mainTabPane.getTabs().add(mapEditTab);
                         mainTabPane.getSelectionModel().select(mapEditTab);
                         mainTabPane.requestFocus();
@@ -849,24 +862,27 @@ public final class KeroEdit extends Application {
              * the List maintained by the ListView's SelectionModel doesn't properly adjust to insertions
              * and deletions and ends up being a pain to work with
              */
-            final ArrayList <String> selectedMapNames =
-                    new ArrayList <>(mapListView.getSelectionModel().getSelectedItems());
+            //TODO: Avoid creating a new List if possible
+            final List <Path> selectedMapNames = new ArrayList <>(mapListView.getSelectionModel().getSelectedItems());
             for (int i = 0; i < selectedMapNames.size() && 0 < selectedMapNames.size(); ) {
-                final String mapName = selectedMapNames.get(i);
-
-                FXUtil.createAlert(Alert.AlertType.CONFIRMATION, mapName, null,
-                                   Messages.getString("KeroEdit.DeleteMap.MESSAGE")).showAndWait()
+                final Path map = selectedMapNames.get(i);
+                FXUtil.createAlert(Alert.AlertType.CONFIRMATION, GameData.baseFilename(map, GameData.mapExtension),
+                                   null, Messages.getString("KeroEdit.DeleteMap.MESSAGE")).showAndWait()
                       .ifPresent(result -> {
                           if (ButtonType.OK == result) {
                               /*
                                * GameData.getMapList()is the backing list for the ListView,
                                * so changes to the ListView's items affect GameData and vice versa.
                                */
-                              mapListView.getItems().remove(mapName);
-                              selectedMapNames.remove(mapName);
+                              mapListView.getItems().remove(map);
+                              selectedMapNames.remove(map);
 
+                              //Close any MapEditTab or ScriptEditTab that bears the filename of this item
                               for (final Tab tab : mainTabPane.getTabs()) {
-                                  if (tab instanceof MapEditTab && tab.getId().equals(mapName)) {
+                                  if ((tab instanceof MapEditTab && ((MapEditTab)tab).getPath().equals(map)) ||
+                                      tab instanceof ScriptEditTab &&
+                                      GameData.baseFilename(((ScriptEditTab)tab).getPath(), GameData.scriptExtension)
+                                              .equals(GameData.baseFilename(map, GameData.mapExtension))) {
                                       /*
                                        * Don't use FXUtil.closeTab() as we've already confirmed
                                        * the user wants to delete the map, and thus that they
@@ -880,7 +896,7 @@ public final class KeroEdit extends Application {
                       });
 
                 //If user canceled map deletion, don't attempt to delete any others
-                if (selectedMapNames.contains(mapName)) {
+                if (selectedMapNames.contains(map)) {
                     return;
                 }
             }
@@ -932,7 +948,7 @@ public final class KeroEdit extends Application {
      */
     private TabPane initTabPane() {
         final TabPane tabPane = new TabPane();
-        tabPane.tabClosingPolicyProperty().setValue(TabPane.TabClosingPolicy.ALL_TABS);
+        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
 
         tabPane.getTabs().add(notepadTab = new NotepadTab());
 

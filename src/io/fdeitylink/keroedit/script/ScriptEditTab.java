@@ -13,10 +13,9 @@ import java.nio.file.Path;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
+import io.fdeitylink.keroedit.gamedata.GameData;
 import io.fdeitylink.util.fx.FileEditTab;
 import javafx.scene.control.Alert;
-
-import javafx.scene.control.Tooltip;
 
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
@@ -30,11 +29,12 @@ import io.fdeitylink.util.fx.FXUtil;
 import io.fdeitylink.keroedit.mapedit.MapEditTab;
 
 public final class ScriptEditTab extends FileEditTab {
-    private final Path scriptPath;
-
     private final TextArea textArea;
 
-    public ScriptEditTab(final Path inPath) throws IOException {
+    public ScriptEditTab(Path inPath) throws IOException {
+        //TODO: Check if inPath is actually within the mod folder and throw except if not?
+        super(inPath = inPath.toAbsolutePath());
+
         /*
          * TODO: Fix this weird exception that I can't seem to get myself
          * java.io.UncheckedIOException: java.nio.charset.MalformedInputException: Input length = 1
@@ -50,19 +50,16 @@ public final class ScriptEditTab extends FileEditTab {
          *  - scriptText = lineStream.collect(Collectors.joining("\n"));
          */
 
-        //TODO: Check if this is actually within the mod folder and throw except if not?
-        scriptPath = NullArgumentException.requireNonNull(inPath, "ScriptEditTab", "inPath").toAbsolutePath();
-
         String scriptText = "";
-        try (Stream <String> lineStream = Files.lines(inPath, Charset.forName("Shift_JIS"))) {
-            scriptText = lineStream.collect(Collectors.joining("\n"));
+        try (Stream <String> lines = Files.lines(inPath, Charset.forName("Shift_JIS"))) {
+            scriptText = lines.collect(Collectors.joining("\n"));
         }
         catch (final FileNotFoundException except) {
             try {
                 Files.createFile(inPath);
             }
             catch (final IOException ex) {
-                //do nothing or throw except?
+                //TODO: Do nothing or throw except?
             }
         }
         catch (final IOException except) {
@@ -76,11 +73,13 @@ public final class ScriptEditTab extends FileEditTab {
         textArea.requestFocus();
         textArea.setFont(new Font("Consolas", 12));
 
-        setId(scriptPath.toString());
-
-        //assume this tab is not inside MapEditTab - other constructor will call setText() if it is inside MapEditTab
-        setText(inPath.getFileName().toString());
-        setTooltip(new Tooltip(scriptPath.toString()));
+        /*
+         * Assume that this ScriptEditTab is not inside of a
+         * MapEditTab and set the title to the filename. The
+         * other constructor will call setText() again if this
+         * tab is inside of a MapEditTab.
+         */
+        setText(GameData.baseFilename(inPath, GameData.scriptExtension));
 
         setContent(textArea);
     }
@@ -97,10 +96,6 @@ public final class ScriptEditTab extends FileEditTab {
         setText(Messages.getString("ScriptEditTab.TITLE"));
     }
 
-    public Path getScriptPath() {
-        return scriptPath;
-    }
-
     @Override
     public void undo() {
         textArea.undo();
@@ -113,6 +108,7 @@ public final class ScriptEditTab extends FileEditTab {
 
     @Override
     public void save() {
+        final Path scriptPath = getPath();
         try {
             Files.write(scriptPath, textArea.getParagraphs(), Charset.forName("Shift_JIS"));
             markUnchanged();

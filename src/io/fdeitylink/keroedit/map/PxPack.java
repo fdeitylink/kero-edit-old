@@ -29,6 +29,8 @@ import io.fdeitylink.util.NullArgumentException;
 
 import io.fdeitylink.keroedit.Messages;
 
+import io.fdeitylink.keroedit.gamedata.GameData;
+
 /**
  * Object for storing information about a PXPACK map file
  */
@@ -53,8 +55,9 @@ public final class PxPack {
     public PxPack(final Path inPath) throws IOException, ParseException {
         path = NullArgumentException.requireNonNull(inPath, "PxPack", "inPath").toAbsolutePath();
 
-        if (!inPath.toString().endsWith(".pxpack")) {
-            throw new IllegalArgumentException("File " + inPath.toAbsolutePath() + " does not end with .pxpack extension");
+        if (!inPath.toString().endsWith(GameData.mapExtension)) {
+            throw new IllegalArgumentException("File " + inPath.toAbsolutePath() +
+                                               " does not end with extension " + GameData.mapExtension);
         }
 
         //TODO: Test this
@@ -94,9 +97,9 @@ public final class PxPack {
 
             final String description = readString(chan, Head.DESCRIPTION_MAX_LEN, "description");
 
-            final String[] mapNames = new String[Head.NUM_REF_MAPS];
-            for (int i = 0; i < mapNames.length; ++i) {
-                mapNames[i] = readString(chan, Head.FILENAME_MAX_LEN, "map name");
+            final String[] mapnames = new String[Head.NUM_REF_MAPS];
+            for (int i = 0; i < mapnames.length; ++i) {
+                mapnames[i] = readString(chan, Head.FILENAME_MAX_LEN, "map name");
             }
 
             final String spritesheetName = readString(chan, Head.FILENAME_MAX_LEN, "spritesheet name");
@@ -142,7 +145,7 @@ public final class PxPack {
                  */
             }
 
-            head = new Head(description, mapNames, spritesheetName, data, bgColor, tilesetNames, visibilityTypes, scrollTypes);
+            head = new Head(description, mapnames, spritesheetName, data, bgColor, tilesetNames, visibilityTypes, scrollTypes);
 
             tileLayers = new TileLayer[NUM_LAYERS];
 
@@ -323,8 +326,7 @@ public final class PxPack {
     }
 
     public String getName() {
-        final String mapFname = path.getFileName().toString();
-        return mapFname.substring(0, mapFname.lastIndexOf(".pxpack"));
+        return GameData.baseFilename(path, GameData.mapExtension);
     }
 
     public Path getPath() {
@@ -339,7 +341,7 @@ public final class PxPack {
                                                " (newName: " + newName + ')');
         }
 
-        path = Files.move(path, path.resolveSibling(newName + ".pxpack"));
+        path = Files.move(path, path.resolveSibling(newName + GameData.mapExtension));
     }
 
     public Head getHead() {
@@ -439,7 +441,7 @@ public final class PxPack {
         static final String HEADER_STRING = "PXPACK121127a**\0";
 
         private String description;
-        private final String[] mapNames;
+        private final String[] mapnames;
         private String spritesheetName;
 
         private final byte[] data;
@@ -449,13 +451,13 @@ public final class PxPack {
         private final byte[] visibilityTypes;
         private final byte[] scrollTypes;
 
-        Head(final String description, final String[] mapNames, final String spritesheetName,
+        Head(final String description, final String[] mapnames, final String spritesheetName,
              final byte[] data, final Color bgColor, final String[] tilesetNames,
              final byte[] visibilityTypes, final byte[] scrollTypes) {
-            if (NUM_REF_MAPS != mapNames.length) {
-                throw new IllegalArgumentException("Attempt to set mapNames[] when arg has length " + mapNames.length +
+            if (NUM_REF_MAPS != mapnames.length) {
+                throw new IllegalArgumentException("Attempt to set mapnames[] when arg has length " + mapnames.length +
                                                    " when length of " + NUM_REF_MAPS + " is expected " +
-                                                   "(mapNames: " + Arrays.toString(mapNames) + ')');
+                                                   "(mapnames: " + Arrays.toString(mapnames) + ')');
             }
             if (5 != data.length) {
                 throw new IllegalArgumentException("Attempt to set data[] when arg has length " + data.length +
@@ -481,9 +483,9 @@ public final class PxPack {
             //TODO: check if these method calls are bad practice
             setDescription(description);
 
-            this.mapNames = new String[NUM_REF_MAPS];
-            for (int i = 0; i < this.mapNames.length; ++i) {
-                setMapName(i, mapNames[i]);
+            this.mapnames = new String[NUM_REF_MAPS];
+            for (int i = 0; i < this.mapnames.length; ++i) {
+                setMapname(i, mapnames[i]);
             }
 
             setSpritesheetName(spritesheetName);
@@ -516,7 +518,7 @@ public final class PxPack {
         }
 
         public String[] getMapNames() {
-            return Arrays.copyOf(mapNames, mapNames.length);
+            return Arrays.copyOf(mapnames, mapnames.length);
         }
 
         public String getSpritesheetName() {
@@ -553,22 +555,22 @@ public final class PxPack {
             this.description = description;
         }
 
-        public void setMapName(final int index, final String mapName) {
-            NullArgumentException.requireNonNull(mapName, "setMapName", "mapName");
-            if (mapName.length() > FILENAME_MAX_LEN) {
-                throw new IllegalArgumentException("Attempt to set mapName when arg has length " +
-                                                   mapName.length() + " when max length is " + FILENAME_MAX_LEN +
-                                                   " (mapName: " + mapName + ')');
+        public void setMapname(final int index, final String mapname) {
+            NullArgumentException.requireNonNull(mapname, "setMapname", "mapname");
+            if (mapname.length() > FILENAME_MAX_LEN) {
+                throw new IllegalArgumentException("Attempt to set mapname when arg has length " +
+                                                   mapname.length() + " when max length is " + FILENAME_MAX_LEN +
+                                                   " (mapname: " + mapname + ')');
             }
-            if (mapName.contains(" ")) {
-                throw new IllegalArgumentException("Attempt to set mapName when arg has spaces when spaces are not allowed " +
-                                                   "(mapName: " + mapName + ')');
+            if (mapname.contains(" ")) {
+                throw new IllegalArgumentException("Attempt to set mapname when arg has spaces when spaces are not allowed " +
+                                                   "(mapname: " + mapname + ')');
             }
-            if (0 > index || mapNames.length <= index) {
-                throw new ArrayIndexOutOfBoundsException("Attempt to set mapName when index arg is out of bounds " +
+            if (0 > index || mapnames.length <= index) {
+                throw new ArrayIndexOutOfBoundsException("Attempt to set mapname when index arg is out of bounds " +
                                                          "(index: " + index + ')');
             }
-            this.mapNames[index] = mapName;
+            this.mapnames[index] = mapname;
         }
 
         public void setSpritesheetName(final String spritesheetName) {
@@ -657,8 +659,8 @@ public final class PxPack {
 
             result.append(String.format("Description: %s\n", description));
 
-            for (int i = 0; i < mapNames.length; ++i) {
-                result.append(String.format("Mapname %d: %s\n", i, mapNames[i]));
+            for (int i = 0; i < mapnames.length; ++i) {
+                result.append(String.format("Mapname %d: %s\n", i, mapnames[i]));
             }
 
             result.append(String.format("Spritesheet Name: %s\n", spritesheetName));

@@ -22,6 +22,8 @@ import io.fdeitylink.util.NullArgumentException;
 
 import io.fdeitylink.keroedit.Messages;
 
+import io.fdeitylink.keroedit.map.PxPack;
+
 /**
  * Singleton class for storing info about a Kero Blaster mod
  */
@@ -29,21 +31,19 @@ public enum GameData {
     INSTANCE;
 
     public static final String bgmFolder = "bgm";
-    public static final String bgmExt = ".ptcop";
+    public static final String bgmExtension = ".ptcop";
 
     public static final String mapFolder = "field";
-    public static final String mapExt = ".pxpack";
+    public static final String mapExtension = ".pxpack";
 
     public static final String imageFolder = "img";
-    public static final String imageExt = ".png";
+    public static final String imageExtension = ".png";
 
     public static final String sfxFolder = "se";
-    public static final String sfxExt = ".ptnoise";
+    public static final String sfxExtension = ".ptnoise";
 
     public static final String scriptFolder = "text";
-    public static final String scriptExt = ".pxeve";
-
-    //TODO: Filter out files with names that are too long and that contain spaces
+    public static final String scriptExtension = ".pxeve";
 
     private boolean initialized = false;
 
@@ -54,20 +54,37 @@ public enum GameData {
 
     //TODO: Make lists of Paths rather than Strings?
 
-    private ObservableList <String> bgms;
+    private ObservableList <Path> bgms;
 
     //TODO: If PxPack is renamed, it must also be renamed here
     //TODO: Add ChangeListener that deletes map file when a map is removed from this list
-    private ObservableList <String> maps;
+    private ObservableList <Path> maps;
 
-    private ObservableList <String> images;
+    private ObservableList <Path> images;
 
-    private ObservableList <String> soundFX;
+    private ObservableList <Path> soundFX;
 
-    private ObservableList <String> scripts;
+    private ObservableList <Path> scripts;
 
     GameData() {
 
+    }
+
+    public static String baseFilename(final Path p, final String ext) {
+        NullArgumentException.requireNonNull(p, "baseFilename", "p");
+        NullArgumentException.requireNonNull(ext, "baseFilename", "ext");
+
+        if (Files.isDirectory(p)) {
+            throw new IllegalArgumentException("Attempt to get base filename of Path that does  not represent a file");
+        }
+
+        String fname = p.getFileName().toString();
+        final int extIndex = fname.lastIndexOf(ext);
+
+        if (-1 == extIndex) {
+            return fname;
+        }
+        return fname.substring(0, extIndex);
     }
 
     /**
@@ -77,8 +94,9 @@ public enum GameData {
      *
      * @throws NoSuchFileException If the given executable is null
      */
-    public static void init(final Path executable) throws IOException {
-        //TODO: Move all/most of this stuff into constructor?
+    public void init(final Path executable) throws IOException {
+        wipe();
+
         //TODO: Throws errors (or mkdirs()?) if rsc_x is missing necessary subfolders?
         NullArgumentException.requireNonNull(executable, "init", "executable");
 
@@ -92,8 +110,7 @@ public enum GameData {
                                                                executable.toAbsolutePath()));
         }
 
-        INSTANCE.wipe();
-        INSTANCE.executable = executable.toAbsolutePath();
+        this.executable = executable.toAbsolutePath();
 
         boolean rscExists = false;
         //TODO: Use path matching? - "/*/"
@@ -101,42 +118,42 @@ public enum GameData {
                                                                         entry -> Files.isDirectory(entry))) {
             for (final Path p : dirPaths) {
                 if (p.endsWith("rsc_k")) {
-                    INSTANCE.resourceFolder = p.toAbsolutePath();
-                    INSTANCE.modType = MOD_TYPE.KERO_BLASTER;
+                    resourceFolder = p.toAbsolutePath();
+                    modType = MOD_TYPE.KERO_BLASTER;
                     rscExists = true;
                     break;
                 }
                 else if (p.endsWith("rsc_p")) {
-                    INSTANCE.resourceFolder = p.toAbsolutePath();
-                    INSTANCE.modType = MOD_TYPE.PINK_HOUR; //TODO: Detect or ask if Pink Heaven
+                    resourceFolder = p.toAbsolutePath();
+                    modType = MOD_TYPE.PINK_HOUR; //TODO: Detect or ask if Pink Heaven
                     rscExists = true;
                     break;
                 }
             }
         }
         catch (final IOException except) {
-            INSTANCE.wipe();
+            wipe();
             throw new IOException(MessageFormat.format(Messages.getString("GameData.ListFilesIOExcept.MESSAGE"),
                                                        executable.toAbsolutePath()), except);
         }
 
         if (!rscExists) {
-            INSTANCE.wipe();
+            wipe();
             throw new NoSuchFileException(MessageFormat.format(Messages.getString("GameData.MISSING_RSC"),
                                                                executable.toAbsolutePath()));
         }
 
         try {
-            INSTANCE.bgms = INSTANCE.getFileList(bgmFolder, bgmExt);
+            bgms = getFileList(bgmFolder, bgmExtension);
 
-            INSTANCE.maps = INSTANCE.getFileList(mapFolder, mapExt);
-            /*INSTANCE.maps.addListener((final ListChangeListener.Change <? extends String> c) -> {
+            maps = getFileList(mapFolder, mapExtension);
+            /*maps.addListener((final ListChangeListener.Change <? extends String> c) -> {
                 //TODO: Should I go back to returning immutable ObservableLists in getX() and provide removeX() methods?
                 for (final String fname : c.getRemoved()) {
                     try {
                         Files.deleteIfExists(Paths.get(INSTANCE.resourceFolder.toString() +
-                                                       File.separator + "field" + File.separatorChar +
-                                                       fname + ".pxpack"));
+                                                       File.separator + mapFolder + File.separatorChar +
+                                                       fname + mapExtension));
                     }
                     catch (final IOException except) {
                         //TODO: Something...
@@ -145,18 +162,18 @@ public enum GameData {
             });*/
 
             //TODO: Separate image lists (tilesets, spritesheets, etc.)
-            INSTANCE.images = INSTANCE.getFileList(imageFolder, imageExt);
+            images = getFileList(imageFolder, imageExtension);
 
-            INSTANCE.soundFX = INSTANCE.getFileList(sfxFolder, sfxExt);
+            soundFX = getFileList(sfxFolder, sfxExtension);
 
-            INSTANCE.scripts = INSTANCE.getFileList(scriptFolder, scriptExt);
+            scripts = getFileList(scriptFolder, scriptExtension);
         }
         catch (final IOException except) {
-            INSTANCE.wipe();
+            wipe();
             throw except;
         }
 
-        INSTANCE.initialized = true;
+        initialized = true;
     }
 
     public boolean isInitialized() {
@@ -202,7 +219,7 @@ public enum GameData {
         return modType;
     }
 
-    public ObservableList <String> getBgmList() {
+    public ObservableList <Path> getBgmList() {
         if (!isInitialized()) {
             throw new IllegalStateException("Attempt to retrieve information from GameData " +
                                             "when it has not been properly initialized yet");
@@ -210,7 +227,7 @@ public enum GameData {
         return bgms;
     }
 
-    public ObservableList <String> getMapList() {
+    public ObservableList <Path> getMapList() {
         if (!isInitialized()) {
             throw new IllegalStateException("Attempt to retrieve information from GameData " +
                                             "when it has not been properly initialized yet");
@@ -218,7 +235,7 @@ public enum GameData {
         return maps;
     }
 
-    public ObservableList <String> getImageList() {
+    public ObservableList <Path> getImageList() {
         if (!isInitialized()) {
             throw new IllegalStateException("Attempt to retrieve information from GameData " +
                                             "when it has not been properly initialized yet");
@@ -226,7 +243,7 @@ public enum GameData {
         return images;
     }
 
-    public ObservableList <String> getSoundFXList() {
+    public ObservableList <Path> getSoundFXList() {
         if (!isInitialized()) {
             throw new IllegalStateException("Attempt to retrieve information from GameData " +
                                             "when it has not been properly initialized yet");
@@ -234,7 +251,7 @@ public enum GameData {
         return soundFX;
     }
 
-    public ObservableList <String> getScriptList() {
+    public ObservableList <Path> getScriptList() {
         if (!isInitialized()) {
             throw new IllegalStateException("Attempt to retrieve information from GameData " +
                                             "when it has not been properly initialized yet");
@@ -242,17 +259,17 @@ public enum GameData {
         return scripts;
     }
 
-    private ObservableList <String> getFileList(final String pathFromRsc, final String ext)
+    private ObservableList <Path> getFileList(final String pathFromRsc, final String ext)
             throws IOException {
-        //TODO: Omit '.' from ext in calls in init(), put '.' in glob in DirectoryStream below
-        final Path basePath = Paths.get(resourceFolder.toAbsolutePath().toString() +
-                                        File.separatorChar + pathFromRsc);
+        final Path basePath = Paths.get(resourceFolder.toAbsolutePath().toString() + File.separatorChar + pathFromRsc);
 
-        final ObservableList <String> nameList = FXCollections.observableList(new ArrayList <>());
-        try (final DirectoryStream <Path> pathList = Files.newDirectoryStream(basePath, '*' + ext)) {
-            for (final Path p : pathList) {
-                final String fname = p.getFileName().toString();
-                nameList.add(fname.substring(0, fname.lastIndexOf(ext)));
+        final ObservableList <Path> list = FXCollections.observableList(new ArrayList <>());
+        try (final DirectoryStream <Path> paths = Files.newDirectoryStream(basePath, '*' + ext)) {
+            for (final Path p : paths) {
+                final String fname = baseFilename(p, ext);
+                if (fname.length() <= PxPack.Head.FILENAME_MAX_LEN && !fname.contains(" ")) {
+                    list.add(p);
+                }
             }
         }
         catch (final IOException except) {
@@ -260,7 +277,7 @@ public enum GameData {
                                                        executable), except);
         }
 
-        return nameList;
+        return list;
     }
 
     public enum MOD_TYPE {

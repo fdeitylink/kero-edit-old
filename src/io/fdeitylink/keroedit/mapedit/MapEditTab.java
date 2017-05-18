@@ -237,18 +237,18 @@ public final class MapEditTab extends FileEditTab {
 
     private final PxPack map;
 
-    public MapEditTab(final String mapName) throws IOException, ParseException {
+    public MapEditTab(Path inPath) throws IOException, ParseException {
+        //TODO: Check if inPath is actually within the mod folder and throw except if not?
+        super(inPath = inPath.toAbsolutePath());
+
         if (!GameData.INSTANCE.isInitialized()) {
             throw new IllegalStateException("Attempt to create MapEditTab when GameData has not been properly initialized yet");
         }
 
-        NullArgumentException.requireNonNull(mapName, "MapEditTab", "mapName");
+        final String fname = GameData.baseFilename(inPath, GameData.mapExtension);
 
-        final Path mapPath = Paths.get(GameData.INSTANCE.getResourceFolder().toString() +
-                                       File.separatorChar + "field" + File.separatorChar +
-                                       mapName + ".pxpack");
         try {
-            map = new PxPack(mapPath);
+            map = new PxPack(inPath);
         }
         catch (final IOException | ParseException except) {
             final String title;
@@ -257,14 +257,14 @@ public final class MapEditTab extends FileEditTab {
             if (except instanceof IOException) {
                 title = Messages.getString("MapEditTab.OpenIOExcept.TITLE");
                 message = MessageFormat.format(Messages.getString("MapEditTab.OpenIOExcept.MESSAGE"),
-                                               mapName, except.getMessage());
+                                               fname, except.getMessage());
 
                 Logger.logThrowable(except);
             }
             else {
                 title = Messages.getString("MapEditTab.OpenParseExcept.TITLE");
                 message = MessageFormat.format(Messages.getString("MapEditTab.OpenParseExcept.MESSAGE"),
-                                               mapName, except.getMessage());
+                                               fname, except.getMessage());
             }
 
             FXUtil.createAlert(Alert.AlertType.ERROR, title, null, message).showAndWait();
@@ -274,21 +274,20 @@ public final class MapEditTab extends FileEditTab {
 
         initResources();
 
-        setId(mapName);
-        setText(mapName);
+        setText(fname);
 
         //TODO: Ensure updates to description in PropertyEditTab are reflected in tooltip
-        tooltip = new Tooltip(mapPath.toString() + '\n' +
+        tooltip = new Tooltip(inPath.toString() + '\n' +
                               Messages.getString("MapEditTab.TOOLTIP_DESCRIPTION_LABEL") +
                               map.getHead().getDescription());
         setTooltip(tooltip);
 
         tileEditTab = new TileEditTab();
 
-        //TODO: Don't fail/escalate except if ScriptEditTab() throws IOException?
+        //TODO: Don't fail/escalate exception if ScriptEditTab() throws IOException?
         scriptEditTab = new ScriptEditTab(Paths.get(GameData.INSTANCE.getResourceFolder().toString() +
-                                                    File.separatorChar + "text" +
-                                                    File.separatorChar + map.getName() + ".pxeve"), this);
+                                                    File.separatorChar + GameData.scriptFolder +
+                                                    File.separatorChar + fname + GameData.scriptExtension), this);
         propertyEditTab = new PropertyEditTab();
 
         tabPane = new TabPane(tileEditTab, scriptEditTab, propertyEditTab);
@@ -341,6 +340,10 @@ public final class MapEditTab extends FileEditTab {
 
     public static void setEditMode(final EditMode mode) {
         editMode.set(mode);
+    }
+
+    public Path getScriptPath() {
+        return scriptEditTab.getPath();
     }
 
     @Override
@@ -443,6 +446,12 @@ public final class MapEditTab extends FileEditTab {
                 namesPath = ResourceManager.getPath("assist/unittype.json");
             }
 
+            /*
+             * TODO:
+             * Handle namesPath being null somehow
+             * Catch ParseException and handle invalid input
+             * Cap the number of entities read at the number of entities that exist
+             */
             //TODO: Handle namesPath being null somehow
             //TODO: Catch ParseException, handle invalid input
             try (BufferedReader namesReader = Files.newBufferedReader(namesPath, Charset.forName("UTF-8"))) {
@@ -470,7 +479,7 @@ public final class MapEditTab extends FileEditTab {
         private final int[][][] selectedTiles;
 
         TileEditTab() {
-            super(Messages.getString("MapEditTab.TileEditTab.TITLE"));
+            super(MapEditTab.this.getPath(), Messages.getString("MapEditTab.TileEditTab.TITLE"));
 
             selectedTiles = new int[PxPack.NUM_LAYERS][1][1];
 
@@ -2043,7 +2052,7 @@ public final class MapEditTab extends FileEditTab {
         private final PxPack.Head head;
 
         PropertyEditTab() {
-            super(Messages.getString("MapEditTab.PropertyEditTab.TITLE"));
+            super(MapEditTab.this.getPath(), Messages.getString("MapEditTab.PropertyEditTab.TITLE"));
             head = map.getHead();
             setContent(initEditorPane());
         }
@@ -2099,17 +2108,6 @@ public final class MapEditTab extends FileEditTab {
                 label.setFont(font);
             }
 
-            /* ********************************************* ComboBoxes ********************************************* */
-            //TODO: Enum for indexes?
-            final ArrayList <ComboBox <String>> fields = new ArrayList <>(labels.size());
-            for (int i = 0; i < PxPack.Head.NUM_REF_MAPS; ++i) {
-                fields.add(new ComboBox <>(GameData.INSTANCE.getMapList())); //TODO: Add option to leave blank
-            }
-            fields.add(new ComboBox <>(GameData.INSTANCE.getImageList()));
-            for (int i = 0; i < PxPack.NUM_LAYERS; ++i) {
-                fields.add(new ComboBox <>(GameData.INSTANCE.getImageList())); //TODO: Add option to leave second two blank
-            }
-
             /* ******************************************** Description ********************************************* */
             final Text descriptionLabel = new Text("Description");
             final TextField descriptionTextField = new TextField(head.getDescription());
@@ -2121,54 +2119,114 @@ public final class MapEditTab extends FileEditTab {
                                 Messages.getString("MapEditTab.TOOLTIP_DESCRIPTION_LABEL") + newValue);
             });
 
+            final ArrayList <ComboBox <Path>> fields = new ArrayList <>(labels.size());
+
             /* ********************************************** Mapnames ********************************************** */
             final String[] currentMapNames = head.getMapNames();
-            for (int i = 0; i < currentMapNames.length; ++i) {
-                final SingleSelectionModel <String> fieldSelectModel = fields.get(i).getSelectionModel();
-                fieldSelectModel.select(currentMapNames[i]);
+            for (int i = 0; i < PxPack.Head.NUM_REF_MAPS; ++i) {
+                //TODO: Add option to leave value blank
+                final ComboBox <Path> cBox = new ComboBox <>(GameData.INSTANCE.getMapList());
 
-                final int index = i;
-                fieldSelectModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                    //TODO: Potential bug with null selected vals
-                    head.setMapName(index, newValue);
-                    markChanged();
+                //TODO: Can I make one Callback object that is used for multiple ComboBoxes?
+                cBox.setCellFactory(listView -> new ListCell <Path>() {
+                    @Override
+                    public void updateItem(final Path map, final boolean empty) {
+                        super.updateItem(map, empty);
+                        setText(empty ? null : GameData.baseFilename(map, GameData.mapExtension));
+                    }
                 });
+
+                //TODO: Set the Button Cell of the ComboBox to have the filename as the label, not the full path
+
+                final Path map = Paths.get(GameData.INSTANCE.getResourceFolder().toString() +
+                                           File.separatorChar + GameData.mapFolder + File.separatorChar +
+                                           currentMapNames[i] + GameData.mapExtension);
+
+                final SingleSelectionModel <Path> selectModel = cBox.getSelectionModel();
+                selectModel.select(map);
+                final int index = i;
+                selectModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                    /*
+                     * newValue is null when the map list is cleared when
+                     * a new mod is loaded in KeroEdit. Ideally this Tab
+                     * object would be destroyed when closed and newValue
+                     * would never be null, so just blame the JVM's rare
+                     * use of The Reaper (GC)
+                     */
+                    if (null != newValue) {
+                        head.setMapname(index, GameData.baseFilename(newValue, GameData.mapExtension));
+                        markChanged();
+                    }
+                });
+
+                fields.add(cBox);
             }
 
             /* ********************************************* Spritesheet ******************************************** */
-            //TODO: If spritesheet can be blank, put blank item into list
-            final SingleSelectionModel <String> spritesheetSelectModel = fields.get(PxPack.Head.NUM_REF_MAPS)
-                                                                               .getSelectionModel();
-            spritesheetSelectModel.select(head.getSpritesheetName());
-            spritesheetSelectModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                head.setSpritesheetName(newValue);
-                markChanged();
-                /*
-                 * TODO:
-                 * When I start pulling entity sprites directly from
-                 * spritesheets, redraw entities in TileEditTab.
-                 */
-            });
+            {
+                //TODO: Check if spritesheet can be blank - if so, put blank item into list (or button that clears selection or something)
+                final ComboBox <Path> cBox = new ComboBox <>(GameData.INSTANCE.getImageList());
+
+                cBox.setCellFactory(comboBox -> new ListCell <Path>() {
+                    @Override
+                    public void updateItem(final Path spritesheet, final boolean empty) {
+                        super.updateItem(spritesheet, empty);
+                        setText(empty ? null : GameData.baseFilename(spritesheet, GameData.imageExtension));
+                    }
+                });
+
+                final Path spritesheet = Paths.get(GameData.INSTANCE.getResourceFolder().toString() +
+                                                   File.separatorChar + GameData.imageFolder + File.separatorChar +
+                                                   head.getSpritesheetName() + GameData.imageExtension);
+
+                final SingleSelectionModel <Path> selectModel = cBox.getSelectionModel();
+                selectModel.select(spritesheet);
+                selectModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                    head.setSpritesheetName(GameData.baseFilename(newValue, GameData.imageExtension));
+                    markChanged();
+                    /*
+                     * TODO:
+                     * When I start pulling entity sprites directly from
+                     * spritesheets, redraw entities in TileEditTab.
+                     */
+                });
+
+                fields.add(cBox);
+            }
 
             /* ************************************************ Data ************************************************ */
             //TODO: Data
 
-            /* ******************************************** Tileset Names ******************************************* */
+            /* *********************************************** Tilesets ********************************************** */
             final String[] currentTilesetNames = head.getTilesetNames();
-            for (int i = 0; i < currentTilesetNames.length; ++i) {
-                final SingleSelectionModel <String> fieldSelectModel = fields.get(PxPack.Head.NUM_REF_MAPS + 1 + i)
-                                                                             .getSelectionModel();
-                fieldSelectModel.select(currentTilesetNames[i]);
+            for (int i = 0; i < PxPack.NUM_LAYERS; ++i) {
+                final ComboBox <Path> cBox = new ComboBox <>(GameData.INSTANCE.getImageList());
 
+                cBox.setCellFactory(comboBox -> new ListCell <Path>() {
+                    @Override
+                    public void updateItem(final Path tileset, final boolean empty) {
+                        super.updateItem(tileset, empty);
+                        setText(empty ? null : GameData.baseFilename(tileset, GameData.imageExtension));
+                    }
+                });
+
+                final Path tileset = Paths.get(GameData.INSTANCE.getResourceFolder().toString() +
+                                               File.separatorChar + GameData.imageFolder + File.separator +
+                                               currentTilesetNames[i] + GameData.imageExtension);
+
+                final SingleSelectionModel <Path> selectModel = cBox.getSelectionModel();
+                selectModel.select(tileset);
                 final int index = i;
-                fieldSelectModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                    head.setTilesetName(index, newValue);
+                selectModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                    head.setTilesetName(index, GameData.baseFilename(newValue, GameData.imageExtension));
                     markChanged();
 
                     //TODO: Only reload affected tileset, not all of them
                     tileEditTab.tilesetPane.loadTilesets.restart();
                     tileEditTab.tilesetPane.loadPxAttrs.restart();
                 });
+
+                fields.add(cBox); //TODO: Add option to leave second two tilesets blank
             }
 
             /* ****************************************** Visibility Types ****************************************** */

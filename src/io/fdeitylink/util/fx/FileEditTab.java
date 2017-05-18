@@ -2,42 +2,56 @@ package io.fdeitylink.util.fx;
 
 import java.util.ArrayDeque;
 
+import java.nio.file.Path;
+
 import javafx.scene.Node;
 
 import javafx.scene.control.Alert;
 
 import javafx.scene.control.Tab;
 
+import javafx.scene.control.Tooltip;
+
 import javafx.scene.control.ButtonType;
+
+import io.fdeitylink.util.NullArgumentException;
 
 import io.fdeitylink.keroedit.Messages;
 
-//TODO: Add abstract getPath(), rename() methods?
+//TODO: Add abstract rename()?
 //TODO: Extend PoppableTab
 public abstract class FileEditTab extends Tab {
     //TODO: Store undo pointer to mark unchanged on undo/redo if same state as when saved is met
     private final ArrayDeque <UndoableEdit> undoStack = new ArrayDeque <>();
     private final ArrayDeque <UndoableEdit> redoStack = new ArrayDeque <>();
 
+    private final Path filePath;
+
     private boolean changed;
 
-    protected FileEditTab() {
-        this(null, null);
+    protected FileEditTab(final Path p) {
+        this(p, null, null);
     }
 
-    protected FileEditTab(final String text) {
-        this(text, null);
+    protected FileEditTab(final Path p, final String text) {
+        this(p, text, null);
     }
 
-    protected FileEditTab(final String text, final Node content) {
+    protected FileEditTab(final Path p, final String text, final Node content) {
         super(text, content);
+        filePath = NullArgumentException.requireNonNull(p, "FileEditTab", "p").toAbsolutePath();
         changed = false;
+
+        //TODO: Set name to base filename (no ext)?
+        setId(filePath.toString());
+        setTooltip(new Tooltip(filePath.toString()));
 
         setOnCloseRequest(event -> {
             if (isChanged()) {
-                final String title = /*getLabelText();*/getText();
-                final Alert alert = FXUtil.createAlert(Alert.AlertType.NONE,
-                                                       title.substring(0, title.lastIndexOf('*')), null,
+                String title = getText();
+                title = title.substring(0, title.lastIndexOf('*'));
+
+                final Alert alert = FXUtil.createAlert(Alert.AlertType.NONE, title, null,
                                                        Messages.getString("FXUtil.FileEditTab.UNSAVED_CHANGES"));
 
                 alert.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
@@ -51,6 +65,10 @@ public abstract class FileEditTab extends Tab {
                 });
             }
         });
+    }
+
+    public final Path getPath() {
+        return filePath;
     }
 
     public void undo() {

@@ -45,8 +45,8 @@ public final class HackTab extends FileEditTab {
 
     private SplitPane sPane;
 
-    private HackTab() {
-
+    private HackTab(final Path executable) {
+        super(executable);
     }
 
     //TODO: don't init() until getInst(), where it is initialized if null?
@@ -55,7 +55,7 @@ public final class HackTab extends FileEditTab {
             throw new IllegalStateException("Attempt to create HackTab when GameData has not been properly initialized yet");
         }
 
-        inst = new HackTab();
+        inst = new HackTab(GameData.INSTANCE.getExecutable());
 
         final String stringsFname;
         switch (GameData.INSTANCE.getModType()) {

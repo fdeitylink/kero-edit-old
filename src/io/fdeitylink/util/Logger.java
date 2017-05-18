@@ -20,7 +20,7 @@ public final class Logger {
             logFile.close();
         }
         catch (final IOException except) {
-            System.err.println("Error: " + message);
+            System.err.println(message);
         }
     }
 

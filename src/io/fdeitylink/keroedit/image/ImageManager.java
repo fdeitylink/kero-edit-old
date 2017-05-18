@@ -42,8 +42,8 @@ public final class ImageManager {
             return imagesMap.get(imageName);
         }
         Image image = new Image("file:///" + GameData.INSTANCE.getResourceFolder() +
-                                File.separator + "img" + File.separatorChar +
-                                imageName + ".png", false);
+                                File.separator + GameData.imageFolder + File.separatorChar +
+                                imageName + GameData.imageExtension, false);
 
         //TODO: Detect if image is not square? (only for tilesets?)
         //TODO: Detect if size is smaller than 128px by 128px (is 128 x 128 required?)

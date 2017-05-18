@@ -50,7 +50,7 @@ public final class PxAttrManager {
         }
 
         Path path = Paths.get(GameData.INSTANCE.getResourceFolder().toString() +
-                              File.separatorChar + "img" + File.separatorChar +
+                              File.separatorChar + GameData.imageFolder + File.separatorChar +
                               tilesetName + ".pxattr");
 
         final PxAttr pxAttr;
@@ -101,7 +101,7 @@ public final class PxAttrManager {
          */
         if (!"mpt00".equals(tilesetName) && pxAttrProp.get() == mpt00) {
             pxAttrProp.set(new PxAttr(mpt00, Paths.get(GameData.INSTANCE.getResourceFolder().toString() +
-                                                       File.separatorChar + "img" + File.separatorChar +
+                                                       File.separatorChar + GameData.imageFolder + File.separatorChar +
                                                        tilesetName + ".pxattr")));
         }
         pxAttrProp.setAttribute(x, y, attribute);
