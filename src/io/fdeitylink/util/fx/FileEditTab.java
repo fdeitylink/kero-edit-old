@@ -52,7 +52,7 @@ public abstract class FileEditTab extends Tab {
                 title = title.substring(0, title.lastIndexOf('*'));
 
                 final Alert alert = FXUtil.createAlert(Alert.AlertType.NONE, title, null,
-                                                       Messages.getString("FXUtil.FileEditTab.UNSAVED_CHANGES"));
+                                                       Messages.getString("FileEditTab.UNSAVED_CHANGES"));
 
                 alert.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
                 alert.showAndWait().ifPresent(result -> {

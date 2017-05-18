@@ -41,7 +41,7 @@ import java.util.concurrent.Callable;
 
 import io.fdeitylink.util.NullArgumentException;
 
-import io.fdeitylink.util.Tuple;
+import kotlin.Pair;
 
 public final class FXUtil {
     private FXUtil() {
@@ -252,29 +252,29 @@ public final class FXUtil {
     }
 
     /**
-     * Creates and returns an {@code Dialog <Tuple <String, String>>} with two {@code TextField}s to be displayed
+     * Creates and returns an {@code Dialog <Dimensions <String, String>>} with two {@code TextField}s to be displayed
      *
      * @param title The title text of the {@code Dialog}
      * @param headerText The header text of the {@code Dialog}
-     * @param firstLabel The label for the first {@code TextField}
-     * @param secondLabel The label for the second {@code TextField}
+     * @param firstPrompt The prompt text for the first {@code TextField}
+     * @param secondPrompt The prompt text for the second {@code TextField}
      *
      * @return The created {@code Dialog <Pair <String, String>>}
      */
-    public static Dialog <Tuple <String, String>> createDualTextFieldDialog(final String title, final String headerText,
-                                                                            final String firstLabel,
-                                                                            final String secondLabel) {
-        final Dialog <Tuple <String, String>> dialog = new Dialog <>();
+    public static Dialog <Pair <String, String>> createDualTextFieldDialog(final String title, final String headerText,
+                                                                           final String firstPrompt,
+                                                                           final String secondPrompt) {
+        final Dialog <Pair <String, String>> dialog = new Dialog <>();
         dialog.setTitle(title);
         dialog.setHeaderText(headerText);
 
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
         final TextField firstField = new TextField();
-        firstField.setPromptText(firstLabel);
+        firstField.setPromptText(firstPrompt);
 
         final TextField secondField = new TextField();
-        secondField.setPromptText(secondLabel);
+        secondField.setPromptText(secondPrompt);
 
         final GridPane pane = new GridPane();
         pane.add(firstField, 1, 0);
@@ -285,7 +285,7 @@ public final class FXUtil {
         Platform.runLater(firstField::requestFocus);
 
         dialog.setResultConverter(param -> ButtonType.OK == param ?
-                                           new Tuple <>(firstField.getText(), secondField.getText()) : null);
+                                           new Pair <>(firstField.getText(), secondField.getText()) : null);
         return dialog;
     }
 }

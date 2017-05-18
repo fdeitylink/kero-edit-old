@@ -27,7 +27,7 @@
  * Make sure all Alert creations are accompanied by showAndWait() calls (some are missing)
  * Have any empty catch blocks log the exception with Logger.logThrowable()
  * Keep any MenuItems with unimplemented features disabled (like what I did for HackTab)
- * Convert to Kotlin?
+ * Use TornadoFX after converting to Kotlin?
  */
 
 package io.fdeitylink.keroedit;
