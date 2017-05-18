@@ -340,7 +340,7 @@ public final class KeroEdit extends Application {
         menuItems[FileMenuItem.CLOSE_TAB.ordinal()].setOnAction(event -> {
             final int tabIndex = mainTabPane.getSelectionModel().getSelectedIndex();
             if (-1 != tabIndex && mainTabPane.getTabs().get(tabIndex) != notepadTab) {
-                FXUtil.closeTab(mainTabPane.getTabs().get(tabIndex));
+                FXUtil.close(mainTabPane.getTabs().get(tabIndex));
             }
         });
         menuItems[FileMenuItem.CLOSE_TAB.ordinal()].setDisable(true);
@@ -723,7 +723,7 @@ public final class KeroEdit extends Application {
 
             //TODO: Print preview, etc.?
             if (printJob.showPrintDialog(mainStage)) {
-                if (printJob.printPage(new ImageView(FXUtil.scaleImage(ResourceManager.getImage("waffle.png"), 32)))) {
+                if (printJob.printPage(new ImageView(FXUtil.scaled(ResourceManager.getImage("waffle.png"), 32)))) {
                     printJob.endJob();
                 }
                 else {
@@ -977,7 +977,7 @@ public final class KeroEdit extends Application {
             }
 
             mainTabPane.getSelectionModel().select(tab);
-            FXUtil.closeTab(tab);
+            FXUtil.close(tab);
 
             /*
              * If tab is a FileEditTab it won't actually close if the user presses

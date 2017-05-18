@@ -724,7 +724,7 @@ public final class MapEditTab extends FileEditTab {
                             }
 
                             Platform.runLater(() -> gContext
-                                    .drawImage(FXUtil.scaleImage(tileTypeImg, tilesetZoom.get() / 2), 0, 0));
+                                    .drawImage(FXUtil.scaled(tileTypeImg, tilesetZoom.get() / 2), 0, 0));
                         }
                     }
 
@@ -761,7 +761,7 @@ public final class MapEditTab extends FileEditTab {
                     }
 
                     //TODO: Change selectedTiles view to a Canvas?
-                    Platform.runLater(() -> selectedTilesImgView.setImage(FXUtil.scaleImage(tilesImg, tilesetZoom.get())));
+                    Platform.runLater(() -> selectedTilesImgView.setImage(FXUtil.scaled(tilesImg, tilesetZoom.get())));
                     return null;
                 });
 
@@ -976,10 +976,10 @@ public final class MapEditTab extends FileEditTab {
                 tilesetGContext.setFill(tilesetBgColor.get());
                 tilesetGContext.fillRect(0, 0, tilesetCanvas.getWidth(), tilesetCanvas.getHeight());
 
-                tilesetGContext.drawImage(FXUtil.scaleImage(tilesets[selectedLayer.get()], tilesetZoom.get()), 0, 0);
+                tilesetGContext.drawImage(FXUtil.scaled(tilesets[selectedLayer.get()], tilesetZoom.get()), 0, 0);
 
                 //Since right now I only load the necessary part of the tileset, a simpler drawImage() method can be called (^)
-                /*tilesetGContext.drawImage(FXUtil.scaleImage(tilesets[selectedLayer.get()], zoom.get()),
+                /*tilesetGContext.drawImage(FXUtil.scaled(tilesets[selectedLayer.get()], zoom.get()),
                                             0, 0, TILESET_WIDTH * zoom.get(), TILESET_HEIGHT * zoom.get(),
                                             0, 0, tilesetCanvas.getWidth(), tilesetCanvas.getHeight());*/
             }
@@ -1031,7 +1031,7 @@ public final class MapEditTab extends FileEditTab {
                     attributeLabel.setFill(Color.WHITE);
 
                     /* *************************************** Attribute Image ************************************** */
-                    final Image scaledImg = FXUtil.scaleImage(pxAttrImage, 2);
+                    final Image scaledImg = FXUtil.scaled(pxAttrImage, 2);
                     //div height by 2 to cut empty bottom half of image
                     final Canvas pxAttrCanvas = new Canvas(scaledImg.getWidth(), scaledImg.getHeight() / 2);
                     final GraphicsContext gContext = pxAttrCanvas.getGraphicsContext2D();
@@ -1114,7 +1114,7 @@ public final class MapEditTab extends FileEditTab {
                         final int x = (entityIndex % ENTITIES_PER_ROW) * ENTITY_WIDTH;
                         final int y = (entityIndex / ENTITIES_PER_ROW) * ENTITY_HEIGHT;
 
-                        entityImageView.setImage(FXUtil.scaleImage(new WritableImage(entityImage.getPixelReader(), x, y,
+                        entityImageView.setImage(FXUtil.scaled(new WritableImage(entityImage.getPixelReader(), x, y,
                                                                                      ENTITY_WIDTH, ENTITY_HEIGHT), 2));
                         setText(String.format("#%d - " + entityNames[entityIndex], entityIndex));
                         setGraphic(entityImageView);
@@ -1170,7 +1170,7 @@ public final class MapEditTab extends FileEditTab {
                     add(label, 0, 0);
 
                     nameField = new TextField();
-                    FXUtil.setTextControlLength(nameField, PxPack.Entity.NAME_MAX_LEN);
+                    FXUtil.setMaxLen(nameField, PxPack.Entity.NAME_MAX_LEN);
                     nameField.textProperty().addListener((observable, oldValue, newValue) -> {
                         /*
                          * textProperty() will also change if the user selects a
@@ -1612,14 +1612,14 @@ public final class MapEditTab extends FileEditTab {
                         final int tilesetX = tileIndex % TILES_PER_ROW;
                         final int tilesetY = tileIndex / TILES_PER_ROW;
 
-                        tileImg = FXUtil.scaleImage(new WritableImage(tilesetReader,
+                        tileImg = FXUtil.scaled(new WritableImage(tilesetReader,
                                                                       tilesetX * TILE_WIDTH, tilesetY * TILE_HEIGHT,
                                                                       TILE_WIDTH, TILE_HEIGHT), mapZoom.get());
                         if (drawTileType) {
                             final int attributesX = attributes[tilesetY][tilesetX] % PXATTR_TILES_PER_ROW;
                             final int attributesY = attributes[tilesetY][tilesetX] / PXATTR_TILES_PER_ROW;
 
-                            tileTypeImg = FXUtil.scaleImage(new WritableImage(pxAttrImgReader,
+                            tileTypeImg = FXUtil.scaled(new WritableImage(pxAttrImgReader,
                                                                               attributesX * PXATTR_TILE_WIDTH,
                                                                               attributesY * PXATTR_TILE_HEIGHT,
                                                                               PXATTR_TILE_WIDTH, PXATTR_TILE_HEIGHT),
@@ -1736,13 +1736,13 @@ public final class MapEditTab extends FileEditTab {
                             }
                         }
 
-                        final Image typeImg = FXUtil.scaleImage(tmpTileTypeImg, mapZoom.get() / 2);
+                        final Image typeImg = FXUtil.scaled(tmpTileTypeImg, mapZoom.get() / 2);
                         Platform.runLater(() -> {
                             final GraphicsContext layerGContext = mapCanvases[layer].getGraphicsContext2D();
 
                             layerGContext.clearRect(0, 0, mapCanvases[layer].getWidth(), mapCanvases[layer].getHeight());
 
-                            layerGContext.drawImage(FXUtil.scaleImage(layerImg, mapZoom.get()), 0, 0);
+                            layerGContext.drawImage(FXUtil.scaled(layerImg, mapZoom.get()), 0, 0);
                             //null images ignored
                             layerGContext.drawImage(typeImg, 0, 0);
                         });
@@ -1811,7 +1811,7 @@ public final class MapEditTab extends FileEditTab {
                                                                 pxFormat, entityBuf, 0, ENTITY_WIDTH * 4);
                                 }
 
-                                Platform.runLater(() -> gContext.drawImage(FXUtil.scaleImage(entitiesImg,
+                                Platform.runLater(() -> gContext.drawImage(FXUtil.scaled(entitiesImg,
                                                                                              mapZoom.get() /
                                                                                              (ENTITY_WIDTH / TILE_WIDTH)),
                                                                            0, 0));
@@ -2110,7 +2110,7 @@ public final class MapEditTab extends FileEditTab {
             /* ******************************************** Description ********************************************* */
             final Text descriptionLabel = new Text("Description");
             final TextField descriptionTextField = new TextField(head.getDescription());
-            FXUtil.setTextControlLength(descriptionTextField, PxPack.Head.DESCRIPTION_MAX_LEN);
+            FXUtil.setMaxLen(descriptionTextField, PxPack.Head.DESCRIPTION_MAX_LEN);
             descriptionTextField.textProperty().addListener((observable, oldValue, newValue) -> {
                 head.setDescription(newValue);
                 markChanged();
