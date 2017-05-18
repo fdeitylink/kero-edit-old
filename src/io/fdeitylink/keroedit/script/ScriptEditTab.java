@@ -13,18 +13,23 @@ import java.nio.file.Path;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
-import io.fdeitylink.keroedit.gamedata.GameData;
-import io.fdeitylink.util.fx.FileEditTab;
 import javafx.scene.control.Alert;
 
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
 
+
 import io.fdeitylink.util.NullArgumentException;
+
+import io.fdeitylink.util.UtilsKt;
+
+import io.fdeitylink.util.fx.FileEditTab;
 
 import io.fdeitylink.keroedit.Messages;
 
 import io.fdeitylink.util.fx.FXUtil;
+
+import io.fdeitylink.keroedit.gamedata.GameData;
 
 import io.fdeitylink.keroedit.mapedit.MapEditTab;
 
@@ -79,7 +84,7 @@ public final class ScriptEditTab extends FileEditTab {
          * other constructor will call setText() again if this
          * tab is inside of a MapEditTab.
          */
-        setText(GameData.baseFilename(inPath, GameData.scriptExtension));
+        setText(UtilsKt.baseFilename(inPath, GameData.scriptExtension));
 
         setContent(textArea);
     }

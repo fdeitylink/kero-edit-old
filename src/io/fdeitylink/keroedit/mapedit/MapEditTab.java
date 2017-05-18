@@ -123,9 +123,9 @@ import io.fdeitylink.util.NullArgumentException;
 
 import io.fdeitylink.keroedit.Messages;
 
-import io.fdeitylink.util.Logger;
+import io.fdeitylink.util.UtilsKt;
 
-import io.fdeitylink.util.MathUtil;
+import io.fdeitylink.util.Logger;
 
 import io.fdeitylink.util.SafeEnum;
 
@@ -245,7 +245,7 @@ public final class MapEditTab extends FileEditTab {
             throw new IllegalStateException("Attempt to create MapEditTab when GameData has not been properly initialized yet");
         }
 
-        final String fname = GameData.baseFilename(inPath, GameData.mapExtension);
+        final String fname = UtilsKt.baseFilename(inPath, GameData.mapExtension);
 
         try {
             map = new PxPack(inPath);
@@ -907,9 +907,9 @@ public final class MapEditTab extends FileEditTab {
                             }
 
                             //grabs x & y and bounds them to be within tileset
-                            final int x = (int)(MathUtil.bound((int)event.getX(), 0, (int)tilesetCanvas.getWidth() - 1) /
+                            final int x = (int)(UtilsKt.bound((int)event.getX(), 0, (int)tilesetCanvas.getWidth() - 1) /
                                                 tilesetZoom.get() / TILE_WIDTH);
-                            final int y = (int)(MathUtil.bound((int)event.getY(), 0, (int)tilesetCanvas.getHeight() - 1) /
+                            final int y = (int)(UtilsKt.bound((int)event.getY(), 0, (int)tilesetCanvas.getHeight() - 1) /
                                                 tilesetZoom.get() / TILE_HEIGHT);
 
                             if (x != prevX || y != prevY) {
@@ -1372,23 +1372,22 @@ public final class MapEditTab extends FileEditTab {
                             FXUtil.task(() -> {
                                 final int layer = selectedLayer.get();
 
-                                if (mapCanvases[layer].isVisible() &&
-                                    MouseButton.PRIMARY == event.getButton()) {
+                                if (mapCanvases[layer].isVisible() && MouseButton.PRIMARY == event.getButton()) {
                                     final int[][] tiles = tileLayers[layer].getTiles();
 
                                     if (null != tiles) {
                                         //grabs x & y and bounds them to be within map
-                                        final int x = (int)(MathUtil.bound((int)event.getX(), 0,
-                                                                           (int)(mapCanvases[layer].getWidth() - 1)) /
+                                        final int x = (int)(UtilsKt.bound((int)event.getX(), 0,
+                                                                          (int)(mapCanvases[layer].getWidth() - 1)) /
                                                             mapZoom.get() / TILE_WIDTH);
-                                        final int y = (int)(MathUtil.bound((int)event.getY(), 0,
-                                                                           (int)(mapCanvases[layer].getHeight() - 1)) /
+                                        final int y = (int)(UtilsKt.bound((int)event.getY(), 0,
+                                                                          (int)(mapCanvases[layer].getHeight() - 1)) /
                                                             mapZoom.get() / TILE_HEIGHT);
 
-                                    /*
-                                     * Caps newTiles.length in the event that x or y is close enough
-                                     * to the map edge that selectedTiles goes off the edge
-                                     */
+                                        /*
+                                         * Caps newTiles.length in the event that x or y is close enough
+                                         * to the map's edge that selectedTiles goes off the edge
+                                         */
                                         final int hLen = Math.min(tiles[0].length - x, selectedTiles[layer][0].length);
                                         final int vLen = Math.min(tiles.length - y, selectedTiles[layer].length);
 
@@ -2132,7 +2131,7 @@ public final class MapEditTab extends FileEditTab {
                     @Override
                     public void updateItem(final Path map, final boolean empty) {
                         super.updateItem(map, empty);
-                        setText(empty ? null : GameData.baseFilename(map, GameData.mapExtension));
+                        setText(empty ? null : UtilsKt.baseFilename(map, GameData.mapExtension));
                     }
                 });
 
@@ -2154,7 +2153,7 @@ public final class MapEditTab extends FileEditTab {
                      * use of The Reaper (GC)
                      */
                     if (null != newValue) {
-                        head.setMapname(index, GameData.baseFilename(newValue, GameData.mapExtension));
+                        head.setMapname(index, UtilsKt.baseFilename(newValue, GameData.mapExtension));
                         markChanged();
                     }
                 });
@@ -2171,7 +2170,7 @@ public final class MapEditTab extends FileEditTab {
                     @Override
                     public void updateItem(final Path spritesheet, final boolean empty) {
                         super.updateItem(spritesheet, empty);
-                        setText(empty ? null : GameData.baseFilename(spritesheet, GameData.imageExtension));
+                        setText(empty ? null : UtilsKt.baseFilename(spritesheet, GameData.imageExtension));
                     }
                 });
 
@@ -2182,7 +2181,7 @@ public final class MapEditTab extends FileEditTab {
                 final SingleSelectionModel <Path> selectModel = cBox.getSelectionModel();
                 selectModel.select(spritesheet);
                 selectModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                    head.setSpritesheetName(GameData.baseFilename(newValue, GameData.imageExtension));
+                    head.setSpritesheetName(UtilsKt.baseFilename(newValue, GameData.imageExtension));
                     markChanged();
                     /*
                      * TODO:
@@ -2206,7 +2205,7 @@ public final class MapEditTab extends FileEditTab {
                     @Override
                     public void updateItem(final Path tileset, final boolean empty) {
                         super.updateItem(tileset, empty);
-                        setText(empty ? null : GameData.baseFilename(tileset, GameData.imageExtension));
+                        setText(empty ? null : UtilsKt.baseFilename(tileset, GameData.imageExtension));
                     }
                 });
 
@@ -2218,7 +2217,7 @@ public final class MapEditTab extends FileEditTab {
                 selectModel.select(tileset);
                 final int index = i;
                 selectModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                    head.setTilesetName(index, GameData.baseFilename(newValue, GameData.imageExtension));
+                    head.setTilesetName(index, UtilsKt.baseFilename(newValue, GameData.imageExtension));
                     markChanged();
 
                     //TODO: Only reload affected tileset, not all of them

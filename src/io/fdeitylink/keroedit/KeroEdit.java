@@ -114,6 +114,8 @@ import javafx.scene.image.ImageView;
 
 import io.fdeitylink.util.NullArgumentException;
 
+import io.fdeitylink.util.UtilsKt;
+
 import io.fdeitylink.util.Logger;
 
 import io.fdeitylink.util.SafeEnum;
@@ -779,7 +781,7 @@ public final class KeroEdit extends Application {
             @Override
             public void updateItem(final Path map, final boolean empty) {
                 super.updateItem(map, empty);
-                setText(empty ? null : GameData.baseFilename(map, GameData.mapExtension));
+                setText(empty ? null : UtilsKt.baseFilename(map, GameData.mapExtension));
             }
         });
 
@@ -815,8 +817,8 @@ public final class KeroEdit extends Application {
                          */
                         for (final Tab tab : mainTabPane.getTabs()) {
                             if (tab instanceof ScriptEditTab &&
-                                GameData.baseFilename(((ScriptEditTab)tab).getPath(), GameData.scriptExtension)
-                                        .equals(GameData.baseFilename(map, GameData.mapExtension))) {
+                                UtilsKt.baseFilename(((ScriptEditTab)tab).getPath(), GameData.scriptExtension)
+                                        .equals(UtilsKt.baseFilename(map, GameData.mapExtension))) {
                                 mainTabPane.getTabs().remove(tab); //TODO: Use closeTab(tab) to trigger onCloseRequest()?
                                 break;
                             }
@@ -866,7 +868,7 @@ public final class KeroEdit extends Application {
             final List <Path> selectedMapNames = new ArrayList <>(mapListView.getSelectionModel().getSelectedItems());
             for (int i = 0; i < selectedMapNames.size() && 0 < selectedMapNames.size(); ) {
                 final Path map = selectedMapNames.get(i);
-                FXUtil.createAlert(Alert.AlertType.CONFIRMATION, GameData.baseFilename(map, GameData.mapExtension),
+                FXUtil.createAlert(Alert.AlertType.CONFIRMATION, UtilsKt.baseFilename(map, GameData.mapExtension),
                                    null, Messages.getString("KeroEdit.DeleteMap.MESSAGE")).showAndWait()
                       .ifPresent(result -> {
                           if (ButtonType.OK == result) {
@@ -881,8 +883,8 @@ public final class KeroEdit extends Application {
                               for (final Tab tab : mainTabPane.getTabs()) {
                                   if ((tab instanceof MapEditTab && ((MapEditTab)tab).getPath().equals(map)) ||
                                       tab instanceof ScriptEditTab &&
-                                      GameData.baseFilename(((ScriptEditTab)tab).getPath(), GameData.scriptExtension)
-                                              .equals(GameData.baseFilename(map, GameData.mapExtension))) {
+                                      UtilsKt.baseFilename(((ScriptEditTab)tab).getPath(), GameData.scriptExtension)
+                                              .equals(UtilsKt.baseFilename(map, GameData.mapExtension))) {
                                       /*
                                        * Don't use FXUtil.closeTab() as we've already confirmed
                                        * the user wants to delete the map, and thus that they

@@ -27,6 +27,8 @@ import javafx.scene.paint.Color;
 
 import io.fdeitylink.util.NullArgumentException;
 
+import io.fdeitylink.util.UtilsKt;
+
 import io.fdeitylink.keroedit.Messages;
 
 import io.fdeitylink.keroedit.gamedata.GameData;
@@ -326,7 +328,7 @@ public final class PxPack {
     }
 
     public String getName() {
-        return GameData.baseFilename(path, GameData.mapExtension);
+        return UtilsKt.baseFilename(path, GameData.mapExtension);
     }
 
     public Path getPath() {

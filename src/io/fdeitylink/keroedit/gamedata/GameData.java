@@ -20,6 +20,8 @@ import javafx.collections.ObservableList;
 
 import io.fdeitylink.util.NullArgumentException;
 
+import io.fdeitylink.util.UtilsKt;
+
 import io.fdeitylink.keroedit.Messages;
 
 import io.fdeitylink.keroedit.map.PxPack;
@@ -68,23 +70,6 @@ public enum GameData {
 
     GameData() {
 
-    }
-
-    public static String baseFilename(final Path p, final String ext) {
-        NullArgumentException.Companion.requireNonNull(p, "baseFilename", "p");
-        NullArgumentException.Companion.requireNonNull(ext, "baseFilename", "ext");
-
-        if (Files.isDirectory(p)) {
-            throw new IllegalArgumentException("Attempt to get base filename of Path that does  not represent a file");
-        }
-
-        String fname = p.getFileName().toString();
-        final int extIndex = fname.lastIndexOf(ext);
-
-        if (-1 == extIndex) {
-            return fname;
-        }
-        return fname.substring(0, extIndex);
     }
 
     /**
@@ -266,7 +251,7 @@ public enum GameData {
         final ObservableList <Path> list = FXCollections.observableList(new ArrayList <>());
         try (final DirectoryStream <Path> paths = Files.newDirectoryStream(basePath, '*' + ext)) {
             for (final Path p : paths) {
-                final String fname = baseFilename(p, ext);
+                final String fname = UtilsKt.baseFilename(p, ext);
                 if (fname.length() <= PxPack.Head.FILENAME_MAX_LEN && !fname.contains(" ")) {
                     list.add(p);
                 }
