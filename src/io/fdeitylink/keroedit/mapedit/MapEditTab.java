@@ -1498,8 +1498,8 @@ public final class MapEditTab extends FileEditTab {
                                                      Messages.getString("MapEditTab.TileEditTab.Resize.NEW_WIDTH"),
                                                      Messages.getString("MapEditTab.TileEditTab.Resize.NEW_HEIGHT"))
                           .showAndWait().ifPresent(result -> {
-                        final String widthStr = result.x;
-                        final String heightStr = result.y;
+                        final String widthStr = result.component1();
+                        final String heightStr = result.component2();
 
                         if (0 < widthStr.length() && 0 < heightStr.length()) {
                             final int newWidth;

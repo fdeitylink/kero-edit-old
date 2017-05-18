@@ -268,7 +268,6 @@ public final class FXUtil {
         dialog.setTitle(title);
         dialog.setHeaderText(headerText);
 
-        //final ButtonType okButton = new ButtonType(okButtonText, ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
         final TextField firstField = new TextField();
@@ -286,8 +285,7 @@ public final class FXUtil {
         Platform.runLater(firstField::requestFocus);
 
         dialog.setResultConverter(param -> ButtonType.OK == param ?
-                                           new Tuple <>(firstField.getText(), secondField.getText()) :
-                                           null);
+                                           new Tuple <>(firstField.getText(), secondField.getText()) : null);
         return dialog;
     }
 }
