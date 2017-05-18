@@ -39,7 +39,7 @@ public abstract class FileEditTab extends Tab {
 
     protected FileEditTab(final Path p, final String text, final Node content) {
         super(text, content);
-        filePath = NullArgumentException.requireNonNull(p, "FileEditTab", "p").toAbsolutePath();
+        filePath = NullArgumentException.Companion.requireNonNull(p, "FileEditTab", "p").toAbsolutePath();
         changed = false;
 
         //TODO: Set name to base filename (no ext)?

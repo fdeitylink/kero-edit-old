@@ -49,7 +49,7 @@ public final class FXUtil {
     }
 
     public static <T> Task <T> task(final Callable <T> callable) {
-        NullArgumentException.requireNonNull(callable, "task", "callable");
+        NullArgumentException.Companion.requireNonNull(callable, "task", "callable");
         return new Task <T>() {
             @Override
             protected T call() throws Exception {
@@ -59,7 +59,7 @@ public final class FXUtil {
     }
 
     public static <V> Service <V> service(final Callable <V> callable) {
-        NullArgumentException.requireNonNull(callable, "service", "callable");
+        NullArgumentException.Companion.requireNonNull(callable, "service", "callable");
         return new Service <V>() {
             @Override
             protected Task <V> createTask() {
@@ -82,7 +82,7 @@ public final class FXUtil {
      * @throws NullArgumentException if {@code tab} is null
      */
     public static void closeTab(final Tab tab) {
-        NullArgumentException.requireNonNull(tab, "closeTab", "tab");
+        NullArgumentException.Companion.requireNonNull(tab, "closeTab", "tab");
         if (null == tab.getTabPane()) {
             return;
         }
@@ -104,7 +104,7 @@ public final class FXUtil {
      * @throws IllegalArgumentException if {@code len} is negative
      */
     public static void setTextControlLength(final TextInputControl input, final int len) {
-        NullArgumentException.requireNonNull(input, "setTextControlLength", "input");
+        NullArgumentException.Companion.requireNonNull(input, "setTextControlLength", "input");
         if (len < 0) {
             throw new IllegalArgumentException("Attempt to set max length of TextInputControl to negative value " +
                                                "(len: " + len + ')');
@@ -125,8 +125,8 @@ public final class FXUtil {
      * @throws NullArgumentException if {@code region} or {@code image} is null
      */
     public static void setBackgroundImage(final Region region, final Image image) {
-        NullArgumentException.requireNonNull(region, "setBackgroundImage", "region");
-        NullArgumentException.requireNonNull(image, "setBackgroundImage", "image");
+        NullArgumentException.Companion.requireNonNull(region, "setBackgroundImage", "region");
+        NullArgumentException.Companion.requireNonNull(image, "setBackgroundImage", "image");
         region.setBackground(new Background(new BackgroundImage(image, null, null, null, null)));
     }
 
@@ -139,7 +139,7 @@ public final class FXUtil {
      * @throws NullArgumentException if {@code region} is null
      */
     public static void setBackgroundColor(final Region region, final Color color) {
-        NullArgumentException.requireNonNull(region, "setBackgroundColor", "region");
+        NullArgumentException.Companion.requireNonNull(region, "setBackgroundColor", "region");
         region.setBackground(new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
     }
 
@@ -155,7 +155,7 @@ public final class FXUtil {
      * @throws NullArgumentException if {@code color} is null
      */
     public static String colorToString(final Color color) {
-        NullArgumentException.requireNonNull(color, "colorToString", "color");
+        NullArgumentException.Companion.requireNonNull(color, "colorToString", "color");
         return String.format("0x%02X%02X%02X%02X",
                              (int)(color.getRed() * 255),
                              (int)(color.getGreen() * 255),

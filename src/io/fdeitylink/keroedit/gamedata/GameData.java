@@ -71,8 +71,8 @@ public enum GameData {
     }
 
     public static String baseFilename(final Path p, final String ext) {
-        NullArgumentException.requireNonNull(p, "baseFilename", "p");
-        NullArgumentException.requireNonNull(ext, "baseFilename", "ext");
+        NullArgumentException.Companion.requireNonNull(p, "baseFilename", "p");
+        NullArgumentException.Companion.requireNonNull(ext, "baseFilename", "ext");
 
         if (Files.isDirectory(p)) {
             throw new IllegalArgumentException("Attempt to get base filename of Path that does  not represent a file");
@@ -98,7 +98,7 @@ public enum GameData {
         wipe();
 
         //TODO: Throws errors (or mkdirs()?) if rsc_x is missing necessary subfolders?
-        NullArgumentException.requireNonNull(executable, "init", "executable");
+        NullArgumentException.Companion.requireNonNull(executable, "init", "executable");
 
         if (!executable.getFileName().toString().endsWith(".exe")) {
             throw new IllegalArgumentException("Attempt to initialize GameData with file " +

@@ -87,7 +87,7 @@ public final class ScriptEditTab extends FileEditTab {
     public ScriptEditTab(final Path inPath, final MapEditTab parent) throws IOException {
         this(inPath); //throws NullArgumentException if inPath == null
 
-        NullArgumentException.requireNonNull(parent, "ScriptEditTab", "parent");
+        NullArgumentException.Companion.requireNonNull(parent, "ScriptEditTab", "parent");
         textArea.textProperty().addListener((observable, oldValue, newValue) -> {
             markChanged();
             parent.markChanged();

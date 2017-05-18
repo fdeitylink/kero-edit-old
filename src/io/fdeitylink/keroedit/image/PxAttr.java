@@ -27,7 +27,7 @@ public final class PxAttr {
     private int[][] attributes;
 
     PxAttr(final Path inPath) throws IOException, ParseException {
-        path = NullArgumentException.requireNonNull(inPath, "PxAttr", "inPath").toAbsolutePath();
+        path = NullArgumentException.Companion.requireNonNull(inPath, "PxAttr", "inPath").toAbsolutePath();
 
         /*if (!Files.exists(inPath)) {
             inPath = Paths.get(inPath.getParent().toAbsolutePath().toString() + File.separatorChar + "mpt00.pxattr");
@@ -82,8 +82,8 @@ public final class PxAttr {
 
     //for cloning into new PxAttr
     PxAttr(final PxAttr pxAttr, final Path inPath) {
-        attributes = NullArgumentException.requireNonNull(pxAttr, "PxAttr", "pxAttr").getAttributes();
-        path = NullArgumentException.requireNonNull(inPath, "PxAttr", "inPath").toAbsolutePath();
+        attributes = NullArgumentException.Companion.requireNonNull(pxAttr, "PxAttr", "pxAttr").getAttributes();
+        path = NullArgumentException.Companion.requireNonNull(inPath, "PxAttr", "inPath").toAbsolutePath();
     }
 
     public int[][] getAttributes() {

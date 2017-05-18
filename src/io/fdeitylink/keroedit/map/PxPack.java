@@ -53,7 +53,7 @@ public final class PxPack {
      * @throws ParseException if the mapFile format was somehow incorrect
      */
     public PxPack(final Path inPath) throws IOException, ParseException {
-        path = NullArgumentException.requireNonNull(inPath, "PxPack", "inPath").toAbsolutePath();
+        path = NullArgumentException.Companion.requireNonNull(inPath, "PxPack", "inPath").toAbsolutePath();
 
         if (!inPath.toString().endsWith(GameData.mapExtension)) {
             throw new IllegalArgumentException("File " + inPath.toAbsolutePath() +
@@ -334,7 +334,7 @@ public final class PxPack {
     }
 
     public void rename(final String newName) throws IOException {
-        NullArgumentException.requireNonNull(newName, "rename", "newName");
+        NullArgumentException.Companion.requireNonNull(newName, "rename", "newName");
         if (newName.length() > Head.FILENAME_MAX_LEN) {
             throw new IllegalArgumentException("Attempt to rename PxPack when arg has length " +
                                                newName.length() + " when max length is " + Head.FILENAME_MAX_LEN +
@@ -546,7 +546,7 @@ public final class PxPack {
         }
 
         public void setDescription(final String description) {
-            NullArgumentException.requireNonNull(description, "setDescription", "description");
+            NullArgumentException.Companion.requireNonNull(description, "setDescription", "description");
             if (description.length() > DESCRIPTION_MAX_LEN) {
                 throw new IllegalArgumentException("Attempt to set description when arg has length " +
                                                    description.length() + " when max length is " + DESCRIPTION_MAX_LEN +
@@ -556,7 +556,7 @@ public final class PxPack {
         }
 
         public void setMapname(final int index, final String mapname) {
-            NullArgumentException.requireNonNull(mapname, "setMapname", "mapname");
+            NullArgumentException.Companion.requireNonNull(mapname, "setMapname", "mapname");
             if (mapname.length() > FILENAME_MAX_LEN) {
                 throw new IllegalArgumentException("Attempt to set mapname when arg has length " +
                                                    mapname.length() + " when max length is " + FILENAME_MAX_LEN +
@@ -574,7 +574,7 @@ public final class PxPack {
         }
 
         public void setSpritesheetName(final String spritesheetName) {
-            NullArgumentException.requireNonNull(spritesheetName, "setSpritesheetName", "spritesheetName");
+            NullArgumentException.Companion.requireNonNull(spritesheetName, "setSpritesheetName", "spritesheetName");
             if (spritesheetName.length() > FILENAME_MAX_LEN) {
                 throw new IllegalArgumentException("Attempt to set spritesheetName when arg has length " +
                                                    spritesheetName.length() + " when max length is " + FILENAME_MAX_LEN +
@@ -598,7 +598,7 @@ public final class PxPack {
         }
 
         public void setBgColor(final Color color) {
-            NullArgumentException.requireNonNull(color, "setBgColor", "color");
+            NullArgumentException.Companion.requireNonNull(color, "setBgColor", "color");
             //TODO: verify kero blaster doesn't support bg opacity
             if (!color.isOpaque()) {
                 throw new IllegalArgumentException("Attempt to set background color to non-opaque color " +
@@ -608,7 +608,7 @@ public final class PxPack {
         }
 
         public void setTilesetName(final int index, final String tilesetName) {
-            NullArgumentException.requireNonNull(tilesetName, "setTilesetName", "tilesetName");
+            NullArgumentException.Companion.requireNonNull(tilesetName, "setTilesetName", "tilesetName");
             //only first is required
             if (0 == index && tilesetName.isEmpty()) {
                 throw new IllegalArgumentException("Attempt to set first tilesetName to empty string");
@@ -900,7 +900,7 @@ public final class PxPack {
         }
 
         public void setName(final String entityName) {
-            NullArgumentException.requireNonNull(entityName, "setName", "entityName");
+            NullArgumentException.Companion.requireNonNull(entityName, "setName", "entityName");
             if (entityName.length() > NAME_MAX_LEN) {
                 throw new IllegalArgumentException("Attempt to set entityName when arg has length " +
                                                    entityName.length() + " when max length is " + NAME_MAX_LEN +

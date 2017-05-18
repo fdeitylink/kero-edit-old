@@ -43,7 +43,7 @@ public final class PxAttrManager {
             throw new IllegalStateException("Attempt to retrieve PxAttr file when GameData has not been properly initialized yet");
         }
 
-        NullArgumentException.requireNonNull(tilesetName, "getPxAttr", "tilesetName");
+        NullArgumentException.Companion.requireNonNull(tilesetName, "getPxAttr", "tilesetName");
 
         if (pxAttrsMap.containsKey(tilesetName)) {
             return pxAttrsMap.get(tilesetName).getReadOnlyProperty();
@@ -79,7 +79,7 @@ public final class PxAttrManager {
 
     public static void setAttribute(final String tilesetName, final int x, final int y, final int attribute)
             throws IOException {
-        NullArgumentException.requireNonNull(tilesetName, "setAttribute", "tilesetName");
+        NullArgumentException.Companion.requireNonNull(tilesetName, "setAttribute", "tilesetName");
 
         if (!pxAttrsMap.containsKey(tilesetName)) {
             throw new IllegalArgumentException("Attempt to set attribute for PxAttr when given tileset has no stored PxAttr object " +

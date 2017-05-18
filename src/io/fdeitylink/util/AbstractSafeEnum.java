@@ -40,8 +40,8 @@ public abstract class AbstractSafeEnum <E extends AbstractSafeEnum<E> & Abstract
     Map <Class <? extends AbstractSafeEnum<?>>, List <? extends AbstractSafeEnum<?>>> subclassMap = new HashMap <>();
 
     private static transient final Comparator <Field> fieldComparator = (fieldOne, fieldTwo) -> {
-        NullArgumentException.requireNonNull(fieldOne, "fieldComparator.compare()", "o1");
-        NullArgumentException.requireNonNull(fieldTwo, "fieldComparator.compare()", "o2");
+        NullArgumentException.Companion.requireNonNull(fieldOne, "fieldComparator.compare()", "o1");
+        NullArgumentException.Companion.requireNonNull(fieldTwo, "fieldComparator.compare()", "o2");
 
         final OrderedMember fieldOneOrder = fieldOne.getAnnotation(OrderedMember.class);
         final OrderedMember fieldTwoOrder = fieldTwo.getAnnotation(OrderedMember.class);
@@ -80,7 +80,7 @@ public abstract class AbstractSafeEnum <E extends AbstractSafeEnum<E> & Abstract
 
     @SuppressWarnings("unchecked")
     protected AbstractSafeEnum(final String name, final int ordinal) {
-        NullArgumentException.requireNonNull(name, "AbstractSafeEnum", "name");
+        NullArgumentException.Companion.requireNonNull(name, "AbstractSafeEnum", "name");
         if (ordinal < 0) {
             throw new IllegalArgumentException("Attempt to construct new AbstractSafeEnum with negative ordinal " +
                                                "(ordinal: " + ordinal + ')');
@@ -250,8 +250,8 @@ public abstract class AbstractSafeEnum <E extends AbstractSafeEnum<E> & Abstract
     }
 
     public static <E extends AbstractSafeEnum<E> & Extensions <E>> E valueOf(final Class <E> safeEnumType, final String name) {
-        NullArgumentException.requireNonNull(safeEnumType, "valueOf", "safeEnumType");
-        NullArgumentException.requireNonNull(name, "valueOf", "name");
+        NullArgumentException.Companion.requireNonNull(safeEnumType, "valueOf", "safeEnumType");
+        NullArgumentException.Companion.requireNonNull(name, "valueOf", "name");
 
         if (AbstractSafeEnum.class.equals(safeEnumType) || !AbstractSafeEnum.class.isAssignableFrom(safeEnumType)) {
             throw new IllegalArgumentException("Argument for safeEnumType must be a subclass of AbstractSafeEnum " +
@@ -276,7 +276,7 @@ public abstract class AbstractSafeEnum <E extends AbstractSafeEnum<E> & Abstract
     }
 
     public static <E extends AbstractSafeEnum<E> & Extensions <E>> E[] values(final Class <E> safeEnumType) {
-        NullArgumentException.requireNonNull(safeEnumType, "values", "safeEnumType");
+        NullArgumentException.Companion.requireNonNull(safeEnumType, "values", "safeEnumType");
 
         if (AbstractSafeEnum.class.equals(safeEnumType) || !AbstractSafeEnum.class.isAssignableFrom(safeEnumType)) {
             throw new IllegalArgumentException("Argument for safeEnumType must be a subclass of AbstractSafeEnum " +
@@ -300,8 +300,8 @@ public abstract class AbstractSafeEnum <E extends AbstractSafeEnum<E> & Abstract
 
     public static <K extends AbstractSafeEnum<K> & Extensions <K>, V> Map <K, V> map(final Class <K> safeEnumType,
                                                                                      final List <V> values) {
-        NullArgumentException.requireNonNull(safeEnumType, "map", "safeEnumType");
-        NullArgumentException.requireNonNull(values, "map", "values");
+        NullArgumentException.Companion.requireNonNull(safeEnumType, "map", "safeEnumType");
+        NullArgumentException.Companion.requireNonNull(values, "map", "values");
 
         if (AbstractSafeEnum.class.equals(safeEnumType) || !AbstractSafeEnum.class.isAssignableFrom(safeEnumType)) {
             throw new IllegalArgumentException("Argument for safeEnumType must be a subclass of AbstractSafeEnum " +
@@ -336,7 +336,7 @@ public abstract class AbstractSafeEnum <E extends AbstractSafeEnum<E> & Abstract
 
     @Override
     public final int compareTo(final AbstractSafeEnum<E> o) {
-        NullArgumentException.requireNonNull(o, "compareTo", "o");
+        NullArgumentException.Companion.requireNonNull(o, "compareTo", "o");
         if (o.getClass() != this.getClass()) {
             throw new ClassCastException();
         }

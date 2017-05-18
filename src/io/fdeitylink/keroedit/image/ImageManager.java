@@ -36,7 +36,7 @@ public final class ImageManager {
             throw new IllegalStateException("Attempt to retrieve image file when GameData has not been properly initialized yet");
         }
 
-        NullArgumentException.requireNonNull(imageName, "getImage", "imageName");
+        NullArgumentException.Companion.requireNonNull(imageName, "getImage", "imageName");
 
         if (imagesMap.containsKey(imageName)) {
             return imagesMap.get(imageName);

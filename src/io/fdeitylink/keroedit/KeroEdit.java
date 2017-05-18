@@ -384,7 +384,7 @@ public final class KeroEdit extends Application {
      * @throws NullArgumentException if {@code executable} is null
      */
     private void loadMod(final Path executable) {
-        final Path exe = NullArgumentException.requireNonNull(executable, "loadMod", "executable").toAbsolutePath();
+        final Path exe = NullArgumentException.Companion.requireNonNull(executable, "loadMod", "executable").toAbsolutePath();
         try {
             FXUtil.task(() -> {
                 if (!exe.toString().endsWith(".exe")) {

@@ -1915,8 +1915,8 @@ public final class MapEditTab extends FileEditTab {
 
                 UndoableMapDrawEdit(final int layer, final int x, final int y,
                                     final int[][] oldTiles, final int[][] newTiles) {
-                    NullArgumentException.requireNonNull(oldTiles, "UndoableMapDrawEdit", "oldTiles");
-                    NullArgumentException.requireNonNull(newTiles, "UndoableMapDrawEdit", "newTiles");
+                    NullArgumentException.Companion.requireNonNull(oldTiles, "UndoableMapDrawEdit", "oldTiles");
+                    NullArgumentException.Companion.requireNonNull(newTiles, "UndoableMapDrawEdit", "newTiles");
 
                     if (0 == oldTiles.length) {
                         throw new IllegalArgumentException("Attempt to initialize new UndoableMapDrawEdit " +

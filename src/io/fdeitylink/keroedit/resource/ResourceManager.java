@@ -29,7 +29,7 @@ public final class ResourceManager {
     }
 
     public static Path getPath(final String filename) {
-        NullArgumentException.requireNonNull(filename, "getPath", "filename");
+        NullArgumentException.Companion.requireNonNull(filename, "getPath", "filename");
         try {
             final URI uri = ResourceManager.class.getResource(filename).toURI();
             try {
@@ -59,14 +59,14 @@ public final class ResourceManager {
     }
 
     public static InputStream getInputStream(final String filename) {
-        NullArgumentException.requireNonNull(filename, "getInputStream", "filename");
+        NullArgumentException.Companion.requireNonNull(filename, "getInputStream", "filename");
         //TODO: Do I need to use getPath() here as it does the whole jarFS thing?
         return ResourceManager.class.getResourceAsStream(filename);
     }
 
     public static Image getImage(final String filename) {
         //TODO: Return empty image if filename is null?
-        NullArgumentException.requireNonNull(filename, "getImage", "filename");
+        NullArgumentException.Companion.requireNonNull(filename, "getImage", "filename");
 
         final Path p = getPath(filename);
         if (null == p) {
