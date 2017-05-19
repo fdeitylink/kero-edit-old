@@ -97,7 +97,7 @@ public final class Config {
             prefs.flush();
         }
         catch (final BackingStoreException except) {
-            Logger.logThrowable("Failed to save preferences", except);
+            Logger.INSTANCE.logThrowable("Failed to save preferences", except);
         }
     }
 

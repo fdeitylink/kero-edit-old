@@ -25,7 +25,7 @@
  * Why is the scrollbar sometimes super tiny on the mapListView?
  * App icon (also use it for child windows)
  * Make sure all Alert creations are accompanied by showAndWait() calls (some are missing)
- * Have any empty catch blocks log the exception with Logger.logThrowable()
+ * Have any empty catch blocks log the exception with Logger.INSTANCE.logThrowable()
  * Keep any MenuItems with unimplemented features disabled (like what I did for HackTab)
  * Use TornadoFX after converting to Kotlin?
  */
@@ -165,7 +165,7 @@ public final class KeroEdit extends Application {
         final Thread.UncaughtExceptionHandler fxDefExceptHandler = Thread.currentThread().getUncaughtExceptionHandler();
         final Thread.UncaughtExceptionHandler exceptHandler = (thread, throwable) -> {
             fxDefExceptHandler.uncaughtException(thread, throwable);
-            Logger.logThrowable("Uncaught exception: ", throwable);
+            Logger.INSTANCE.logThrowable("Uncaught exception: ", throwable);
         };
         Thread.currentThread().setUncaughtExceptionHandler(exceptHandler);
         //Thread.setDefaultUncaughtExceptionHandler(exceptHandler);
@@ -448,7 +448,7 @@ public final class KeroEdit extends Application {
             //TODO: Use Service subclass
         }
         catch (final Exception except) {
-            Logger.logThrowable("Error during mod loading", except);
+            Logger.INSTANCE.logThrowable("Error during mod loading", except);
         }
     }
 

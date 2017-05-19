@@ -259,7 +259,7 @@ public final class MapEditTab extends FileEditTab {
                 message = MessageFormat.format(Messages.INSTANCE.getString("MapEditTab.OpenIOExcept.MESSAGE"),
                                                fname, except.getMessage());
 
-                Logger.logThrowable(except);
+                Logger.INSTANCE.logThrowable("IOException in map parsing", except);
             }
             else {
                 title = Messages.INSTANCE.getString("MapEditTab.OpenParseExcept.TITLE");
@@ -1424,7 +1424,7 @@ public final class MapEditTab extends FileEditTab {
                             }).run();
                         }
                         catch (final Exception except) {
-                            Logger.logThrowable("Exception in stackPane.setOnMouseClicked()", except);
+                            Logger.INSTANCE.logThrowable("Exception in stackPane.setOnMouseClicked()", except);
                         }
                     }
                 });
@@ -1648,7 +1648,7 @@ public final class MapEditTab extends FileEditTab {
                     }).run();
                 }
                 catch (final Exception except) {
-                    Logger.logThrowable("Exception in redrawTile(" + layer + ", " + x + ", " + y + ", " + ')', except);
+                    Logger.INSTANCE.logThrowable("Exception in redrawTile(" + layer + ", " + x + ", " + y + ", " + ')', except);
                 }
             }
 
@@ -1751,7 +1751,7 @@ public final class MapEditTab extends FileEditTab {
                     }).run();
                 }
                 catch (final Exception except) {
-                    Logger.logThrowable("Exception in redrawTileLayer(" + layer + ')', except);
+                    Logger.INSTANCE.logThrowable("Exception in redrawTileLayer(" + layer + ')', except);
                 }
             }
 
@@ -1852,7 +1852,7 @@ public final class MapEditTab extends FileEditTab {
                     }).run();
                 }
                 catch (final Exception except) {
-                    Logger.logThrowable("Exception in redrawEntityLayer()", except);
+                    Logger.INSTANCE.logThrowable("Exception in redrawEntityLayer()", except);
                 }
             }
 
