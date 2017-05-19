@@ -116,8 +116,10 @@ object FXUtil {
         Platform.runLater(firstField::requestFocus)
 
         dialog.resultConverter = Callback {
-            return@Callback if (ButtonType.OK == it) Pair<String, String>(firstField.text, secondField.text)
-            else Pair("", "")
+            if (ButtonType.OK == it) {
+                return@Callback Pair<String, String>(firstField.text, secondField.text)
+            }
+            return@Callback Pair("", "")
         }
 
         return dialog
@@ -184,10 +186,7 @@ object FXUtil {
      * @throws IllegalArgumentException if {@code len} is negative
      */
     fun TextInputControl.setMaxLen(len: Int) {
-        if (len < 0) {
-            throw IllegalArgumentException("Attempt to set max length of TextInputControl to negative value " +
-                                           "(len: " + len + ')')
-        }
+        require(len >= 0) { "Attempt to set max length of TextInputControl to negative value (len: $len)" }
         textProperty().addListener {
             _, _, newValue ->
             if (newValue.length > len) {

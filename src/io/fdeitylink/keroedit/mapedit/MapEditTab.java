@@ -424,7 +424,7 @@ public final class MapEditTab extends FileEditTab {
                 pxAttrImage = new Image(attrPath.toUri().toString(), false);
             }
             else {
-                pxAttrImage = ResourceManager.getImage("assist/attribute.png");
+                pxAttrImage = ResourceManager.INSTANCE.getImage("assist/attribute.png");
             }
         }
         if (null == entityImage) {
@@ -435,7 +435,7 @@ public final class MapEditTab extends FileEditTab {
                 entityImage = new Image(entityPath.toUri().toString(), false);
             }
             else {
-                entityImage = ResourceManager.getImage("assist/unittype.png");
+                entityImage = ResourceManager.INSTANCE.getImage("assist/unittype.png");
             }
         }
         if (null == entityNames) {
@@ -443,7 +443,7 @@ public final class MapEditTab extends FileEditTab {
                                        File.separatorChar + "assist" + File.separatorChar +
                                        "unittype.json");
             if (!Files.exists(namesPath)) {
-                namesPath = ResourceManager.getPath("assist/unittype.json");
+                namesPath = ResourceManager.INSTANCE.getPath("assist/unittype.json");
             }
 
             /*

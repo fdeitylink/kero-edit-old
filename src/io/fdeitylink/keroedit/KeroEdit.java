@@ -211,7 +211,7 @@ public final class KeroEdit extends Application {
         showLicense();
 
         /* ****************************************** Testing PoppableTab ******************************************* */
-        /*final ImageView node = new ImageView(ResourceManager.getImage("fdl_logo.png"));
+        /*final ImageView node = new ImageView(ResourceManager.INSTANCE.getImage("fdl_logo.png"));
         final PoppableTab tab = new PoppableTab("Test Poppable Tab", node);
         tab.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (!tab.isSelected()) {
@@ -463,7 +463,7 @@ public final class KeroEdit extends Application {
                 Files.createDirectory(modAssistPath);
             }
 
-            final Path internalAssistPath = ResourceManager.getPath("assist");
+            final Path internalAssistPath = ResourceManager.INSTANCE.getPath("assist");
             if (null == internalAssistPath) {
                 throw new IOException(); //jumps to outer catch block with CopyFolderFail
             }
@@ -723,7 +723,7 @@ public final class KeroEdit extends Application {
 
             //TODO: Print preview, etc.?
             if (printJob.showPrintDialog(mainStage)) {
-                if (printJob.printPage(new ImageView(FXUtil.INSTANCE.scaled(ResourceManager.getImage("waffle.png"), 32)))) {
+                if (printJob.printPage(new ImageView(FXUtil.INSTANCE.scaled(ResourceManager.INSTANCE.getImage("waffle.png"), 32)))) {
                     printJob.endJob();
                 }
                 else {
@@ -754,7 +754,7 @@ public final class KeroEdit extends Application {
                                                                              Messages.INSTANCE.getString("KeroEdit.LAST_UPDATE"),
                                                                              Messages.INSTANCE.getString("KeroEdit.VERSION")));
 
-            aboutAlert.setGraphic(new ImageView(ResourceManager.getImage("fdl_logo.png")));
+            aboutAlert.setGraphic(new ImageView(ResourceManager.INSTANCE.getImage("fdl_logo.png")));
             aboutAlert.showAndWait();
         });
 
@@ -1002,7 +1002,7 @@ public final class KeroEdit extends Application {
             return;
         }
 
-        final Path licensePath = ResourceManager.getPath("LICENSE");
+        final Path licensePath = ResourceManager.INSTANCE.getPath("LICENSE");
 
         if (null != licensePath) {
             try (Stream <String> lineStream = Files.lines(licensePath, Charset.forName("UTF-8"))) {

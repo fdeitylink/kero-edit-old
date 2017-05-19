@@ -73,7 +73,7 @@ public final class HackTab extends FileEditTab {
         Path stringsPath = Paths.get(GameData.INSTANCE.getResourceFolder().toString() +
                                      File.separatorChar + "assist" + File.separatorChar + stringsFname);
         if (!Files.exists(stringsPath)) {
-            stringsPath = ResourceManager.getPath("assist/" + stringsFname);
+            stringsPath = ResourceManager.INSTANCE.getPath("assist/" + stringsFname);
             if (null == stringsPath) { //this should never happen but I'm being safe
                 //inst = null;
                 //TODO: throw some kind of exception...
