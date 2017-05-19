@@ -91,7 +91,7 @@ public enum GameData {
         }
         if (!Files.exists(executable)) {
             //TODO: Throw IllegalArgumentException?
-            throw new NoSuchFileException(MessageFormat.format(Messages.getString("GameData.EXECUTABLE_NONEXISTENT"),
+            throw new NoSuchFileException(MessageFormat.format(Messages.INSTANCE.getString("GameData.EXECUTABLE_NONEXISTENT"),
                                                                executable.toAbsolutePath()));
         }
 
@@ -118,13 +118,13 @@ public enum GameData {
         }
         catch (final IOException except) {
             wipe();
-            throw new IOException(MessageFormat.format(Messages.getString("GameData.ListFilesIOExcept.MESSAGE"),
+            throw new IOException(MessageFormat.format(Messages.INSTANCE.getString("GameData.ListFilesIOExcept.MESSAGE"),
                                                        executable.toAbsolutePath()), except);
         }
 
         if (!rscExists) {
             wipe();
-            throw new NoSuchFileException(MessageFormat.format(Messages.getString("GameData.MISSING_RSC"),
+            throw new NoSuchFileException(MessageFormat.format(Messages.INSTANCE.getString("GameData.MISSING_RSC"),
                                                                executable.toAbsolutePath()));
         }
 
@@ -258,7 +258,7 @@ public enum GameData {
             }
         }
         catch (final IOException except) {
-            throw new IOException(MessageFormat.format(Messages.getString("GameData.ListFilesIOExcept.MESSAGE"),
+            throw new IOException(MessageFormat.format(Messages.INSTANCE.getString("GameData.ListFilesIOExcept.MESSAGE"),
                                                        executable), except);
         }
 

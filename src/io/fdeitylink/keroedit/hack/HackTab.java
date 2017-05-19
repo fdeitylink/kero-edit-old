@@ -80,7 +80,7 @@ public final class HackTab extends FileEditTab {
             }
         }
 
-        final HackTreeItem stringsTreeItem = parseHackFile(stringsPath, Messages.getString("HackTab.Roots.STRINGS"));
+        final HackTreeItem stringsTreeItem = parseHackFile(stringsPath, Messages.INSTANCE.getString("HackTab.Roots.STRINGS"));
 
         inst.sPane = new SplitPane();
 
@@ -107,7 +107,7 @@ public final class HackTab extends FileEditTab {
 
         //TODO: Apply button
 
-        inst.setText(Messages.getString("HackTab.TITLE"));
+        inst.setText(Messages.INSTANCE.getString("HackTab.TITLE"));
         inst.setTooltip(new Tooltip(GameData.INSTANCE.getExecutable().toString()));
 
         inst.setContent(inst.sPane);
@@ -220,7 +220,7 @@ public final class HackTab extends FileEditTab {
             field = new TextField(currentVal);
             field.setDisable(-1 == len || -1 == offset);
             field.setTooltip(new Tooltip("Default: " + defaultVal));
-            FXUtil.setMaxLen(field, len);
+            FXUtil.INSTANCE.setMaxLen(field, len);
 
             getChildren().addAll(label, field);
         }

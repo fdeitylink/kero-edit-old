@@ -93,7 +93,7 @@ public final class PxPack {
             chan.read(buf);
 
             if (!(new String(buf.array(), "SJIS").equals(Head.HEADER_STRING))) {
-                throw new ParseException(MessageFormat.format(Messages.getString("PxPack.INVALID_HEADER"),
+                throw new ParseException(MessageFormat.format(Messages.INSTANCE.getString("PxPack.INVALID_HEADER"),
                                                               inPath.getFileName()), (int)chan.position());
             }
 
@@ -125,7 +125,7 @@ public final class PxPack {
                 tilesetNames[i] = readString(chan, Head.FILENAME_MAX_LEN, "tileset name");
 
                 if (0 == i && tilesetNames[i].isEmpty()) {
-                    throw new ParseException(MessageFormat.format(Messages.getString("PxPack.MISSING_FIRST_TILESET"),
+                    throw new ParseException(MessageFormat.format(Messages.INSTANCE.getString("PxPack.MISSING_FIRST_TILESET"),
                                                                   inPath.getFileName()), (int)chan.position());
                 }
 
@@ -155,7 +155,7 @@ public final class PxPack {
                 buf = ByteBuffer.allocate(TileLayer.HEADER_STRING.length());
                 chan.read(buf);
                 if (!(new String(buf.array()).equals(TileLayer.HEADER_STRING))) {
-                    throw new ParseException(MessageFormat.format(Messages.getString("PxPack.INVALID_LAYER_HEADER"),
+                    throw new ParseException(MessageFormat.format(Messages.INSTANCE.getString("PxPack.INVALID_LAYER_HEADER"),
                                                                   i, inPath.getFileName()), (int)chan.position());
                 }
 
@@ -387,7 +387,7 @@ public final class PxPack {
 
         final int strLen = buf.get() & 0xFF;
         if (maxLen < strLen) {
-            throw new ParseException(MessageFormat.format(Messages.getString("PxPack.ReadString.INVALID_LEN"),
+            throw new ParseException(MessageFormat.format(Messages.INSTANCE.getString("PxPack.ReadString.INVALID_LEN"),
                                                           type, maxLen, strLen), (int)chan.position());
         }
 
@@ -396,7 +396,7 @@ public final class PxPack {
 
         final String str = new String(buf.array(), "SJIS");
         if (!"description".equals(type) && str.contains(" ")) {
-            throw new ParseException(MessageFormat.format(Messages.getString("PxPack.ReadString.CONTAINS_SPACE"),
+            throw new ParseException(MessageFormat.format(Messages.INSTANCE.getString("PxPack.ReadString.CONTAINS_SPACE"),
                                                           type), (int)chan.position());
         }
 

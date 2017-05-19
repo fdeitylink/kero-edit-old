@@ -211,7 +211,7 @@ public final class MapEditTab extends FileEditTab {
 
         tilesetStage = new Stage();
         tilesetStage.setAlwaysOnTop(true); //TODO: minimize or hide when KeroEdit program not focused
-        tilesetStage.setTitle(Messages.getString("MapEditTab.TileEditTab.TILESET_WINDOW_TITLE"));
+        tilesetStage.setTitle(Messages.INSTANCE.getString("MapEditTab.TileEditTab.TILESET_WINDOW_TITLE"));
         tilesetStage.setScene(new Scene(EMPTY_PANE));
 
         tilesetStage.setOnCloseRequest(event -> {
@@ -255,19 +255,19 @@ public final class MapEditTab extends FileEditTab {
             final String message;
 
             if (except instanceof IOException) {
-                title = Messages.getString("MapEditTab.OpenIOExcept.TITLE");
-                message = MessageFormat.format(Messages.getString("MapEditTab.OpenIOExcept.MESSAGE"),
+                title = Messages.INSTANCE.getString("MapEditTab.OpenIOExcept.TITLE");
+                message = MessageFormat.format(Messages.INSTANCE.getString("MapEditTab.OpenIOExcept.MESSAGE"),
                                                fname, except.getMessage());
 
                 Logger.logThrowable(except);
             }
             else {
-                title = Messages.getString("MapEditTab.OpenParseExcept.TITLE");
-                message = MessageFormat.format(Messages.getString("MapEditTab.OpenParseExcept.MESSAGE"),
+                title = Messages.INSTANCE.getString("MapEditTab.OpenParseExcept.TITLE");
+                message = MessageFormat.format(Messages.INSTANCE.getString("MapEditTab.OpenParseExcept.MESSAGE"),
                                                fname, except.getMessage());
             }
 
-            FXUtil.createAlert(Alert.AlertType.ERROR, title, null, message).showAndWait();
+            FXUtil.INSTANCE.createAlert(Alert.AlertType.ERROR, title, null, message).showAndWait();
 
             throw except;
         }
@@ -278,7 +278,7 @@ public final class MapEditTab extends FileEditTab {
 
         //TODO: Ensure updates to description in PropertyEditTab are reflected in tooltip
         tooltip = new Tooltip(inPath.toString() + '\n' +
-                              Messages.getString("MapEditTab.TOOLTIP_DESCRIPTION_LABEL") +
+                              Messages.INSTANCE.getString("MapEditTab.TOOLTIP_DESCRIPTION_LABEL") +
                               map.getHead().getDescription());
         setTooltip(tooltip);
 
@@ -382,8 +382,8 @@ public final class MapEditTab extends FileEditTab {
             }
         }
         catch (final IOException except) {
-            FXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("MapEditTab.Save.IOExcept.TITLE"), null,
-                               MessageFormat.format(Messages.getString("MapEditTab.Save.IOExcept.MESSAGE"),
+            FXUtil.INSTANCE.createAlert(Alert.AlertType.ERROR, Messages.INSTANCE.getString("MapEditTab.Save.IOExcept.TITLE"), null,
+                               MessageFormat.format(Messages.INSTANCE.getString("MapEditTab.Save.IOExcept.MESSAGE"),
                                                     map.getName(), except.getMessage())).showAndWait();
         }
     }
@@ -479,7 +479,7 @@ public final class MapEditTab extends FileEditTab {
         private final int[][][] selectedTiles;
 
         TileEditTab() {
-            super(MapEditTab.this.getPath(), Messages.getString("MapEditTab.TileEditTab.TITLE"));
+            super(MapEditTab.this.getPath(), Messages.INSTANCE.getString("MapEditTab.TileEditTab.TITLE"));
 
             selectedTiles = new int[PxPack.NUM_LAYERS][1][1];
 
@@ -686,7 +686,7 @@ public final class MapEditTab extends FileEditTab {
             }
 
             private void initServices() {
-                redrawTileTypes = FXUtil.service(() -> {
+                redrawTileTypes = FXUtil.INSTANCE.service(() -> {
                     final GraphicsContext gContext = tileTypeCanvas.getGraphicsContext2D();
 
                     Platform.runLater(() -> gContext.clearRect(0, 0, tileTypeCanvas.getWidth(), tileTypeCanvas.getHeight()));
@@ -724,14 +724,14 @@ public final class MapEditTab extends FileEditTab {
                             }
 
                             Platform.runLater(() -> gContext
-                                    .drawImage(FXUtil.scaled(tileTypeImg, tilesetZoom.get() / 2), 0, 0));
+                                    .drawImage(FXUtil.INSTANCE.scaled(tileTypeImg, tilesetZoom.get() / 2), 0, 0));
                         }
                     }
 
                     return null;
                 });
 
-                drawSelectedTiles = FXUtil.service(() -> {
+                drawSelectedTiles = FXUtil.INSTANCE.service(() -> {
                     final int layer = selectedLayer.get();
 
                     final int[][] selectedTilesRect = selectedTiles[layer];
@@ -761,11 +761,11 @@ public final class MapEditTab extends FileEditTab {
                     }
 
                     //TODO: Change selectedTiles view to a Canvas?
-                    Platform.runLater(() -> selectedTilesImgView.setImage(FXUtil.scaled(tilesImg, tilesetZoom.get())));
+                    Platform.runLater(() -> selectedTilesImgView.setImage(FXUtil.INSTANCE.scaled(tilesImg, tilesetZoom.get())));
                     return null;
                 });
 
-                loadTilesets = FXUtil.service(() -> {
+                loadTilesets = FXUtil.INSTANCE.service(() -> {
                     tilesets = new Image[PxPack.NUM_LAYERS];
 
                     final String[] tilesetNames = head.getTilesetNames();
@@ -790,7 +790,7 @@ public final class MapEditTab extends FileEditTab {
                     }
                 });
 
-                loadPxAttrs = FXUtil.service(() -> {
+                loadPxAttrs = FXUtil.INSTANCE.service(() -> {
                     pxAttrs = new PxAttr[PxPack.NUM_LAYERS];
 
                     final String[] tilesetNames = head.getTilesetNames();
@@ -805,10 +805,10 @@ public final class MapEditTab extends FileEditTab {
                         }
                         catch (final IOException | ParseException except) {
                             final String title = except instanceof IOException ?
-                                                 Messages.getString("MapEditTab.TileEditTab.PxAttrLoadIOExcept.TITLE") :
-                                                 Messages.getString("MapEditTab.TileEditTab.PxAttrLoadParseExcept.TITLE");
+                                                 Messages.INSTANCE.getString("MapEditTab.TileEditTab.PxAttrLoadIOExcept.TITLE") :
+                                                 Messages.INSTANCE.getString("MapEditTab.TileEditTab.PxAttrLoadParseExcept.TITLE");
                             //TODO: Option to create one? (will have to be all blank...)
-                            Platform.runLater(() -> FXUtil.createAlert(Alert.AlertType.ERROR, title, null,
+                            Platform.runLater(() -> FXUtil.INSTANCE.createAlert(Alert.AlertType.ERROR, title, null,
                                                                        except.getMessage()).showAndWait());
                         }
                     }
@@ -976,10 +976,10 @@ public final class MapEditTab extends FileEditTab {
                 tilesetGContext.setFill(tilesetBgColor.get());
                 tilesetGContext.fillRect(0, 0, tilesetCanvas.getWidth(), tilesetCanvas.getHeight());
 
-                tilesetGContext.drawImage(FXUtil.scaled(tilesets[selectedLayer.get()], tilesetZoom.get()), 0, 0);
+                tilesetGContext.drawImage(FXUtil.INSTANCE.scaled(tilesets[selectedLayer.get()], tilesetZoom.get()), 0, 0);
 
                 //Since right now I only load the necessary part of the tileset, a simpler drawImage() method can be called (^)
-                /*tilesetGContext.drawImage(FXUtil.scaled(tilesets[selectedLayer.get()], zoom.get()),
+                /*tilesetGContext.drawImage(FXUtil.INSTANCE.scaled(tilesets[selectedLayer.get()], zoom.get()),
                                             0, 0, TILESET_WIDTH * zoom.get(), TILESET_HEIGHT * zoom.get(),
                                             0, 0, tilesetCanvas.getWidth(), tilesetCanvas.getHeight());*/
             }
@@ -1017,7 +1017,7 @@ public final class MapEditTab extends FileEditTab {
 
                     final VBox content = new VBox(10);
                     content.setPadding(new Insets(5, 5, 5, 5));
-                    FXUtil.setBackgroundColor(content, Color.BLACK);
+                    FXUtil.INSTANCE.setBackgroundColor(content, Color.BLACK);
 
                     /* *************************************** Attribute Label ************************************** */
                     final PxAttr pxAttr = pxAttrs[layer];
@@ -1031,7 +1031,7 @@ public final class MapEditTab extends FileEditTab {
                     attributeLabel.setFill(Color.WHITE);
 
                     /* *************************************** Attribute Image ************************************** */
-                    final Image scaledImg = FXUtil.scaled(pxAttrImage, 2);
+                    final Image scaledImg = FXUtil.INSTANCE.scaled(pxAttrImage, 2);
                     //div height by 2 to cut empty bottom half of image
                     final Canvas pxAttrCanvas = new Canvas(scaledImg.getWidth(), scaledImg.getHeight() / 2);
                     final GraphicsContext gContext = pxAttrCanvas.getGraphicsContext2D();
@@ -1067,7 +1067,7 @@ public final class MapEditTab extends FileEditTab {
                                 }
                                 catch (final IOException except) {
                                     //TODO: Better and more descriptive Alert
-                                    FXUtil.createAlert(Alert.AlertType.ERROR, "Failed to set attribute", null,
+                                    FXUtil.INSTANCE.createAlert(Alert.AlertType.ERROR, "Failed to set attribute", null,
                                                        "Failed to set attribute").showAndWait();
                                 }
                             }
@@ -1114,7 +1114,7 @@ public final class MapEditTab extends FileEditTab {
                         final int x = (entityIndex % ENTITIES_PER_ROW) * ENTITY_WIDTH;
                         final int y = (entityIndex / ENTITIES_PER_ROW) * ENTITY_HEIGHT;
 
-                        entityImageView.setImage(FXUtil.scaled(new WritableImage(entityImage.getPixelReader(), x, y,
+                        entityImageView.setImage(FXUtil.INSTANCE.scaled(new WritableImage(entityImage.getPixelReader(), x, y,
                                                                                      ENTITY_WIDTH, ENTITY_HEIGHT), 2));
                         setText(String.format("#%d - " + entityNames[entityIndex], entityIndex));
                         setGraphic(entityImageView);
@@ -1170,7 +1170,7 @@ public final class MapEditTab extends FileEditTab {
                     add(label, 0, 0);
 
                     nameField = new TextField();
-                    FXUtil.setMaxLen(nameField, PxPack.Entity.NAME_MAX_LEN);
+                    FXUtil.INSTANCE.setMaxLen(nameField, PxPack.Entity.NAME_MAX_LEN);
                     nameField.textProperty().addListener((observable, oldValue, newValue) -> {
                         /*
                          * textProperty() will also change if the user selects a
@@ -1255,8 +1255,8 @@ public final class MapEditTab extends FileEditTab {
                 stackPane.getChildren().addAll(entityCanvas, gridCanvas, cursorCanvas);
 
                 bgColor = new SimpleObjectProperty <>(head.getBgColor());
-                bgColor.addListener((observable, oldValue, newValue) -> FXUtil.setBackgroundColor(stackPane, newValue));
-                FXUtil.setBackgroundColor(stackPane, bgColor.get());
+                bgColor.addListener((observable, oldValue, newValue) -> FXUtil.INSTANCE.setBackgroundColor(stackPane, newValue));
+                FXUtil.INSTANCE.setBackgroundColor(stackPane, bgColor.get());
 
                 initEventHandlers();
 
@@ -1369,7 +1369,7 @@ public final class MapEditTab extends FileEditTab {
                 stackPane.setOnMouseClicked(event -> {
                     if (EditMode.TILE == editMode.get()) {
                         try {
-                            FXUtil.task(() -> {
+                            FXUtil.INSTANCE.task(() -> {
                                 final int layer = selectedLayer.get();
 
                                 if (mapCanvases[layer].isVisible() && MouseButton.PRIMARY == event.getButton()) {
@@ -1464,8 +1464,8 @@ public final class MapEditTab extends FileEditTab {
              * @return The created {@code ContextMenu}
              */
             private ContextMenu initContextMenu() {
-                final MenuItem[] menuItems = {new MenuItem(Messages.getString("MapEditTab.TileEditTab.Resize.MENU_TEXT")),
-                                              new MenuItem(Messages.getString("MapEditTab.TileEditTab.BgColor.MENU_TEXT"))};
+                final MenuItem[] menuItems = {new MenuItem(Messages.INSTANCE.getString("MapEditTab.TileEditTab.Resize.MENU_TEXT")),
+                                              new MenuItem(Messages.INSTANCE.getString("MapEditTab.TileEditTab.BgColor.MENU_TEXT"))};
 
                 menuItems[MapPaneMenuItem.RESIZE.ordinal()].setOnAction(event -> {
                     final int layer = selectedLayer.get();
@@ -1473,29 +1473,29 @@ public final class MapEditTab extends FileEditTab {
                     final String layerName;
                     switch (layer) {
                         case 0:
-                            layerName = Messages.getString("PxPack.LayerNames.FOREGROUND");
+                            layerName = Messages.INSTANCE.getString("PxPack.LayerNames.FOREGROUND");
                             break;
                         case 1:
-                            layerName = Messages.getString("PxPack.LayerNames.MIDDLEGROUND");
+                            layerName = Messages.INSTANCE.getString("PxPack.LayerNames.MIDDLEGROUND");
                             break;
                         case 2:
                         default:
-                            layerName = Messages.getString("PxPack.LayerNames.BACKGROUND");
+                            layerName = Messages.INSTANCE.getString("PxPack.LayerNames.BACKGROUND");
                     }
 
-                    final String title = MessageFormat.format(Messages.getString("MapEditTab.TileEditTab.Resize.TITLE"),
+                    final String title = MessageFormat.format(Messages.INSTANCE.getString("MapEditTab.TileEditTab.Resize.TITLE"),
                                                               layerName);
 
                     final int[][] oldTiles = mapPane.tileLayers[layer].getTiles();
                     final int oldWidth = null == oldTiles ? 0 : oldTiles[0].length;
                     final int oldHeight = null == oldTiles ? 0 : oldTiles.length;
 
-                    final String currentSizeStr = MessageFormat.format(Messages.getString("MapEditTab.TileEditTab.Resize.CURRENT_SIZE"),
+                    final String currentSizeStr = MessageFormat.format(Messages.INSTANCE.getString("MapEditTab.TileEditTab.Resize.CURRENT_SIZE"),
                                                                        oldWidth, oldHeight);
 
-                    FXUtil.createDualTextFieldDialog(title, currentSizeStr,
-                                                     Messages.getString("MapEditTab.TileEditTab.Resize.NEW_WIDTH"),
-                                                     Messages.getString("MapEditTab.TileEditTab.Resize.NEW_HEIGHT"))
+                    FXUtil.INSTANCE.createDualTextFieldDialog(title, currentSizeStr,
+                                                     Messages.INSTANCE.getString("MapEditTab.TileEditTab.Resize.NEW_WIDTH"),
+                                                     Messages.INSTANCE.getString("MapEditTab.TileEditTab.Resize.NEW_HEIGHT"))
                           .showAndWait().ifPresent(result -> {
                         final String widthStr = result.component1();
                         final String heightStr = result.component2();
@@ -1508,19 +1508,19 @@ public final class MapEditTab extends FileEditTab {
                                 newHeight = Integer.parseInt(heightStr);
                             }
                             catch (final NumberFormatException except) {
-                                FXUtil.createAlert(Alert.AlertType.ERROR,
-                                                   Messages.getString("MapEditTab.TileEditTab.Resize.NumFormatExcept.TITLE"),
+                                FXUtil.INSTANCE.createAlert(Alert.AlertType.ERROR,
+                                                   Messages.INSTANCE.getString("MapEditTab.TileEditTab.Resize.NumFormatExcept.TITLE"),
                                                    null,
-                                                   Messages.getString("MapEditTab.TileEditTab.Resize.NumFormatExcept.MESSAGE"))
+                                                   Messages.INSTANCE.getString("MapEditTab.TileEditTab.Resize.NumFormatExcept.MESSAGE"))
                                       .showAndWait();
                                 return;
                             }
 
                             if (newWidth > 0xFFFF || newHeight > 0xFFFF) {
-                                FXUtil.createAlert(Alert.AlertType.ERROR,
-                                                   Messages.getString("MapEditTab.TileEditTab.Resize.InvalidDimensions.TITLE"),
+                                FXUtil.INSTANCE.createAlert(Alert.AlertType.ERROR,
+                                                   Messages.INSTANCE.getString("MapEditTab.TileEditTab.Resize.InvalidDimensions.TITLE"),
                                                    null,
-                                                   Messages.getString("MapEditTab.TileEditTab.Resize.InvalidDimensions.MESSAGE"))
+                                                   Messages.INSTANCE.getString("MapEditTab.TileEditTab.Resize.InvalidDimensions.MESSAGE"))
                                       .showAndWait();
                                 return;
                             }
@@ -1540,10 +1540,10 @@ public final class MapEditTab extends FileEditTab {
                     final ColorPicker cPicker = new ColorPicker(mapPane.bgColor.get());
                     cPicker.setOnAction(ev -> {
                         if (!cPicker.getValue().isOpaque()) {
-                            FXUtil.createAlert(Alert.AlertType.ERROR,
-                                               Messages.getString("MapEditTab.TileEditTab.BgColor.OpacityError.TITLE"),
+                            FXUtil.INSTANCE.createAlert(Alert.AlertType.ERROR,
+                                               Messages.INSTANCE.getString("MapEditTab.TileEditTab.BgColor.OpacityError.TITLE"),
                                                null,
-                                               Messages.getString("MapEditTab.TileEditTab.BgColor.OpacityError.MESSAGE"))
+                                               Messages.INSTANCE.getString("MapEditTab.TileEditTab.BgColor.OpacityError.MESSAGE"))
                                   .showAndWait();
                         }
                         else {
@@ -1574,7 +1574,7 @@ public final class MapEditTab extends FileEditTab {
             private void redrawTile(final int layer, final int x, final int y) {
                 try {
                     //TODO: Create new Service subclass that takes layer, x, and y params in constructor and can be restarted on demand?
-                    FXUtil.task(() -> {
+                    FXUtil.INSTANCE.task(() -> {
                         final int[][] tiles = tileLayers[layer].getTiles();
                         if (null == tiles) {
                             return null;
@@ -1612,14 +1612,14 @@ public final class MapEditTab extends FileEditTab {
                         final int tilesetX = tileIndex % TILES_PER_ROW;
                         final int tilesetY = tileIndex / TILES_PER_ROW;
 
-                        tileImg = FXUtil.scaled(new WritableImage(tilesetReader,
+                        tileImg = FXUtil.INSTANCE.scaled(new WritableImage(tilesetReader,
                                                                       tilesetX * TILE_WIDTH, tilesetY * TILE_HEIGHT,
                                                                       TILE_WIDTH, TILE_HEIGHT), mapZoom.get());
                         if (drawTileType) {
                             final int attributesX = attributes[tilesetY][tilesetX] % PXATTR_TILES_PER_ROW;
                             final int attributesY = attributes[tilesetY][tilesetX] / PXATTR_TILES_PER_ROW;
 
-                            tileTypeImg = FXUtil.scaled(new WritableImage(pxAttrImgReader,
+                            tileTypeImg = FXUtil.INSTANCE.scaled(new WritableImage(pxAttrImgReader,
                                                                               attributesX * PXATTR_TILE_WIDTH,
                                                                               attributesY * PXATTR_TILE_HEIGHT,
                                                                               PXATTR_TILE_WIDTH, PXATTR_TILE_HEIGHT),
@@ -1660,7 +1660,7 @@ public final class MapEditTab extends FileEditTab {
             private void redrawTileLayer(final int layer) {
                 try {
                     //TODO: Create new Service subclass that takes layer param in constructor and can be restarted on demand?
-                    FXUtil.task(() -> {
+                    FXUtil.INSTANCE.task(() -> {
                         final int[][] tiles = tileLayers[layer].getTiles();
                         if (null == tiles) {
                             return null;
@@ -1736,13 +1736,13 @@ public final class MapEditTab extends FileEditTab {
                             }
                         }
 
-                        final Image typeImg = FXUtil.scaled(tmpTileTypeImg, mapZoom.get() / 2);
+                        final Image typeImg = FXUtil.INSTANCE.scaled(tmpTileTypeImg, mapZoom.get() / 2);
                         Platform.runLater(() -> {
                             final GraphicsContext layerGContext = mapCanvases[layer].getGraphicsContext2D();
 
                             layerGContext.clearRect(0, 0, mapCanvases[layer].getWidth(), mapCanvases[layer].getHeight());
 
-                            layerGContext.drawImage(FXUtil.scaled(layerImg, mapZoom.get()), 0, 0);
+                            layerGContext.drawImage(FXUtil.INSTANCE.scaled(layerImg, mapZoom.get()), 0, 0);
                             //null images ignored
                             layerGContext.drawImage(typeImg, 0, 0);
                         });
@@ -1766,7 +1766,7 @@ public final class MapEditTab extends FileEditTab {
 
             private void redrawEntityLayer() {
                 try {
-                    FXUtil.task(() -> {
+                    FXUtil.INSTANCE.task(() -> {
                         //TODO: Two of these just call Platform.runLater(), so should only sprite drawing go in a Task?
 
                         //TODO: Single image that is modified, then scaled and drawn onto Canvas?
@@ -1811,7 +1811,7 @@ public final class MapEditTab extends FileEditTab {
                                                                 pxFormat, entityBuf, 0, ENTITY_WIDTH * 4);
                                 }
 
-                                Platform.runLater(() -> gContext.drawImage(FXUtil.scaled(entitiesImg,
+                                Platform.runLater(() -> gContext.drawImage(FXUtil.INSTANCE.scaled(entitiesImg,
                                                                                              mapZoom.get() /
                                                                                              (ENTITY_WIDTH / TILE_WIDTH)),
                                                                            0, 0));
@@ -2051,7 +2051,7 @@ public final class MapEditTab extends FileEditTab {
         private final PxPack.Head head;
 
         PropertyEditTab() {
-            super(MapEditTab.this.getPath(), Messages.getString("MapEditTab.PropertyEditTab.TITLE"));
+            super(MapEditTab.this.getPath(), Messages.INSTANCE.getString("MapEditTab.PropertyEditTab.TITLE"));
             head = map.getHead();
             setContent(initEditorPane());
         }
@@ -2110,12 +2110,12 @@ public final class MapEditTab extends FileEditTab {
             /* ******************************************** Description ********************************************* */
             final Text descriptionLabel = new Text("Description");
             final TextField descriptionTextField = new TextField(head.getDescription());
-            FXUtil.setMaxLen(descriptionTextField, PxPack.Head.DESCRIPTION_MAX_LEN);
+            FXUtil.INSTANCE.setMaxLen(descriptionTextField, PxPack.Head.DESCRIPTION_MAX_LEN);
             descriptionTextField.textProperty().addListener((observable, oldValue, newValue) -> {
                 head.setDescription(newValue);
                 markChanged();
                 tooltip.setText(map.getPath().toString() + '\n' +
-                                Messages.getString("MapEditTab.TOOLTIP_DESCRIPTION_LABEL") + newValue);
+                                Messages.INSTANCE.getString("MapEditTab.TOOLTIP_DESCRIPTION_LABEL") + newValue);
             });
 
             final ArrayList <ComboBox <Path>> fields = new ArrayList <>(labels.size());

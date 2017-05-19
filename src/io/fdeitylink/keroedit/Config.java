@@ -49,7 +49,7 @@ public final class Config {
     static void loadPrefs() {
         licenseRead = prefs.getBoolean("LICENSE_READ", false);
         lastExeLoc = prefs.get("LAST_EXECUTABLE_LOCATION", System.getProperty("user.dir"));
-        notepadText = prefs.get("NOTEPAD_TEXT", Messages.getString("Config.NOTEPAD_TEXT_DEFAULT"));
+        notepadText = prefs.get("NOTEPAD_TEXT", Messages.INSTANCE.getString("Config.NOTEPAD_TEXT_DEFAULT"));
 
         mapZoom = prefs.getDouble("MAP_ZOOM", 2);
         tilesetZoom = prefs.getDouble("TILESET_ZOOM", 2);
@@ -81,7 +81,7 @@ public final class Config {
 
             prefs.putDouble("MAP_ZOOM", mapZoom);
             prefs.putDouble("TILESET_ZOOM", tilesetZoom);
-            prefs.put("TILESET_BG_COLOR", FXUtil.colorToString(tilesetBgColor));
+            prefs.put("TILESET_BG_COLOR", FXUtil.INSTANCE.colorToString(tilesetBgColor));
 
             prefs.putInt("DISPLAYED_LAYERS", encode(displayedLayers));
             prefs.putInt("SELECTED_LAYER", selectedLayer);

@@ -32,7 +32,7 @@ public final class PxAttr {
         /*if (!Files.exists(inPath)) {
             inPath = Paths.get(inPath.getParent().toAbsolutePath().toString() + File.separatorChar + "mpt00.pxattr");
             if (!Files.exists(inPath)) {
-                throw new FileNotFoundException(Messages.getString("PxAttrManager.PxAttr.DEFAULT_MISSING"));
+                throw new FileNotFoundException(Messages.INSTANCE.getString("PxAttrManager.PxAttr.DEFAULT_MISSING"));
             }
         }*/
 
@@ -41,7 +41,7 @@ public final class PxAttr {
             chan.read(buf);
 
             if (!(new String(buf.array()).equals(HEADER_STRING))) {
-                throw new ParseException(MessageFormat.format(Messages.getString("PxAttrManager.PxAttr.INCORRECT_HEADER"),
+                throw new ParseException(MessageFormat.format(Messages.INSTANCE.getString("PxAttrManager.PxAttr.INCORRECT_HEADER"),
                                                               inPath.getFileName()),
                                          (int)chan.position());
             }
@@ -75,7 +75,7 @@ public final class PxAttr {
             }
         }
         catch (final IOException except) {
-            throw new IOException(MessageFormat.format(Messages.getString("PxAttrManager.PxAttr.IOEXCEPT"),
+            throw new IOException(MessageFormat.format(Messages.INSTANCE.getString("PxAttrManager.PxAttr.IOEXCEPT"),
                                                        inPath.getFileName()), except);
         }
     }

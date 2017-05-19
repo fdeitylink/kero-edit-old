@@ -68,8 +68,8 @@ public final class ScriptEditTab extends FileEditTab {
             }
         }
         catch (final IOException except) {
-            FXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("ScriptEditTab.IOExcept.TITLE"), null,
-                               MessageFormat.format(Messages.getString("ScriptEditTab.IOExcept.MESSAGE"),
+            FXUtil.INSTANCE.createAlert(Alert.AlertType.ERROR, Messages.INSTANCE.getString("ScriptEditTab.IOExcept.TITLE"), null,
+                               MessageFormat.format(Messages.INSTANCE.getString("ScriptEditTab.IOExcept.MESSAGE"),
                                                     inPath.getFileName(), except.getMessage())).showAndWait();
             throw except;
         }
@@ -98,7 +98,7 @@ public final class ScriptEditTab extends FileEditTab {
             parent.markChanged();
         });
 
-        setText(Messages.getString("ScriptEditTab.TITLE"));
+        setText(Messages.INSTANCE.getString("ScriptEditTab.TITLE"));
     }
 
     @Override
@@ -119,8 +119,8 @@ public final class ScriptEditTab extends FileEditTab {
             markUnchanged();
         }
         catch (final IOException except) {
-            FXUtil.createAlert(Alert.AlertType.ERROR, Messages.getString("ScriptEditTab.Save.IOExcept.TITLE"), null,
-                               MessageFormat.format(Messages.getString("ScriptEditTab.Save.IOExcept.MESSAGE"),
+            FXUtil.INSTANCE.createAlert(Alert.AlertType.ERROR, Messages.INSTANCE.getString("ScriptEditTab.Save.IOExcept.TITLE"), null,
+                               MessageFormat.format(Messages.INSTANCE.getString("ScriptEditTab.Save.IOExcept.MESSAGE"),
                                                     scriptPath.getFileName(), except.getMessage())).showAndWait();
         }
     }

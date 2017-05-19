@@ -39,16 +39,14 @@ import javafx.scene.paint.Color
 import javafx.concurrent.Service
 import javafx.concurrent.Task
 
-//TODO: Make the extension functions top-level functions
+//TODO: Make the extension functions top-level functions?
 object FXUtil {
-    @JvmStatic
     fun <V> task(callable: Callable<V>): Task<V> {
         return object : Task<V>() {
             override fun call() = callable.call()
         }
     }
 
-    @JvmStatic
     fun <V> service(callable: Callable<V>): Service<V> {
         return object : Service<V>() {
             override fun createTask(): Task<V> {
@@ -67,7 +65,6 @@ object FXUtil {
      *
      * @return a {@code String} representation of {@code color}
      */
-    @JvmStatic
     fun colorToString(color: Color): String {
         return String.format("0x%02X%02X%02X%02X",
                              (color.red * 255).toInt(),
@@ -86,7 +83,6 @@ object FXUtil {
      *
      * @return the created {@code Alert}
      */
-    @JvmStatic
     fun createAlert(type: Alert.AlertType = Alert.AlertType.NONE, title: String?, headerText: String? = null,
                     message: String?): Alert {
         val alert = Alert(type)
@@ -97,44 +93,6 @@ object FXUtil {
         return alert
     }
 
-    /**
-     * Creates and returns an {@code Alert} with an {@code TextBox} inside
-     *
-     * @param type the {@code Alert.AlertType} of the alert. Defaults to {@code Alert.AlertType.NONE}
-     * @param title the title text of the alert
-     * @param headerText the header text of the alert
-     * @param message the content text of the alert
-     * @param textAreaContent the content of the text box in the alert
-     * @param editable true if the user should be able to edit the content of the text box, false otherwise
-     *
-     * @return the created {@code Alert}
-     */
-    @JvmStatic
-    fun createTextboxAlert(type: Alert.AlertType = Alert.AlertType.NONE, title: String?, headerText: String? = null,
-                           message: String?, textAreaContent: String?, editable: Boolean = false): Alert {
-        val alert = createAlert(type, title, headerText, message)
-
-        val textArea = TextArea(textAreaContent)
-        textArea.isEditable = editable
-        textArea.isWrapText = true
-
-        textArea.maxWidth = Double.MAX_VALUE
-        textArea.maxHeight = Double.MAX_VALUE
-
-        GridPane.setVgrow(textArea, Priority.ALWAYS)
-        GridPane.setHgrow(textArea, Priority.ALWAYS)
-
-        val pane = GridPane() //TODO: Other solution that doesn't use GridPane
-        pane.maxWidth = Double.MAX_VALUE
-        pane.add(textArea, 0, 0)
-
-        alert.dialogPane.expandableContent = pane
-        alert.dialogPane.isExpanded = true
-
-        return alert
-    }
-
-    @JvmStatic
     fun createDualTextFieldDialog(title: String?, headerText: String?, firstPrompt: String?, secondPrompt: String?):
             Dialog<Pair<String, String>> {
         val dialog = Dialog<Pair <String, String>>()
@@ -166,10 +124,45 @@ object FXUtil {
     }
 
     /**
+     * Creates and returns an {@code Alert} with an {@code TextBox} inside
+     *
+     * @param type the {@code Alert.AlertType} of the alert. Defaults to {@code Alert.AlertType.NONE}
+     * @param title the title text of the alert
+     * @param headerText the header text of the alert
+     * @param message the content text of the alert
+     * @param textAreaContent the content of the text box in the alert
+     * @param editable true if the user should be able to edit the content of the text box, false otherwise
+     *
+     * @return the created {@code Alert}
+     */
+    fun createTextboxAlert(type: Alert.AlertType = Alert.AlertType.NONE, title: String?, headerText: String? = null,
+                           message: String?, textAreaContent: String?, editable: Boolean = false): Alert {
+        val alert = createAlert(type, title, headerText, message)
+
+        val textArea = TextArea(textAreaContent)
+        textArea.isEditable = editable
+        textArea.isWrapText = true
+
+        textArea.maxWidth = Double.MAX_VALUE
+        textArea.maxHeight = Double.MAX_VALUE
+
+        GridPane.setVgrow(textArea, Priority.ALWAYS)
+        GridPane.setHgrow(textArea, Priority.ALWAYS)
+
+        val pane = GridPane() //TODO: Other solution that doesn't use GridPane
+        pane.maxWidth = Double.MAX_VALUE
+        pane.add(textArea, 0, 0)
+
+        alert.dialogPane.expandableContent = pane
+        alert.dialogPane.isExpanded = true
+
+        return alert
+    }
+
+    /**
      * Closes this tab such that if it has an {@code onCloseRequest} or
      * {@code onClosed EventHandler} set, it will be triggered.
      */
-    @JvmStatic
     fun Tab.close() {
         if (null == tabPane) {
             return
@@ -190,7 +183,6 @@ object FXUtil {
      *
      * @throws IllegalArgumentException if {@code len} is negative
      */
-    @JvmStatic
     fun TextInputControl.setMaxLen(len: Int) {
         if (len < 0) {
             throw IllegalArgumentException("Attempt to set max length of TextInputControl to negative value " +
@@ -209,7 +201,6 @@ object FXUtil {
      *
      * @param image the {@code Image} to use as the background of this {@code Region}
      */
-    @JvmStatic
     fun Region.setBackgroundImage(image: Image) {
         background = Background(BackgroundImage(image, null, null, null, null))
     }
@@ -219,7 +210,6 @@ object FXUtil {
      *
      * @param color the {@code Color} to use as the background of this {@code Region}
      */
-    @JvmStatic
     fun Region.setBackgroundColor(color: Color) {
         background = Background(BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY))
     }
@@ -233,7 +223,6 @@ object FXUtil {
      * @return this {@code Image} if this is null, the width or height of this is 0,
      * or {@code scale} is 1, otherwise a version of this scaled by {@code scale}
      */
-    @JvmStatic
     fun Image?.scaled(scale: Double): Image? {
         if (null == this || 1.0 == scale) {
             return this

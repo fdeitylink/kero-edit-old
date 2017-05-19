@@ -61,7 +61,7 @@ public final class PxAttrManager {
                 path = Paths.get(path.getParent().toAbsolutePath().toString() + File.separatorChar + "mpt00.pxattr");
                 if (!Files.exists(path)) { //mpt00 file doesn't exist
                     //return null instead?
-                    throw new FileNotFoundException(Messages.getString("PxAttrManager.PxAttr.DEFAULT_MISSING"));
+                    throw new FileNotFoundException(Messages.INSTANCE.getString("PxAttrManager.PxAttr.DEFAULT_MISSING"));
                 }
                 mpt00 = new PxAttr(path);
             }
