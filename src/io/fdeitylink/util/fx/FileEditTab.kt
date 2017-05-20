@@ -25,24 +25,30 @@ import javafx.scene.control.Tooltip
 
 import io.fdeitylink.keroedit.Messages
 
-abstract class FileEditTab protected constructor(p: Path, text: String?, content: Node?) : Tab(text, content) {
-    private val undoStack = ArrayDeque<UndoableEdit>()
-    private val redoStack = ArrayDeque<UndoableEdit>()
+abstract class FileEditTab
+@JvmOverloads protected constructor(p: Path, text: String? = null, content: Node? = null): Tab(text, content) {
+    //https://xkcd.com/853/
+    private val undoQueue = ArrayDeque<UndoableEdit>()
+    private val redoQueue = ArrayDeque<UndoableEdit>()
 
-    private val filePath: Path = p.toAbsolutePath()
+    val path: Path = p.toAbsolutePath()
 
-    private var changed = false
-
-    protected constructor(p: Path) : this(p, null, null)
-
-    protected constructor(p: Path, text: String?) : this(p, text, null)
+    /*
+     * Changes are done via markChanged() and markUnchanged().
+     * This is so that subclasses can increase the visibility
+     * of the setter methods as needed. If the visibility of only
+     * one method needs to be changed, that can be done so other
+     * classes cannot arbitrarily change the boolean to true or false.
+     */
+    var isChanged = false
+        private set
 
     init {
-        id = filePath.toString()
-        tooltip = Tooltip(filePath.toString())
+        id = path.toString()
+        tooltip = Tooltip(path.toString())
 
         onCloseRequest = EventHandler<Event> { event ->
-            if (isChanged()) {
+            if (isChanged) {
                 val alert = FXUtil.createAlert(title = this.text?.substring(0, this.text.lastIndexOf('*')),
                                                message = Messages.getString("FileEditTab.UNSAVED_CHANGES"))
 
@@ -59,33 +65,29 @@ abstract class FileEditTab protected constructor(p: Path, text: String?, content
         }
     }
 
-    fun getPath() = filePath
-
     open fun undo() {
-        if (!undoStack.isEmpty()) {
+        if (!undoQueue.isEmpty()) {
             markChanged()
-            val edit = undoStack.removeFirst()
-            redoStack.addFirst(edit)
+            val edit = undoQueue.removeFirst()
+            redoQueue.addFirst(edit)
             edit.undo()
         }
     }
 
     open fun redo() {
-        if (!redoStack.isEmpty()) {
+        if (!redoQueue.isEmpty()) {
             markChanged()
-            val edit = redoStack.removeFirst()
-            undoStack.addFirst(edit)
+            val edit = redoQueue.removeFirst()
+            undoQueue.addFirst(edit)
             edit.redo()
         }
     }
 
     abstract fun save()
 
-    fun isChanged() = changed
-
     protected open fun markChanged() {
-        if (!changed) {
-            changed = true
+        if (!isChanged) {
+            isChanged = true
             if (!text.endsWith("*")) {
                 text += '*'
             }
@@ -93,8 +95,8 @@ abstract class FileEditTab protected constructor(p: Path, text: String?, content
     }
 
     protected open fun markUnchanged() {
-        if (changed) {
-            changed = false
+        if (isChanged) {
+            isChanged = false
             if (text.endsWith("*")) {
                 text = text.substring(0, text.lastIndexOf("*"))
             }
@@ -103,7 +105,7 @@ abstract class FileEditTab protected constructor(p: Path, text: String?, content
 
     protected fun addUndo(edit: UndoableEdit) {
         markChanged()
-        redoStack.clear()
-        undoStack.addFirst(edit)
+        redoQueue.clear()
+        undoQueue.addFirst(edit)
     }
 }

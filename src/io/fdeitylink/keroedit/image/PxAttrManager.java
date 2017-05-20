@@ -122,7 +122,7 @@ public final class PxAttrManager {
             get().setAttribute(x, y, attribute);
             /*
              * This only triggers InvalidationListeners (not ChangeListeners)
-             * because the PxAttr object stored by this property is not changed
+             * because the actual PxAttr object stored by this property is unchanged
              */
             fireValueChangedEvent();
         }

@@ -1,8 +1,11 @@
 package io.fdeitylink.util
 
 /**
- * Marker interface for Enums whose ordinals can be relied on to be unchanged.
- * Useful for enums that are used for array or list indexes.
+ * Marker interface for [Enum]s whose ordinals can be relied on to
+ * remain unchanged. Useful for [Enum]s that are used for array or
+ * list indexes.
+ *
+ * @param E the [Enum] class being implemented by this interface
  */
 @Suppress("unused")
 interface SafeEnum<E : Enum<E>>

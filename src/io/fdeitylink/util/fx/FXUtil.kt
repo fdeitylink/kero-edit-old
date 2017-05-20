@@ -1,3 +1,9 @@
+/*
+ * TODO:
+ * Make the extension functions top-level functions?
+ * Make all of the functions top-level functions?
+ */
+
 package io.fdeitylink.util.fx
 
 import javafx.util.Callback
@@ -39,15 +45,38 @@ import javafx.scene.paint.Color
 import javafx.concurrent.Service
 import javafx.concurrent.Task
 
-//TODO: Make the extension functions top-level functions?
 object FXUtil {
+    /**
+     * Returns a [Task] that simply executes the given [Callable] in
+     * its [Task.call] method
+     *
+     * @param callable the [Callable] object to invoke [Callable.call]
+     * on in the body of the [Task.call] method for the returned [Task]
+     *
+     * @return a [Task] that calls [Callable.call] on [callable] in its
+     * [Task.call] method
+     */
     fun <V> task(callable: Callable<V>): Task<V> {
+        //TODO: Take a () -> V
         return object : Task<V>() {
             override fun call() = callable.call()
         }
     }
 
+    /**
+     * Returns a [Service] that in its [Service.createTask] method
+     * returns a [Task] that executes the given [Callable] in its
+     * [Task.call] method
+     *
+     * @param callable the [Callable] object to invoke [Callable.call]
+     * on in the body of the [Task.call] method for the [Task] that is
+     * returned in the [Service.createTask] method of the returned [Service]
+     *
+     * @return a [Service] that, in its [Service.createTask] method, returns
+     * a [Task] that calls [Callable.call] on [callable] in its [Task.call] method
+     */
     fun <V> service(callable: Callable<V>): Service<V> {
+        //TODO: Take a () -> V
         return object : Service<V>() {
             override fun createTask(): Task<V> {
                 return object : Task<V>() {
@@ -58,12 +87,16 @@ object FXUtil {
     }
 
     /**
-     * Returns a {@code String} representation of the given {@code Color}
-     * suitable for use with {@code Color.web} or {@code Color.valueOf}.
+     * Returns a [String] representation of the given [Color]
+     * suitable for use with [Color.web] and [Color.valueOf].
+     * The official documentation for [Color.toString] does
+     * not specify that it can be used for the methods mentioned
+     * above, so this method should be used for such purposes as
+     * it will always be compatible.
      *
-     * @param color the {@code Color} to get a {@code String} representation of
+     * @param color the [Color] to get a [String] representation of
      *
-     * @return a {@code String} representation of {@code color}
+     * @return a [String] representation of [color]
      */
     fun colorToString(color: Color): String {
         return String.format("0x%02X%02X%02X%02X",
@@ -74,14 +107,14 @@ object FXUtil {
     }
 
     /**
-     * Creates and returns an {@code Alert} window
+     * Creates and returns an [Alert] with the given properties
      *
-     * @param type the {@code Alert.AlertType} of the alert. Defaults to {@code Alert.AlertType.NONE}
-     * @param title the title text of the alert
-     * @param headerText the header text of the alert. Defaults to null
-     * @param message the content text of the alert
+     * @param type the [Alert.AlertType] of the [Alert]. Defaults to [Alert.AlertType.NONE]
+     * @param title the title text of the [Alert]
+     * @param headerText the header text of the [Alert]. Defaults to null
+     * @param message the content text of the [Alert]
      *
-     * @return the created {@code Alert}
+     * @return the created [Alert]
      */
     fun createAlert(type: Alert.AlertType = Alert.AlertType.NONE, title: String?, headerText: String? = null,
                     message: String?): Alert {
@@ -93,7 +126,21 @@ object FXUtil {
         return alert
     }
 
-    fun createDualTextFieldDialog(title: String?, headerText: String?, firstPrompt: String?, secondPrompt: String?):
+    /**
+     * Creates and returns an [Dialog] with the given properties and two [TextField]s
+     *
+     * @param title the title text of the [Dialog]
+     * @param headerText the header text of the [Dialog]. Defaults to null
+     * @param firstPrompt the prompt text for the first [TextField]
+     * @param secondPrompt the prompt text for the second [TextField]
+     *
+     * @return the created [Dialog]. Its result is a [Pair] with both components being
+     * [String]s. The first component is the text of the first [TextField], and the second
+     * component is the text of the second [TextField], **provided that the user confirmed
+     * their choice by clicking the OK button**. If they did not, such as by clicking the
+     * Cancel button, then both [String]s in the [Pair] result will be empty.
+     */
+    fun createDualTextFieldDialog(title: String?, headerText: String? = null, firstPrompt: String?, secondPrompt: String?):
             Dialog<Pair<String, String>> {
         val dialog = Dialog<Pair <String, String>>()
         dialog.title = title
@@ -126,16 +173,16 @@ object FXUtil {
     }
 
     /**
-     * Creates and returns an {@code Alert} with an {@code TextBox} inside
+     * Creates and returns an [Alert] with the given properties and a [TextArea] inside
      *
-     * @param type the {@code Alert.AlertType} of the alert. Defaults to {@code Alert.AlertType.NONE}
-     * @param title the title text of the alert
-     * @param headerText the header text of the alert
-     * @param message the content text of the alert
-     * @param textAreaContent the content of the text box in the alert
-     * @param editable true if the user should be able to edit the content of the text box, false otherwise
+     * @param type the [Alert.AlertType] of the alert. Defaults to [Alert.AlertType.NONE]
+     * @param title the title text of the [Alert]
+     * @param headerText the header text of the [Alert]
+     * @param message the content text of the [Alert]
+     * @param textAreaContent the content of the text box in the [Alert]
+     * @param editable true if the user should be able to edit the content of the [TextArea], false otherwise
      *
-     * @return the created {@code Alert}
+     * @return the created [Alert]
      */
     fun createTextboxAlert(type: Alert.AlertType = Alert.AlertType.NONE, title: String?, headerText: String? = null,
                            message: String?, textAreaContent: String?, editable: Boolean = false): Alert {
@@ -161,17 +208,22 @@ object FXUtil {
         return alert
     }
 
+    //TODO: Test this method on a tab that is specified as not-closeable
     /**
-     * Closes this tab such that if it has an {@code onCloseRequest} or
-     * {@code onClosed EventHandler} set, it will be triggered.
+     * Closes this [Tab] such that if it has an [javafx.event.EventHandler]
+     * set for its onCloseRequest or onClosed property, they will be triggered.
+     *
+     * @receiver a [Tab]
      */
     fun Tab.close() {
         if (null == tabPane) {
             return
         }
 
-        //https://stackoverflow.com/a/22783949/7355843
-        //assumes default TabPane skin
+        /*
+         * Assumes default TabPane skin
+         * https://stackoverflow.com/a/22783949/7355843
+         */
         val behavior = (this.tabPane.skin as TabPaneSkin).behavior
         if (behavior.canCloseTab(this)) {
             behavior.closeTab(this)
@@ -179,11 +231,13 @@ object FXUtil {
     }
 
     /**
-     * Sets the maximum length of the text in this {@code TextInputControl}
+     * Sets the maximum length of the [String] text in this [TextInputControl]
      *
-     * @param len the maximun length of the text
+     * @receiver a [TextInputControl] whose text should have a maximum length
      *
-     * @throws IllegalArgumentException if {@code len} is negative
+     * @param len the maximum length of the text
+     *
+     * @throws IllegalArgumentException if [len] is negative
      */
     fun TextInputControl.setMaxLen(len: Int) {
         require(len >= 0) { "Attempt to set max length of TextInputControl to negative value (len: $len)" }
@@ -196,33 +250,41 @@ object FXUtil {
     }
 
     /**
-     * Sets the background of this {@code Region} to the given {@code Image}
+     * Sets the background of this [Region] to the given [Image]
      *
-     * @param image the {@code Image} to use as the background of this {@code Region}
+     * @receiver a [Region] to set the background image of
+     *
+     * @param image the [Image] to use as the background of this [Region]
      */
     fun Region.setBackgroundImage(image: Image) {
         background = Background(BackgroundImage(image, null, null, null, null))
     }
 
     /**
-     * Sets the background of this {@code Region} to the given {@code Color}
+     * Sets the background of this [Region] to the given [Color]
      *
-     * @param color the {@code Color} to use as the background of this {@code Region}
+     * @receiver a [Region] to set the background color of
+     *
+     * @param color the [Color] to use as the background of this [Region]
      */
     fun Region.setBackgroundColor(color: Color) {
         background = Background(BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY))
     }
 
     /**
-     * Returns a scaled version of this {@code Image}, or this {@code Image} if
-     * this is null, the width or height of this is 0, or the given scale is 1
+     * Returns a scaled version of this [Image], or this [Image] if
+     * this [Image] is null, the width or height of this [Image] is 0,
+     * or [scale] is 1.0
      *
-     * @param scale the scale factor to scale this {@code Image} by
+     * @receiver an [Image] to scale by [scale]
      *
-     * @return this {@code Image} if this is null, the width or height of this is 0,
-     * or {@code scale} is 1, otherwise a version of this scaled by {@code scale}
+     * @param scale the scale factor to scale this [Image] by
+     *
+     * @return this [Image] if this is null, the width or height of this
+     * [Image] is 0, or [scale] is 1.0, otherwise a version of this [Image]
+     * scaled by [scale]
      */
-    fun Image?.scaled(scale: Double): Image? {
+    fun Image?.scale(scale: Double): Image? {
         if (null == this || 1.0 == scale) {
             return this
         }
