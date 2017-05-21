@@ -21,6 +21,7 @@
  * Make redrawing entities a Service
  * Method for redrawing a single entity?
  * Pixel renders the game at 2x (so 200% zoom looks like it would in the game assuming the scale there is set to 1x)
+ * Have redrawTile() and redrawTileLayer() take a Layer object rather than an int layer
  */
 
 package io.fdeitylink.keroedit.mapedit;
@@ -87,7 +88,6 @@ import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ListCell;
 
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
@@ -174,12 +174,12 @@ public final class MapEditTab extends FileEditTab {
 
     private static final SimpleObjectProperty <Color> tilesetBgColor;
 
-    private static final SimpleObjectProperty <EnumSet <LayerFlag>> displayedLayers;
-    private static final SimpleIntegerProperty selectedLayer;
+    private static final SimpleObjectProperty <EnumSet <Layer>> displayedLayers;
+    private static final SimpleObjectProperty <Layer> selectedLayer;
 
     private static final SimpleObjectProperty <DrawMode> drawMode;
 
-    private static final SimpleObjectProperty <EnumSet <ViewFlag>> viewSettings;
+    private static final SimpleObjectProperty <EnumSet <ViewOption>> viewSettings;
 
     private static final SimpleObjectProperty <EditMode> editMode;
 
@@ -198,7 +198,7 @@ public final class MapEditTab extends FileEditTab {
         tilesetBgColor = new SimpleObjectProperty <>(Config.tilesetBgColor);
 
         displayedLayers = new SimpleObjectProperty <>(Config.displayedLayers);
-        selectedLayer = new SimpleIntegerProperty(Config.INSTANCE.getSelectedLayer());
+        selectedLayer = new SimpleObjectProperty <>(Config.INSTANCE.getSelectedLayer());
 
         drawMode = new SimpleObjectProperty <>(Config.drawMode);
 
@@ -317,16 +317,13 @@ public final class MapEditTab extends FileEditTab {
         tilesetBgColor.set(color);
     }
 
-    public static void setDisplayedLayers(final EnumSet <LayerFlag> flags) {
+    public static void setDisplayedLayers(final EnumSet <Layer> flags) {
         //TODO: Observable value that fires change events when Enum is added to/removed from Set?
         //(similar to the thing for PxAttrs)
         displayedLayers.set(EnumSet.copyOf(flags));
     }
 
-    public static void setSelectedLayer(final int layer) {
-        if (layer < 0 || layer > 2) {
-            throw new IllegalArgumentException("Attempt to set selected layer to value outside range 0 - 2 (layer: " + layer + ')');
-        }
+    public static void setSelectedLayer(final Layer layer) {
         selectedLayer.set(layer);
     }
 
@@ -334,7 +331,7 @@ public final class MapEditTab extends FileEditTab {
         drawMode.set(mode);
     }
 
-    public static void setViewSettings(final EnumSet <ViewFlag> flags) {
+    public static void setViewSettings(final EnumSet <ViewOption> flags) {
         viewSettings.set(EnumSet.copyOf(flags));
     }
 
@@ -655,7 +652,7 @@ public final class MapEditTab extends FileEditTab {
                 tileTypeCanvas.widthProperty().bind(tilesetCanvas.widthProperty());
                 tileTypeCanvas.heightProperty().bind(tilesetCanvas.heightProperty());
 
-                tileTypeCanvas.setVisible(viewSettings.get().contains(ViewFlag.TILE_TYPES));
+                tileTypeCanvas.setVisible(viewSettings.get().contains(ViewOption.TILE_TYPES));
                 tileTypeCanvas.setOnMouseClicked(tilesetCanvas::fireEvent);
 
                 selectedRectCanvas = new Canvas();
@@ -696,7 +693,7 @@ public final class MapEditTab extends FileEditTab {
 
                     Platform.runLater(() -> gContext.clearRect(0, 0, tileTypeCanvas.getWidth(), tileTypeCanvas.getHeight()));
 
-                    final PxAttr pxAttr = pxAttrs[selectedLayer.get()];
+                    final PxAttr pxAttr = pxAttrs[selectedLayer.get().ordinal()];
                     if (null != pxAttr) {
                         final int[][] attributes = pxAttr.getAttributes();
                         final PixelReader pxAttrImgReader = pxAttrImage.getPixelReader();
@@ -737,7 +734,7 @@ public final class MapEditTab extends FileEditTab {
                 });
 
                 drawSelectedTiles = FXUtil.INSTANCE.service(() -> {
-                    final int layer = selectedLayer.get();
+                    final int layer = selectedLayer.get().ordinal();
 
                     final int[][] selectedTilesRect = selectedTiles[layer];
 
@@ -804,7 +801,7 @@ public final class MapEditTab extends FileEditTab {
                             final ReadOnlyObjectProperty <PxAttr> pxAttrProp = PxAttrManager.getPxAttr(tilesetNames[i]);
                             pxAttrProp.addListener(observable -> {
                                 redrawTileTypes.restart();
-                                mapPane.redrawTileLayer(selectedLayer.get());
+                                mapPane.redrawTileLayer(selectedLayer.get().ordinal());
                             });
                             pxAttrs[i] = pxAttrProp.get();
                         }
@@ -830,7 +827,7 @@ public final class MapEditTab extends FileEditTab {
 
             private void initEventHandlers() {
                 viewSettings.addListener((observable, oldValue, newValue) ->
-                                                 tileTypeCanvas.setVisible(newValue.contains(ViewFlag.TILE_TYPES)));
+                                                 tileTypeCanvas.setVisible(newValue.contains(ViewOption.TILE_TYPES)));
 
                 selectedLayer.addListener((observable, oldValue, newValue) -> {
                     redrawTileTypes.restart(); //do this before tileset redraw for speed
@@ -860,7 +857,7 @@ public final class MapEditTab extends FileEditTab {
                                 pxAttrPopup = null;
                             }
 
-                            final int layer = selectedLayer.get();
+                            final int layer = selectedLayer.get().ordinal();
                             if (0 == tilesets[layer].getWidth() ||
                                 0 == tilesets[layer].getHeight()) {
                                 selectedTiles[layer] = new int[][]{{0}}; //TODO: make array empty?
@@ -890,7 +887,7 @@ public final class MapEditTab extends FileEditTab {
 
                             final int tilesetX = (int)(event.getX() / tilesetZoom.get() / TILE_WIDTH);
                             final int tilesetY = (int)(event.getY() / tilesetZoom.get() / TILE_HEIGHT);
-                            pxAttrPopup = new PxAttrPopup(selectedLayer.get(), tilesetX, tilesetY);
+                            pxAttrPopup = new PxAttrPopup(selectedLayer.get().ordinal(), tilesetX, tilesetY);
 
                             pxAttrPopup.show(tilesetPane, event.getScreenX(), event.getScreenY());
                         }
@@ -904,7 +901,7 @@ public final class MapEditTab extends FileEditTab {
                     @Override
                     public void handle(final MouseEvent event) {
                         if (MouseButton.PRIMARY == event.getButton()) {
-                            final int layer = selectedLayer.get();
+                            final int layer = selectedLayer.get().ordinal();
 
                             if (0 == tilesets[layer].getWidth() ||
                                 0 == tilesets[layer].getHeight()) {
@@ -981,7 +978,8 @@ public final class MapEditTab extends FileEditTab {
                 tilesetGContext.setFill(tilesetBgColor.get());
                 tilesetGContext.fillRect(0, 0, tilesetCanvas.getWidth(), tilesetCanvas.getHeight());
 
-                tilesetGContext.drawImage(FXUtil.INSTANCE.scale(tilesets[selectedLayer.get()], tilesetZoom.get()), 0, 0);
+                tilesetGContext.drawImage(FXUtil.INSTANCE.scale(tilesets[selectedLayer.get().ordinal()],
+                                                                tilesetZoom.get()), 0, 0);
 
                 //Since right now I only load the necessary part of the tileset, a simpler drawImage() method can be called (^)
                 /*tilesetGContext.drawImage(FXUtil.INSTANCE.scale(tilesets[selectedLayer.get()], zoom.get()),
@@ -993,7 +991,7 @@ public final class MapEditTab extends FileEditTab {
                 final GraphicsContext gContext = selectedRectCanvas.getGraphicsContext2D();
                 gContext.clearRect(0, 0, selectedRectCanvas.getWidth(), selectedRectCanvas.getHeight());
 
-                final Rectangle2D selRect = selectedRects[selectedLayer.get()];
+                final Rectangle2D selRect = selectedRects[selectedLayer.get().ordinal()];
                 gContext.strokeRoundRect(selRect.getMinX() * TILE_WIDTH * tilesetZoom.get(),
                                          selRect.getMinY() * TILE_HEIGHT * tilesetZoom.get(),
                                          selRect.getWidth() * TILE_WIDTH * tilesetZoom.get(),
@@ -1228,7 +1226,7 @@ public final class MapEditTab extends FileEditTab {
                 mapCanvases = new Canvas[tileLayers.length];
                 for (int i = 0; i < mapCanvases.length; ++i) {
                     mapCanvases[i] = new Canvas();
-                    mapCanvases[i].setVisible(displayedLayers.get().contains(LayerFlag.values()[i]));
+                    mapCanvases[i].setVisible(displayedLayers.get().contains(Layer.values()[i]));
                 }
 
                 //Always visible - what is drawn is changed when viewSettings changes
@@ -1238,7 +1236,7 @@ public final class MapEditTab extends FileEditTab {
                 entityCanvas.getGraphicsContext2D().setLineWidth(2);
 
                 gridCanvas = new Canvas();
-                gridCanvas.setVisible(viewSettings.get().contains(ViewFlag.GRID));
+                gridCanvas.setVisible(viewSettings.get().contains(ViewOption.GRID));
                 gridCanvas.getGraphicsContext2D().setStroke(Color.WHITE);
                 gridCanvas.getGraphicsContext2D().setLineWidth(1);
 
@@ -1278,40 +1276,40 @@ public final class MapEditTab extends FileEditTab {
              */
             private void initEventHandlers() {
                 displayedLayers.addListener((observable, oldValue, newValue) -> {
-                    for (int i = 0; i < LayerFlag.values().length; ++i) {
-                        mapCanvases[i].setVisible(newValue.contains(LayerFlag.values()[i]));
+                    for (int i = 0; i < Layer.values().length; ++i) {
+                        mapCanvases[i].setVisible(newValue.contains(Layer.values()[i]));
                     }
                 });
 
                 selectedLayer.addListener((observable, oldValue, newValue) -> {
-                    if (viewSettings.get().contains(ViewFlag.TILE_TYPES)) {
-                        redrawTileLayer(oldValue.intValue()); //"undraw" tiletypes from previously selected layer
-                        redrawTileLayer(newValue.intValue()); //draw tiletypes onto new selected layer
+                    if (viewSettings.get().contains(ViewOption.TILE_TYPES)) {
+                        redrawTileLayer(oldValue.ordinal()); //"undraw" tiletypes from previously selected layer
+                        redrawTileLayer(newValue.ordinal()); //draw tiletypes onto new selected layer
                     }
                 });
 
                 viewSettings.addListener((observable, oldValue, newValue) -> {
                     //Only one flag is changed at a time
                     //TODO: Find more efficient method (complement? noneOf?)
-                    if ((oldValue.contains(ViewFlag.TILE_TYPES) && !newValue.contains(ViewFlag.TILE_TYPES)) ||
-                        (!oldValue.contains(ViewFlag.TILE_TYPES) && newValue.contains(ViewFlag.TILE_TYPES))) {
-                        redrawTileLayer(selectedLayer.get());
+                    if ((oldValue.contains(ViewOption.TILE_TYPES) && !newValue.contains(ViewOption.TILE_TYPES)) ||
+                        (!oldValue.contains(ViewOption.TILE_TYPES) && newValue.contains(ViewOption.TILE_TYPES))) {
+                        redrawTileLayer(selectedLayer.get().ordinal());
                     }
-                    else if ((oldValue.contains(ViewFlag.GRID) && !newValue.contains(ViewFlag.GRID)) ||
-                             (!oldValue.contains(ViewFlag.GRID) && newValue.contains(ViewFlag.GRID))) {
-                        gridCanvas.setVisible(newValue.contains(ViewFlag.GRID));
+                    else if ((oldValue.contains(ViewOption.GRID) && !newValue.contains(ViewOption.GRID)) ||
+                             (!oldValue.contains(ViewOption.GRID) && newValue.contains(ViewOption.GRID))) {
+                        gridCanvas.setVisible(newValue.contains(ViewOption.GRID));
                     }
                     //If any of the entity flags changed
                     //TODO: Is the if necessary or can I just leave it as an else?
                     else if (EditMode.ENTITY != editMode.get() &&
-                             (((oldValue.contains(ViewFlag.ENTITY_BOXES) && !newValue.contains(ViewFlag.ENTITY_BOXES)) ||
-                               (!oldValue.contains(ViewFlag.ENTITY_BOXES) && newValue.contains(ViewFlag.ENTITY_BOXES))) ||
+                             (((oldValue.contains(ViewOption.ENTITY_BOXES) && !newValue.contains(ViewOption.ENTITY_BOXES)) ||
+                               (!oldValue.contains(ViewOption.ENTITY_BOXES) && newValue.contains(ViewOption.ENTITY_BOXES))) ||
 
-                              ((oldValue.contains(ViewFlag.ENTITY_SPRITES) && !newValue.contains(ViewFlag.ENTITY_SPRITES)) ||
-                               (!oldValue.contains(ViewFlag.ENTITY_SPRITES) && newValue.contains(ViewFlag.ENTITY_SPRITES))) ||
+                              ((oldValue.contains(ViewOption.ENTITY_SPRITES) && !newValue.contains(ViewOption.ENTITY_SPRITES)) ||
+                               (!oldValue.contains(ViewOption.ENTITY_SPRITES) && newValue.contains(ViewOption.ENTITY_SPRITES))) ||
 
-                              ((oldValue.contains(ViewFlag.ENTITY_NAMES) && !newValue.contains(ViewFlag.ENTITY_NAMES)) ||
-                               (!oldValue.contains(ViewFlag.ENTITY_NAMES) && newValue.contains(ViewFlag.ENTITY_NAMES))))) {
+                              ((oldValue.contains(ViewOption.ENTITY_NAMES) && !newValue.contains(ViewOption.ENTITY_NAMES)) ||
+                               (!oldValue.contains(ViewOption.ENTITY_NAMES) && newValue.contains(ViewOption.ENTITY_NAMES))))) {
                         redrawEntityLayer();
                     }
                 });
@@ -1357,7 +1355,7 @@ public final class MapEditTab extends FileEditTab {
 
                             switch (drawMode.get()) {
                                 case DRAW:
-                                    final int[][] tilesRect = selectedTiles[selectedLayer.get()];
+                                    final int[][] tilesRect = selectedTiles[selectedLayer.get().ordinal()];
                                     cursorGContext.strokeRoundRect(x * TILE_WIDTH * mapZoom.get(),
                                                                    y * TILE_HEIGHT * mapZoom.get(),
                                                                    TILE_WIDTH * tilesRect[0].length * mapZoom.get(),
@@ -1375,7 +1373,7 @@ public final class MapEditTab extends FileEditTab {
                     if (EditMode.TILE == editMode.get()) {
                         try {
                             FXUtil.INSTANCE.task(() -> {
-                                final int layer = selectedLayer.get();
+                                final int layer = selectedLayer.get().ordinal();
 
                                 if (mapCanvases[layer].isVisible() && MouseButton.PRIMARY == event.getButton()) {
                                     final int[][] tiles = tileLayers[layer].getTiles();
@@ -1473,7 +1471,7 @@ public final class MapEditTab extends FileEditTab {
                                               new MenuItem(Messages.INSTANCE.getString("MapEditTab.TileEditTab.BgColor.MENU_TEXT"))};
 
                 menuItems[MapPaneMenuItem.RESIZE.ordinal()].setOnAction(event -> {
-                    final int layer = selectedLayer.get();
+                    final int layer = selectedLayer.get().ordinal();
 
                     final String layerName;
                     switch (layer) {
@@ -1599,8 +1597,8 @@ public final class MapEditTab extends FileEditTab {
                         int[][] attributes;
                         final boolean drawTileType;
 
-                        if (viewSettings.get().contains(ViewFlag.TILE_TYPES) && selectedLayer.get() == layer) {
-                            final PxAttr pxAttr = tilesetPane.pxAttrs[selectedLayer.get()];
+                        if (viewSettings.get().contains(ViewOption.TILE_TYPES) && selectedLayer.get().ordinal() == layer) {
+                            final PxAttr pxAttr = tilesetPane.pxAttrs[selectedLayer.get().ordinal()];
                             attributes = pxAttr == null ? null : pxAttr.getAttributes();
                             pxAttrImgReader = pxAttrImage.getPixelReader();
                             if (!(drawTileType = (null != attributes && null != pxAttrImgReader))) {
@@ -1691,8 +1689,8 @@ public final class MapEditTab extends FileEditTab {
 
                         boolean drawTileTypes = false;
 
-                        if (viewSettings.get().contains(ViewFlag.TILE_TYPES) && selectedLayer.get() == layer) {
-                            final PxAttr pxAttr = tilesetPane.pxAttrs[selectedLayer.get()];
+                        if (viewSettings.get().contains(ViewOption.TILE_TYPES) && selectedLayer.get().ordinal() == layer) {
+                            final PxAttr pxAttr = tilesetPane.pxAttrs[selectedLayer.get().ordinal()];
                             attributes = pxAttr == null ? null : pxAttr.getAttributes();
                             pxAttrImgReader = pxAttrImage.getPixelReader();
 
@@ -1781,7 +1779,7 @@ public final class MapEditTab extends FileEditTab {
                                                                    entityCanvas.getHeight()));
 
                         /* ************************************* Entity Sprites ************************************* */
-                        if (EditMode.ENTITY == editMode.get() || viewSettings.get().contains(ViewFlag.ENTITY_SPRITES)) {
+                        if (EditMode.ENTITY == editMode.get() || viewSettings.get().contains(ViewOption.ENTITY_SPRITES)) {
                             final PixelReader entitiesImgReader = entityImage.getPixelReader();
                             if (null != entitiesImgReader) {
                                 final WritablePixelFormat <ByteBuffer> pxFormat = PixelFormat.getByteBgraInstance();
@@ -1824,7 +1822,7 @@ public final class MapEditTab extends FileEditTab {
                         }
 
                         /* ************************************** Entity Boxes ************************************** */
-                        if (EditMode.ENTITY == editMode.get() || viewSettings.get().contains(ViewFlag.ENTITY_BOXES)) {
+                        if (EditMode.ENTITY == editMode.get() || viewSettings.get().contains(ViewOption.ENTITY_BOXES)) {
                             Platform.runLater(() -> {
                                 for (final PxPack.Entity e : entities) {
                                     gContext.strokeRect(e.getX() * TILE_WIDTH * mapZoom.get(),
@@ -1842,7 +1840,7 @@ public final class MapEditTab extends FileEditTab {
                          * Change size as mapZoom changes?
                          */
                         /* ************************************** Entity Names ************************************** */
-                        /*if (EditMode.ENTITY == editMode.get() || viewSettings.get().contains(ViewFlag.ENTITY_NAMES)) {
+                        /*if (EditMode.ENTITY == editMode.get() || viewSettings.get().contains(ViewOption.ENTITY_NAMES)) {
                             Platform.runLater(() -> {
                                 for (final PxPack.Entity e : entities) {
                                     gContext.fillText(e.getName(),
@@ -2260,13 +2258,13 @@ public final class MapEditTab extends FileEditTab {
         REPLACE
     }
 
-    public enum LayerFlag implements SafeEnum <LayerFlag> {
+    public enum Layer implements SafeEnum <Layer> {
         FOREGROUND,
         MIDDLEGROUND,
         BACKGROUND
     }
 
-    public enum ViewFlag implements SafeEnum <ViewFlag> {
+    public enum ViewOption implements SafeEnum <ViewOption> {
         TILE_TYPES,
         GRID,
         ENTITY_BOXES,

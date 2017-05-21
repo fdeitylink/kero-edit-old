@@ -9,12 +9,12 @@ object Messages {
     private val resourceBundle = ResourceBundle.getBundle("io.fdeitylink.keroedit.messages")
 
     /**
-     * Returns a {@code String} that corresponds to a key in the {@code messages.properties}
-     * resource bundle.
+     * Returns a [String] that corresponds to a key in the messages.properties
+     * resource bundle in the [io.fdeitylink.keroedit] package.
      *
-     * @param key The key corresponding to the {@code String} to retrieve
+     * @param key the key corresponding to the [String] to retrieve
      *
-     * @return The {@code String} corresponding to {@code key}
+     * @return the [String] corresponding to [key]
      */
     fun getString(key: String): String {
         try {

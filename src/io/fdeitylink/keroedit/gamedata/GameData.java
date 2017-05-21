@@ -77,7 +77,7 @@ public enum GameData {
      *
      * @param executable A {@code Path} that references the executable for a mod
      *
-     * @throws NoSuchFileException If the given executable is null
+     * @throws NullArgumentException If the given executable is null
      */
     public void init(final Path executable) throws IOException {
         wipe();
@@ -91,8 +91,7 @@ public enum GameData {
         }
         if (!Files.exists(executable)) {
             //TODO: Throw IllegalArgumentException?
-            throw new NoSuchFileException(MessageFormat.format(Messages.INSTANCE.getString("GameData.EXECUTABLE_NONEXISTENT"),
-                                                               executable.toAbsolutePath()));
+            throw new NoSuchFileException(executable.toAbsolutePath().toString(), null, "Executable does not exist");
         }
 
         this.executable = executable.toAbsolutePath();
@@ -124,8 +123,7 @@ public enum GameData {
 
         if (!rscExists) {
             wipe();
-            throw new NoSuchFileException(MessageFormat.format(Messages.INSTANCE.getString("GameData.MISSING_RSC"),
-                                                               executable.toAbsolutePath()));
+            throw new NoSuchFileException(executable.toAbsolutePath().toString(), null, "rsc_x folder does not exist");
         }
 
         try {

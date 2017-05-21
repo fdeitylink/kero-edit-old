@@ -172,14 +172,14 @@ public final class KeroEdit extends Application {
         Thread.currentThread().setUncaughtExceptionHandler(exceptHandler);
         //Thread.setDefaultUncaughtExceptionHandler(exceptHandler);
 
-        Config.INSTANCE.loadPrefs();
+        Config.INSTANCE.load();
 
         mainStage = primaryStage;
         mainStage.setOnCloseRequest(event -> {
             //if user didn't cancel any attempted tab closes and definitely wants to close program
             if (!closeTabs()) {
                 Config.notepadText = notepadTab.notepad.getText();
-                Config.INSTANCE.savePrefs();
+                Config.INSTANCE.save();
 
                 Platform.exit(); //graceful shutdown & closes all child windows
             }
@@ -287,9 +287,9 @@ public final class KeroEdit extends Application {
                 final FileChooser exeChooser = new FileChooser();
                 exeChooser.setTitle(Messages.INSTANCE.getString("KeroEdit.OpenMod.TITLE"));
 
-                final String exeLoc = Config.INSTANCE.getLastExeLoc();
-                final String initDir = exeLoc.substring(0, exeLoc.lastIndexOf(File.separatorChar) + 1);
-                exeChooser.setInitialDirectory(new File(initDir));
+                /*final String exeLoc = Config.INSTANCE.getLastExeLoc();
+                final String initDir = exeLoc.substring(0, exeLoc.lastIndexOf(File.separatorChar) + 1);*/
+                exeChooser.setInitialDirectory(Config.INSTANCE.getLastExeLoc().getParent().toFile());
 
                 final FileChooser.ExtensionFilter extFilter =
                         new FileChooser.ExtensionFilter(Messages.INSTANCE.getString("KeroEdit.OpenMod.EXECUTABLE_FILTER"), "*.exe");
@@ -308,11 +308,11 @@ public final class KeroEdit extends Application {
             //if user didn't cancel any attempted tab closes and definitely wants to load last mod
             if (!closeTabs()) {
                 wipeLoaded();
-                loadMod(Paths.get(Config.INSTANCE.getLastExeLoc()).toAbsolutePath());
+                loadMod(Config.INSTANCE.getLastExeLoc().toAbsolutePath());
             }
         });
         //Disabled if there is no last mod
-        menuItems[FileMenuItem.OPEN_LAST.ordinal()].setDisable(!Config.INSTANCE.getLastExeLoc().endsWith(".exe"));
+        menuItems[FileMenuItem.OPEN_LAST.ordinal()].setDisable(!Config.INSTANCE.getLastExeLoc().toString().endsWith(".exe"));
         openLast = menuItems[FileMenuItem.OPEN_LAST.ordinal()];
 
         menuItems[FileMenuItem.SAVE.ordinal()]
@@ -403,7 +403,7 @@ public final class KeroEdit extends Application {
 
                 try {
                     GameData.INSTANCE.init(exe);
-                    Config.INSTANCE.setLastExeLoc(exe.toString());
+                    Config.INSTANCE.setLastExeLoc(exe);
 
                     HackTab.init();
 
@@ -1019,7 +1019,7 @@ public final class KeroEdit extends Application {
                                .ifPresent(result -> {
                                    Config.INSTANCE.setLicenseRead(ButtonType.OK == result);
                                    if (!Config.INSTANCE.getLicenseRead()) {
-                                       Config.INSTANCE.savePrefs();
+                                       Config.INSTANCE.save();
                                        Platform.exit();
                                        System.exit(0);
                                    }
@@ -1067,11 +1067,11 @@ public final class KeroEdit extends Application {
             for (int i = 0; i < cBoxes.length; ++i) {
                 cBoxes[i].setAllowIndeterminate(false);
                 //selected if the flag is set
-                cBoxes[i].setSelected(Config.displayedLayers.contains(MapEditTab.LayerFlag.values()[i]));
+                cBoxes[i].setSelected(Config.displayedLayers.contains(MapEditTab.Layer.values()[i]));
 
                 final int layer = i;
                 cBoxes[i].setOnAction(event -> {
-                    final MapEditTab.LayerFlag flag = MapEditTab.LayerFlag.values()[layer];
+                    final MapEditTab.Layer flag = MapEditTab.Layer.values()[layer];
                     if (cBoxes[layer].isSelected()) {
                         Config.displayedLayers.add(flag);
                     }
@@ -1099,12 +1099,12 @@ public final class KeroEdit extends Application {
                                                 new RadioButton(Messages.INSTANCE.getString("PxPack.LayerNames.MIDDLEGROUND")),
                                                 new RadioButton(Messages.INSTANCE.getString("PxPack.LayerNames.BACKGROUND"))};
 
-            radioButtons[Config.INSTANCE.getSelectedLayer()].setSelected(true);
+            radioButtons[Config.INSTANCE.getSelectedLayer().ordinal()].setSelected(true);
 
             for (int i = 0; i < radioButtons.length; ++i) {
                 radioButtons[i].setToggleGroup(toggleGroup);
 
-                final int layer = i;
+                final MapEditTab.Layer layer = MapEditTab.Layer.values()[i];
                 radioButtons[i].selectedProperty().addListener((observable, oldValue, newValue) -> {
                     if (newValue) {
                         MapEditTab.setSelectedLayer(layer);
@@ -1162,11 +1162,11 @@ public final class KeroEdit extends Application {
             for (int i = 0; i < cBoxes.length; ++i) {
                 cBoxes[i].setAllowIndeterminate(false);
 
-                cBoxes[i].setSelected(Config.viewSettings.contains(MapEditTab.ViewFlag.values()[i]));
+                cBoxes[i].setSelected(Config.viewSettings.contains(MapEditTab.ViewOption.values()[i]));
 
                 final int index = i;
                 cBoxes[i].setOnAction(event -> {
-                    final MapEditTab.ViewFlag flag = MapEditTab.ViewFlag.values()[index];
+                    final MapEditTab.ViewOption flag = MapEditTab.ViewOption.values()[index];
                     if (cBoxes[index].isSelected()) {
                         Config.viewSettings.add(flag);
                     }
