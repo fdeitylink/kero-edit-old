@@ -30,6 +30,8 @@
  * Use TornadoFX after converting to Kotlin?
  * Put kotlin-reflect.jar in the classpath (bundle into JAR?)
  * Use Gradle
+ * Turn members of Kotlin objects into top-level properties and functions?
+ * Don't show tileset stage until after main window is showing (if it is set to be shown from the last session)
  */
 
 package io.fdeitylink.keroedit;
@@ -376,7 +378,7 @@ public final class KeroEdit extends Application {
 
         GameData.INSTANCE.wipe();
         HackTab.wipe();
-        ImageManager.wipe();
+        ImageManager.INSTANCE.wipe();
         PxAttrManager.wipe();
         MapEditTab.wipeResources();
     }

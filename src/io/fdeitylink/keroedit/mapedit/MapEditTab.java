@@ -150,21 +150,21 @@ import io.fdeitylink.keroedit.image.ImageManager;
 
 import io.fdeitylink.keroedit.script.ScriptEditTab;
 
-import static io.fdeitylink.keroedit.image.ImageDimension.ENTITIES_PER_ROW;
-import static io.fdeitylink.keroedit.image.ImageDimension.ENTITY_HEIGHT;
-import static io.fdeitylink.keroedit.image.ImageDimension.ENTITY_WIDTH;
-import static io.fdeitylink.keroedit.image.ImageDimension.TILE_WIDTH;
-import static io.fdeitylink.keroedit.image.ImageDimension.TILE_HEIGHT;
+import static io.fdeitylink.keroedit.image.ImageDimensionsKt.ENTITIES_PER_ROW;
+import static io.fdeitylink.keroedit.image.ImageDimensionsKt.ENTITY_HEIGHT;
+import static io.fdeitylink.keroedit.image.ImageDimensionsKt.ENTITY_WIDTH;
+import static io.fdeitylink.keroedit.image.ImageDimensionsKt.TILE_WIDTH;
+import static io.fdeitylink.keroedit.image.ImageDimensionsKt.TILE_HEIGHT;
 
-import static io.fdeitylink.keroedit.image.ImageDimension.TILES_PER_ROW;
+import static io.fdeitylink.keroedit.image.ImageDimensionsKt.TILES_PER_ROW;
 
-import static io.fdeitylink.keroedit.image.ImageDimension.TILESET_WIDTH;
-import static io.fdeitylink.keroedit.image.ImageDimension.TILESET_HEIGHT;
+import static io.fdeitylink.keroedit.image.ImageDimensionsKt.TILESET_WIDTH;
+import static io.fdeitylink.keroedit.image.ImageDimensionsKt.TILESET_HEIGHT;
 
-import static io.fdeitylink.keroedit.image.ImageDimension.PXATTR_TILE_WIDTH;
-import static io.fdeitylink.keroedit.image.ImageDimension.PXATTR_TILE_HEIGHT;
+import static io.fdeitylink.keroedit.image.ImageDimensionsKt.PXATTR_TILE_WIDTH;
+import static io.fdeitylink.keroedit.image.ImageDimensionsKt.PXATTR_TILE_HEIGHT;
 
-import static io.fdeitylink.keroedit.image.ImageDimension.PXATTR_TILES_PER_ROW;
+import static io.fdeitylink.keroedit.image.ImageDimensionsKt.PXATTR_TILES_PER_ROW;
 
 public final class MapEditTab extends FileEditTab {
     //private static int numInstances; //used to tell if this is the last MapEditTab open
@@ -772,7 +772,7 @@ public final class MapEditTab extends FileEditTab {
 
                     final String[] tilesetNames = head.getTilesetNames();
                     for (int i = 0; i < tilesets.length; ++i) {
-                        tilesets[i] = ImageManager.getImage(tilesetNames[i], true);
+                        tilesets[i] = ImageManager.INSTANCE.getImage(tilesetNames[i], true);
                     }
                     return null;
                 });
