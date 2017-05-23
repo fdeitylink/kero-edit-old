@@ -798,7 +798,7 @@ public final class MapEditTab extends FileEditTab {
                     final String[] tilesetNames = head.getTilesetNames();
                     for (int i = 0; i < tilesetNames.length; ++i) {
                         try {
-                            final ReadOnlyObjectProperty <PxAttr> pxAttrProp = PxAttrManager.getPxAttr(tilesetNames[i]);
+                            final ReadOnlyObjectProperty <PxAttr> pxAttrProp = PxAttrManager.INSTANCE.getPxAttr(tilesetNames[i]);
                             pxAttrProp.addListener(observable -> {
                                 redrawTileTypes.restart();
                                 mapPane.redrawTileLayer(selectedLayer.get().ordinal());
@@ -1064,7 +1064,7 @@ public final class MapEditTab extends FileEditTab {
 
                                 try {
                                     final int attr = (y * PXATTR_TILES_PER_ROW) + x;
-                                    PxAttrManager.setAttribute(head.getTilesetNames()[layer], tilesetX, tilesetY, attr);
+                                    PxAttrManager.INSTANCE.setAttribute(head.getTilesetNames()[layer], tilesetX, tilesetY, attr);
                                     attributeLabel.setText(String.format("Current attribute: %02X\nHovered attribute: %02X",
                                                                          attr, attr));
                                 }

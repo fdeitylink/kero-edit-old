@@ -39,6 +39,7 @@ object ResourceManager {
      * in the [resource][io.fdeitylink.keroedit.resource] package
      */
     fun getPath(filename: String): Path? {
+        //TODO: Use Kotlin's NoSuchFileException?
         val uri = javaClass.getResource(filename)?.toURI() ?: throw NoSuchFileException(filename)
         try {
             return Paths.get(uri).toAbsolutePath()

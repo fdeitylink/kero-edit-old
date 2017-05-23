@@ -1,4 +1,4 @@
-/*
+    /*
  * TODO:
  * Barebones PNG editor
  *  - Color picker
@@ -29,7 +29,7 @@
  * Keep any MenuItems with unimplemented features disabled (like what I did for HackTab)
  * Use TornadoFX after converting to Kotlin?
  * Put kotlin-reflect.jar in the classpath (bundle into JAR?)
- * Use Gradle
+ * Use Gradle (Kobalt?)
  * Turn members of Kotlin objects into top-level properties and functions?
  * Don't show tileset stage until after main window is showing (if it is set to be shown from the last session)
  */
@@ -379,7 +379,7 @@ public final class KeroEdit extends Application {
         GameData.INSTANCE.wipe();
         HackTab.wipe();
         ImageManager.INSTANCE.wipe();
-        PxAttrManager.wipe();
+        PxAttrManager.INSTANCE.wipe();
         MapEditTab.wipeResources();
     }
 

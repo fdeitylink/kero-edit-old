@@ -32,6 +32,8 @@ import io.fdeitylink.keroedit.map.PxPack;
 public enum GameData {
     INSTANCE;
 
+    //TODO: Add folder and extension constants for PXATTR
+
     //TODO: Insert File.separatorChar into the folder strings?
     public static final String bgmFolder = "bgm";
     public static final String bgmExtension = ".ptcop";
