@@ -432,7 +432,7 @@ public final class KeroEdit extends Application {
 
                         openLast.setDisable(false);
 
-                        mapList.setItems(GameData.INSTANCE.getMapList());
+                        mapList.setItems(GameData.INSTANCE.getMaps());
                         mapList.requestFocus();
 
                         for (final MenuItem mItem : enableOnLoadItems) {

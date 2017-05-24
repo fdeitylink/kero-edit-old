@@ -1,8 +1,7 @@
-/* TODO:
-* Override set() for all member properties
-*  - Check integer flags for validity
-* Make map-editing related member properties JavaFX properties (Kotlin properties?) that can be bound to?
-*/
+/*
+ * TODO:
+ * Make map-editing related member properties JavaFX properties (Kotlin properties?) that can be bound to?
+ */
 
 package io.fdeitylink.keroedit
 
@@ -13,6 +12,8 @@ import java.util.prefs.BackingStoreException
 
 import java.nio.file.Path
 import java.nio.file.Paths
+
+import java.nio.file.InvalidPathException
 
 import kotlin.properties.Delegates
 
@@ -28,7 +29,6 @@ import io.fdeitylink.util.Logger
 import io.fdeitylink.util.fx.FXUtil
 
 import io.fdeitylink.keroedit.mapedit.MapEditTab
-import java.nio.file.InvalidPathException
 
 internal object Config {
     private val prefs = Preferences.userNodeForPackage(javaClass)
@@ -45,7 +45,6 @@ internal object Config {
 
     lateinit var displayedLayers: EnumSet<MapEditTab.Layer>
 
-    //TODO: Have this use Layer and the selected layer will be derived from the ordinal
     lateinit var selectedLayer: MapEditTab.Layer
 
     lateinit var drawMode: MapEditTab.DrawMode
@@ -80,9 +79,9 @@ internal object Config {
 
         drawMode = MapEditTab.DrawMode.values()[prefs.getInt("DRAW_MODE", 0)]
 
-        //TODO: Default to entity sprites and boxes displayed
-        //0b0000_0000 -> defaults as nothing extra displayed
-        viewSettings = prefs.getLong("VIEW_SETTINGS", 0b0000_0000).decode(MapEditTab.ViewOption::class)
+        //TODO: Also show entity names by default when they are enabled
+        //0b0000_1100 -> defaults as entity boxes and sprites shown
+        viewSettings = prefs.getLong("VIEW_SETTINGS", 0b0000_1100).decode(MapEditTab.ViewOption::class)
 
         editMode = MapEditTab.EditMode.values()[prefs.getInt("EDIT_MODE", 0)]
 

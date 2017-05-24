@@ -1,12 +1,12 @@
 package io.fdeitylink.util
 
-class NullArgumentException(funcName: String, argName: String) :
+class NullArgumentException(funcName: String, argName: String):
         NullPointerException("Null value passed for argument $argName to function " +
-                "${funcName + if ("" == funcName) "" else "()"} " +
-                "when null value is not permitted") {
+                             "${funcName + if ("" == funcName) "" else "()"} " +
+                             "when null value is not permitted") {
 
-    constructor() : this("", "")
-    constructor(funcName: String) : this(funcName, "")
+    constructor(): this("", "")
+    constructor(funcName: String): this(funcName, "")
 
     companion object {
         fun <T> requireNonNull(obj: T?) = requireNonNull(obj, "", "")

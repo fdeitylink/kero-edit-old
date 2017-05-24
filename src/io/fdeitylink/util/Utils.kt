@@ -1,5 +1,7 @@
 package io.fdeitylink.util
 
+//TODO: Break up into MathUtils.kt, EnumUtils.kt
+
 import java.util.EnumSet
 
 import java.nio.file.Path
@@ -27,7 +29,7 @@ fun max(a: Byte, b: Byte) = if (a >= b) a else b
 
 fun min(a: Byte, b: Byte) = if (a <= b) a else b
 
-fun Path.baseFilename(ext: String = "*"): String {
+fun Path.baseFilename(ext: String = "."): String {
     if (Files.isDirectory(this)) {
         throw IllegalArgumentException("Attempt to get base filename of Path that does not represent a file")
     }
@@ -39,7 +41,7 @@ fun Path.baseFilename(ext: String = "*"): String {
 }
 
 //TODO: Make the following two methods regular, non-extension methods?
-fun <E> EnumSet<E>.encoded(): Long where E : Enum<E>, E : SafeEnum<E> {
+fun <E> EnumSet<E>.encoded(): Long where E: Enum<E>, E: SafeEnum<E> {
     var flags = 0L
     for (e in this) {
         flags = flags or (1L shl e.ordinal)
@@ -48,7 +50,7 @@ fun <E> EnumSet<E>.encoded(): Long where E : Enum<E>, E : SafeEnum<E> {
     return flags
 }
 
-fun <E> Long.decode(enumClass: KClass<E>): EnumSet<E> where E : Enum<E>, E : SafeEnum<E> {
+fun <E> Long.decode(enumClass: KClass<E>): EnumSet<E> where E: Enum<E>, E: SafeEnum<E> {
     /*
      * Assumes at most 64 values in the enum class (64 bits in a long)
      * http://stackoverflow.com/a/2199486

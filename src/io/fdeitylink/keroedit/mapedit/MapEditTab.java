@@ -21,7 +21,8 @@
  * Make redrawing entities a Service
  * Method for redrawing a single entity?
  * Pixel renders the game at 2x (so 200% zoom looks like it would in the game assuming the scale there is set to 1x)
- * Have redrawTile() and redrawTileLayer() take a Layer object rather than an int layer
+ * Have redrawTile() and redrawTileLayer() take a Layer enum object rather than an int layer
+ * Break this up into multiple files once this is reimplemented in Kotlin (i.e. make it less of a mess
  */
 
 package io.fdeitylink.keroedit.mapedit;
@@ -2127,7 +2128,7 @@ public final class MapEditTab extends FileEditTab {
             final String[] currentMapNames = head.getMapNames();
             for (int i = 0; i < PxPack.Head.NUM_REF_MAPS; ++i) {
                 //TODO: Add option to leave value blank
-                final ComboBox <Path> cBox = new ComboBox <>(GameData.INSTANCE.getMapList());
+                final ComboBox <Path> cBox = new ComboBox <>(GameData.INSTANCE.getMaps());
 
                 //TODO: Can I make one Callback object that is used for multiple ComboBoxes?
                 cBox.setCellFactory(listView -> new ListCell <Path>() {
@@ -2167,7 +2168,7 @@ public final class MapEditTab extends FileEditTab {
             /* ********************************************* Spritesheet ******************************************** */
             {
                 //TODO: Check if spritesheet can be blank - if so, put blank item into list (or button that clears selection or something)
-                final ComboBox <Path> cBox = new ComboBox <>(GameData.INSTANCE.getImageList());
+                final ComboBox <Path> cBox = new ComboBox <>(GameData.INSTANCE.getImages());
 
                 cBox.setCellFactory(comboBox -> new ListCell <Path>() {
                     @Override
@@ -2202,7 +2203,7 @@ public final class MapEditTab extends FileEditTab {
             /* *********************************************** Tilesets ********************************************** */
             final String[] currentTilesetNames = head.getTilesetNames();
             for (int i = 0; i < PxPack.NUM_LAYERS; ++i) {
-                final ComboBox <Path> cBox = new ComboBox <>(GameData.INSTANCE.getImageList());
+                final ComboBox <Path> cBox = new ComboBox <>(GameData.INSTANCE.getImages());
 
                 cBox.setCellFactory(comboBox -> new ListCell <Path>() {
                     @Override

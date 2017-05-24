@@ -32,14 +32,20 @@ import kotlin.reflect.KProperty
  * the string " (value: $value)" so the caller knows what was wrong with their input.
  * Defaults to a function returning the String "Invalid value passed to set()".
  */
-class NotNullValidated<T: Any>
-constructor(private val validator: (T) -> Boolean,
-            private val lazyMessage: () -> Any = { "Invalid value passed to set()" }): ReadWriteProperty<Any?, T> {
-
+/*
+ * TODO:
+ * Turn validator: (T) -> Boolean into onChange: (property: KProperty<*>, oldValue: T, newValue: T) -> Boolean
+ * Either create NotNullVetoable class or add throwExcept: Boolean  = true to the constructor
+ */
+//TODO:
+class ValidatedNotNullVar<T: Any>(private val validator: (value: T) -> Boolean,
+                                  private val lazyMessage: () -> Any = { "Invalid value passed to set()" }
+                                 ): ReadWriteProperty<Any?, T> {
     private var value: T? = null
 
     override operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        return value ?: throw IllegalStateException("Property ${property.name} must be initialized before get()")
+        //TODO: Add name of class/object to exception string
+        return value ?: throw IllegalStateException("Property ${property.name} should be initialized before get.")
     }
 
     override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {

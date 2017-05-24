@@ -19,7 +19,7 @@ object ImageManager {
     private val EMPTY_IMAGE = Image("file:///")
 
     fun getImage(imageName: String, isTileset: Boolean): Image {
-        if (!GameData.INSTANCE.isInitialized) {
+        if (!GameData.isInitialized) {
             throw IllegalStateException("GameData must be initialized before images can be retrieved from ImageManager")
         }
 
@@ -27,7 +27,7 @@ object ImageManager {
             return imageMap[imageName]!!
         }
 
-        var image = Image("file:///${GameData.INSTANCE.resourceFolder.toString() +
+        var image = Image("file:///${GameData.resourceFolder.toString() +
                                      File.separatorChar + GameData.imageFolder + File.separatorChar +
                                      imageName + GameData.imageExtension}", false)
 

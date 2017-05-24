@@ -30,7 +30,7 @@ public final class PxAttr {
         path = NullArgumentException.Companion.requireNonNull(inPath, "PxAttr", "inPath").toAbsolutePath();
 
         /*if (!Files.exists(inPath)) {
-            inPath = Paths.get(inPath.getParent().toAbsolutePath().toString() + File.separatorChar + "mpt00.pxattr");
+            inPath = Paths.get(inPath.getParent().toAbsolutePath().toString() + File.separatorChar + "mpt00" + GameData.pxAttrExtension);
             if (!Files.exists(inPath)) {
                 throw new FileNotFoundException(Messages.INSTANCE.getString("PxAttrManager.PxAttr.DEFAULT_MISSING"));
             }

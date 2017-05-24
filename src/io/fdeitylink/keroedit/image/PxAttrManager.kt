@@ -22,7 +22,7 @@ object PxAttrManager {
 
     @Throws(IOException::class, ParseException::class)
     fun getPxAttr(tilesetName: String): ReadOnlyObjectProperty<PxAttr> {
-        if (!GameData.INSTANCE.isInitialized) {
+        if (!GameData.isInitialized) {
             throw IllegalStateException("GameData must be initialized before PXATTRs can be retrieved from PxAttrManager")
         }
 
@@ -30,16 +30,17 @@ object PxAttrManager {
             return pxAttrMap[tilesetName]!!.readOnlyProperty
         }
 
-        var path = Paths.get(GameData.INSTANCE.resourceFolder.toString() +
+        var path = Paths.get(GameData.resourceFolder.toString() +
                              File.separatorChar + GameData.imageFolder + File.separatorChar +
-                             tilesetName + ".pxattr")
+                             tilesetName + GameData.pxAttrExtension)
 
         val pxAttr: PxAttr
 
         //If the mpt00 PXATTR was requested or it needs to be used as a default
         pxAttr = if ("mpt00" == tilesetName || !Files.exists(path)) {
             if (null == mpt00) {
-                path = Paths.get(path.parent.toAbsolutePath().toString() + File.separatorChar + "mpt00.pxattr")
+                path = Paths.get(path.parent.toAbsolutePath().toString() + File.separatorChar +
+                                 "mpt00" + GameData.pxAttrExtension)
                 if (!Files.exists(path)) {
                     //The default PXATTR file mpt00 does not exist
                     /*
@@ -93,9 +94,9 @@ object PxAttrManager {
          * corresponding to tilesetName
          */
         if (prop.get() === mpt00 && "mpt00" != tilesetName) {
-            prop.set(PxAttr(mpt00, Paths.get(GameData.INSTANCE.resourceFolder.toString() +
+            prop.set(PxAttr(mpt00, Paths.get(GameData.resourceFolder.toString() +
                                              File.separatorChar + GameData.imageFolder + File.separatorChar +
-                                             tilesetName + ".pxattr")))
+                                             tilesetName + GameData.pxAttrExtension)))
         }
         prop.setAttribute(x, y, attribute)
         prop.get().save()
