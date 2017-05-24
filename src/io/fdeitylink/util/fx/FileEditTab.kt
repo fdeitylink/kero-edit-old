@@ -1,7 +1,6 @@
 /*
  * TODO:
  * abstract fun rename()?
- * Extend PoppableTab
  * Store undo pointer to call markUnchanged() on undo()/redo() if the same state as when save() was called is met
  * Create abstract class representing a savable object and use that rather than Path and delegating save() to subclasses?
  * Handle tabs that have a '*' in their name not as a marker of changes (is this already handled?)

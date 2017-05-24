@@ -25,7 +25,6 @@ import io.fdeitylink.keroedit.Messages
 import io.fdeitylink.keroedit.map.PxPack
 
 object GameData {
-    //TODO: Insert File.separatorChar into the folder strings?
     const val bgmFolder = "bgm"
     const val bgmExtension = ".ptcop"
 
