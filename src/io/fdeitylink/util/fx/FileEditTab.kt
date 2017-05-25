@@ -26,26 +26,26 @@ import io.fdeitylink.keroedit.Messages
 
 //TODO: Get rid of @JvmOverloads annotation once I convert ScriptEditTab, MapEditTab, and HackTab to Kotlin
 abstract class FileEditTab
-@JvmOverloads protected constructor(p: Path, text: String? = null, content: Node? = null): Tab(text, content) {
+@JvmOverloads protected constructor(path: Path, text: String? = null, content: Node? = null): Tab(text, content) {
     //https://xkcd.com/853/
     private val undoQueue = ArrayDeque<UndoableEdit>()
     private val redoQueue = ArrayDeque<UndoableEdit>()
 
-    val path: Path = p.toAbsolutePath()
+    val path: Path = path.toAbsolutePath()
 
     /*
-     * Changes are done via markChanged() and markUnchanged().
-     * This is so that subclasses can increase the visibility
-     * of the setter methods as needed. If the visibility of only
-     * one method needs to be changed, that can be done so other
-     * classes cannot arbitrarily change the boolean to true or false.
+     * Modifying isChanged is done via markChanged() and markUnchanged().
+     * This is so that subclasses can increase the visibility of the
+     * setter methods as needed, independently of one another. If the
+     * visibility of only one method needs to be changed, that can be
+     * done so other classes cannot arbitrarily change the boolean.
      */
     var isChanged = false
         private set
 
     init {
-        id = path.toString()
-        tooltip = Tooltip(path.toString())
+        id = this.path.toString()
+        tooltip = Tooltip(this.path.toString())
 
         onCloseRequest = EventHandler<Event> { event ->
             if (isChanged) {

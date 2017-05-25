@@ -58,7 +58,7 @@ object FXUtil {
      */
     fun <V> task(callable: Callable<V>): Task<V> {
         //TODO: Take a () -> V
-        return object : Task<V>() {
+        return object: Task<V>() {
             override fun call() = callable.call()
         }
     }
@@ -77,9 +77,9 @@ object FXUtil {
      */
     fun <V> service(callable: Callable<V>): Service<V> {
         //TODO: Take a () -> V
-        return object : Service<V>() {
+        return object: Service<V>() {
             override fun createTask(): Task<V> {
-                return object : Task<V>() {
+                return object: Task<V>() {
                     override fun call() = callable.call()
                 }
             }
@@ -110,14 +110,14 @@ object FXUtil {
      * Creates and returns an [Alert] with the given properties
      *
      * @param type the [Alert.AlertType] of the [Alert]. Defaults to [Alert.AlertType.NONE]
-     * @param title the title text of the [Alert]
+     * @param title the title text of the [Alert]. Defaults to null
      * @param headerText the header text of the [Alert]. Defaults to null
-     * @param message the content text of the [Alert]
+     * @param message the content text of the [Alert]. Defaults to null
      *
      * @return the created [Alert]
      */
-    fun createAlert(type: Alert.AlertType = Alert.AlertType.NONE, title: String?, headerText: String? = null,
-                    message: String?): Alert {
+    fun createAlert(type: Alert.AlertType = Alert.AlertType.NONE, title: String? = null, headerText: String? = null,
+                    message: String? = null): Alert {
         val alert = Alert(type)
         alert.title = title
         alert.headerText = headerText
@@ -129,10 +129,10 @@ object FXUtil {
     /**
      * Creates and returns an [Dialog] with the given properties and two [TextField]s
      *
-     * @param title the title text of the [Dialog]
+     * @param title the title text of the [Dialog]. Defaults to null
      * @param headerText the header text of the [Dialog]. Defaults to null
-     * @param firstPrompt the prompt text for the first [TextField]
-     * @param secondPrompt the prompt text for the second [TextField]
+     * @param firstPrompt the prompt text for the first [TextField]. Defaults to null
+     * @param secondPrompt the prompt text for the second [TextField]. Defaults to null
      *
      * @return the created [Dialog]. Its result is a [Pair] with both components being
      * [String]s. The first component is the text of the first [TextField], and the second
@@ -140,8 +140,11 @@ object FXUtil {
      * their choice by clicking the OK button**. If they did not, such as by clicking the
      * Cancel button, then both [String]s in the [Pair] result will be empty.
      */
-    fun createDualTextFieldDialog(title: String?, headerText: String? = null, firstPrompt: String?, secondPrompt: String?):
-            Dialog<Pair<String, String>> {
+    fun createDualTextFieldDialog(title: String? = null, headerText: String? = null,
+                                  firstPrompt: String? = null, secondPrompt: String? = null
+                                 ): Dialog<Pair<String, String>> {
+        //TODO: Add 'message' parameter that defaults to null?
+
         val dialog = Dialog<Pair <String, String>>()
         dialog.title = title
         dialog.headerText = headerText
@@ -176,16 +179,18 @@ object FXUtil {
      * Creates and returns an [Alert] with the given properties and a [TextArea] inside
      *
      * @param type the [Alert.AlertType] of the alert. Defaults to [Alert.AlertType.NONE]
-     * @param title the title text of the [Alert]
-     * @param headerText the header text of the [Alert]
-     * @param message the content text of the [Alert]
-     * @param textAreaContent the content of the text box in the [Alert]
-     * @param editable true if the user should be able to edit the content of the [TextArea], false otherwise
+     * @param title the title text of the [Alert]. Defaults to null
+     * @param headerText the header text of the [Alert]. Defaults to null
+     * @param message the content text of the [Alert]. Defaults to null
+     * @param textAreaContent the content of the text box in the [Alert]. Defaults to null
+     * @param editable true if the user should be able to edit the content of the [TextArea], false otherwise.
+     * Defaults to false.
      *
      * @return the created [Alert]
      */
-    fun createTextboxAlert(type: Alert.AlertType = Alert.AlertType.NONE, title: String?, headerText: String? = null,
-                           message: String?, textAreaContent: String?, editable: Boolean = false): Alert {
+    fun createTextboxAlert(type: Alert.AlertType = Alert.AlertType.NONE, title: String? = null,
+                           headerText: String? = null, message: String? = null, textAreaContent: String? = null,
+                           editable: Boolean = false): Alert {
         val alert = createAlert(type, title, headerText, message)
 
         val textArea = TextArea(textAreaContent)
@@ -198,7 +203,7 @@ object FXUtil {
         GridPane.setVgrow(textArea, Priority.ALWAYS)
         GridPane.setHgrow(textArea, Priority.ALWAYS)
 
-        val pane = GridPane() //TODO: Other solution that doesn't use GridPane
+        val pane = GridPane() //TODO: Find another solution that doesn't use a GridPane?
         pane.maxWidth = Double.MAX_VALUE
         pane.add(textArea, 0, 0)
 

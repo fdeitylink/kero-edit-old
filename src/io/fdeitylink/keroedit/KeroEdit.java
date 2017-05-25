@@ -28,10 +28,14 @@
  * Have any empty catch blocks log the exception with Logger.INSTANCE.logThrowable()
  * Keep any MenuItems with unimplemented features disabled (like what I did for HackTab)
  * Use TornadoFX after converting to Kotlin?
- * Put kotlin-reflect.jar in the classpath (bundle into JAR?)
+ * Put kotlin-reflect.jar on the classpath (bundle into JAR?)
+ *  - Is this still necessary as of Kotlin 1.1? (https://kotlinlang.org/docs/reference/whatsnew11.html#kotlinreflectfull)
  * Use Gradle (Kobalt?)
  * Turn members of Kotlin objects into top-level properties and functions?
  * Don't show tileset stage until after main window is showing (if it is set to be shown from the last session)
+ * Before converting MapEditTab, rename its messages.properties strings to match the class hierarchy better
+ *  - Also improve the string names in general
+ *  - Decide whether to always pass full file path or just filename to the messages
  */
 
 package io.fdeitylink.keroedit;
