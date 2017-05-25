@@ -1265,7 +1265,10 @@ public final class MapEditTab extends FileEditTab {
                 initEventHandlers();
 
                 setPannable(false);
+
+                //TODO: Alternate between two different context menus depending on editMode
                 setContextMenu(initContextMenu());
+
                 setContent(stackPane);
             }
 
@@ -2151,11 +2154,11 @@ public final class MapEditTab extends FileEditTab {
                 selectModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                     /*
                      * newValue is null when the map list is cleared when
-                     * a new mod is loaded in KeroEdit. Ideally this Tab
-                     * object would be destroyed when closed and newValue
-                     * would never be null, so just blame the JVM's rare
-                     * use of The Reaper (GC)
+                     * a new mod is loaded. Ideally this Tab object would
+                     * be destroyed when closed and newValue would never be
+                     * null, so just blame the JVM's rare use of The Reaper (GC)
                      */
+                    //TODO: Remove listeners on tab close to avoid this issue?
                     if (null != newValue) {
                         head.setMapname(index, UtilsKt.baseFilename(newValue, GameData.mapExtension));
                         markChanged();

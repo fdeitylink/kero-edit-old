@@ -1,4 +1,4 @@
-    /*
+/*
  * TODO:
  * Barebones PNG editor
  *  - Color picker
@@ -367,8 +367,6 @@ public final class KeroEdit extends Application {
      */
     private void wipeLoaded() {
         setTitle("");
-
-        mapList.getItems().clear();
 
         for (final MenuItem mItem : enableOnLoadItems) {
             if (!mItem.isDisable()) {

@@ -22,9 +22,10 @@ import kotlin.reflect.KProperty
  * @constructor
  *
  * @param validator a function that will be called to ensure that values
- * given to set() are valid for the delegated property. If it returns true,
- * the given value is valid, otherwise the value is invalid and an
- * [IllegalArgumentException] will be thrown.
+ * given to set() are valid for the delegated property. Its single parameter
+ * is the value passed to set() that needs to be validated. If calling [validator]
+ * with the value returns true, the given value is valid and will be set, otherwise
+ * the value is invalid and an [IllegalArgumentException] will be thrown.
  *
  * @param lazyMessage a supplier function that returns an [Any] whose [toString]
  * method will be called to provide a message for any [IllegalArgumentException]s
@@ -36,8 +37,8 @@ import kotlin.reflect.KProperty
  * TODO:
  * Turn validator: (T) -> Boolean into onChange: (property: KProperty<*>, oldValue: T, newValue: T) -> Boolean
  * Either create NotNullVetoable class or add throwExcept: Boolean  = true to the constructor
+ * Turn into CustomNotNullVar class that takes a setter validator and a custom getter?
  */
-//TODO:
 class ValidatedNotNullVar<T: Any>(private val validator: (value: T) -> Boolean,
                                   private val lazyMessage: () -> Any = { "Invalid value passed to set()" }
                                  ): ReadWriteProperty<Any?, T> {
@@ -50,5 +51,17 @@ class ValidatedNotNullVar<T: Any>(private val validator: (value: T) -> Boolean,
 
     override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
         this.value = if (validator(value)) value else throw IllegalArgumentException(lazyMessage().toString() + " (value: $value)")
+    }
+}
+
+class ReInitializableVar<T>: ReadWriteProperty<Any?, T> {
+    private var value: T? = null
+
+    override fun getValue(thisRef: Any?, property: KProperty<*>): T {
+        return value ?: throw IllegalStateException("Property ${property.name} should be initialized before get.")
+    }
+
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+        this.value = value
     }
 }

@@ -17,17 +17,9 @@ fun Long.bound(lower: Long, upper: Long) = Math.max(lower, Math.min(this, upper)
 
 fun Int.bound(lower: Int, upper: Int) = Math.max(lower, Math.min(this, upper))
 
-fun Short.bound(lower: Short, upper: Short) = max(lower, min(this, upper))
+fun Short.bound(lower: Short, upper: Short) = maxOf(lower, minOf(this, upper))
 
-fun Byte.bound(lower: Byte, upper: Byte) = max(lower, min(this, upper))
-
-fun max(a: Short, b: Short) = if (a >= b) a else b
-
-fun min(a: Short, b: Short) = if (a <= b) a else b
-
-fun max(a: Byte, b: Byte) = if (a >= b) a else b
-
-fun min(a: Byte, b: Byte) = if (a <= b) a else b
+fun Byte.bound(lower: Byte, upper: Byte) = maxOf(lower, minOf(this, upper))
 
 fun Path.baseFilename(ext: String = "."): String {
     if (Files.isDirectory(this)) {
@@ -50,7 +42,7 @@ fun <E> EnumSet<E>.encoded(): Long where E: Enum<E>, E: SafeEnum<E> {
     return flags
 }
 
-fun <E> Long.decode(enumClass: KClass<E>): EnumSet<E> where E: Enum<E>, E: SafeEnum<E> {
+fun <E> Long.decoded(enumClass: KClass<E>): EnumSet<E> where E: Enum<E>, E: SafeEnum<E> {
     /*
      * Assumes at most 64 values in the enum class (64 bits in a long)
      * http://stackoverflow.com/a/2199486

@@ -22,7 +22,7 @@ import kotlin.jvm.javaClass
 import javafx.scene.paint.Color
 
 import io.fdeitylink.util.encoded
-import io.fdeitylink.util.decode
+import io.fdeitylink.util.decoded
 
 import io.fdeitylink.util.Logger
 
@@ -74,14 +74,14 @@ internal object Config {
         tilesetBgColor = if (null == colStr) Color.MAGENTA else Color.web(colStr)
 
         //0b0000_0111 -> defaults to all displayed
-        displayedLayers = prefs.getLong("DISPLAYED_LAYERS", 0b0000_0111).decode(MapEditTab.Layer::class)
+        displayedLayers = prefs.getLong("DISPLAYED_LAYERS", 0b0000_0111).decoded(MapEditTab.Layer::class)
         selectedLayer = MapEditTab.Layer.values()[prefs.getInt("SELECTED_LAYER", 0)]
 
         drawMode = MapEditTab.DrawMode.values()[prefs.getInt("DRAW_MODE", 0)]
 
         //TODO: Also show entity names by default when they are enabled
         //0b0000_1100 -> defaults as entity boxes and sprites shown
-        viewSettings = prefs.getLong("VIEW_SETTINGS", 0b0000_1100).decode(MapEditTab.ViewOption::class)
+        viewSettings = prefs.getLong("VIEW_SETTINGS", 0b0000_1100).decoded(MapEditTab.ViewOption::class)
 
         editMode = MapEditTab.EditMode.values()[prefs.getInt("EDIT_MODE", 0)]
 

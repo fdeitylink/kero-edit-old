@@ -16,8 +16,6 @@ import java.nio.file.NoSuchFileException
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 
-import io.fdeitylink.util.NotNull
-
 import io.fdeitylink.util.baseFilename
 
 import io.fdeitylink.keroedit.Messages
@@ -46,62 +44,68 @@ object GameData {
     var isInitialized = false
         private set
 
-    //TODO: Use Delegates.nonNull? Derive from it (it doesn't allow setting to null)
-    var modType: ModType? = null
-        @NotNull get() {
+    private var _modType: ModType? = null
+    val modType: ModType
+        get() {
             checkInit("modType")
-            return field!!
+            return _modType!!
         }
-        private set
 
-    var executable: Path? = null
-        @NotNull get() {
+    private var _executable: Path? = null
+    val executable: Path
+        get() {
             checkInit("executable")
-            return field!!
+            return _executable!!
         }
-        private set
 
-    var resourceFolder: Path? = null
-        @NotNull get() {
+    private var _resourceFolder: Path? = null
+    val resourceFolder: Path
+        get() {
             checkInit("resourceFolder")
-            return field!!
+            return _resourceFolder!!
         }
-        private set
 
-    var bgms: ObservableList<Path>? = null
-        @NotNull get() {
+    /*
+     * TODO:
+     * Don't return a new ObservableList in every call to get()
+     * Make use of the unused lists
+     * Store the items in the localize folder in these lists?
+     */
+
+    private var _bgms: ObservableList<Path>? = null
+    val bgms: ObservableList<Path>
+        get() {
             checkInit("bgms")
-            return field!!
+            return FXCollections.unmodifiableObservableList(_bgms)
         }
-        private set
 
-    var maps: ObservableList<Path>? = null
-        @NotNull get() {
+    private var _maps: ObservableList<Path>? = null
+    val maps: ObservableList<Path>
+        get() {
             checkInit("maps")
-            return field!!
+            return FXCollections.unmodifiableObservableList(_maps)
         }
-        private set
 
-    var images: ObservableList<Path>? = null
-        @NotNull get() {
+    private var _images: ObservableList<Path>? = null
+    val images: ObservableList<Path>
+        get() {
             checkInit("images")
-            return field!!
+            return FXCollections.unmodifiableObservableList(_images)
         }
-        private set
 
-    var sfx: ObservableList<Path>? = null
-        @NotNull get() {
+    private var _sfx: ObservableList<Path>? = null
+    val sfx: ObservableList<Path>
+        get() {
             checkInit("sfx")
-            return field!!
+            return FXCollections.unmodifiableObservableList(_sfx)
         }
-        private set
 
-    var scripts: ObservableList<Path>? = null
-        @NotNull get() {
+    private var _scripts: ObservableList<Path>? = null
+    val scripts: ObservableList<Path>
+        get() {
             checkInit("scripts")
-            return field!!
+            return FXCollections.unmodifiableObservableList(_scripts)
         }
-        private set
 
     @Throws(IOException::class)
     fun init(executable: Path) {
@@ -110,25 +114,14 @@ object GameData {
         val exe = executable.toAbsolutePath()
 
         if (!exe.fileName.toString().endsWith(".exe")) {
-            throw IllegalArgumentException("GameData must be initialized with an executable file with the extension \".exe\" " +
-                                           "(exe: $exe)")
+            throw IllegalArgumentException("GameData must be initialized with an executable file ending in \".exe\" (exe: $exe)")
         }
 
         if (!Files.exists(exe)) {
-            //TODO: Throw IllegalArgumentException?
             throw NoSuchFileException(exe.toString(), null, "Mod exe does not exist")
         }
 
-        this.executable = exe
-
-        /*
-         * Although we've barely started initializing, this statement is necessary.
-         * The property getters throw an exception if isInitialized is false, so
-         * set it to true here so those getters can be used as needed during the
-         * initialization process. Any time that initialization fails for any
-         * reason, isInitialized is set to false via wipe().
-         */
-        isInitialized = true
+        _executable = exe
 
         /*
          * TODO:
@@ -139,13 +132,13 @@ object GameData {
             Files.newDirectoryStream(exe.parent, { Files.isDirectory(it) }).use {
                 for (p in it) {
                     if (p.endsWith("rsc_k")) {
-                        resourceFolder = p.toAbsolutePath()
-                        modType = ModType.KERO_BLASTER
+                        _resourceFolder = p.toAbsolutePath()
+                        _modType = ModType.KERO_BLASTER
                         break
                     }
                     else if (p.endsWith("rsc_p")) {
-                        resourceFolder = p.toAbsolutePath()
-                        modType = ModType.PINK_HOUR //TODO: Find a way to detect if it's Pink Heaven, or ask the user
+                        _resourceFolder = p.toAbsolutePath()
+                        _modType = ModType.PINK_HOUR //TODO: Find a way to detect if it's Pink Heaven, or ask the user
                         break
                     }
                 }
@@ -156,20 +149,19 @@ object GameData {
             throw IOException(MessageFormat.format(Messages.getString("GameData.ListFilesIOExcept.MESSAGE"), exe), except)
         }
 
-        if (null == modType) {
+        if (null == _modType) {
             //rsc folder is missing
             wipe()
-            throw NoSuchFileException(executable.toString(), null, "rsc_x folder does not exist")
+            throw NoSuchFileException(exe.toString(), null, "rsc_x folder does not exist")
         }
 
         try {
-            bgms = fileList(bgmFolder, bgmExtension)
+            _bgms = fileList(bgmFolder, bgmExtension)
 
-            maps = fileList(mapFolder, mapExtension)
+            _maps = fileList(mapFolder, mapExtension)
 
-            /*maps.addListener(ListChangeListener<Path> { c: ListChangeListener.Change<out Path> ->
+            /*_maps.addListener(ListChangeListener<Path> { c: ListChangeListener.Change<out Path> ->
                 val removed = c.removed
-                //TODO: Should I go back to returning immutable ObservableLists in getX() and provide removeX() methods?
                 for (p in removed) {
                     try {
                         Files.deleteIfExists(p)
@@ -181,45 +173,64 @@ object GameData {
             })*/
 
             //TODO: Separate image lists (tilesets, spritesheets, etc.)
-            images = fileList(imageFolder, imageExtension)
+            _images = fileList(imageFolder, imageExtension)
 
-            sfx = fileList(sfxFolder, sfxExtension)
+            _sfx = fileList(sfxFolder, sfxExtension)
 
-            scripts = fileList(scriptFolder, scriptExtension)
+            _scripts = fileList(scriptFolder, scriptExtension)
         }
         catch (except: IOException) {
             wipe()
             throw except
         }
+
+        isInitialized = true
     }
 
     /**
-     * Clears all data stored by this object
+     * Clears all data stored by this object. All [ObservableList]s
+     * stored by this object are cleared, and [isInitialized] is set
+     * to false.
      */
     fun wipe() {
         isInitialized = false
 
-        modType = null
+        _modType = null
 
-        executable = null
-        resourceFolder = null
+        _executable = null
+        _resourceFolder = null
 
-        bgms = null
-        maps = null
-        images = null
-        sfx = null
-        scripts = null
+        _bgms?.clear()
+        _bgms = null
+
+        _maps?.clear()
+        _maps = null
+
+        _images?.clear()
+        _images = null
+
+        _sfx?.clear()
+        _sfx = null
+
+        _scripts?.clear()
+        _scripts = null
     }
 
-    private fun fileList(pathFromResource: String, ext: String): ObservableList<Path> {
-        val basePath: Path = Paths.get(resourceFolder.toString() + File.separatorChar + pathFromResource)
+    //TODO: Put a similar method into Utils.kt that returns a List?
+    /**
+     * Returns an [ObservableList] of [Path] objects representing all of the files with the
+     * given extension that were present in the folder within [_resourceFolder] denoted by
+     * [pathFromResource].
+     */
+    private fun fileList(pathFromResource: String, extension: String): ObservableList<Path> {
+        val basePath: Path = Paths.get(_resourceFolder.toString() + File.separatorChar + pathFromResource)
 
         val list = FXCollections.observableArrayList(ArrayList<Path>())
 
         try {
-            Files.newDirectoryStream(basePath, '*' + ext).use {
+            Files.newDirectoryStream(basePath, '*' + extension).use {
                 for (p in it) {
-                    val fname = p.baseFilename(ext)
+                    val fname = p.baseFilename(extension)
                     if (fname.length <= PxPack.Head.FILENAME_MAX_LEN && !fname.contains(' ')) {
                         list.add(p)
                     }
@@ -227,7 +238,7 @@ object GameData {
             }
         }
         catch (except: IOException) {
-            throw IOException(MessageFormat.format(Messages.getString("GameData.ListFilesIOExcept"), executable), except)
+            throw IOException(MessageFormat.format(Messages.getString("GameData.ListFilesIOExcept"), _executable), except)
         }
 
         return list
@@ -235,16 +246,39 @@ object GameData {
 
     /**
      * Throws an [IllegalStateException] if [isInitialized] is false, otherwise returns normally
+     *
+     * @param retrievedProperty the name of the property attempting to be
+     * retrieved. It will be put into the message of the [IllegalStateException]
+     * that is thrown when [isInitialized] is false so that the message can be
+     * more informative.
      */
-    private fun checkInit(retrievedItem: String) {
+    private fun checkInit(retrievedProperty: String) {
         if (!isInitialized) {
-            throw IllegalStateException("GameData must be initialized before $retrievedItem can be retrieved from it")
+            throw IllegalStateException("GameData must be initialized before $retrievedProperty can be retrieved from it")
         }
     }
 
+    /**
+     * An enum class representing the different types of Kero Blaster mods
+     * that can exist. Each constant within the class represents a different
+     * game based on the Kero Blaster engine. Although each is mostly the same
+     * in terms of the engine and capabilities, there are some discrepancies
+     * that must be dealt with.
+     */
     enum class ModType {
+        /**
+         * A mod based on the Pink Hour game
+         */
         PINK_HOUR,
+
+        /**
+         * A mod based on the Pink Heaven game
+         */
         PINK_HEAVEN,
+
+        /**
+         * A mod based on the Kero Blaster game
+         */
         KERO_BLASTER
     }
 }

@@ -24,7 +24,7 @@ import javafx.scene.control.Tooltip
 
 import io.fdeitylink.keroedit.Messages
 
-//TODO: Get rid of @JvmOverloads annotation once I convert ScriptEditTab, MapEditTab, and HackTab?
+//TODO: Get rid of @JvmOverloads annotation once I convert ScriptEditTab, MapEditTab, and HackTab to Kotlin
 abstract class FileEditTab
 @JvmOverloads protected constructor(p: Path, text: String? = null, content: Node? = null): Tab(text, content) {
     //https://xkcd.com/853/
