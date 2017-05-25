@@ -42,6 +42,7 @@ import java.text.ParseException;
 
 import java.text.MessageFormat;
 
+import io.fdeitylink.util.MathUtilsKt;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.stage.Stage;
 import javafx.stage.Modality;
@@ -910,9 +911,9 @@ public final class MapEditTab extends FileEditTab {
                             }
 
                             //grabs x & y and bounds them to be within tileset
-                            final int x = (int)(UtilsKt.bound((int)event.getX(), 0, (int)tilesetCanvas.getWidth() - 1) /
+                            final int x = (int)(MathUtilsKt.bound((int)event.getX(), 0, (int)tilesetCanvas.getWidth() - 1) /
                                                 tilesetZoom.get() / TILE_WIDTH);
-                            final int y = (int)(UtilsKt.bound((int)event.getY(), 0, (int)tilesetCanvas.getHeight() - 1) /
+                            final int y = (int)(MathUtilsKt.bound((int)event.getY(), 0, (int)tilesetCanvas.getHeight() - 1) /
                                                 tilesetZoom.get() / TILE_HEIGHT);
 
                             if (x != prevX || y != prevY) {
@@ -1384,11 +1385,11 @@ public final class MapEditTab extends FileEditTab {
 
                                     if (null != tiles) {
                                         //grabs x & y and bounds them to be within map
-                                        final int x = (int)(UtilsKt.bound((int)event.getX(), 0,
-                                                                          (int)(mapCanvases[layer].getWidth() - 1)) /
+                                        final int x = (int)(MathUtilsKt.bound((int)event.getX(), 0,
+                                                                              (int)(mapCanvases[layer].getWidth() - 1)) /
                                                             mapZoom.get() / TILE_WIDTH);
-                                        final int y = (int)(UtilsKt.bound((int)event.getY(), 0,
-                                                                          (int)(mapCanvases[layer].getHeight() - 1)) /
+                                        final int y = (int)(MathUtilsKt.bound((int)event.getY(), 0,
+                                                                              (int)(mapCanvases[layer].getHeight() - 1)) /
                                                             mapZoom.get() / TILE_HEIGHT);
 
                                         /*

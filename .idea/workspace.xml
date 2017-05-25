@@ -10,7 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7e217904-e010-4fe6-a354-8fe1baa2af52" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/script/ScriptEditTab.kt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/io/fdeitylink/util/EnumUtils.kt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/io/fdeitylink/util/MathUtils.kt" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/META-INF/KeroEdit.kotlin_module" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/META-INF/MANIFEST.MF" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/com/eclipsesource/json/Json$DefaultHandler.class" afterPath="" />
@@ -123,14 +124,9 @@
       <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/util/fx/FileEditTab$1.class" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/util/fx/FileEditTab.class" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/KeroEdit/io/fdeitylink/util/fx/UndoableEdit.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/script/ScriptEditTab.java" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/readme.txt" afterPath="$PROJECT_DIR$/readme.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.java" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/util/Utils.kt" afterPath="$PROJECT_DIR$/src/io/fdeitylink/util/Utils.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/util/fx/FXUtil.kt" afterPath="$PROJECT_DIR$/src/io/fdeitylink/util/fx/FXUtil.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/util/fx/FileEditTab.kt" afterPath="$PROJECT_DIR$/src/io/fdeitylink/util/fx/FileEditTab.kt" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -161,27 +157,13 @@
       <file leaf-file-name="ScriptEditTab.kt" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/script/ScriptEditTab.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="104" column="0" lean-forward="true" selection-start-line="104" selection-start-column="0" selection-end-line="104" selection-end-column="0" />
+            <state relative-caret-position="102">
+              <caret line="34" column="0" lean-forward="true" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
               <folding>
                 <element signature="e#829#3306#0" expanded="false" />
                 <element signature="n#!!block;n#ScriptEditTab#0;n#!!block;n#ScriptEditTab#0" expanded="false" />
                 <element signature="n#!!block;n#save#0;n#!!block;n#ScriptEditTab#0" expanded="false" />
                 <element signature="n#!!block;n#markChanged#0;n#!!block;n#ScriptEditTab#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Utils.kt" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/util/Utils.kt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="371">
-              <caret line="104" column="1" lean-forward="false" selection-start-line="104" selection-start-column="1" selection-end-line="104" selection-end-column="1" />
-              <folding>
-                <element signature="n#!!block;n#baseFilename#0" expanded="false" />
-                <element signature="n#!!block;n#encoded#0" expanded="false" />
-                <element signature="n#!!block;n#decoded#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -288,8 +270,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/io/fdeitylink/util/Dimensions.kt" />
-        <option value="$PROJECT_DIR$/src/io/fdeitylink/util/SafeEnumX.kt" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/util/NullArgumentExceptionX.kt" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxPack.java" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/util/fx/UndoableEditX.kt" />
@@ -335,10 +315,12 @@
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/util/fx/FileEditTab.kt" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/util/fx/FXUtil.kt" />
-        <option value="$PROJECT_DIR$/src/io/fdeitylink/util/Utils.kt" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/script/ScriptEditTab.java" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.java" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/script/ScriptEditTab.kt" />
+        <option value="$PROJECT_DIR$/src/io/fdeitylink/util/EnumUtils.kt" />
+        <option value="$PROJECT_DIR$/src/io/fdeitylink/util/Utils.kt" />
+        <option value="$PROJECT_DIR$/src/io/fdeitylink/util/MathUtils.kt" />
       </list>
     </option>
   </component>
@@ -487,9 +469,6 @@
       <recent name="io.fdeitylink" />
       <recent name="io" />
     </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\brian\Documents\Programming\IdeaProjects\KeroEdit\src\com\fdl\keroedit\resource" />
-    </key>
     <key name="MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY">
       <recent name="io.fdeitylink.keroedit" />
     </key>
@@ -497,6 +476,9 @@
       <recent name="C:\Users\brian\Documents\Programming\IdeaProjects\KeroEdit\src\com\eclipsesource\json" />
       <recent name="C:\Users\brian\Documents\Programming\IdeaProjects\KeroEdit\src\com\fdl\keroedit" />
       <recent name="C:\Users\brian\Documents\Programming\IdeaProjects\KeroEdit\src\com\fdl\keroedit\util" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\brian\Documents\Programming\IdeaProjects\KeroEdit\src\com\fdl\keroedit\resource" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -693,13 +675,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1483667605832</updated>
-    </task>
-    <task id="LOCAL-00028" summary="Map description text now appears in tooltip on tab&#10;Cleanup &#10;- Changed how ScriptEditTab reads in lines&#10;- Realized not all referenced maps were being stored due to len diff in PxPack.Head constructor">
-      <created>1490149179608</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1490149179608</updated>
     </task>
     <task id="LOCAL-00029" summary="Mostly cleanup&#10;GameData is safer when loading a mod or retrieving information&#10;Now using SimpleIntegerProperty with flags for displayedLayers instead of array of SimpleBooleanProperties&#10;Config now saves displayedLayers&#10;Changed how license is read in KeroEdit.showLicense() (Stream &amp; Files.lines() instead of BufferedReader &amp; Files.newBufferedReader())">
       <created>1490449596336</created>
@@ -1037,7 +1012,14 @@
       <option name="project" value="LOCAL" />
       <updated>1495682261161</updated>
     </task>
-    <option name="localTasksCounter" value="77" />
+    <task id="LOCAL-00077" summary="Reimplemented ScriptEditTab as a Kotlin class">
+      <created>1495691826223</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1495691826224</updated>
+    </task>
+    <option name="localTasksCounter" value="78" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1087,7 +1069,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="MapEditTab shows coordinates of mouse in title bar&#10;Made undo()/redo() call markChanged() in FileEditTab" />
     <MESSAGE value="Rudimentary entity editing (only names can be changed)" />
     <MESSAGE value="Can change entity type now&#10;markChanged() in MapEditTab inner classes now automatically call MapEditTab.this.markChanged();&#10;PxPack inner classes are no longer static" />
     <MESSAGE value="Moved util package from io.fdeitylink.keroedit to io.fdeitylink" />
@@ -1112,7 +1093,8 @@
     <MESSAGE value="Reimplemented GameData as a Kotlin object&#10;Added GameData.pxAttrExtension const String&#10;View mode defaults to entity boxes and sprites&#10;Added util.NullabilityAnnotations - my own @NotNull and @Nullable annotations" />
     <MESSAGE value="Deleted PoppableTab - it was a hot mess" />
     <MESSAGE value="Updates to GameData property management&#10; - ObservableLists are cleared in wipe()&#10; - get() for any of the ObservableList properties returns an unmodifiable ObservableList with the property as its backing list&#10; - Backing properties are used for all but isInitialized&#10;  - This allows GameData to internally access the properties during init() or wipe() without causing an IllegalStateException&#10;Removed max(Short, Short), min(Short, Short), max(Byte, Byte), and min(Byte, Byte) from Utils.kt in favor of using maxOf() and minOf()" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updates to GameData property management&#10; - ObservableLists are cleared in wipe()&#10; - get() for any of the ObservableList properties returns an unmodifiable ObservableList with the property as its backing list&#10; - Backing properties are used for all but isInitialized&#10;  - This allows GameData to internally access the properties during init() or wipe() without causing an IllegalStateException&#10;Removed max(Short, Short), min(Short, Short), max(Byte, Byte), and min(Byte, Byte) from Utils.kt in favor of using maxOf() and minOf()" />
+    <MESSAGE value="Reimplemented ScriptEditTab as a Kotlin class" />
+    <option name="LAST_COMMIT_MESSAGE" value="Reimplemented ScriptEditTab as a Kotlin class" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1140,20 +1122,6 @@
     <module2generated>rO0ABXNyABFqYXZhLnV0aWwuSGFzaE1hcAUH2sHDFmDRAwACRgAKbG9hZEZhY3RvckkACXRocmVzaG9sZHhwP0AAAAAAAAF3CAAAAAIAAAABdAAIS2Vyb0VkaXRzcgAvb3JnLmVjbGlwc2UueHRleHQuYnVpbGQuU291cmNlMkdlbmVyYXRlZE1hcHBpbmdgwc1G7ZGGygwAAHhwdwQAAAAAeHg=</module2generated>
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$KOTLIN_BUNDLED$/lib/kotlin-runtime-sources.jar!/kotlin/Annotations.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="90" column="3" lean-forward="false" selection-start-line="90" selection-start-column="3" selection-end-line="90" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$KOTLIN_BUNDLED$/lib/kotlin-runtime-sources.jar!/kotlin/reflect/KProperty.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="351">
-          <caret line="47" column="4" lean-forward="false" selection-start-line="47" selection-start-column="4" selection-end-line="47" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$KOTLIN_BUNDLED$/lib/kotlin-runtime-sources.jar!/kotlin/reflect/KCallable.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
@@ -1325,14 +1293,6 @@
           <folding>
             <element signature="n#!!block;n#getImage#0;n#!!block;n#ImageManager#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="116">
-          <caret line="2056" column="60" lean-forward="false" selection-start-line="2056" selection-start-column="60" selection-end-line="2056" selection-end-column="60" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1514,18 +1474,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/util/Utils.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="371">
-          <caret line="104" column="1" lean-forward="false" selection-start-line="104" selection-start-column="1" selection-end-line="104" selection-end-column="1" />
-          <folding>
-            <element signature="n#!!block;n#baseFilename#0" expanded="false" />
-            <element signature="n#!!block;n#encoded#0" expanded="false" />
-            <element signature="n#!!block;n#decoded#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/scene/text/Font.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="152">
@@ -1561,10 +1509,49 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/util/EnumUtils.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="46" column="1" lean-forward="true" selection-start-line="46" selection-start-column="1" selection-end-line="46" selection-end-column="1" />
+          <folding>
+            <element signature="e#28#82#0" expanded="true" />
+            <element signature="n#!!block;n#encoded#0" expanded="false" />
+            <element signature="n#!!block;n#decoded#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/util/Utils.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="19" column="73" lean-forward="true" selection-start-line="19" selection-start-column="73" selection-end-line="19" selection-end-column="73" />
+          <folding>
+            <element signature="n#!!block;n#baseFilename#0" expanded="false" />
+            <element signature="n#!!block;n#use#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="469" column="56" lean-forward="false" selection-start-line="469" selection-start-column="56" selection-end-line="469" selection-end-column="56" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/util/MathUtils.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="13" lean-forward="false" selection-start-line="8" selection-start-column="8" selection-end-line="8" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/script/ScriptEditTab.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="104" column="0" lean-forward="true" selection-start-line="104" selection-start-column="0" selection-end-line="104" selection-end-column="0" />
+        <state relative-caret-position="102">
+          <caret line="34" column="0" lean-forward="true" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
           <folding>
             <element signature="e#829#3306#0" expanded="false" />
             <element signature="n#!!block;n#ScriptEditTab#0;n#!!block;n#ScriptEditTab#0" expanded="false" />
