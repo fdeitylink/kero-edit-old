@@ -70,6 +70,7 @@ object GameData {
      * Don't return a new ObservableList in every call to get()
      * Make use of the unused lists
      * Store the items in the localize folder in these lists?
+     * Replace the public properties that have backing properties with methods? (since they can throw)
      */
 
     private var _bgms: ObservableList<Path>? = null
@@ -256,29 +257,5 @@ object GameData {
         if (!isInitialized) {
             throw IllegalStateException("GameData must be initialized before $retrievedProperty can be retrieved from it")
         }
-    }
-
-    /**
-     * An enum class representing the different types of Kero Blaster mods
-     * that can exist. Each constant within the class represents a different
-     * game based on the Kero Blaster engine. Although each is mostly the same
-     * in terms of the engine and capabilities, there are some discrepancies
-     * that must be dealt with.
-     */
-    enum class ModType {
-        /**
-         * A mod based on the Pink Hour game
-         */
-        PINK_HOUR,
-
-        /**
-         * A mod based on the Pink Heaven game
-         */
-        PINK_HEAVEN,
-
-        /**
-         * A mod based on the Kero Blaster game
-         */
-        KERO_BLASTER
     }
 }

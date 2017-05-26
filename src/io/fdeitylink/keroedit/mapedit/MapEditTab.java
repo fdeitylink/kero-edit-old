@@ -512,7 +512,7 @@ public final class MapEditTab extends FileEditTab {
                     sPane.setDividerPositions(0.1);
                 }
                 else { //EditMode.ENTITY
-                    sPane.getItems().set(0, entityPane);
+                    sPane.getItems().set(0, entityPane); //TODO: java.lang.IndexOutOfBoundsException: Index: 0, Size: 0
                     sPane.setOrientation(Orientation.HORIZONTAL);
                     sPane.setDividerPositions(0.2);
                     //tilesetStage.close();
@@ -2243,12 +2243,14 @@ public final class MapEditTab extends FileEditTab {
             //TODO: Scroll types
 
             int y = 0;
-            gPane.add(descriptionLabel, 0, y);
-            gPane.add(descriptionTextField, 1, y++);
+            gPane.addRow(y++, descriptionLabel, descriptionTextField);
+            /*gPane.add(descriptionLabel, 0, y);
+            gPane.add(descriptionTextField, 1, y++);*/
 
             for (int i = 0; i < labels.size(); ++i, ++y) {
-                gPane.add(labels.get(i), 0, y);
-                gPane.add(fields.get(i), 1, y);
+                /*gPane.add(labels.get(i), 0, y);
+                gPane.add(fields.get(i), 1, y);*/
+                gPane.addRow(y, labels.get(i), fields.get(i));
             }
 
             return gPane;

@@ -1,6 +1,6 @@
 /*
  * TODO:
- * abstract fun rename()?
+ * protected fun rename(p: Path)?
  * Store undo pointer to call markUnchanged() on undo()/redo() if the same state as when save() was called is met
  * Create abstract class representing a savable object and use that rather than Path and delegating save() to subclasses?
  * Handle tabs that have a '*' in their name not as a marker of changes (is this already handled?)
@@ -24,7 +24,7 @@ import javafx.scene.control.Tooltip
 
 import io.fdeitylink.keroedit.Messages
 
-//TODO: Get rid of @JvmOverloads annotation once I convert ScriptEditTab, MapEditTab, and HackTab to Kotlin
+//TODO: Get rid of @JvmOverloads annotation once I convert MapEditTab to Kotlin
 abstract class FileEditTab
 @JvmOverloads protected constructor(path: Path, text: String? = null, content: Node? = null): Tab(text, content) {
     //https://xkcd.com/853/

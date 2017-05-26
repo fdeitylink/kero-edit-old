@@ -379,7 +379,7 @@ public final class KeroEdit extends Application {
         }
 
         GameData.INSTANCE.wipe();
-        HackTab.wipe();
+        HackTab.INSTANCE.wipe();
         ImageManager.INSTANCE.wipe();
         PxAttrManager.INSTANCE.wipe();
         MapEditTab.wipeResources();
@@ -409,8 +409,6 @@ public final class KeroEdit extends Application {
                     GameData.INSTANCE.init(exe);
                     Config.INSTANCE.setLastExeLoc(exe);
 
-                    HackTab.init();
-
                     final File executableParent = exe.getParent().toAbsolutePath().toFile();
                     boolean hasRWXPermissions = executableParent.canRead() && executableParent.canWrite() &&
                                                 executableParent.canExecute();
@@ -428,6 +426,8 @@ public final class KeroEdit extends Application {
                     if (hasRWXPermissions) {
                         createAssistFolder();
                     }
+
+                    HackTab.INSTANCE.init();
 
                     Platform.runLater(() -> {
                         setTitle(" - " + exe.getParent().toAbsolutePath() + File.separatorChar);
@@ -709,15 +709,15 @@ public final class KeroEdit extends Application {
         enableOnLoadItems.add(menuItems[ActionsMenuItem.EDIT_GLOBAL_SCRIPT.ordinal()]);
 
         menuItems[ActionsMenuItem.HACK_EXECUTABLE.ordinal()].setOnAction(event -> {
-            if (!mainTabPane.getTabs().contains(HackTab.getInst())) {
-                mainTabPane.getTabs().add(HackTab.getInst());
+            if (!mainTabPane.getTabs().contains(HackTab.INSTANCE)) {
+                mainTabPane.getTabs().add(HackTab.INSTANCE);
             }
-            mainTabPane.getSelectionModel().select(HackTab.getInst());
+            mainTabPane.getSelectionModel().select(HackTab.INSTANCE);
             mainTabPane.requestFocus();
         });
         menuItems[ActionsMenuItem.HACK_EXECUTABLE.ordinal()].setDisable(true);
         //Disabled until I give it more functionality and the ability to load and save the executable
-        //enableOnLoadItems.add(menuItems[ActionsMenuItem.ordinalMap.get(ActionsMenuItem.HACK_EXECUTABLE)]);
+        enableOnLoadItems.add(menuItems[ActionsMenuItem.HACK_EXECUTABLE.ordinal()]);
 
         menuItems[ActionsMenuItem.WAFFLE.ordinal()].setOnAction(event -> {
             final Alert errorAlert = FXUtil.INSTANCE.createAlert(Alert.AlertType.ERROR,

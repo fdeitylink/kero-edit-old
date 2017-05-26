@@ -27,9 +27,9 @@ object ImageManager {
             return imageMap[imageName]!!
         }
 
-        var image = Image("file:///${GameData.resourceFolder.toString() +
-                                     File.separatorChar + GameData.imageFolder + File.separatorChar +
-                                     imageName + GameData.imageExtension}", false)
+        var image = Image("file:///" + GameData.resourceFolder.toString() +
+                          File.separatorChar + GameData.imageFolder + File.separatorChar +
+                          imageName + GameData.imageExtension, false)
 
         /*
          * TODO:
