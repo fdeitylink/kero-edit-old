@@ -67,8 +67,7 @@ object GameData {
 
     /*
      * TODO:
-     * Don't nullify and reassign the lists - use ObservableList.setAll()
-     *  - Could probably get rid of backing properties too
+     * Find a way to get rid of the backing properties
      * Don't return unmodifiable ObservableLists?
      *  - Bind ListChangeListeners instead and throw excepts for invalid changes?
      * Make use of the unused lists
@@ -76,35 +75,35 @@ object GameData {
      * Replace the public properties that have backing properties with methods? (since they can throw)
      */
 
-    private var _bgms: ObservableList<Path>? = null
+    private val _bgms: ObservableList<Path> = FXCollections.observableArrayList()
     val bgms: ObservableList<Path>
         get() {
             checkInit("bgms")
             return FXCollections.unmodifiableObservableList(_bgms)
         }
 
-    private var _maps: ObservableList<Path>? = null
+    private val _maps: ObservableList<Path> = FXCollections.observableArrayList()
     val maps: ObservableList<Path>
         get() {
             checkInit("maps")
             return FXCollections.unmodifiableObservableList(_maps)
         }
 
-    private var _images: ObservableList<Path>? = null
+    private val _images: ObservableList<Path> = FXCollections.observableArrayList()
     val images: ObservableList<Path>
         get() {
             checkInit("images")
             return FXCollections.unmodifiableObservableList(_images)
         }
 
-    private var _sfx: ObservableList<Path>? = null
+    private val _sfx: ObservableList<Path> = FXCollections.observableArrayList()
     val sfx: ObservableList<Path>
         get() {
             checkInit("sfx")
             return FXCollections.unmodifiableObservableList(_sfx)
         }
 
-    private var _scripts: ObservableList<Path>? = null
+    private val _scripts: ObservableList<Path> = FXCollections.observableArrayList()
     val scripts: ObservableList<Path>
         get() {
             checkInit("scripts")
@@ -117,12 +116,11 @@ object GameData {
 
         val exe = executable.toAbsolutePath()
 
-        if (!exe.fileName.toString().endsWith(".exe")) {
-            throw IllegalArgumentException("GameData must be initialized with an executable file ending in \".exe\" (exe: $exe)")
-        }
+        require(exe.fileName.toString().endsWith(".exe"))
+        { "GameData must be initialized with an executable file ending in \".exe\" (executable: $exe)" }
 
         if (!Files.exists(exe)) {
-            throw NoSuchFileException(exe.toString(), null, "Mod exe does not exist")
+            throw NoSuchFileException(exe.toString(), null, "Mod exe does not exist (executable: $exe)")
         }
 
         _executable = exe
@@ -160,9 +158,9 @@ object GameData {
         }
 
         try {
-            _bgms = fileList(bgmFolder, bgmExtension)
+            fillFileList(_bgms, bgmFolder, bgmExtension)
 
-            _maps = fileList(mapFolder, mapExtension)
+            fillFileList(_maps, mapFolder, mapExtension)
 
             /*_maps.addListener(ListChangeListener<Path> { c: ListChangeListener.Change<out Path> ->
                 val removed = c.removed
@@ -177,11 +175,11 @@ object GameData {
             })*/
 
             //TODO: Separate image lists (tilesets, spritesheets, etc.)
-            _images = fileList(imageFolder, imageExtension)
+            fillFileList(_images, imageFolder, imageExtension)
 
-            _sfx = fileList(sfxFolder, sfxExtension)
+            fillFileList(_sfx, sfxFolder, sfxExtension)
 
-            _scripts = fileList(scriptFolder, scriptExtension)
+            fillFileList(_scripts, scriptFolder, scriptExtension)
         }
         catch (except: IOException) {
             wipe()
@@ -204,39 +202,28 @@ object GameData {
         _executable = null
         _resourceFolder = null
 
-        _bgms?.clear()
-        _bgms = null
-
-        _maps?.clear()
-        _maps = null
-
-        _images?.clear()
-        _images = null
-
-        _sfx?.clear()
-        _sfx = null
-
-        _scripts?.clear()
-        _scripts = null
+        _bgms.clear()
+        _maps.clear()
+        _images.clear()
+        _sfx.clear()
+        _scripts.clear()
     }
 
     //TODO: Put a similar method into Utils.kt that returns a List?
     /**
-     * Returns an [ObservableList] of [Path] objects representing all of the files with the
+     * Fills a given [ObservableList] of [Path] objects representing all of the files with the
      * given extension that were present in the folder within [_resourceFolder] denoted by
      * [pathFromResource].
      */
-    private fun fileList(pathFromResource: String, extension: String): ObservableList<Path> {
+    private fun fillFileList(fileList: ObservableList<Path>, pathFromResource: String, extension: String) {
         val basePath: Path = Paths.get(_resourceFolder.toString() + File.separatorChar + pathFromResource)
-
-        val list = FXCollections.observableArrayList(ArrayList<Path>())
 
         try {
             Files.newDirectoryStream(basePath, '*' + extension).use {
                 for (p in it) {
                     val fname = p.baseFilename(extension)
                     if (fname.length <= PxPack.Head.FILENAME_MAX_LEN && !fname.contains(' ')) {
-                        list.add(p)
+                        fileList.add(p)
                     }
                 }
             }
@@ -244,8 +231,6 @@ object GameData {
         catch (except: IOException) {
             throw IOException(MessageFormat.format(Messages.getString("GameData.ListFilesIOExcept"), _executable), except)
         }
-
-        return list
     }
 
     /**

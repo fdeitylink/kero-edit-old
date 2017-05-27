@@ -38,6 +38,7 @@ class ScriptEditTab @Throws(IOException::class) constructor(inPath: Path): FileE
     init {
         parent = null
 
+        //TODO: Verify p represents a file
         val p = inPath.toAbsolutePath()
 
         /*

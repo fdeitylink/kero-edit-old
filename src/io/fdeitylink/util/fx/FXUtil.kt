@@ -215,7 +215,7 @@ object FXUtil {
 
     //TODO: Test this method on a tab that is specified as not-closeable
     /**
-     * Closes this [Tab] such that if it has an [javafx.event.EventHandler]
+     * Closes the receiving [Tab] such that if it has an [javafx.event.EventHandler]
      * set for its onCloseRequest or onClosed property, they will be triggered.
      *
      * @receiver a [Tab]
@@ -236,7 +236,7 @@ object FXUtil {
     }
 
     /**
-     * Sets the maximum length of the [String] text in this [TextInputControl]
+     * Sets the maximum length of the [String] text in the receiving [TextInputControl]
      *
      * @receiver a [TextInputControl] whose text should have a maximum length
      *
@@ -245,9 +245,9 @@ object FXUtil {
      * @throws IllegalArgumentException if [len] is negative
      */
     fun TextInputControl.setMaxLen(len: Int) {
-        require(len >= 0) { "Attempt to set max length of TextInputControl to negative value (len: $len)" }
-        textProperty().addListener {
-            _, _, newValue ->
+        //TODO: Remove previous listeners set by this method
+        require(len >= 0) { "Attempt to set max length of TextInputControl to a negative value (len: $len)" }
+        textProperty().addListener { _, _, newValue ->
             if (newValue.length > len) {
                 text = newValue.substring(0, len)
             }
@@ -255,39 +255,38 @@ object FXUtil {
     }
 
     /**
-     * Sets the background of this [Region] to the given [Image]
+     * Sets the background of the receiving [Region] to the given [Image]
      *
      * @receiver a [Region] to set the background image of
      *
-     * @param image the [Image] to use as the background of this [Region]
+     * @param image the [Image] to use as the background of the receiving [Region]
      */
     fun Region.setBackgroundImage(image: Image) {
         background = Background(BackgroundImage(image, null, null, null, null))
     }
 
     /**
-     * Sets the background of this [Region] to the given [Color]
+     * Sets the background of the receiving [Region] to the given [Color]
      *
      * @receiver a [Region] to set the background color of
      *
-     * @param color the [Color] to use as the background of this [Region]
+     * @param color the [Color] to use as the background of the receiving [Region]
      */
     fun Region.setBackgroundColor(color: Color) {
         background = Background(BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY))
     }
 
     /**
-     * Returns a scaled version of this [Image], or this [Image] if
-     * this [Image] is null, the width or height of this [Image] is 0,
+     * Returns a scaled version of the receiving [Image], or this [Image]
+     * if this [Image] is null, the width or height of this [Image] is 0,
      * or [scale] is 1.0
      *
      * @receiver an [Image] to scale by [scale]
      *
      * @param scale the scale factor to scale this [Image] by
      *
-     * @return this [Image] if this is null, the width or height of this
-     * [Image] is 0, or [scale] is 1.0, otherwise a version of this [Image]
-     * scaled by [scale]
+     * @return the receiving [Image] if it is null, the width or height of it
+     * is 0, or [scale] is 1.0, otherwise a version of it scaled by [scale]
      */
     fun Image?.scale(scale: Double): Image? {
         if (null == this || 1.0 == scale) {

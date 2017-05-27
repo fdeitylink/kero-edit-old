@@ -242,6 +242,7 @@ public final class MapEditTab extends FileEditTab {
     public MapEditTab(Path inPath) throws IOException, ParseException {
         //TODO: Check if inPath is actually within the mod folder and throw except if not?
         super(inPath = inPath.toAbsolutePath());
+        //TODO: Verify p represents a file (do this in FileEditTab constructor?)
 
         if (!GameData.INSTANCE.isInitialized()) {
             throw new IllegalStateException("Attempt to create MapEditTab when GameData has not been properly initialized yet");

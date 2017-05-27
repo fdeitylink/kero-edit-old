@@ -1,5 +1,6 @@
 package io.fdeitylink.util
 
+//TODO: Verify lower < upper for each of these
 fun Double.bound(lower: Double, upper: Double) = Math.max(lower, Math.min(this, upper))
 
 fun Float.bound(lower: Float, upper: Float) = Math.max(lower, Math.min(this, upper))

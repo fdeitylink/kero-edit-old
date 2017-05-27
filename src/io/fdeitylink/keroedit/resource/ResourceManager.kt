@@ -39,7 +39,6 @@ object ResourceManager {
      * in the [resource][io.fdeitylink.keroedit.resource] package
      */
     fun getPath(filename: String): Path? {
-        //TODO: Use Kotlin's NoSuchFileException?
         val uri = javaClass.getResource(filename)?.toURI() ?: throw NoSuchFileException(filename)
         try {
             return Paths.get(uri).toAbsolutePath()
@@ -84,6 +83,7 @@ object ResourceManager {
      * @return an [Image] that represents the file denoted by [filename]
      */
     fun getImage(filename: String): Image {
+        //TODO: Check that p represents a file?
         val p = getPath(filename) ?: return EMPTY_IMAGE
         return Image(p.toUri().toString(), false)
     }

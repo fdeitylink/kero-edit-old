@@ -50,7 +50,8 @@ class ValidatedNotNullVar<T: Any>(private val validator: (value: T) -> Boolean,
     }
 
     override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-        this.value = if (validator(value)) value else throw IllegalArgumentException(lazyMessage().toString() + " (value: $value)")
+        require(validator(value)) { lazyMessage().toString() + " (value: $value)" }
+        this.value = value
     }
 }
 

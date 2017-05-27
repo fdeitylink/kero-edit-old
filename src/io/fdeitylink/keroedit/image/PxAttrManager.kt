@@ -73,9 +73,8 @@ object PxAttrManager {
 
     @Throws(IOException::class)
     fun setAttribute(tilesetName: String, x: Int, y: Int, attribute: Int) {
-        if (!pxAttrMap.contains(tilesetName)) {
-            throw IllegalArgumentException("Given tileset has no stored PxAttr object yet (tilesetName: $tilesetName)")
-        }
+        require(pxAttrMap.contains(tilesetName))
+        { "Given tileset has no stored PxAttr object yet (tilesetName: $tilesetName)" }
 
         val prop = pxAttrMap[tilesetName]!!
 
