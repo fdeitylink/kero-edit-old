@@ -22,7 +22,7 @@
  * Method for redrawing a single entity?
  * Pixel renders the game at 2x (so 200% zoom looks like it would in the game assuming the scale there is set to 1x)
  * Have redrawTile() and redrawTileLayer() take a Layer enum object rather than an int layer
- * Break this up into multiple files once this is reimplemented in Kotlin (i.e. make it less of a mess
+ * Break this up into multiple files once this is reimplemented in Kotlin (i.e. make it less of a mess)
  */
 
 package io.fdeitylink.keroedit.mapedit;
@@ -451,18 +451,21 @@ public final class MapEditTab extends FileEditTab {
              * Catch ParseException and handle invalid input
              * Cap the number of entities read at the number of entities that exist
              */
-            //TODO: Handle namesPath being null somehow
-            //TODO: Catch ParseException, handle invalid input
+            /*
+             * TODO:
+             * Handle namesPath being null
+             * Catch ParseException, handle invalid input
+             *  - Ensure that the root of the file is an object, as JSON spec allows array as root
+             */
             try (BufferedReader namesReader = Files.newBufferedReader(namesPath, Charset.forName("UTF-8"))) {
                 final JsonArray names = Json.parse(namesReader).asObject().get("entities").asArray();
                 entityNames = new String[names.size()];
                 for (int i = 0; i < names.size(); ++i) {
                     entityNames[i] = names.get(i).asString();
                 }
-
             }
             catch (final IOException except) {
-
+                except.printStackTrace();
             }
         }
     }
@@ -487,43 +490,59 @@ public final class MapEditTab extends FileEditTab {
 
             tilesetPane = new TilesetPane();
             entityPane = new EntityPane();
-            mapPane = new MapPane();
 
             //TODO: background on map pane (purple checkerboard?)
+            mapPane = new MapPane();
+
             final SplitPane sPane = new SplitPane();
+
+            initTilesetStage(sPane);
 
             if (EditMode.TILE == editMode.get()) {
                 sPane.getItems().add(tilesetPane);
+
                 sPane.setOrientation(Orientation.VERTICAL);
                 sPane.setDividerPositions(0.1);
             }
             else { //EditMode.ENTITY
+                tilesetStage.close();
+
                 sPane.getItems().add(entityPane);
+
                 sPane.setOrientation(Orientation.HORIZONTAL);
                 sPane.setDividerPositions(0.2);
-                //tilesetStage.close();
-                //TODO: The tileset stage needs to be closed/hidden while in entity mode
             }
 
             editMode.addListener((observable, oldValue, newValue) -> {
                 if (EditMode.TILE == newValue) {
                     sPane.getItems().set(0, tilesetPane);
+
                     sPane.setOrientation(Orientation.VERTICAL);
                     sPane.setDividerPositions(0.1);
                 }
                 else { //EditMode.ENTITY
-                    sPane.getItems().set(0, entityPane); //TODO: java.lang.IndexOutOfBoundsException: Index: 0, Size: 0
+                    if (tilesetStage.isShowing()) {
+                        tilesetStage.close();
+
+                        sPane.getItems().add(0, entityPane);
+                    }
+                    else {
+                        sPane.getItems().set(0, entityPane);
+                    }
+
                     sPane.setOrientation(Orientation.HORIZONTAL);
                     sPane.setDividerPositions(0.2);
-                    //tilesetStage.close();
                 }
-
-                sPane.setDividerPositions(0.1);
+                /*
+                 * TODO:
+                 * Open tilesetStage when in tile editng mode
+                 * Switch to entity editing mode
+                 * Switch back to tile editing mode
+                 * Open tilesetStage - it'll be super thin and throw an NPE if the mouse passes over it
+                 */
             });
 
             sPane.getItems().add(mapPane);
-
-            initTilesetStage(sPane);
 
             setContent(sPane);
         }
@@ -546,51 +565,69 @@ public final class MapEditTab extends FileEditTab {
         }
 
         /**
-         * Adds all the {@code EventHandler}s and other things
-         * for setting up the tileset {@code Stage}
+         * Adds all the {@code EventHandler}s and other things for setting up
+         * the tileset {@code Stage}
          *
          * @param sPane The {@code SplitPane} containing the {@code TilesetPane} to be swapped
          *              between the main {@code Stage} and a secondary {@code Stage}
          */
         private void initTilesetStage(final SplitPane sPane) {
-            //TODO: Hide tilesetStage when editing entities, show when editing tiles
+            /*
+             * The tilesetPane in every MapEditTab will be removed from
+             * sPane when tilesetStage is shown
+             */
+            final EventHandler <? super WindowEvent> beforeShowingEvent = new EventHandler <WindowEvent>() {
+                private Pane tmpPane = new Pane();
 
-            //tilesetPane in EVERY MapEditTab will be removed from sPane when tilesetStage is shown
-            final EventHandler <? super WindowEvent> beforeShowingEvent = event -> {
-                sPane.getItems().remove(tilesetPane);
+                @Override
+                public void handle(final WindowEvent event) {
+                    sPane.getItems().remove(tilesetPane);
 
-                /*
-                 * The following is a temporary workaround for a bug where removing a node from a SplitPane does not
-                 * immediately (or ever?) set its parent to null. If it is not set to null, an exception will be thrown
-                 * when an attempt is made to make the Node (in this case tilesetPane) the root of a Scene. This code
-                 * will make a Pane the Node's parent, then remove the Node so that the Node's parent is null and the
-                 * Node is ready to be made the root of a Scene. The bug should be fixed in Java/JavaFX 9.
-                 * https://bugs.openjdk.java.net/browse/JDK-8148828
-                 * https://bugs.openjdk.java.net/browse/JDK-8132898
-                 */
-                final Pane tmpPane = new Pane(tilesetPane);
-                tmpPane.getChildren().remove(tilesetPane);
+                    /*
+                     * The following is a temporary workaround for a bug where removing a node from a SplitPane does
+                     * not immediately (or ever?) set its parent to null. If it is not set to null, an exception will
+                     * be thrown when an attempt is made to make the Node (in this case tilesetPane) the root of a
+                     * Scene. This code will make a Pane the Node's parent, then remove the Node so that the Node's
+                     * parent is null and the Node is ready to be made the root of a Scene. The bug should be fixed in
+                     * Java/JavaFX 9.
+                     * https://bugs.openjdk.java.net/browse/JDK-8148828
+                     * https://bugs.openjdk.java.net/browse/JDK-8132898
+                     */
+                    tmpPane.getChildren().add(tilesetPane);
+                    tmpPane.getChildren().remove(tilesetPane);
 
-                tilesetStage.getScene().setRoot(tilesetPane);
-                tilesetStage.setWidth(tilesetPane.getWidth());
-                tilesetStage.setHeight(tilesetPane.getHeight());
+                    tilesetStage.getScene().setRoot(tilesetPane);
+
+                    //TODO: Fix bug where the stage is shrinks every time it's reopened
+                    tilesetStage.setWidth(tilesetPane.getWidth());
+                    tilesetStage.setHeight(tilesetPane.getHeight());
+                }
             };
             tilesetStage.addEventHandler(WindowEvent.WINDOW_SHOWING, beforeShowingEvent);
 
-            //tilesetPane in EVERY MapEditTab will be added back to sPane when tilesetStage is hidden
+            /*
+             * The tilesetPane in every MapEditTab will be added back to sPane
+             * when tilesetStage is hidden if the user is editing tiles, not entities.
+             */
             final EventHandler <? super WindowEvent> afterHiddenEvent = event -> {
-                //read the static{} block at the top of this file - tilesetStage's root set to empty Pane when closed
+                /*
+                 * Read the static{} block at the top of this file. In it,
+                 * tilesetStage's root is set to an empty Pane when it is closed.
+                 */
                 if (EditMode.TILE == editMode.get()) {
-                    sPane.getItems().set(0, tilesetPane);
+                    sPane.getItems().add(0, tilesetPane);
                     sPane.setDividerPositions(0.1);
                 }
             };
             tilesetStage.addEventHandler(WindowEvent.WINDOW_HIDDEN, afterHiddenEvent);
 
-            //shows or minimizes tilesetStage depending on if TileEditTab is selected or Properties/Script Tabs are selected
+            /*
+             * tilesetStage will be shown or minimized depending on if the TileEditTab
+             * is selected, or the PropertyEdit/ScriptEdit Tabs are selected
+             */
             setOnSelectionChanged(event -> tilesetStage.setIconified(!isSelected()));
 
-            //undock tileset
+            //Undock the tileset
             tilesetPane.setOnMouseClicked(event -> {
                 if (MouseButton.PRIMARY == event.getButton() && 2 == event.getClickCount() &&
                     !tilesetStage.isShowing()) {
@@ -598,8 +635,10 @@ public final class MapEditTab extends FileEditTab {
                 }
             });
 
-            //change shown tilesetPane when selected MapEditTab is changed
-
+            /*
+             * Change which tilesetPane is shown in tilesetStage when the selected
+             * MapEditTab is changed
+             */
             MapEditTab.this.setOnSelectionChanged(event -> {
                 if (MapEditTab.this.isSelected()) {
                     if (tilesetStage.isShowing() && tilesetStage.getScene().getRoot() != tilesetPane) {
@@ -615,8 +654,11 @@ public final class MapEditTab extends FileEditTab {
                 }*/
             });
 
-            //if the tilesetStage is being shown on init, change shown tilesetPane to this one
-            if (tilesetStage.showingProperty().get()) {
+            /*
+             * If tilesetStage is already showing when an instance of TileEditTab is initialized,
+             * change the tilesetPane in the Stage to the one stored by this object.
+             */
+            if (tilesetStage.isShowing()) {
                 beforeShowingEvent.handle(new WindowEvent(tilesetStage, WindowEvent.WINDOW_SHOWING));
             }
         }
@@ -2244,12 +2286,8 @@ public final class MapEditTab extends FileEditTab {
 
             int y = 0;
             gPane.addRow(y++, descriptionLabel, descriptionTextField);
-            /*gPane.add(descriptionLabel, 0, y);
-            gPane.add(descriptionTextField, 1, y++);*/
 
             for (int i = 0; i < labels.size(); ++i, ++y) {
-                /*gPane.add(labels.get(i), 0, y);
-                gPane.add(fields.get(i), 1, y);*/
                 gPane.addRow(y, labels.get(i), fields.get(i));
             }
 

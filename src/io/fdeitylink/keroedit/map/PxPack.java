@@ -359,7 +359,7 @@ public final class PxPack {
         /*
          * TODO:
          * Disallow null elements
-         * Maybe return an unmodifiable backing list and provide set/addEntity() methods
+         * Maybe return an unmodifiable list and provide set/addEntity() methods
          * Cap size at 0xFFFF
          */
         return entities;

@@ -67,7 +67,10 @@ object GameData {
 
     /*
      * TODO:
-     * Don't return a new ObservableList in every call to get()
+     * Don't nullify and reassign the lists - use ObservableList.setAll()
+     *  - Could probably get rid of backing properties too
+     * Don't return unmodifiable ObservableLists?
+     *  - Bind ListChangeListeners instead and throw excepts for invalid changes?
      * Make use of the unused lists
      * Store the items in the localize folder in these lists?
      * Replace the public properties that have backing properties with methods? (since they can throw)

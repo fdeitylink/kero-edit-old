@@ -143,7 +143,7 @@ object HackTab: FileEditTab(Paths.get("")) {
 
         try {
             Files.newBufferedReader(hackFilePath, Charset.forName("UTF-8")).use {
-                //TODO: Check that the JSON spec requires the outermost value to be an object
+                //TODO: Check that result of Json.parse(it) is an object (as JSON spec also allows array as root)
                 val topLevelObj = Json.parse(it).asObject()
                 subrootName = topLevelObj.getString("name", "<name missing>")
 

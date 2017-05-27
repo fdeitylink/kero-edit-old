@@ -144,7 +144,7 @@ import io.fdeitylink.keroedit.mapedit.MapEditTab;
 import io.fdeitylink.keroedit.script.ScriptEditTab;
 
 public final class KeroEdit extends Application {
-    private static KeroEdit inst;
+    private static KeroEdit INSTANCE;
 
     private static final String baseTitleStr = MessageFormat.format(Messages.INSTANCE.getString("KeroEdit.APP_TITLE"),
                                                                     Messages.INSTANCE.getString("KeroEdit.VERSION"));
@@ -168,7 +168,7 @@ public final class KeroEdit extends Application {
      */
     @Override
     public void start(final Stage primaryStage) {
-        inst = this;
+        INSTANCE = this;
 
         final Thread.UncaughtExceptionHandler fxDefExceptHandler = Thread.currentThread().getUncaughtExceptionHandler();
         final Thread.UncaughtExceptionHandler exceptHandler = (thread, throwable) -> {
@@ -240,7 +240,7 @@ public final class KeroEdit extends Application {
      * @param str The string to append to the title
      */
     public static void setTitle(final String str) {
-        inst.mainStage.setTitle(baseTitleStr + str);
+        INSTANCE.mainStage.setTitle(baseTitleStr + str);
     }
 
     /**
@@ -249,7 +249,7 @@ public final class KeroEdit extends Application {
      * @return the {@code String} that has been appended to the base title of the program's {@code Stage}
      */
     public static String getTitle() {
-        final String fullTitle = inst.mainStage.getTitle();
+        final String fullTitle = INSTANCE.mainStage.getTitle();
         return null == fullTitle ? "" : fullTitle.substring(baseTitleStr.length());
     }
 
@@ -708,16 +708,16 @@ public final class KeroEdit extends Application {
         menuItems[ActionsMenuItem.EDIT_GLOBAL_SCRIPT.ordinal()].setDisable(true);
         enableOnLoadItems.add(menuItems[ActionsMenuItem.EDIT_GLOBAL_SCRIPT.ordinal()]);
 
-        menuItems[ActionsMenuItem.HACK_EXECUTABLE.ordinal()].setOnAction(event -> {
+        //Disabled until I give it more functionality and the ability to load and save the executable
+        /*menuItems[ActionsMenuItem.HACK_EXECUTABLE.ordinal()].setOnAction(event -> {
             if (!mainTabPane.getTabs().contains(HackTab.INSTANCE)) {
                 mainTabPane.getTabs().add(HackTab.INSTANCE);
             }
             mainTabPane.getSelectionModel().select(HackTab.INSTANCE);
             mainTabPane.requestFocus();
         });
+        enableOnLoadItems.add(menuItems[ActionsMenuItem.HACK_EXECUTABLE.ordinal()]);*/
         menuItems[ActionsMenuItem.HACK_EXECUTABLE.ordinal()].setDisable(true);
-        //Disabled until I give it more functionality and the ability to load and save the executable
-        enableOnLoadItems.add(menuItems[ActionsMenuItem.HACK_EXECUTABLE.ordinal()]);
 
         menuItems[ActionsMenuItem.WAFFLE.ordinal()].setOnAction(event -> {
             final Alert errorAlert = FXUtil.INSTANCE.createAlert(Alert.AlertType.ERROR,
@@ -881,10 +881,16 @@ public final class KeroEdit extends Application {
                                             null, Messages.INSTANCE.getString("KeroEdit.DeleteMap.MESSAGE")).showAndWait()
                                .ifPresent(result -> {
                                    if (ButtonType.OK == result) {
-                              /*
-                               * GameData.getMapList()is the backing list for the ListView,
-                               * so changes to the ListView's items affect GameData and vice versa.
-                               */
+                                      /*
+                                       * GameData.getMapList()is the backing list for the ListView,
+                                       * so changes to the ListView's items affect GameData and vice versa.
+                                       */
+                                      /*
+                                       * TODO:
+                                       * THis will throw an UnsupportedOperationException right now
+                                       * Figure out how GameData should give out its lists while allowing
+                                       * changes to them
+                                       */
                                        mapListView.getItems().remove(map);
                                        selectedMapNames.remove(map);
 
@@ -894,11 +900,11 @@ public final class KeroEdit extends Application {
                                                tab instanceof ScriptEditTab &&
                                                UtilsKt.baseFilename(((ScriptEditTab)tab).getPath(), GameData.scriptExtension)
                                                       .equals(UtilsKt.baseFilename(map, GameData.mapExtension))) {
-                                      /*
-                                       * Don't use FXUtil.INSTANCE.closeTab() as we've already confirmed
-                                       * the user wants to delete the map, and thus that they
-                                       * don't care about unsaved changes.
-                                       */
+                                              /*
+                                               * Don't use close() in FXUtil as we've already confirmed
+                                               * the user wants to delete the map, and thus that they
+                                               * don't care about unsaved changes.
+                                               */
                                                mainTabPane.getTabs().remove(tab);
                                                break;
                                            }
