@@ -10,7 +10,6 @@
  * Play pxtone files (javafx.scene.media? javax.sound.sampled?)
  * In script editor, eventually put in an autocompleter for stuff like entity names
  * Add @throws to JavaDoc comments for runtime exceptions
- * Throw IllegalAccessExceptions in private constructors for classes not intended to be instantiated?
  * Verify default uncaught exception handler works
  * Throw EOFExceptions if EOF met during PXPACK or PXATTR parsing (chan.read() returns -1 if it met EOF)
  *   - Create wrapper channel class that throws EOFException?
@@ -25,7 +24,7 @@
  * Why is the scrollbar sometimes super tiny on the mapListView?
  * App icon (also use it for child windows)
  * Make sure all Alert creations are accompanied by showAndWait() calls (some are missing)
- * Have any empty catch blocks log the exception with Logger.INSTANCE.logThrowable()
+ * Have any empty catch blocks log the exception with Logger.logThrowable()
  * Keep any MenuItems with unimplemented features disabled (like what I did for HackTab)
  * Use TornadoFX after converting to Kotlin?
  * Put kotlin-reflect.jar on the classpath (bundle into JAR?)
@@ -50,9 +49,9 @@ import java.text.MessageFormat;
 
 import java.io.File;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.Files;
 
 import java.io.IOException;
 import java.text.ParseException;

@@ -38,6 +38,7 @@ import kotlin.reflect.KProperty
  * Turn validator: (T) -> Boolean into onChange: (property: KProperty<*>, oldValue: T, newValue: T) -> Boolean
  * Either create NotNullVetoable class or add throwExcept: Boolean  = true to the constructor
  * Turn into CustomNotNullVar class that takes a setter validator and a custom getter?
+ * Delegate to Delegates.notNull?
  */
 class ValidatedNotNullVar<T: Any>(private val validator: (value: T) -> Boolean,
                                   private val lazyMessage: () -> Any = { "Invalid value passed to set()" }

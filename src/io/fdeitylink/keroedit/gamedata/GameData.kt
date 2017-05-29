@@ -67,6 +67,7 @@ object GameData {
 
     /*
      * TODO:
+     * Use ObservableSets?
      * Find a way to get rid of the backing properties
      * Don't return unmodifiable ObservableLists?
      *  - Bind ListChangeListeners instead and throw excepts for invalid changes?
@@ -161,18 +162,6 @@ object GameData {
             fillFileList(_bgms, bgmFolder, bgmExtension)
 
             fillFileList(_maps, mapFolder, mapExtension)
-
-            /*_maps.addListener(ListChangeListener<Path> { c: ListChangeListener.Change<out Path> ->
-                val removed = c.removed
-                for (p in removed) {
-                    try {
-                        Files.deleteIfExists(p)
-                    }
-                    catch (except: IOException) {
-                        //TODO: Something...
-                    }
-                }
-            })*/
 
             //TODO: Separate image lists (tilesets, spritesheets, etc.)
             fillFileList(_images, imageFolder, imageExtension)
