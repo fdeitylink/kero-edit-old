@@ -2173,6 +2173,7 @@ public final class MapEditTab extends FileEditTab {
 
             /* ********************************************** Mapnames ********************************************** */
             final String[] currentMapNames = head.getMapNames();
+
             for (int i = 0; i < PxPack.Head.NUM_REF_MAPS; ++i) {
                 //TODO: Add option to leave value blank
                 final ComboBox <Path> cBox = new ComboBox <>(GameData.INSTANCE.getMaps());
@@ -2201,6 +2202,11 @@ public final class MapEditTab extends FileEditTab {
                      * a new mod is loaded. Ideally this Tab object would
                      * be destroyed when closed and newValue would never be
                      * null, so just blame the JVM's rare use of The Reaper (GC)
+                     *
+                     * TODO:
+                     *  - Check what happens when a map is deleted in the list
+                     *    - What becomes the new selected item?
+                     *      - If it just selects a new item, what happens when the list empties?
                      */
                     //TODO: Remove listeners on tab close to avoid this issue?
                     if (null != newValue) {
@@ -2232,13 +2238,15 @@ public final class MapEditTab extends FileEditTab {
                 final SingleSelectionModel <Path> selectModel = cBox.getSelectionModel();
                 selectModel.select(spritesheet);
                 selectModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                    head.setSpritesheetName(UtilsKt.baseFilename(newValue, GameData.imageExtension));
-                    markChanged();
-                    /*
-                     * TODO:
-                     * When I start pulling entity sprites directly from
-                     * spritesheets, redraw entities in TileEditTab.
-                     */
+                    if (newValue != null) {
+                        head.setSpritesheetName(UtilsKt.baseFilename(newValue, GameData.imageExtension));
+                        markChanged();
+                        /*
+                         * TODO:
+                         * When I start pulling entity sprites directly from
+                         * spritesheets, redraw entities in TileEditTab.
+                         */
+                    }
                 });
 
                 fields.add(cBox);
@@ -2268,12 +2276,14 @@ public final class MapEditTab extends FileEditTab {
                 selectModel.select(tileset);
                 final int index = i;
                 selectModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                    head.setTilesetName(index, UtilsKt.baseFilename(newValue, GameData.imageExtension));
-                    markChanged();
+                    if (newValue != null) {
+                        head.setTilesetName(index, UtilsKt.baseFilename(newValue, GameData.imageExtension));
+                        markChanged();
 
-                    //TODO: Only reload affected tileset, not all of them
-                    tileEditTab.tilesetPane.loadTilesets.restart();
-                    tileEditTab.tilesetPane.loadPxAttrs.restart();
+                        //TODO: Only reload affected tileset, not all of them
+                        tileEditTab.tilesetPane.loadTilesets.restart();
+                        tileEditTab.tilesetPane.loadPxAttrs.restart();
+                    }
                 });
 
                 fields.add(cBox); //TODO: Add option to leave second two tilesets blank

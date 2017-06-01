@@ -1,3 +1,9 @@
+/*
+ * TODO:
+ * Allow specifying Log Levels?
+ * Remove @JvmOverloads annotation on logThrowable when everything is converted to Kotlin
+ * Am I properly appending log records rather than overwriting?
+ */
 package io.fdeitylink.util
 
 import java.util.logging.LogRecord
@@ -6,12 +12,10 @@ import java.util.logging.Level
 
 import java.io.IOException
 
-//TODO: Allow specifying Log Levels?
-
 object Logger {
-    fun logMessage(message: String) {
+    fun logMessage(message: String, logFile: String = "error.log") {
         try {
-            val handle = FileHandler("error.log")
+            val handle = FileHandler(logFile)
             handle.publish(LogRecord(Level.ALL, message))
             handle.close()
         }
@@ -20,7 +24,8 @@ object Logger {
         }
     }
 
-    fun logThrowable(message: String = "", t: Throwable) {
+    @JvmOverloads
+    fun logThrowable(message: String = "", t: Throwable, logFile: String = "error.log") {
         val builder = StringBuilder(message).append('\n')
         builder.append("${t.javaClass.name}: ${t.message}")
 
@@ -32,7 +37,7 @@ object Logger {
         val finalMessage = builder.toString()
 
         try {
-            val handle = FileHandler("error.log")
+            val handle = FileHandler(logFile)
             handle.publish(LogRecord(Level.ALL, finalMessage))
             handle.close()
         }

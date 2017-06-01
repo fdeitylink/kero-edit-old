@@ -13,10 +13,14 @@ import java.io.IOException
 
 import java.nio.file.NoSuchFileException
 
-import javafx.collections.FXCollections
 import javafx.collections.ObservableList
+import javafx.collections.ListChangeListener
+
+import io.fdeitylink.util.Logger
 
 import io.fdeitylink.util.baseFilename
+
+import io.fdeitylink.util.ValidatedObservableList
 
 import io.fdeitylink.keroedit.Messages
 
@@ -68,47 +72,44 @@ object GameData {
     /*
      * TODO:
      * Use ObservableSets?
-     * Find a way to get rid of the backing properties
-     * Don't return unmodifiable ObservableLists?
-     *  - Bind ListChangeListeners instead and throw excepts for invalid changes?
-     * Make use of the unused lists
-     * Store the items in the localize folder in these lists?
+     * Get rid of the backing properties if possible
+     * Store the items in the localize folder in these lists? (separate lists?)
      * Replace the public properties that have backing properties with methods? (since they can throw)
      */
 
-    private val _bgms: ObservableList<Path> = FXCollections.observableArrayList()
+    private val _bgms = FileList()
     val bgms: ObservableList<Path>
         get() {
             checkInit("bgms")
-            return FXCollections.unmodifiableObservableList(_bgms)
+            return _bgms
         }
 
-    private val _maps: ObservableList<Path> = FXCollections.observableArrayList()
+    private val _maps = FileList()
     val maps: ObservableList<Path>
         get() {
             checkInit("maps")
-            return FXCollections.unmodifiableObservableList(_maps)
+            return _maps
         }
 
-    private val _images: ObservableList<Path> = FXCollections.observableArrayList()
+    private val _images = FileList()
     val images: ObservableList<Path>
         get() {
             checkInit("images")
-            return FXCollections.unmodifiableObservableList(_images)
+            return _images
         }
 
-    private val _sfx: ObservableList<Path> = FXCollections.observableArrayList()
+    private val _sfx = FileList()
     val sfx: ObservableList<Path>
         get() {
             checkInit("sfx")
-            return FXCollections.unmodifiableObservableList(_sfx)
+            return _sfx
         }
 
-    private val _scripts: ObservableList<Path> = FXCollections.observableArrayList()
+    private val _scripts = FileList()
     val scripts: ObservableList<Path>
         get() {
             checkInit("scripts")
-            return FXCollections.unmodifiableObservableList(_scripts)
+            return _scripts
         }
 
     @Throws(IOException::class)
@@ -179,7 +180,7 @@ object GameData {
     }
 
     /**
-     * Clears all data stored by this object. All [ObservableList]s
+     * Wipes all data stored by this object. All [ObservableList]s
      * stored by this object are cleared, and [isInitialized] is set
      * to false.
      */
@@ -200,11 +201,11 @@ object GameData {
 
     //TODO: Put a similar method into Utils.kt that returns a List?
     /**
-     * Fills a given [ObservableList] of [Path] objects representing all of the files with the
+     * Fills a given [FileList] with [Path] objects representing all of the files with the
      * given extension that were present in the folder within [_resourceFolder] denoted by
      * [pathFromResource].
      */
-    private fun fillFileList(fileList: ObservableList<Path>, pathFromResource: String, extension: String) {
+    private fun fillFileList(fileList: FileList, pathFromResource: String, extension: String) {
         val basePath: Path = Paths.get(_resourceFolder.toString() + File.separatorChar + pathFromResource)
 
         try {
@@ -227,12 +228,57 @@ object GameData {
      *
      * @param retrievedProperty the name of the property attempting to be
      * retrieved. It will be put into the message of the [IllegalStateException]
-     * that is thrown when [isInitialized] is false so that the message can be
-     * more informative.
+     * if one is thrown.
      */
     private fun checkInit(retrievedProperty: String) {
         if (!isInitialized) {
             throw IllegalStateException("GameData must be initialized before $retrievedProperty can be retrieved from it")
+        }
+    }
+
+    private class FileList: ValidatedObservableList<Path>(
+            { "Paths added must have lengths <= ${PxPack.Head.FILENAME_MAX_LEN} and contain no spaces (path: ${it.toAbsolutePath()})" },
+            {
+                val fname = it.baseFilename()
+                fname.length <= PxPack.Head.FILENAME_MAX_LEN && !fname.contains(' ')
+            }) {
+
+        companion object {
+            val deleteListener = ListChangeListener <Path> {
+                if (isInitialized) {
+                    while (it.next()) {
+                        if (it.wasRemoved()) {
+                            val removed = it.removed
+                            for (p in removed) {
+                                try {
+                                    Files.deleteIfExists(p)
+                                    //TODO: Why aren't it.list and _maps the same object?
+                                    if (p.fileName.toString().endsWith(mapExtension)/*it.list === GameData._maps*/) {
+                                        val scriptPath = Paths.get(_resourceFolder.toString() +
+                                                                   File.separatorChar + scriptFolder + File.separatorChar +
+                                                                   p.baseFilename(mapExtension) + scriptExtension)
+                                        try {
+                                            Files.deleteIfExists(scriptPath)
+                                        }
+                                        catch(except: IOException) {
+                                            //Other than logging, fail silently as not deleting a file isn't a big deal
+                                            Logger.logThrowable("Exception when attempting to delete script file ${p.toAbsolutePath()}", except)
+                                        }
+                                    }
+                                }
+                                catch (except: IOException) {
+                                    //Other than logging, fail silently as not deleting a file isn't a big deal
+                                    Logger.logThrowable("Exception when attempting to delete path ${p.toAbsolutePath()}", except)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        init {
+            addListener(deleteListener)
         }
     }
 }

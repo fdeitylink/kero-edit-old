@@ -169,13 +169,14 @@ public final class KeroEdit extends Application {
     public void start(final Stage primaryStage) {
         INSTANCE = this;
 
+        //TODO: The handler isn't being executed on non-FX Application threads...
         final Thread.UncaughtExceptionHandler fxDefExceptHandler = Thread.currentThread().getUncaughtExceptionHandler();
         final Thread.UncaughtExceptionHandler exceptHandler = (thread, throwable) -> {
             fxDefExceptHandler.uncaughtException(thread, throwable);
             Logger.INSTANCE.logThrowable("Uncaught exception: ", throwable);
         };
         Thread.currentThread().setUncaughtExceptionHandler(exceptHandler);
-        //Thread.setDefaultUncaughtExceptionHandler(exceptHandler);
+        Thread.setDefaultUncaughtExceptionHandler(exceptHandler);
 
         Config.INSTANCE.load();
 
@@ -873,9 +874,9 @@ public final class KeroEdit extends Application {
              * and deletions and ends up being a pain to work with
              */
             //TODO: Avoid creating a new List if possible
-            final List <Path> selectedMapNames = new ArrayList <>(mapListView.getSelectionModel().getSelectedItems());
-            for (int i = 0; i < selectedMapNames.size() && 0 < selectedMapNames.size(); ) {
-                final Path map = selectedMapNames.get(i);
+            final List <Path> selectedMaps = new ArrayList <>(mapListView.getSelectionModel().getSelectedItems());
+            for (int i = 0; i < selectedMaps.size() && 0 < selectedMaps.size(); ) {
+                final Path map = selectedMaps.get(i);
                 FXUtil.INSTANCE.createAlert(Alert.AlertType.CONFIRMATION, UtilsKt.baseFilename(map, GameData.mapExtension),
                                             null, Messages.INSTANCE.getString("KeroEdit.DeleteMap.MESSAGE")).showAndWait()
                                .ifPresent(result -> {
@@ -884,14 +885,8 @@ public final class KeroEdit extends Application {
                                        * GameData.getMapList()is the backing list for the ListView,
                                        * so changes to the ListView's items affect GameData and vice versa.
                                        */
-                                      /*
-                                       * TODO:
-                                       * THis will throw an UnsupportedOperationException right now
-                                       * Figure out how GameData should give out its lists while allowing
-                                       * changes to them
-                                       */
                                        mapListView.getItems().remove(map);
-                                       selectedMapNames.remove(map);
+                                       selectedMaps.remove(map);
 
                                        //Close any MapEditTab or ScriptEditTab that bears the filename of this item
                                        for (final Tab tab : mainTabPane.getTabs()) {
@@ -912,7 +907,7 @@ public final class KeroEdit extends Application {
                                });
 
                 //If user canceled map deletion, don't attempt to delete any others
-                if (selectedMapNames.contains(map)) {
+                if (selectedMaps.contains(map)) {
                     return;
                 }
             }

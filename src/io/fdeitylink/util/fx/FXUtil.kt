@@ -47,39 +47,27 @@ import javafx.concurrent.Task
 
 object FXUtil {
     /**
-     * Returns a [Task] that simply executes the given [Callable] in
-     * its [Task.call] method
-     *
-     * @param callable the [Callable] object to invoke [Callable.call]
-     * on in the body of the [Task.call] method for the returned [Task]
-     *
-     * @return a [Task] that calls [Callable.call] on [callable] in its
-     * [Task.call] method
+     * Returns a [Task] that calls [callable.call][Callable.call] in its [Task.call] method.
      */
     fun <V> task(callable: Callable<V>): Task<V> {
         //TODO: Take a () -> V
         return object: Task<V>() {
+            @Throws(Exception::class)
             override fun call() = callable.call()
         }
     }
 
     /**
      * Returns a [Service] that in its [Service.createTask] method
-     * returns a [Task] that executes the given [Callable] in its
-     * [Task.call] method
-     *
-     * @param callable the [Callable] object to invoke [Callable.call]
-     * on in the body of the [Task.call] method for the [Task] that is
-     * returned in the [Service.createTask] method of the returned [Service]
-     *
-     * @return a [Service] that, in its [Service.createTask] method, returns
-     * a [Task] that calls [Callable.call] on [callable] in its [Task.call] method
+     * returns a [Task] that calls [callable.call][Callable.call]
+     * in its [Task.call] method.
      */
     fun <V> service(callable: Callable<V>): Service<V> {
         //TODO: Take a () -> V
         return object: Service<V>() {
             override fun createTask(): Task<V> {
                 return object: Task<V>() {
+                    @Throws(Exception::class)
                     override fun call() = callable.call()
                 }
             }
