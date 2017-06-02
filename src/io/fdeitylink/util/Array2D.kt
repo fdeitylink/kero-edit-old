@@ -26,7 +26,8 @@ import java.util.Arrays
  * @constructor
  * Constructs a new `Array2D`, given its [width], [height], and a [backing] 2D array.
  * This constructor is useful for turning a regular Java 2D array (or `Array<Array<T>>`)
- * into an `Array2D`. For example,
+ * into an `Array2D`. For example, the following would create an `Array2D` with `regArray`
+ * as its backing list.
  *
  * ```
  * //Java
@@ -34,7 +35,6 @@ import java.util.Arrays
  * Array2D<String> array2D = new Array2D<String>(regArray[0].length, regArray.length, regArray);
  * ```
  *
- * would create an `Array2D` with `regArray` as its backing list.
  * Most of the time, however, the [emptyArray2D], [array2DOfNulls], and [invoke]
  * methods should be used for constructing a new `Array2D`.
  *
@@ -104,66 +104,6 @@ class Array2D<T>(val width: Int, val height: Int, val backing: Array<Array<T>>) 
                 Array2D(width, height, Array(height, { y -> Array(width, { x -> init(x, y) }) }))
 
         /**
-         * Constructs an `Array2D<T>` with a `width` and `height` of `0`. Has the same purpose
-         * as [emptyArray].
-         */
-        inline fun <reified T> emptyArray2D() = Array2D(0, 0, Array(0, { emptyArray<T>() }))
-
-        /**
-         * Constructs an `Array2D<T>` with the given [width] and [height], with a backing
-         * array whose elements are all `null`. Has the same purpose as [arrayOfNulls].
-         */
-        inline fun <reified T> array2DOfNulls(width: Int, height: Int) =
-                Array2D(width, height, Array(height, { arrayOfNulls<T>(width) }))
-
-        /**
-         * Constructs an `Array2D<T>` with the given [width] and [elements]. Has the same
-         * purpose as [arrayOf].
-         *
-         * If the width were `3`, for example, then the first three elements given would
-         * go into the first row of the `Array2D`, the next three the second row, and so on.
-         *
-         * @throws IllegalArgumentException if the length of [elements] is not a multiple
-         * of [width].
-         */
-        inline fun <reified T> array2DOf(width: Int, vararg elements: T): Array2D<T> {
-            if (elements.size % width != 0) {
-                throw IllegalArgumentException("elements cannot be converted to Array2D because its size is not divisible by width (width: $width, elements: ${elements.size})")
-            }
-
-            val array2D = array2DOfNulls<T>(width, elements.size / width)
-            var y = 0
-            for (i in elements.indices) {
-                array2D[i % width, y] = elements[i]
-                if (width == (i % width + 1)) {
-                    y++
-                }
-            }
-
-            /*
-             * T will be determined based upon the values given for elements,
-             * making the cast perfectly safe, as explained below.
-             *
-             * If T is non-nullable (e.g. String), array2D will hold only
-             * non-null items (pulled from elements), and the cast is safe
-             * because it is essentially equivalent to
-             * Array2D<T> as Array2D<T>.
-             *
-             * If T is nullable (e.g. String?), array2D will hold nullable
-             * items (pulled from elements), and the cast is safe because
-             * it is essentially equivalent to
-             * Array2D<T?> as Array2D<T?>.
-             *
-             * If T is a platform type (e.g. Path!), array2D will hold platform
-             * types (pulled from elements), and the cast is safe because
-             * it is essentially equivalent to
-             * Array2D<T!> as Array2D<T!>.
-             */
-            @Suppress("UNCHECKED_CAST")
-            return array2D as Array2D<T>
-        }
-
-        /**
          * Returns a [String] representation of [array2D] equivalent to [Arrays.deepToString].
          */
         fun <T> toString(array2D: Array2D<T>): String = Arrays.deepToString(array2D.backing)
@@ -220,4 +160,35 @@ class Array2D<T>(val width: Int, val height: Int, val backing: Array<Array<T>>) 
     inline fun forEachIndexed(action: (x: Int, y: Int, T) -> Unit) {
         backing.forEachIndexed { y, row -> row.forEachIndexed { x, value -> action.invoke(x, y, value) } }
     }
+}
+
+/**
+ * Constructs an `Array2D<T>` with a `width` and `height` of `0`. Has the same purpose
+ * as [emptyArray].
+ */
+inline fun <reified T> emptyArray2D() = Array2D(0, 0, Array(0, { emptyArray<T>() }))
+
+/**
+ * Constructs an `Array2D<T>` with the given [width] and [height], with a backing
+ * array whose elements are all `null`. Has the same purpose as [arrayOfNulls].
+ */
+inline fun <reified T> array2DOfNulls(width: Int, height: Int) =
+        Array2D(width, height, Array(height, { arrayOfNulls<T>(width) }))
+
+/**
+ * Constructs an `Array2D<T>` with the given [width] and [elements]. Has the same
+ * purpose as [arrayOf].
+ *
+ * If the width were `3`, for example, then the first three elements given would
+ * go into the first row of the `Array2D`, the next three the second row, and so on.
+ *
+ * @throws IllegalArgumentException if the length of [elements] is not a multiple
+ * of [width].
+ */
+inline fun <reified T> array2DOf(width: Int, vararg elements: T): Array2D<T> {
+    if (elements.size % width != 0) {
+        throw IllegalArgumentException("elements cannot be converted to Array2D because its size is not divisible by width (width: $width, elements: ${elements.size})")
+    }
+
+    return Array2D(width, elements.size / width) { x, y -> elements[(width * y) + x] }
 }

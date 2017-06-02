@@ -55,6 +55,7 @@ object HackTab: FileEditTab(Paths.get("")) {
         tabPaneProperty()
                 .addListener({ _, _, newValue ->
                                  if (null != newValue && !isInitialized) {
+                                     tabPane.tabs.remove(this)
                                      throw IllegalStateException("HackTab must be initialized before being added to a TabPane")
                                  }
                              })

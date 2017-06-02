@@ -34,10 +34,8 @@ object PxAttrManager {
                              File.separatorChar + GameData.imageFolder + File.separatorChar +
                              tilesetName + GameData.pxAttrExtension)
 
-        val pxAttr: PxAttr
-
         //If the mpt00 PXATTR was requested or it needs to be used as a default
-        pxAttr = if ("mpt00" == tilesetName || !Files.exists(path)) {
+        val pxAttr = if ("mpt00" == tilesetName || !Files.exists(path)) {
             if (null == mpt00) {
                 path = Paths.get(path.parent.toAbsolutePath().toString() + File.separatorChar +
                                  "mpt00" + GameData.pxAttrExtension)
@@ -46,7 +44,7 @@ object PxAttrManager {
                     /*
                      * TODO:
                      * Return null instead?
-                     * Use Kotlin's NoSuchFileException instead?
+                     * Return PxAttr with all empty attributes?
                      */
                     throw NoSuchFileException(path.toString(), null, "Missing default PXATTR file mpt00")
                 }
@@ -93,7 +91,7 @@ object PxAttrManager {
          * corresponding to tilesetName
          */
         if (prop.get() === mpt00 && "mpt00" != tilesetName) {
-            prop.set(PxAttr(mpt00, Paths.get(GameData.resourceFolder.toString() +
+            prop.set(PxAttr(mpt00!!, Paths.get(GameData.resourceFolder.toString() +
                                              File.separatorChar + GameData.imageFolder + File.separatorChar +
                                              tilesetName + GameData.pxAttrExtension)))
         }

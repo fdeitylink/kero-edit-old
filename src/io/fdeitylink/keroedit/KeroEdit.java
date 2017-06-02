@@ -35,6 +35,8 @@
  * Before converting MapEditTab, rename its messages.properties strings to match the class hierarchy better
  *  - Also improve the string names in general
  *  - Decide whether to always pass full file path or just filename to the messages
+ * ImmutableArray class?
+ * Use except.localizedMessage for exceptions that may be visible to the user
  */
 
 package io.fdeitylink.keroedit;

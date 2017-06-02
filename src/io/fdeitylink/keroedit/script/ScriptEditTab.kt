@@ -56,11 +56,10 @@ class ScriptEditTab @Throws(IOException::class) constructor(inPath: Path): FileE
          *  - scriptText = lineStream.collect(Collectors.joining("\n"));
          */
 
-        var scriptText = ""
-        try {
+        val scriptText = try {
             Files.lines(p, Charset.forName("Shift_JIS")).use {
                 //TODO: Replace all newlines with \n? (use regex)
-                scriptText = it.collect(Collectors.joining("\n"))
+                it.collect(Collectors.joining("\n"))
             }
         }
         catch (except: FileNotFoundException) {
@@ -68,8 +67,13 @@ class ScriptEditTab @Throws(IOException::class) constructor(inPath: Path): FileE
                 Files.createFile(p) //TODO: Give attributes as well?
             }
             catch (except: IOException) {
-                //TODO: Do nothing or let the except escalate?
+                /*
+                 * TODO:
+                 * Do nothing?
+                 * Log the exception?
+                 */
             }
+            ""
         }
         catch (except: IOException) {
             FXUtil.createAlert(type = Alert.AlertType.ERROR, title = Messages.getString("ScriptEditTab.IOExcept.TITLE"),

@@ -42,8 +42,6 @@ import java.text.ParseException;
 
 import java.text.MessageFormat;
 
-import io.fdeitylink.util.MathUtilsKt;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.stage.Stage;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
@@ -90,6 +88,7 @@ import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ListCell;
 
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
@@ -123,7 +122,9 @@ import com.eclipsesource.json.JsonArray;
 
 import io.fdeitylink.util.NullArgumentException;
 
-import io.fdeitylink.keroedit.Messages;
+import io.fdeitylink.util.Array2D;
+
+import io.fdeitylink.util.MathUtilsKt;
 
 import io.fdeitylink.util.UtilsKt;
 
@@ -135,6 +136,8 @@ import io.fdeitylink.util.fx.FXUtil;
 import io.fdeitylink.util.fx.FileEditTab;
 
 import io.fdeitylink.util.fx.UndoableEdit;
+
+import io.fdeitylink.keroedit.Messages;
 
 import io.fdeitylink.keroedit.KeroEdit;
 
@@ -152,9 +155,6 @@ import io.fdeitylink.keroedit.image.ImageManager;
 
 import io.fdeitylink.keroedit.script.ScriptEditTab;
 
-import static io.fdeitylink.keroedit.image.ImageDimensionsKt.ENTITIES_PER_ROW;
-import static io.fdeitylink.keroedit.image.ImageDimensionsKt.ENTITY_HEIGHT;
-import static io.fdeitylink.keroedit.image.ImageDimensionsKt.ENTITY_WIDTH;
 import static io.fdeitylink.keroedit.image.ImageDimensionsKt.TILE_WIDTH;
 import static io.fdeitylink.keroedit.image.ImageDimensionsKt.TILE_HEIGHT;
 
@@ -167,6 +167,16 @@ import static io.fdeitylink.keroedit.image.ImageDimensionsKt.PXATTR_TILE_WIDTH;
 import static io.fdeitylink.keroedit.image.ImageDimensionsKt.PXATTR_TILE_HEIGHT;
 
 import static io.fdeitylink.keroedit.image.ImageDimensionsKt.PXATTR_TILES_PER_ROW;
+
+import static io.fdeitylink.keroedit.image.ImageDimensionsKt.PXATTR_TO_TILE_RATIO;
+
+import static io.fdeitylink.keroedit.image.ImageDimensionsKt.ENTITY_WIDTH;
+import static io.fdeitylink.keroedit.image.ImageDimensionsKt.ENTITY_HEIGHT;
+
+import static io.fdeitylink.keroedit.image.ImageDimensionsKt.ENTITIES_PER_ROW;
+
+import static io.fdeitylink.keroedit.image.ImageDimensionsKt.ENTITY_TO_TILE_RATIO;
+
 
 public final class MapEditTab extends FileEditTab {
     //private static int numInstances; //used to tell if this is the last MapEditTab open
@@ -740,24 +750,22 @@ public final class MapEditTab extends FileEditTab {
 
                     final PxAttr pxAttr = pxAttrs[selectedLayer.get().ordinal()];
                     if (null != pxAttr) {
-                        final int[][] attributes = pxAttr.getAttributes();
+                        final Array2D <Integer> attributes = pxAttr.getAttributes();
                         final PixelReader pxAttrImgReader = pxAttrImage.getPixelReader();
 
                         if (null != attributes && null != pxAttrImgReader) {
                             final WritableImage tileTypeImg =
-                                    new WritableImage((int)tileTypeCanvas.getWidth() * 2
-                                                                            /*(PXATTR_IMAGE_WIDTH / TILESET_WIDTH)*/,
-                                                      (int)tileTypeCanvas.getHeight() * 2
-                                                                            /*(PXATTR_IMAGE_HEIGHT / TILESET_HEIGHT)*/);
+                                    new WritableImage((int)tileTypeCanvas.getWidth() * PXATTR_TO_TILE_RATIO,
+                                                      (int)tileTypeCanvas.getHeight() * PXATTR_TO_TILE_RATIO);
                             final PixelWriter tileTypeImgWriter = tileTypeImg.getPixelWriter();
 
                             final WritablePixelFormat <ByteBuffer> pxFormat = PixelFormat.getByteBgraInstance();
 
                             final byte[] attrTile = new byte[PXATTR_TILE_WIDTH * PXATTR_TILE_HEIGHT * 4];
-                            for (int y = 0; y < attributes.length; ++y) {
-                                for (int x = 0; x < attributes[y].length; ++x) {
-                                    final int attributesX = attributes[y][x] % PXATTR_TILES_PER_ROW;
-                                    final int attributesY = attributes[y][x] / PXATTR_TILES_PER_ROW;
+                            for (int y = 0; y < attributes.getHeight(); ++y) {
+                                for (int x = 0; x < attributes.getWidth(); ++x) {
+                                    final int attributesX = attributes.get(x, y) % PXATTR_TILES_PER_ROW;
+                                    final int attributesY = attributes.get(x, y) / PXATTR_TILES_PER_ROW;
 
                                     pxAttrImgReader.getPixels(attributesX * PXATTR_TILE_WIDTH,
                                                               attributesY * PXATTR_TILE_HEIGHT,
@@ -771,7 +779,8 @@ public final class MapEditTab extends FileEditTab {
                             }
 
                             Platform.runLater(() -> gContext
-                                    .drawImage(FXUtil.INSTANCE.scale(tileTypeImg, tilesetZoom.get() / 2), 0, 0));
+                                    .drawImage(FXUtil.INSTANCE.scale(tileTypeImg,
+                                                                     tilesetZoom.get() / PXATTR_TO_TILE_RATIO), 0, 0));
                         }
                     }
 
@@ -925,7 +934,9 @@ public final class MapEditTab extends FileEditTab {
                             drawSelectedTiles.restart();
                             redrawSelectedRect();
                         }
-                        else if (MouseButton.SECONDARY == event.getButton()) {
+                        else if (MouseButton.SECONDARY == event.getButton() &&
+                                 viewSettings.get().contains(ViewOption.TILE_TYPES)) {
+                            //TODO: Toggle visibility of popup rather than creating a new one every time
                             if (null != pxAttrPopup) {
                                 pxAttrPopup.hide();
                             }
@@ -1069,12 +1080,12 @@ public final class MapEditTab extends FileEditTab {
 
                     /* *************************************** Attribute Label ************************************** */
                     final PxAttr pxAttr = pxAttrs[layer];
-                    final int[][] attributes = null == pxAttr ? null : pxAttr.getAttributes();
+                    final Array2D <Integer> attributes = null == pxAttr ? null : pxAttr.getAttributes();
 
                     final Text attributeLabel = null == attributes ?
                                                 new Text("No attributes for this tileset") :
                                                 new Text(String.format("Current attribute: %02X",
-                                                                       attributes[tilesetY][tilesetX]));
+                                                                       attributes.get(tilesetX, tilesetY)));
                     attributeLabel.setFont(Font.font(null, FontWeight.BOLD, 12));
                     attributeLabel.setFill(Color.WHITE);
 
@@ -1089,7 +1100,11 @@ public final class MapEditTab extends FileEditTab {
                                        0, 0, scaledImg.getWidth(), scaledImg.getHeight() / 2,
                                        0, 0, pxAttrCanvas.getWidth(), pxAttrCanvas.getHeight());
 
-                    //TODO: Grid is cut off at edges for some reason
+                    /*
+                     * TODO:
+                     * Grid is cut off at edges for some reason
+                     * Highlight which attribute is chosen
+                     */
                     //Draw grid over image
                     gContext.setStroke(Color.WHITE);
                     gContext.setLineWidth(1);
@@ -1125,7 +1140,7 @@ public final class MapEditTab extends FileEditTab {
                             final int x = (int)event.getX() / 2 / PXATTR_TILE_WIDTH;
                             final int y = (int)event.getY() / 2 / PXATTR_TILE_HEIGHT;
                             attributeLabel.setText(String.format("Current attribute: %02X\nHovered attribute: %02X",
-                                                                 pxAttr.getAttributes()[tilesetY][tilesetX],
+                                                                 pxAttr.getAttributes().get(tilesetX, tilesetY),
                                                                  (y * PXATTR_TILES_PER_ROW) + x));
                         });
                     }
@@ -1163,7 +1178,8 @@ public final class MapEditTab extends FileEditTab {
                         final int y = (entityIndex / ENTITIES_PER_ROW) * ENTITY_HEIGHT;
 
                         entityImageView.setImage(FXUtil.INSTANCE.scale(new WritableImage(entityImage.getPixelReader(), x, y,
-                                                                                         ENTITY_WIDTH, ENTITY_HEIGHT), 2));
+                                                                                         ENTITY_WIDTH, ENTITY_HEIGHT),
+                                                                       ENTITY_TO_TILE_RATIO));
                         setText(String.format("#%d - " + entityNames[entityIndex], entityIndex));
                         setGraphic(entityImageView);
                     }
@@ -1274,21 +1290,28 @@ public final class MapEditTab extends FileEditTab {
                     mapCanvases[i].setVisible(displayedLayers.get().contains(Layer.values()[i]));
                 }
 
+                GraphicsContext context;
+
                 //Always visible - what is drawn is changed when viewSettings changes
                 entityCanvas = new Canvas();
-                entityCanvas.getGraphicsContext2D().setStroke(Color.LIME);
-                entityCanvas.getGraphicsContext2D().setFill(Color.WHITE);
-                entityCanvas.getGraphicsContext2D().setLineWidth(2);
+                context = entityCanvas.getGraphicsContext2D();
+
+                context.setStroke(Color.LIME);
+                context.setFill(Color.WHITE);
+                context.setLineWidth(2);
 
                 gridCanvas = new Canvas();
                 gridCanvas.setVisible(viewSettings.get().contains(ViewOption.GRID));
-                gridCanvas.getGraphicsContext2D().setStroke(Color.WHITE);
-                gridCanvas.getGraphicsContext2D().setLineWidth(1);
+                context = gridCanvas.getGraphicsContext2D();
+                context.setStroke(Color.WHITE);
+                context.setLineWidth(1);
+
 
                 cursorCanvas = new Canvas();
                 cursorCanvas.setVisible(EditMode.TILE == editMode.get());
-                cursorCanvas.getGraphicsContext2D().setStroke(Color.WHITE);
-                cursorCanvas.getGraphicsContext2D().setLineWidth(2);
+                context = cursorCanvas.getGraphicsContext2D();
+                context.setStroke(Color.WHITE);
+                context.setLineWidth(2);
 
                 fixCanvasSizes();
                 redrawGridLayer();
@@ -1642,7 +1665,7 @@ public final class MapEditTab extends FileEditTab {
 
                         PixelReader pxAttrImgReader;
                         final Image tileTypeImg;
-                        int[][] attributes;
+                        Array2D <Integer> attributes;
                         final boolean drawTileType;
 
                         if (viewSettings.get().contains(ViewOption.TILE_TYPES) && selectedLayer.get().ordinal() == layer) {
@@ -1667,14 +1690,15 @@ public final class MapEditTab extends FileEditTab {
                                                                           tilesetX * TILE_WIDTH, tilesetY * TILE_HEIGHT,
                                                                           TILE_WIDTH, TILE_HEIGHT), mapZoom.get());
                         if (drawTileType) {
-                            final int attributesX = attributes[tilesetY][tilesetX] % PXATTR_TILES_PER_ROW;
-                            final int attributesY = attributes[tilesetY][tilesetX] / PXATTR_TILES_PER_ROW;
+                            final int attribute = attributes.get(tilesetX, tilesetY);
+                            final int attributesX = attribute % PXATTR_TILES_PER_ROW;
+                            final int attributesY = attribute / PXATTR_TILES_PER_ROW;
 
                             tileTypeImg = FXUtil.INSTANCE.scale(new WritableImage(pxAttrImgReader,
                                                                                   attributesX * PXATTR_TILE_WIDTH,
                                                                                   attributesY * PXATTR_TILE_HEIGHT,
                                                                                   PXATTR_TILE_WIDTH, PXATTR_TILE_HEIGHT),
-                                                                mapZoom.get() / 2);
+                                                                mapZoom.get() / PXATTR_TO_TILE_RATIO);
                         }
                         else {
                             tileTypeImg = null;
@@ -1732,7 +1756,7 @@ public final class MapEditTab extends FileEditTab {
                         PixelReader pxAttrImgReader = null;
                         WritableImage tmpTileTypeImg = null;
                         PixelWriter tileTypeImgWriter = null;
-                        int[][] attributes = null;
+                        Array2D <Integer> attributes = null;
                         byte[] attrTile = null;
 
                         boolean drawTileTypes = false;
@@ -1743,8 +1767,8 @@ public final class MapEditTab extends FileEditTab {
                             pxAttrImgReader = pxAttrImage.getPixelReader();
 
                             if (drawTileTypes = (null != attributes && null != pxAttrImgReader)) {
-                                tmpTileTypeImg = new WritableImage((int)layerImg.getWidth() * 2,
-                                                                   (int)layerImg.getHeight() * 2);
+                                tmpTileTypeImg = new WritableImage((int)layerImg.getWidth() * PXATTR_TO_TILE_RATIO,
+                                                                   (int)layerImg.getHeight() * PXATTR_TO_TILE_RATIO);
                                 tileTypeImgWriter = tmpTileTypeImg.getPixelWriter();
 
                                 attrTile = new byte[PXATTR_TILE_WIDTH * PXATTR_TILE_HEIGHT * 4];
@@ -1771,8 +1795,9 @@ public final class MapEditTab extends FileEditTab {
 
                                 /* *********************************** Tile Types *********************************** */
                                 if (drawTileTypes) {
-                                    final int attributesX = attributes[tilesetY][tilesetX] % PXATTR_TILES_PER_ROW;
-                                    final int attributesY = attributes[tilesetY][tilesetX] / PXATTR_TILES_PER_ROW;
+                                    final int attribute = attributes.get(tilesetX, tilesetY);
+                                    final int attributesX = attribute % PXATTR_TILES_PER_ROW;
+                                    final int attributesY = attribute / PXATTR_TILES_PER_ROW;
 
                                     pxAttrImgReader.getPixels(attributesX * PXATTR_TILE_WIDTH,
                                                               attributesY * PXATTR_TILE_HEIGHT,
@@ -1787,7 +1812,7 @@ public final class MapEditTab extends FileEditTab {
                             }
                         }
 
-                        final Image typeImg = FXUtil.INSTANCE.scale(tmpTileTypeImg, mapZoom.get() / 2);
+                        final Image typeImg = FXUtil.INSTANCE.scale(tmpTileTypeImg, mapZoom.get() / PXATTR_TO_TILE_RATIO);
                         Platform.runLater(() -> {
                             final GraphicsContext layerGContext = mapCanvases[layer].getGraphicsContext2D();
 
@@ -1842,9 +1867,9 @@ public final class MapEditTab extends FileEditTab {
                                  */
                                 final WritableImage entitiesImg =
                                         new WritableImage((int)(entityCanvas.getWidth() / mapZoom.get()) *
-                                                          (ENTITY_WIDTH / TILE_WIDTH),
+                                                          ENTITY_TO_TILE_RATIO,
                                                           (int)(entityCanvas.getHeight() / mapZoom.get()) *
-                                                          (ENTITY_HEIGHT / TILE_HEIGHT));
+                                                          ENTITY_TO_TILE_RATIO);
                                 final PixelWriter entitiesImgWriter = entitiesImg.getPixelWriter();
 
                                 final byte[] entityBuf = new byte[ENTITY_WIDTH * ENTITY_HEIGHT * 4];
@@ -1864,7 +1889,7 @@ public final class MapEditTab extends FileEditTab {
 
                                 Platform.runLater(() -> gContext.drawImage(FXUtil.INSTANCE.scale(entitiesImg,
                                                                                                  mapZoom.get() /
-                                                                                                 (ENTITY_WIDTH / TILE_WIDTH)),
+                                                                                                 ENTITY_TO_TILE_RATIO),
                                                                            0, 0));
                             }
                         }
