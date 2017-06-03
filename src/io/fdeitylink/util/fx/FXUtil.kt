@@ -98,14 +98,14 @@ object FXUtil {
      * Creates and returns an [Alert] with the given properties
      *
      * @param type the [Alert.AlertType] of the [Alert]. Defaults to [Alert.AlertType.NONE]
-     * @param title the title text of the [Alert]. Defaults to null
+     * @param title the title text of the [Alert]
      * @param headerText the header text of the [Alert]. Defaults to null
-     * @param message the content text of the [Alert]. Defaults to null
+     * @param message the content text of the [Alert]
      *
      * @return the created [Alert]
      */
-    fun createAlert(type: Alert.AlertType = Alert.AlertType.NONE, title: String? = null, headerText: String? = null,
-                    message: String? = null): Alert {
+    fun createAlert(type: Alert.AlertType = Alert.AlertType.NONE, title: String?, headerText: String? = null,
+                    message: String?): Alert {
         val alert = Alert(type)
         alert.title = title
         alert.headerText = headerText
@@ -117,7 +117,7 @@ object FXUtil {
     /**
      * Creates and returns an [Dialog] with the given properties and two [TextField]s
      *
-     * @param title the title text of the [Dialog]. Defaults to null
+     * @param title the title text of the [Dialog]
      * @param headerText the header text of the [Dialog]. Defaults to null
      * @param firstPrompt the prompt text for the first [TextField]. Defaults to null
      * @param secondPrompt the prompt text for the second [TextField]. Defaults to null
@@ -128,7 +128,7 @@ object FXUtil {
      * their choice by clicking the OK button**. If they did not, such as by clicking the
      * Cancel button, then both [String]s in the [Pair] result will be empty.
      */
-    fun createDualTextFieldDialog(title: String? = null, headerText: String? = null,
+    fun createDualTextFieldDialog(title: String?, headerText: String? = null,
                                   firstPrompt: String? = null, secondPrompt: String? = null
                                  ): Dialog<Pair<String, String>> {
         //TODO: Add 'message' parameter that defaults to null?
@@ -167,17 +167,17 @@ object FXUtil {
      * Creates and returns an [Alert] with the given properties and a [TextArea] inside
      *
      * @param type the [Alert.AlertType] of the alert. Defaults to [Alert.AlertType.NONE]
-     * @param title the title text of the [Alert]. Defaults to null
+     * @param title the title text of the [Alert]
      * @param headerText the header text of the [Alert]. Defaults to null
-     * @param message the content text of the [Alert]. Defaults to null
-     * @param textAreaContent the content of the text box in the [Alert]. Defaults to null
-     * @param editable true if the user should be able to edit the content of the [TextArea], false otherwise.
-     * Defaults to false.
+     * @param message the content text of the [Alert]
+     * @param textAreaContent the content of the text box in the [Alert]
+     * @param editable true if the user should be able to edit the content of the [TextArea],
+     * false otherwise. Defaults to false
      *
      * @return the created [Alert]
      */
-    fun createTextboxAlert(type: Alert.AlertType = Alert.AlertType.NONE, title: String? = null,
-                           headerText: String? = null, message: String? = null, textAreaContent: String? = null,
+    fun createTextboxAlert(type: Alert.AlertType = Alert.AlertType.NONE, title: String?,
+                           headerText: String? = null, message: String?, textAreaContent: String?,
                            editable: Boolean = false): Alert {
         val alert = createAlert(type, title, headerText, message)
 
@@ -203,8 +203,9 @@ object FXUtil {
 
     //TODO: Test this method on a tab that is specified as not-closeable
     /**
-     * Closes the receiving [Tab] such that if it has an [javafx.event.EventHandler]
-     * set for its onCloseRequest or onClosed property, they will be triggered.
+     * Closes the receiving [Tab] such that if it has an
+     * [EventHandler][javafx.event.EventHandler] set for its onCloseRequest
+     * or onClosed property, they will be triggered.
      *
      * @receiver a [Tab]
      */

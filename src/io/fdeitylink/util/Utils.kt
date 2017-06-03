@@ -55,10 +55,11 @@ inline fun <T: AutoCloseable, R> T.use(block: (T) -> R): R {
     }
 }
 
-open class ValidatedObservableList<E> private constructor(private val delegate: ObservableList<E>,
-                                                          private val lazyMessage: (E) -> Any,
-                                                          private val validator: (E) -> Boolean
-                                                         ): ObservableList<E> by delegate {
+open class ValidatedObservableList<E>
+private constructor(private val delegate: ObservableList<E>,
+                    private val lazyMessage: (E) -> Any,
+                    private val validator: (E) -> Boolean
+                   ): ObservableList<E> by delegate {
     constructor(lazyMessage: (E) -> Any = { "Invalid element attempted to be added to list (value: $it)" },
                 validator: (E) -> Boolean
                ): this(FXCollections.observableArrayList(), lazyMessage, validator)

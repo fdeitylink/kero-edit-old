@@ -30,7 +30,8 @@ import io.fdeitylink.keroedit.gamedata.GameData
 
 import io.fdeitylink.keroedit.mapedit.MapEditTab
 
-class ScriptEditTab @Throws(IOException::class) constructor(inPath: Path): FileEditTab(inPath) {
+class ScriptEditTab
+@Throws(IOException::class) constructor(inPath: Path): FileEditTab(inPath) {
     private val textArea: TextArea
 
     private var parent: MapEditTab?
@@ -76,8 +77,8 @@ class ScriptEditTab @Throws(IOException::class) constructor(inPath: Path): FileE
             ""
         }
         catch (except: IOException) {
-            FXUtil.createAlert(type = Alert.AlertType.ERROR, title = Messages.getString("ScriptEditTab.IOExcept.TITLE"),
-                               message = MessageFormat.format(Messages.getString("Keroedit.IOExcept.MESSAGE"),
+            FXUtil.createAlert(type = Alert.AlertType.ERROR, title = Messages["ScriptEditTab.IOExcept.TITLE"],
+                               message = MessageFormat.format(Messages["Keroedit.IOExcept.MESSAGE"],
                                                               p.fileName, except.message)).showAndWait()
             throw except
         }
@@ -101,7 +102,7 @@ class ScriptEditTab @Throws(IOException::class) constructor(inPath: Path): FileE
     //TODO: Make this constructor the primary one?
     constructor(inPath: Path, parent: MapEditTab): this(inPath) {
         this.parent = parent
-        text = Messages.getString("ScriptEditTab.TITLE")
+        text = Messages["ScriptEditTab.TITLE"]
     }
 
     override fun undo() = textArea.undo()
@@ -114,8 +115,8 @@ class ScriptEditTab @Throws(IOException::class) constructor(inPath: Path): FileE
             markUnchanged()
         }
         catch (except: IOException) {
-            FXUtil.createAlert(type = Alert.AlertType.ERROR, title = Messages.getString("ScriptEditTab.Save.IOExcept.TITLE"),
-                               message = MessageFormat.format(Messages.getString("ScriptEditTab.Save.IOExcept.MESSAGE"),
+            FXUtil.createAlert(type = Alert.AlertType.ERROR, title = Messages["ScriptEditTab.Save.IOExcept.TITLE"],
+                               message = MessageFormat.format(Messages["ScriptEditTab.Save.IOExcept.MESSAGE"],
                                                               path.fileName, except.message)).showAndWait()
         }
     }

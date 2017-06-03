@@ -182,7 +182,7 @@ inline fun <reified T> array2DOfNulls(width: Int, height: Int) =
  * If the width were `3`, for example, then the first three elements given would
  * go into the first row of the `Array2D`, the next three the second row, and so on.
  *
- * @throws IllegalArgumentException if the length of [elements] is not a multiple
+ * @throws IllegalArgumentException if [elements.size][Array.size] is not a multiple
  * of [width].
  */
 inline fun <reified T> array2DOf(width: Int, vararg elements: T): Array2D<T> {

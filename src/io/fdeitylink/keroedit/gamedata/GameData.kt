@@ -16,6 +16,8 @@ import java.nio.file.NoSuchFileException
 import javafx.collections.ObservableList
 import javafx.collections.ListChangeListener
 
+import javafx.application.Platform
+
 import io.fdeitylink.util.Logger
 
 import io.fdeitylink.util.baseFilename
@@ -118,12 +120,10 @@ object GameData {
 
         val exe = executable.toAbsolutePath()
 
-        require(exe.fileName.toString().endsWith(".exe"))
+        require(exe.toString().endsWith(".exe"))
         { "GameData must be initialized with an executable file ending in \".exe\" (executable: $exe)" }
 
-        if (!Files.exists(exe)) {
-            throw NoSuchFileException(exe.toString(), null, "Mod exe does not exist (executable: $exe)")
-        }
+        require(Files.exists(exe)) { "GameData must be initialized with an executable file that exists (executable: $exe)" }
 
         _executable = exe
 
@@ -150,13 +150,13 @@ object GameData {
         }
         catch (except: IOException) {
             wipe()
-            throw IOException(MessageFormat.format(Messages.getString("GameData.ListFilesIOExcept.MESSAGE"), exe), except)
+            throw IOException(MessageFormat.format(Messages["GameData.DirStreamIOExcept.MESSAGE"], exe), except)
         }
 
         if (null == _modType) {
             //rsc folder is missing
             wipe()
-            throw NoSuchFileException(exe.toString(), null, "rsc_x folder does not exist")
+            throw NoSuchFileException(exe.toString(), null, Messages["GameData.MISSING_RSC"])
         }
 
         try {
@@ -213,13 +213,18 @@ object GameData {
                 for (p in it) {
                     val fname = p.baseFilename(extension)
                     if (fname.length <= PxPack.Head.FILENAME_MAX_LEN && !fname.contains(' ')) {
-                        fileList.add(p)
+                        /*
+                         * In order to prevent exceptions with regard to JavaFX objects using the
+                         * list, the item addition is done on the JavaFX thread, since it is expected
+                         * init() is called on a separate thread.
+                         */
+                        Platform.runLater{ fileList.add(p.toAbsolutePath())}
                     }
                 }
             }
         }
         catch (except: IOException) {
-            throw IOException(MessageFormat.format(Messages.getString("GameData.ListFilesIOExcept"), _executable), except)
+            throw IOException(MessageFormat.format(Messages["GameData.DirStreamIOExcept.MESSAGE"], _executable), except)
         }
     }
 
@@ -238,10 +243,7 @@ object GameData {
 
     private class FileList: ValidatedObservableList<Path>(
             { "Paths added must have lengths <= ${PxPack.Head.FILENAME_MAX_LEN} and contain no spaces (path: ${it.toAbsolutePath()})" },
-            {
-                val fname = it.baseFilename()
-                fname.length <= PxPack.Head.FILENAME_MAX_LEN && !fname.contains(' ')
-            }) {
+            { val fname = it.baseFilename(); fname.length <= PxPack.Head.FILENAME_MAX_LEN && !fname.contains(' ') }) {
 
         companion object {
             val deleteListener = ListChangeListener <Path> {

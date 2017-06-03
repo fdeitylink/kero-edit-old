@@ -4,6 +4,7 @@
  * Remove @JvmOverloads annotation on logThrowable when everything is converted to Kotlin
  * Am I properly appending log records rather than overwriting?
  */
+
 package io.fdeitylink.util
 
 import java.util.logging.LogRecord
@@ -11,6 +12,8 @@ import java.util.logging.FileHandler
 import java.util.logging.Level
 
 import java.io.IOException
+import java.io.PrintWriter
+import java.io.StringWriter
 
 object Logger {
     fun logMessage(message: String, logFile: String = "error.log") {
@@ -26,15 +29,13 @@ object Logger {
 
     @JvmOverloads
     fun logThrowable(message: String = "", t: Throwable, logFile: String = "error.log") {
-        val builder = StringBuilder(message).append('\n')
-        builder.append("${t.javaClass.name}: ${t.message}")
+        val writer = StringWriter()
+        writer.append(message).append('\n')
+        writer.append("${t.javaClass.name}: ${t.message}")
 
-        val stackTrace = t.stackTrace
-        for (element in stackTrace) {
-            builder.append("\n\t$element")
-        }
+        t.printStackTrace(PrintWriter(writer))
 
-        val finalMessage = builder.toString()
+        val finalMessage = writer.toString()
 
         try {
             val handle = FileHandler(logFile)

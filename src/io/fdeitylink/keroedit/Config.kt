@@ -28,6 +28,8 @@ import io.fdeitylink.util.Logger
 
 import io.fdeitylink.util.fx.FXUtil
 
+import io.fdeitylink.keroedit.map.Layer
+
 import io.fdeitylink.keroedit.mapedit.MapEditTab
 
 internal object Config {
@@ -41,9 +43,9 @@ internal object Config {
 
     var tilesetZoom by Delegates.notNull<Double>()
     lateinit var tilesetBgColor: Color
-    lateinit var displayedLayers: EnumSet<MapEditTab.Layer>
+    lateinit var displayedLayers: EnumSet<Layer>
 
-    lateinit var selectedLayer: MapEditTab.Layer
+    lateinit var selectedLayer: Layer
 
     lateinit var drawMode: MapEditTab.DrawMode
 
@@ -71,7 +73,7 @@ internal object Config {
     fun load() {
         licenseRead = prefs.getBoolean(LICENSE_READ, false)
 
-        notepadText = prefs.get(NOTEPAD_TEXT, Messages.getString("Config.NOTEPAD_TEXT_DEFAULT"))
+        notepadText = prefs.get(NOTEPAD_TEXT, Messages["Config.NOTEPAD_TEXT_DEFAULT"])
 
         try {
             lastExeLoc = Paths.get(prefs.get(LAST_EXECUTABLE_LOCATION, System.getProperty("user.dir")))
@@ -87,8 +89,8 @@ internal object Config {
         tilesetBgColor = if (null == colStr) Color.MAGENTA else Color.web(colStr)
 
         //0b0000_0111 -> defaults to all displayed
-        displayedLayers = prefs.getLong(DISPLAYED_LAYERS, 0b0000_0111).decoded(MapEditTab.Layer::class)
-        selectedLayer = MapEditTab.Layer.values()[prefs.getInt(SELECTED_LAYER, 0)]
+        displayedLayers = prefs.getLong(DISPLAYED_LAYERS, 0b0000_0111).decoded(Layer::class)
+        selectedLayer = Layer.values()[prefs.getInt(SELECTED_LAYER, 0)]
 
         drawMode = MapEditTab.DrawMode.values()[prefs.getInt(DRAW_MODE, 0)]
 

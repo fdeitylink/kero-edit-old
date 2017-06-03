@@ -23,9 +23,11 @@ import io.fdeitylink.util.Logger
 
 import io.fdeitylink.keroedit.Messages
 
-private const val HEADER_STRING = "pxMAP01\u0000"
-
 class PxAttr {
+    companion object {
+        private const val HEADER_STRING = "pxMAP01\u0000"
+    }
+
     private val path: Path
 
     /*
@@ -57,7 +59,7 @@ class PxAttr {
                 it.read(buf)
 
                 if (String(buf.array()) != HEADER_STRING) {
-                    throw ParseException(MessageFormat.format(Messages.getString("PxAttr.INCORRECT_HEADER"), path),
+                    throw ParseException(MessageFormat.format(Messages.get("PxAttr.INCORRECT_HEADER"), path),
                                          it.position().toInt())
                 }
 
@@ -89,7 +91,7 @@ class PxAttr {
         catch (except: IOException) {
             //TODO: Have PxAttrManager log and throw the specialized exception?
             Logger.logThrowable("Exception while parsing PXATTR file $path", except)
-            throw IOException(path.toString() + except.localizedMessage, except)
+            throw IOException("${except.localizedMessage}\n$path", except)
         }
     }
 
@@ -147,7 +149,7 @@ class PxAttr {
         catch(except: IOException) {
             //TODO: Have PxAttrManager log and throw the specialized exception?
             Logger.logThrowable("Exception while saving PXATTR file $path", except)
-            throw IOException(path.toString() + '\n' + except.localizedMessage, except)
+            throw IOException("${except.localizedMessage}\n$path", except)
         }
     }
 }

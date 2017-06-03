@@ -124,7 +124,7 @@ object HackTab: FileEditTab(Paths.get("")) {
 
         //TODO: Add 'Apply' button
 
-        text = Messages.getString("HackTab.TITLE")
+        text = Messages["HackTab.TITLE"]
         tooltip = Tooltip(GameData.executable.toString())
 
         content = sPane

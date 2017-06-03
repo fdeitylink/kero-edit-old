@@ -50,7 +50,7 @@ abstract class FileEditTab
         onCloseRequest = EventHandler<Event> { event ->
             if (isChanged) {
                 val alert = FXUtil.createAlert(title = this.text?.substring(0, this.text.lastIndexOf('*')),
-                                               message = Messages.getString("FileEditTab.UNSAVED_CHANGES"))
+                                               message = Messages["FileEditTab.UNSAVED_CHANGES"])
 
                 alert.buttonTypes.addAll(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL)
                 alert.showAndWait().ifPresent {
@@ -58,7 +58,7 @@ abstract class FileEditTab
                         save()
                     }
                     else if (ButtonType.CANCEL == it) {
-                        event?.consume()
+                        event!!.consume()
                     }
                 }
             }

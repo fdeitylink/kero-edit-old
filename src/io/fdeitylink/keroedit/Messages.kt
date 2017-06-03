@@ -14,15 +14,16 @@ object Messages {
      *
      * @param key the key corresponding to the [String] to retrieve
      *
-     * @return the [String] corresponding to [key]
+     * @return the [String] corresponding to [key], or [key] if there is no
+     * mapping for it in the resource bundle
      */
-    fun getString(key: String): String {
+    operator fun get(key: String): String {
         try {
             return resourceBundle.getString(key)
         }
         catch (except: MissingResourceException) {
-            Logger.logThrowable("Missing string resource $key", except)
-            return "Missing resource: $key"
+            Logger.logMessage("Missing string resource $key")
+            return key
         }
     }
 }
