@@ -243,6 +243,7 @@ object FXUtil {
         }
     }
 
+    //TODO: Change background image and background color to properties
     /**
      * Sets the background of the receiving [Region] to the given [Image]
      *
@@ -266,18 +267,11 @@ object FXUtil {
     }
 
     /**
-     * Returns a scaled version of the receiving [Image], or this [Image]
-     * if this [Image] is null, the width or height of this [Image] is 0,
-     * or [scale] is 1.0
-     *
-     * @receiver an [Image] to scale by [scale]
-     *
-     * @param scale the scale factor to scale this [Image] by
-     *
-     * @return the receiving [Image] if it is null, the width or height of it
-     * is 0, or [scale] is 1.0, otherwise a version of it scaled by [scale]
+     * Returns the receiving [Image] if it is null, its width or height
+     * are 0, or [scale] is `1.0`, otherwise the result of scaling the
+     * receiving [Image] by [scale].
      */
-    fun Image?.scale(scale: Double): Image? {
+    fun <T: Image?> T.scale(scale: Double): T {
         if (null == this || 1.0 == scale) {
             return this
         }
@@ -296,6 +290,7 @@ object FXUtil {
         trans.scale(scale, scale)
         AffineTransformOp(trans, AffineTransformOp.TYPE_NEAREST_NEIGHBOR).filter(src, dest)
 
-        return SwingFXUtils.toFXImage(dest, null)
+        @Suppress("UNCHECKED_CAST")
+        return SwingFXUtils.toFXImage(dest, null) as T
     }
 }

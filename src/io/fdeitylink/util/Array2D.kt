@@ -90,15 +90,16 @@ class Array2D<T>(val width: Int, val height: Int, val backing: Array<Array<T>>) 
          * element to be constructed and returns that element. Has the same purpose as the
          * [Array] constructor.
          *
-         * This method allows one to write code such as
+         * This method allows one to write code such as the following.
          * ```
          * Array2D(width, height) {...}
          * ```
-         * which is looks equivalent to a constructor call, despite not being entirely
-         * equivalent. A constructor cannot be used as [T] is a `reified` parameter, so
-         * instead an inline `invoke` operator is used. Because [T] is `reified`, this
-         * method cannot be called from Java code. In such cases where an `Array2D` must
-         * be constructed in Java, the primary constructor for this class should be used.
+         * Although appearing equivalent to a constructor call, it is not entirely
+         * equivalent. The reason for using the `invoke` operator rather than a constructor
+         * is that a constructor could not be used since [T] is a `reified` parameter.
+         * Because [T] is `reified`, this method cannot be called from Java code. In such
+         * cases where an `Array2D` must be constructed in Java, the primary constructor
+         * for this class should be used.
          */
         inline operator fun <reified T> invoke(width: Int, height: Int, init: (x: Int, y: Int) -> (T)) =
                 Array2D(width, height, Array(height, { y -> Array(width, { x -> init(x, y) }) }))
@@ -192,3 +193,5 @@ inline fun <reified T> array2DOf(width: Int, vararg elements: T): Array2D<T> {
 
     return Array2D(width, elements.size / width) { x, y -> elements[(width * y) + x] }
 }
+
+fun <T> Array2D<T>.copy() = Array2D(this.width, this.height, this.backing)

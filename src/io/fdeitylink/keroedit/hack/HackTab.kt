@@ -45,13 +45,112 @@ import io.fdeitylink.keroedit.gamedata.ModType
 /*
  * TODO:
  * Update executable in init() (using a rename method()?)
+ * Is there any way to make this a normal object and meet FileEditTab's
+ * requirement that path is a file? Should I remove that requirement?
  */
-object HackTab: FileEditTab(Paths.get("")) {
-    var isInitialized = false
+class HackTab private constructor(): FileEditTab(GameData.executable) {
+    companion object {
+        lateinit var INSTANCE: HackTab
+            private set
+
+        var isInitialized = false
+
+        private var instanceExists = false
+
+        fun init() {
+            if (!GameData.isInitialized) {
+                throw IllegalStateException("GameData must be initialized before HackTab can be initialized")
+            }
+
+            if (!instanceExists) {
+                INSTANCE = HackTab()
+            }
+
+            wipe()
+
+            isInitialized = true
+
+            /*
+             * TODO:
+             * Iterate through every Path in the assist/hacks folder (create this folder, by the way)
+             *  - Ensure only the proper *_strings.json file is used
+             * Create a new HackTreeItem for every file and add it to the root
+             */
+
+            val stringsFname =
+                    when (GameData.modType) {
+                        ModType.PINK_HOUR -> "hour_strings.json"
+                        ModType.PINK_HEAVEN -> "heaven_strings.json"
+                        ModType.KERO_BLASTER -> "kero_strings.json"
+                    }
+
+            //TODO: Create const val assistFolder = "assist" in one of the classes (KeroEdit?)
+            var stringsPath = Paths.get(GameData.resourceFolder.toString() +
+                                        File.separatorChar + "assist" + File.separatorChar +
+                                        stringsFname)
+
+            if (!Files.exists(stringsPath)) {
+                stringsPath = ResourceManager.getPath("assist/" + stringsFname) ?: return //continue
+            }
+
+            val stringsTreeItem = INSTANCE.parseHackFile(stringsPath)
+
+            val root = HackTreeItem()
+            root.isExpanded = true
+            root.children.addAll(arrayOf(stringsTreeItem))
+
+            //TODO: Create HackTreeView? (subclass of TreeView<String>)
+            val hacksTree = TreeView<String>(root)
+            hacksTree.selectionModel.selectedItemProperty()
+                    .addListener({ _, _, newValue ->
+                                     if (newValue.isLeaf) {
+                                         INSTANCE.sPane.items[1] = (newValue as HackTreeItem).hackPane
+                                     }
+                                 })
+
+            /*
+             * Get first item of root, which only has children and then get
+             * the first item of that "subroot", which also only has children.
+             * That will be a HackTreeItem - add its hackPane to sPane
+             */
+            INSTANCE.sPane.items.add(hacksTree)
+            if (root.children.isNotEmpty()) {
+                val subrootChildren = root.children[0].children
+                if (subrootChildren.isNotEmpty()) {
+                    INSTANCE.sPane.items.add((subrootChildren[0] as HackTreeItem).hackPane)
+                    INSTANCE.sPane.setDividerPositions(0.2)
+                }
+            }
+
+            //TODO: Add 'Apply' button
+
+            INSTANCE.text = Messages["HackTab.TITLE"]
+            INSTANCE.tooltip = Tooltip(GameData.executable.toString())
+
+            INSTANCE.content = INSTANCE.sPane
+        }
+
+        fun wipe() {
+            isInitialized = false
+
+            if (instanceExists) {
+                INSTANCE.sPane.items.clear()
+                INSTANCE.tabPane?.tabs?.remove(INSTANCE)
+            }
+        }
+    }
 
     private val sPane = SplitPane()
 
     init {
+        //TODO: Can I just check the value of INSTANCE instead? Is it null when not initialized?
+        if (instanceExists) {
+            throw IllegalStateException("Only one instance of HackTab may be created")
+        }
+        instanceExists = true
+
+        INSTANCE = this
+
         tabPaneProperty()
                 .addListener({ _, _, newValue ->
                                  if (null != newValue && !isInitialized) {
@@ -59,80 +158,6 @@ object HackTab: FileEditTab(Paths.get("")) {
                                      throw IllegalStateException("HackTab must be initialized before being added to a TabPane")
                                  }
                              })
-    }
-
-    fun init() {
-        wipe()
-
-        if (!GameData.isInitialized) {
-            throw IllegalStateException("GameData must be initialized before HackTab can be initialized")
-        }
-
-        isInitialized = true
-
-        /*
-         * TODO:
-         * Iterate through every Path in the assist/hacks folder (create this folder, by the way)
-         *  - Ensure only the proper *_strings.json file is used
-         * Create a new HackTreeItem for every file and add it to the root
-         */
-
-        val stringsFname =
-                when (GameData.modType) {
-                    ModType.PINK_HOUR -> "hour_strings.json"
-                    ModType.PINK_HEAVEN -> "heaven_strings.json"
-                    ModType.KERO_BLASTER -> "kero_strings.json"
-                }
-
-        //TODO: Create const val assistFolder = "assist" in one of the classes (KeroEdit?)
-        var stringsPath = Paths.get(GameData.resourceFolder.toString() +
-                                    File.separatorChar + "assist" + File.separatorChar +
-                                    stringsFname)
-
-        if (!Files.exists(stringsPath)) {
-            stringsPath = ResourceManager.getPath("assist/" + stringsFname) ?: return //continue
-        }
-
-        val stringsTreeItem = parseHackFile(stringsPath)
-
-        val root = HackTreeItem()
-        root.isExpanded = true
-        root.children.addAll(arrayOf(stringsTreeItem))
-
-        //TODO: Create HackTreeView? (subclass of TreeView<String>)
-        val hacksTree = TreeView<String>(root)
-        hacksTree.selectionModel.selectedItemProperty()
-                .addListener({ _, _, newValue ->
-                                 if (newValue.isLeaf) {
-                                     sPane.items[1] = (newValue as HackTreeItem).hackPane
-                                 }
-                             })
-
-        /*
-         * Get first item of root, which only has children and then get
-         * the first item of that "subroot", which also only has children.
-         * That will be a HackTreeItem - add its hackPane to sPane
-         */
-        sPane.items.add(hacksTree)
-        if (root.children.isNotEmpty()) {
-            val subrootChildren = root.children[0].children
-            if (subrootChildren.isNotEmpty()) {
-                sPane.items.add((subrootChildren[0] as HackTreeItem).hackPane)
-                sPane.setDividerPositions(0.2)
-            }
-        }
-
-        //TODO: Add 'Apply' button
-
-        text = Messages["HackTab.TITLE"]
-        tooltip = Tooltip(GameData.executable.toString())
-
-        content = sPane
-    }
-
-    fun wipe() {
-        isInitialized = false
-        sPane.items.clear()
     }
 
     //Does nothing yet

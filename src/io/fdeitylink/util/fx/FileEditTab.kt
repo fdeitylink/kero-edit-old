@@ -11,6 +11,7 @@ package io.fdeitylink.util.fx
 import java.util.ArrayDeque
 
 import java.nio.file.Path
+import java.nio.file.Files
 
 import javafx.scene.Node
 
@@ -44,6 +45,8 @@ abstract class FileEditTab
         private set
 
     init {
+        require(Files.isRegularFile(path)) { "${this.path} is not a file" }
+
         id = this.path.toString()
         tooltip = Tooltip(this.path.toString())
 

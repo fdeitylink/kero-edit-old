@@ -37,6 +37,11 @@ object PxAttrManager {
         //If the mpt00 PXATTR was requested or it needs to be used as a default
         val pxAttr = if ("mpt00" == tilesetName || !Files.exists(path)) {
             if (null == mpt00) {
+                /*
+                 * TODO:
+                 * Use path.resolveSibling()
+                 * Don't throw except - return a PXATTR with all empty values
+                 */
                 path = Paths.get(path.parent.toAbsolutePath().toString() + File.separatorChar +
                                  "mpt00" + GameData.pxAttrExtension)
                 if (!Files.exists(path)) {

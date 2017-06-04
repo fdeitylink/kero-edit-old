@@ -25,6 +25,7 @@ import io.fdeitylink.keroedit.Messages
 
 class PxAttr {
     companion object {
+        //TODO: Create default Array2D<Int> for attributes with all empty values
         private const val HEADER_STRING = "pxMAP01\u0000"
     }
 
@@ -47,8 +48,8 @@ class PxAttr {
     constructor(inPath: Path) {
         path = inPath.toAbsolutePath()
 
-        //TODO: Create the file and set attributes to all 0?
         if (!Files.exists(path)) {
+            //TODO: Rather than setting to null, save a new PxAttr file with empty attributes by calling save()
             _attributes = null
             return
         }
@@ -59,7 +60,7 @@ class PxAttr {
                 it.read(buf)
 
                 if (String(buf.array()) != HEADER_STRING) {
-                    throw ParseException(MessageFormat.format(Messages.get("PxAttr.INCORRECT_HEADER"), path),
+                    throw ParseException(MessageFormat.format(Messages["PxAttr.INCORRECT_HEADER"], path),
                                          it.position().toInt())
                 }
 
@@ -68,7 +69,7 @@ class PxAttr {
                 it.read(buf)
                 buf.flip()
 
-                //TODO: Validate dimensions/size (range?)
+                //TODO: Validate dimensions are 16 by 16 or 0 by 0
                 val width = buf.getShort().toInt()
                 val height = buf.getShort().toInt()
 
@@ -80,6 +81,7 @@ class PxAttr {
                     it.read(buf)
                     buf.flip()
 
+                    //TODO: Use buf.array().forEachIndexed()
                     val bufArray = buf.array()
                     Array2D(width, height) { x, y -> (bufArray[(width * y) + x] and 0xFF.toByte()).toInt() }
                 }
@@ -101,7 +103,7 @@ class PxAttr {
     }
 
     fun setAttribute(x: Int, y: Int, attribute: Int) {
-        //TODO: Check attribute for validity (range?)
+        //TODO: Check attribute for validity (range)
         if (null == _attributes) {
             throw IndexOutOfBoundsException("attributes is empty")
         }

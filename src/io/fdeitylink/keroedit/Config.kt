@@ -33,15 +33,15 @@ import io.fdeitylink.keroedit.map.Layer
 import io.fdeitylink.keroedit.mapedit.MapEditTab
 
 internal object Config {
-    var licenseRead by Delegates.notNull<Boolean>()
+    var licenseRead: Boolean by Delegates.notNull()
 
     lateinit var notepadText: String
 
-    var lastExeLoc by Delegates.notNull<Path>()
+    lateinit var lastExeLoc: Path
 
-    var mapZoom by Delegates.notNull<Double>()
+    var mapZoom: Double by Delegates.notNull()
 
-    var tilesetZoom by Delegates.notNull<Double>()
+    var tilesetZoom: Double by Delegates.notNull()
     lateinit var tilesetBgColor: Color
     lateinit var displayedLayers: EnumSet<Layer>
 
@@ -53,7 +53,7 @@ internal object Config {
 
     lateinit var editMode: MapEditTab.EditMode
 
-    var tilesetStageShowing by Delegates.notNull<Boolean>()
+    var tilesetStageShowing: Boolean by Delegates.notNull()
 
     private val prefs = Preferences.userNodeForPackage(javaClass)
 

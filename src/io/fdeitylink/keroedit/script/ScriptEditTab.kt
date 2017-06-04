@@ -6,7 +6,6 @@ import java.nio.file.Path
 import java.nio.file.Files
 
 import java.io.IOException
-import java.io.FileNotFoundException
 
 import java.nio.charset.Charset
 
@@ -29,19 +28,26 @@ import io.fdeitylink.keroedit.Messages
 import io.fdeitylink.keroedit.gamedata.GameData
 
 import io.fdeitylink.keroedit.mapedit.MapEditTab
+import io.fdeitylink.util.Logger
 
 class ScriptEditTab
-@Throws(IOException::class) constructor(inPath: Path): FileEditTab(inPath) {
-    private val textArea: TextArea
+@Throws(IOException::class) constructor(inPath: Path,
+                                        private val parent: MapEditTab? = null
+                                       ): FileEditTab(
+        inPath.toAbsolutePath().apply {
+            if (!Files.exists(this)) {
+                try {
+                    Files.createFile(this)
+                }
+                catch (except: IOException) {
+                    Logger.logThrowable("Error creating new script file $this", except)
+                }
+            }
+        }) {
 
-    private var parent: MapEditTab?
+    private val textArea = TextArea()
 
     init {
-        parent = null
-
-        //TODO: Verify p represents a file
-        val p = inPath.toAbsolutePath()
-
         /*
          * TODO: Fix this weird exception that I can't seem to get myself
          * java.io.UncheckedIOException: java.nio.charset.MalformedInputException: Input length = 1
@@ -58,51 +64,29 @@ class ScriptEditTab
          */
 
         val scriptText = try {
-            Files.lines(p, Charset.forName("Shift_JIS")).use {
+            Files.lines(path, Charset.forName("Shift_JIS")).use {
                 //TODO: Replace all newlines with \n? (use regex)
                 it.collect(Collectors.joining("\n"))
             }
         }
-        catch (except: FileNotFoundException) {
-            try {
-                Files.createFile(p) //TODO: Give attributes as well?
-            }
-            catch (except: IOException) {
-                /*
-                 * TODO:
-                 * Do nothing?
-                 * Log the exception?
-                 */
-            }
-            ""
-        }
         catch (except: IOException) {
-            FXUtil.createAlert(type = Alert.AlertType.ERROR, title = Messages["ScriptEditTab.IOExcept.TITLE"],
+            FXUtil.createAlert(type = Alert.AlertType.ERROR,
+                               title = Messages["ScriptEditTab.IOExcept.TITLE"],
                                message = MessageFormat.format(Messages["Keroedit.IOExcept.MESSAGE"],
-                                                              p.fileName, except.message)).showAndWait()
+                                                              path.fileName, except.message)).showAndWait()
+            //TODO: Is this necessary?
+            tabPaneProperty().addListener { _, _, _ -> tabPane?.tabs?.remove(this) }
             throw except
         }
 
-        textArea = TextArea(scriptText)
+        textArea.text = scriptText
         textArea.requestFocus()
         textArea.font = Font.font("Consolas", 12.0)
         textArea.textProperty().addListener { _, _, _ -> markChanged() }
 
-        /*
-         * Assume that this ScriptEditTab is not inside of a
-         * MapEditTab and set the title to the filename. The
-         * other constructor will re-set the text if this
-         * tab is inside of a MapEditTab.
-         */
-        text = p.baseFilename(GameData.scriptExtension)
+        text = if (null == parent) path.baseFilename(GameData.scriptExtension) else Messages["ScriptEditTab.TITLE"]
 
         content = textArea
-    }
-
-    //TODO: Make this constructor the primary one?
-    constructor(inPath: Path, parent: MapEditTab): this(inPath) {
-        this.parent = parent
-        text = Messages["ScriptEditTab.TITLE"]
     }
 
     override fun undo() = textArea.undo()

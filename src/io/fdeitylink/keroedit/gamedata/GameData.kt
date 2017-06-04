@@ -120,10 +120,9 @@ object GameData {
 
         val exe = executable.toAbsolutePath()
 
-        require(exe.toString().endsWith(".exe"))
-        { "GameData must be initialized with an executable file ending in \".exe\" (executable: $exe)" }
-
-        require(Files.exists(exe)) { "GameData must be initialized with an executable file that exists (executable: $exe)" }
+        require(exe.toString().endsWith(".exe")) { "$exe does not end in \".exe\"" }
+        require(Files.exists(exe)) { "$exe does not exist" }
+        require(Files.isRegularFile(exe)) { "$exe is not a file" }
 
         _executable = exe
 
@@ -218,7 +217,7 @@ object GameData {
                          * list, the item addition is done on the JavaFX thread, since it is expected
                          * init() is called on a separate thread.
                          */
-                        Platform.runLater{ fileList.add(p.toAbsolutePath())}
+                        Platform.runLater { fileList.add(p.toAbsolutePath()) }
                     }
                 }
             }

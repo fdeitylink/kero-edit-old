@@ -1,8 +1,6 @@
 /*
  * TODO:
- * Allow specifying Log Levels?
- * Remove @JvmOverloads annotation on logThrowable when everything is converted to Kotlin
- * Am I properly appending log records rather than overwriting?
+ * Deprecate this in favor of standard java.util.logging system
  */
 
 package io.fdeitylink.util

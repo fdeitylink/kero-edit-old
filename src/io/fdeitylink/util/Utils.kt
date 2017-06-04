@@ -17,7 +17,7 @@ import javafx.collections.ObservableList
  * represent a file
  */
 fun Path.baseFilename(extension: String = "."): String {
-    require(!Files.isDirectory(this)) { "Receiver Path does not represent a file (path: $this)" }
+    require(!Files.isDirectory(this)) { "Receiver Path $this is not a file" }
 
     val fname = this.fileName.toString()
     val extIndex = fname.lastIndexOf(extension)

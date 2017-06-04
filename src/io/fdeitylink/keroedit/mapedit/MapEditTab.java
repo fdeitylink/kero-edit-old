@@ -282,7 +282,9 @@ public final class MapEditTab extends FileEditTab {
 
             FXUtil.INSTANCE.createAlert(Alert.AlertType.ERROR, title, null, message).showAndWait();
 
-            throw except; //TODO: Add listener to tabPaneProperty() that removes self upon being added rather than throwing except
+            //TODO: Is this necessary?
+            tabPaneProperty().addListener((observable, oldValue, newValue) -> newValue.getTabs().remove(this));
+            throw except;
         }
 
         initResources();

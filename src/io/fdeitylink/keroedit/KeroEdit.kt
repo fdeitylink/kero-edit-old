@@ -545,10 +545,10 @@ class KeroEdit: Application() {
         enableOnLoadItems.add(menuItems[ActionsMenuItem.EDIT_GLOBAL_SCRIPT]!!)
 
         /*menuItems[ActionsMenuItem.HACK_EXECUTABLE]!!.setOnAction {
-            if (HackTab !in mainTabPane.tabs) {
+            if (HackTab.INSTANCE !in mainTabPane.tabs) {
                 mainTabPane.tabs.add(HackTab)
             }
-            mainTabPane.selectionModel.select(HackTab)
+            mainTabPane.selectionModel.select(HackTab.INSTANCE)
             mainTabPane.requestFocus()
         }
         menuItems[ActionsMenuItem.HACK_EXECUTABLE]!!.isDisable = true
@@ -809,7 +809,7 @@ class KeroEdit: Application() {
             PxAttrManager.wipe()
             MapEditTab.wipeResources()
 
-            //TODO: Call closeTabs()? Manually close all tabs?
+            //TODO: Call closeTabs()? Close tabs with tabs.remove()?
         }
 
         fun load(executable: Path) {
