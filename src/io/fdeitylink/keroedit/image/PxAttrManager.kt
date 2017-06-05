@@ -39,11 +39,11 @@ object PxAttrManager {
             if (null == mpt00) {
                 /*
                  * TODO:
-                 * Use path.resolveSibling()
                  * Don't throw except - return a PXATTR with all empty values
                  */
-                path = Paths.get(path.parent.toAbsolutePath().toString() + File.separatorChar +
-                                 "mpt00" + GameData.pxAttrExtension)
+                path = path.resolveSibling("mpt00" + GameData.pxAttrExtension)
+                /*Paths.get(path.parent.toAbsolutePath().toString() + File.separatorChar +
+                                 "mpt00" + GameData.pxAttrExtension)*/
                 if (!Files.exists(path)) {
                     //The default PXATTR file mpt00 does not exist
                     /*
