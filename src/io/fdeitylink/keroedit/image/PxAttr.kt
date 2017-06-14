@@ -79,7 +79,6 @@ class PxAttr {
 
                     buf = ByteBuffer.allocate(width * height)
                     it.read(buf)
-                    buf.flip()
 
                     //TODO: Use buf.array().forEachIndexed()
                     val bufArray = buf.array()

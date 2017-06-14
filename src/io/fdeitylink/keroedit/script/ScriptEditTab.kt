@@ -33,17 +33,16 @@ import io.fdeitylink.util.Logger
 class ScriptEditTab
 @Throws(IOException::class) constructor(inPath: Path,
                                         private val parent: MapEditTab? = null
-                                       ): FileEditTab(
-        inPath.toAbsolutePath().apply {
-            if (!Files.exists(this)) {
-                try {
-                    Files.createFile(this)
-                }
-                catch (except: IOException) {
-                    Logger.logThrowable("Error creating new script file $this", except)
-                }
-            }
-        }) {
+) : FileEditTab(inPath.toAbsolutePath().apply {
+    if (!Files.exists(this)) {
+        try {
+            Files.createFile(this)
+        }
+        catch (except: IOException) {
+            Logger.logThrowable("Error creating new script file $this", except)
+        }
+    }
+}) {
 
     private val textArea = TextArea()
 

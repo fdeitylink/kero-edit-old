@@ -147,7 +147,7 @@ import io.fdeitylink.keroedit.script.ScriptEditTab
 
 fun main(args: Array<String>) = Application.launch(*args)
 
-class KeroEdit: Application() {
+class KeroEdit : Application() {
     /*
      * TODO:
      * Put all of these properties into the companion object?
@@ -345,7 +345,11 @@ class KeroEdit: Application() {
         menuItems[FileMenuItem.SAVE_ALL]!!.accelerator =
                 KeyCodeCombination(KeyCode.S, KeyCombination.SHIFT_DOWN, KeyCombination.CONTROL_DOWN)
         menuItems[FileMenuItem.SAVE_ALL]!!.setOnAction {
-            mainTabPane.tabs.filter { it is FileEditTab }.forEach { (it as FileEditTab).save() }
+            mainTabPane.tabs.forEach {
+                if (it is FileEditTab) {
+                    it.save()
+                }
+            }
         }
         menuItems[FileMenuItem.SAVE_ALL]!!.isDisable = true
         enableOnLoadItems.add(menuItems[FileMenuItem.SAVE_ALL]!!)
@@ -482,6 +486,11 @@ class KeroEdit: Application() {
         menuItems[ActionsMenuItem.RUN_GAME]!!.accelerator = KeyCodeCombination(KeyCode.F5)
         menuItems[ActionsMenuItem.RUN_GAME]!!.setOnAction {
             try {
+                /*
+                 * TODO:
+                 * Prompt to save unsaved changes before running?
+                 * Run in background thread
+                 */
                 //TODO: Prompt to save unsaved changes before running?
                 Runtime.getRuntime().exec(GameData.executable.toString())
             }
@@ -607,7 +616,7 @@ class KeroEdit: Application() {
         mapList.selectionModel.selectionMode = SelectionMode.MULTIPLE
 
         mapList.setCellFactory {
-            object: ListCell<Path>() {
+            object : ListCell<Path>() {
                 override fun updateItem(map: Path?, empty: Boolean) {
                     super.updateItem(map, empty)
                     text = if (empty || null == map) null else map.baseFilename(GameData.mapExtension)
@@ -939,7 +948,7 @@ class KeroEdit: Application() {
     }
 }
 
-private class SettingsPane: GridPane() {
+private class SettingsPane : GridPane() {
     companion object {
         private val font = Font.font(null, FontWeight.BOLD, 15.0)
     }
@@ -1121,7 +1130,7 @@ private class SettingsPane: GridPane() {
     }
 }
 
-private class NotepadTab: Tab(Messages["KeroEdit.NOTEPAD_TITLE"]) {
+private class NotepadTab : Tab(Messages["KeroEdit.NOTEPAD_TITLE"]) {
     val notepad: TextArea = TextArea(Config.notepadText)
 
     init {

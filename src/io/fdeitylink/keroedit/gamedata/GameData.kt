@@ -234,13 +234,11 @@ object GameData {
      * retrieved. It will be put into the message of the [IllegalStateException]
      * if one is thrown.
      */
-    private fun checkInit(retrievedProperty: String) {
-        if (!isInitialized) {
-            throw IllegalStateException("GameData must be initialized before $retrievedProperty can be retrieved from it")
-        }
-    }
+    private fun checkInit(retrievedProperty: String) =
+            check(isInitialized) { "GameData must be initialized before $retrievedProperty can be retrieved from it" }
 
-    private class FileList: ValidatedObservableList<Path>(
+
+    private class FileList : ValidatedObservableList<Path>(
             { "Paths added must have lengths <= ${PxPack.Head.FILENAME_MAX_LEN} and contain no spaces (path: ${it.toAbsolutePath()})" },
             { val fname = it.baseFilename(); fname.length <= PxPack.Head.FILENAME_MAX_LEN && !fname.contains(' ') }) {
 
