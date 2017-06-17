@@ -145,7 +145,7 @@ import io.fdeitylink.keroedit.hack.HackTab
 import io.fdeitylink.keroedit.mapedit.MapEditTab
 import io.fdeitylink.keroedit.script.ScriptEditTab
 
-fun main(args: Array<String>) = Application.launch(*args)
+fun main(args: Array<String>) = Application.launch(KeroEdit::class.java, *args)
 
 class KeroEdit : Application() {
     /*
@@ -164,6 +164,19 @@ class KeroEdit : Application() {
     private lateinit var mapList: ListView<Path>
 
     private lateinit var notepadTab: NotepadTab
+
+    companion object {
+        private lateinit var INSTANCE: KeroEdit
+
+        private val baseTitleString = MessageFormat.format(Messages["KeroEdit.APP_TITLE"],
+                                                           Messages["KeroEdit.VERSION"])
+
+        var titleSuffix
+            get() = INSTANCE.mainStage.title?.substring(baseTitleString.length) ?: ""
+            set(value) {
+                INSTANCE.mainStage.title = baseTitleString + value
+            }
+    }
 
     override fun init() {
         INSTANCE = this
@@ -262,19 +275,6 @@ class KeroEdit : Application() {
         ModLoader.execService.shutdown()
         Config.notepadText = notepadTab.notepad.text
         Config.save()
-    }
-
-    companion object {
-        private lateinit var INSTANCE: KeroEdit
-
-        private val baseTitleString = MessageFormat.format(Messages["KeroEdit.APP_TITLE"],
-                                                           Messages["KeroEdit.VERSION"])
-
-        var titleSuffix
-            get() = INSTANCE.mainStage.title?.substring(baseTitleString.length) ?: ""
-            set(value) {
-                INSTANCE.mainStage.title = baseTitleString + value
-            }
     }
 
     private fun initMenuBar(): MenuBar {

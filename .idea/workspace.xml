@@ -10,15 +10,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7e217904-e010-4fe6-a354-8fe1baa2af52" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/io/fdeitylink/util/ValidatedArray.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/KeroEdit_jar.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/KeroEdit_jar.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/readme.txt" afterPath="$PROJECT_DIR$/readme.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.kt" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.kt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/gamedata/GameData.kt" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/gamedata/GameData.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/image/PxAttr.kt" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/image/PxAttr.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/script/ScriptEditTab.kt" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/script/ScriptEditTab.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/util/Array2D.kt" afterPath="$PROJECT_DIR$/src/io/fdeitylink/util/Array2D.kt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties" afterPath="$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -36,47 +33,82 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="GameData.kt" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/gamedata/GameData.kt">
+      <file leaf-file-name="KeroEdit.kt" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
-              <caret line="33" column="0" lean-forward="false" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+            <state relative-caret-position="136">
+              <caret line="149" column="32" lean-forward="true" selection-start-line="149" selection-start-column="32" selection-end-line="149" selection-end-column="32" />
               <folding>
-                <element signature="e#1180#1254#0" expanded="false" />
-                <element signature="e#1337#1417#0" expanded="false" />
-                <element signature="e#1508#1596#0" expanded="false" />
-                <element signature="e#1974#2040#0" expanded="false" />
-                <element signature="e#2126#2192#0" expanded="false" />
-                <element signature="e#2282#2352#0" expanded="false" />
-                <element signature="e#2436#2500#0" expanded="false" />
-                <element signature="e#2592#2664#0" expanded="false" />
-                <element signature="n#!!block;n#init#0;n#!!block;n#GameData#0" expanded="false" />
-                <element signature="n#!!block;n#wipe#0;n#!!block;n#GameData#0" expanded="false" />
-                <element signature="n#!!block;n#fillFileList#0;n#!!block;n#GameData#0" expanded="false" />
-                <element signature="n#!!block;n#FileList#0;n#!!block;n#GameData#0" expanded="false" />
-                <element signature="n#!!block;n#Companion#0;n#!!block;n#FileList#0;n#!!block;n#GameData#0" expanded="false" />
+                <element signature="n#!!block;n#Companion#0;n#!!block;n#KeroEdit#0" expanded="false" />
+                <element signature="n#!!block;n#init#0;n#!!block;n#KeroEdit#0" expanded="false" />
+                <element signature="n#!!block;n#start#0;n#!!block;n#KeroEdit#0" expanded="false" />
+                <element signature="n#!!block;n#buildScene#0;n#!!block;n#start#0;n#!!block;n#KeroEdit#0" expanded="false" />
+                <element signature="n#!!block;n#showLicense#0;n#!!block;n#start#0;n#!!block;n#KeroEdit#0" expanded="false" />
+                <element signature="n#!!block;n#stop#0;n#!!block;n#KeroEdit#0" expanded="false" />
+                <element signature="n#!!block;n#initMenuBar#0;n#!!block;n#KeroEdit#0" expanded="false" />
+                <element signature="n#!!block;n#initFileMenu#0;n#!!block;n#KeroEdit#0" expanded="false" />
+                <element signature="e#11128#11893#2" expanded="false" />
+                <element signature="e#12068#12330#2" expanded="false" />
+                <element signature="e#12696#12872#2" expanded="false" />
+                <element signature="e#13206#13359#2" expanded="false" />
+                <element signature="e#13660#13828#2" expanded="false" />
+                <element signature="n#!!block;n#initEditMenu#0;n#!!block;n#KeroEdit#0" expanded="false" />
+                <element signature="e#14943#15119#2" expanded="false" />
+                <element signature="e#15406#15582#2" expanded="false" />
+                <element signature="n#!!block;n#initViewMenu#0;n#!!block;n#KeroEdit#0" expanded="false" />
+                <element signature="n#!!block;n#buildZoomSubmenu#0;n#!!block;n#initViewMenu#0;n#!!block;n#KeroEdit#0" expanded="false" />
+                <element signature="e#17773#18193#2" expanded="false" />
+                <element signature="n#!!block;n#initActionsMenu#0;n#!!block;n#KeroEdit#0" expanded="false" />
+                <element signature="e#19061#19738#2" expanded="false" />
+                <element signature="e#19940#22226#2" expanded="false" />
+                <element signature="e#22884#23710#2" expanded="false" />
+                <element signature="n#!!block;n#initHelpMenu#0;n#!!block;n#KeroEdit#0" expanded="false" />
+                <element signature="e#24210#24873#2" expanded="false" />
+                <element signature="n#!!block;n#initMapList#0;n#!!block;n#KeroEdit#0" expanded="false" />
+                <element signature="e#25231#25536#2" expanded="false" />
+                <element signature="e#26436#28723#2" expanded="false" />
+                <element signature="e#29026#32086#2" expanded="false" />
+                <element signature="e#30007#31815#2" expanded="false" />
+                <element signature="e#32262#32470#2" expanded="false" />
+                <element signature="e#32506#32693#2" expanded="false" />
+                <element signature="n#!!block;n#initTabPane#0;n#!!block;n#KeroEdit#0" expanded="false" />
+                <element signature="n#!!block;n#closeTabs#0;n#!!block;n#KeroEdit#0" expanded="false" />
+                <element signature="n#!!block;n#ModLoader#0;n#!!block;n#KeroEdit#0" expanded="false" />
+                <element signature="n#!!block;n#wipeLoaded#0;n#!!block;n#ModLoader#0;n#!!block;n#KeroEdit#0" expanded="false" />
+                <element signature="n#!!block;n#load#0;n#!!block;n#ModLoader#0;n#!!block;n#KeroEdit#0" expanded="false" />
+                <element signature="n#!!block;n#createAssistFolder#0;n#!!block;n#ModLoader#0;n#!!block;n#KeroEdit#0" expanded="false" />
+                <element signature="e#38369#40495#2" expanded="false" />
+                <element signature="n#!!block;n#SettingsPane#0" expanded="false" />
+                <element signature="e#40652#40912#0" expanded="false" />
+                <element signature="n#!!block;n#initDisplayedLayers#0;n#!!block;n#SettingsPane#0" expanded="false" />
+                <element signature="n#!!block;n#initSelectedLayer#0;n#!!block;n#SettingsPane#0" expanded="false" />
+                <element signature="n#!!block;n#initDrawModes#0;n#!!block;n#SettingsPane#0" expanded="false" />
+                <element signature="n#!!block;n#initViewSettings#0;n#!!block;n#SettingsPane#0" expanded="false" />
+                <element signature="n#!!block;n#initEditMode#0;n#!!block;n#SettingsPane#0" expanded="false" />
+                <element signature="n#!!block;n#NotepadTab#0" expanded="false" />
+                <element signature="n#!!block;n#FileMenuItem#0" expanded="false" />
+                <element signature="n#!!block;n#EditMenuItem#0" expanded="false" />
+                <element signature="n#!!block;n#ViewMenuItem#0" expanded="false" />
+                <element signature="n#!!block;n#ActionsMenuItem#0" expanded="false" />
+                <element signature="n#!!block;n#HelpMenuItem#0" expanded="false" />
+                <element signature="n#!!block;n#MapListMenuItem#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ValidatedArray.kt" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/util/ValidatedArray.kt">
+      <file leaf-file-name="GameData.kt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/gamedata/GameData.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="24" column="57" lean-forward="false" selection-start-line="24" selection-start-column="57" selection-end-line="24" selection-end-column="57" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Array2D.kt" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/util/Array2D.kt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="62" column="0" lean-forward="false" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
+            <state relative-caret-position="34">
+              <caret line="31" column="40" lean-forward="false" selection-start-line="31" selection-start-column="40" selection-end-line="31" selection-end-column="40" />
               <folding>
-                <element signature="e#2463#2874#0" expanded="false" />
+                <element signature="n#!!block;n#init#0;n#!!block;n#GameData#0" expanded="false" />
+                <element signature="n#!!block;n#wipe#0;n#!!block;n#GameData#0" expanded="false" />
+                <element signature="n#!!block;n#checkInit#0;n#!!block;n#GameData#0" expanded="false" />
+                <element signature="n#!!block;n#FileList#0;n#!!block;n#GameData#0" expanded="false" />
+                <element signature="n#!!block;n#Companion#0;n#!!block;n#FileList#0;n#!!block;n#GameData#0" expanded="false" />
+                <element signature="n#!!block;n#fill#0;n#!!block;n#FileList#0;n#!!block;n#GameData#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -101,7 +133,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>public GridPane(</find>
       <find>UnexpectedIOExcept</find>
       <find>GameData.DirStreamIOExcept.MESSAGE</find>
       <find>KeroEdit.LoadMod.Missing.MESSAGE</find>
@@ -131,6 +162,7 @@
       <find>for(</find>
       <find>fo</find>
       <find>for (</find>
+      <find>GameData.init</find>
     </findStrings>
     <replaceStrings>
       <replace>FileMenuItems.arrIndexEnumMap</replace>
@@ -225,16 +257,16 @@
         <option value="$PROJECT_DIR$/src/io/fdeitylink/util/fx/FXUtil.kt" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/image/PxAttrManager.kt" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/image/PxAttr.kt" />
-        <option value="$PROJECT_DIR$/readme.txt" />
-        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties" />
-        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.kt" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/script/ScriptEditTab.kt" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxPack.java" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/util/ValidatedArray.kt" />
-        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxPack.kt" />
-        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/gamedata/GameData.kt" />
         <option value="$PROJECT_DIR$/src/io/fdeitylink/util/Array2D.kt" />
+        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java" />
+        <option value="$PROJECT_DIR$/readme.txt" />
+        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties" />
+        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/gamedata/GameData.kt" />
+        <option value="$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.kt" />
       </list>
     </option>
   </component>
@@ -292,9 +324,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -363,12 +392,15 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="Scratches" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Kotlin" />
+    <property name="settings.editor.selected.configurable" value="project.kotlinCompiler" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../DeityBot" />
-    <property name="project.structure.last.edited" value="SDKs" />
+    <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://C:/Users/brian/Documents/Programming/IdeaProjects/KeroEdit/src/io/fdeitylink/keroedit/gamedata/GameData.kt&#10;FileChannel&#9;PSI&#9;JAVA://java.nio.channels.FileChannel&#10;ByteBuffer&#9;PSI&#9;JAVA://java.nio.ByteBuffer" />
@@ -413,22 +445,15 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.KeroEdit">
-    <configuration default="false" name="KeroEdit" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="com.fdl.keroedit.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="MAIN_CLASS_NAME" value="io.fdeitylink.keroedit.KeroEdit" />
-      <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+  <component name="RunManager" selected="Kotlin.io.fdeitylink.keroedit.KeroEditKt">
+    <configuration default="false" name="io.fdeitylink.keroedit.KeroEditKt" type="JetRunConfigurationType" factoryName="Kotlin" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="MAIN_CLASS_NAME" value="io.fdeitylink.keroedit.KeroEditKt" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="KeroEdit" />
       <envs />
@@ -665,11 +690,11 @@
       <method />
     </configuration>
     <list size="1">
-      <item index="0" class="java.lang.String" itemvalue="Application.KeroEdit" />
+      <item index="0" class="java.lang.String" itemvalue="Kotlin.io.fdeitylink.keroedit.KeroEditKt" />
     </list>
     <recent_temporary>
       <list size="1">
-        <item index="0" class="java.lang.String" itemvalue="Application.KeroEdit" />
+        <item index="0" class="java.lang.String" itemvalue="Kotlin.io.fdeitylink.keroedit.KeroEditKt" />
       </list>
     </recent_temporary>
   </component>
@@ -683,13 +708,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1483667605832</updated>
-    </task>
-    <task id="LOCAL-00040" summary="MapEditTab and ScriptEditTab both save&#10;Prompts user about unsaved changes when tab is closed, new mod is loaded, or program is closed&#10;Removed reload in File menu - it was useless since Load Last can do essentially the same thing&#10;loadMod() fully handles any IOExceptions thrown during its execution (shows prompt to user)&#10;ScriptEditTab has two constructors, use depending on if called from KeroEdit or MapEditTab&#10;HackEditTab is now singleton (ish - singleton in the same way GameData is singleton)&#10;FileEditTab moved to FXUtil class&#10;Better error handling&#10;Cleanup and refactoring">
-      <created>1491536223493</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1491536223493</updated>
     </task>
     <task id="LOCAL-00041" summary="Added multiple selection in script file chooser">
       <created>1491540712445</created>
@@ -1027,7 +1045,14 @@
       <option name="project" value="LOCAL" />
       <updated>1496672959210</updated>
     </task>
-    <option name="localTasksCounter" value="89" />
+    <task id="LOCAL-00089" summary="Renamed Array2D.copy() to Array2D.clone(), and now it properly clones into an independent Array2D&#10;Removed useless width and height arguments from Array2D constructor&#10;Added ValidatedArray class that will be used when PxPack is converted for its arrays of information">
+      <created>1497403218425</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1497403218427</updated>
+    </task>
+    <option name="localTasksCounter" value="90" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1125,8 +1150,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Reimplemented io.fdeitylink.util.fx.UndoableEdit interface as a Kotlin interface" />
-    <MESSAGE value="Reimplemented io.fdeitylink.util.fx.FXUtil interface as a Kotlin object" />
     <MESSAGE value="Reimplemented io.fdeitylink.keroedit.Messages class as a Kotlin object" />
     <MESSAGE value="Reimplemented io.fdeitylink.util.Logger class as a Kotlin object" />
     <MESSAGE value="Reimplemented io.fdeitylink.util.fx.FileEditTab abstract class as a Kotlin abstract class" />
@@ -1150,7 +1173,9 @@
     <MESSAGE value="Converted KeroEdit to Kotlin&#10;Fixed bug where map and tileset zoom would always be stored as 400%&#10;Changed Messages.getString() to get operator so [key] can be used&#10;Moved MapEditTab.Layer to top-level class in map package" />
     <MESSAGE value="Better FileEditTab and GameData error checking&#10;Changed HackTab to a class with only one instance that is not initialized immediately (similar to an object but late-initialized)&#10;MapEditTab and ScriptEditTab remove themselves from parent tab panes if there was a problem being initialized&#10;ScriptEditTab creates a script file immediately in the constructor if it doesn't exist already&#10;Added copy() method to Array2D" />
     <MESSAGE value="PxAttrManager uses Path.resolveSibling to resolve location of mpt00.pxattr" />
-    <option name="LAST_COMMIT_MESSAGE" value="PxAttrManager uses Path.resolveSibling to resolve location of mpt00.pxattr" />
+    <MESSAGE value="Renamed Array2D.copy() to Array2D.clone(), and now it properly clones into an independent Array2D&#10;Removed useless width and height arguments from Array2D constructor&#10;Added ValidatedArray class that will be used when PxPack is converted for its arrays of information" />
+    <MESSAGE value="GameData.checkInit() returns property value being requested if it doesn't throw an exception (allowing code like get() = checkInit(prop))&#10;GameData.fillFileList() has become GameData.FileList.fill()&#10;Kotlin runtime now bundled into exported JAR so it can run properly" />
+    <option name="LAST_COMMIT_MESSAGE" value="GameData.checkInit() returns property value being requested if it doesn't throw an exception (allowing code like get() = checkInit(prop))&#10;GameData.fillFileList() has become GameData.FileList.fill()&#10;Kotlin runtime now bundled into exported JAR so it can run properly" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1178,35 +1203,6 @@
     <module2generated>rO0ABXNyABFqYXZhLnV0aWwuSGFzaE1hcAUH2sHDFmDRAwACRgAKbG9hZEZhY3RvckkACXRocmVzaG9sZHhwP0AAAAAAAAF3CAAAAAIAAAABdAAIS2Vyb0VkaXRzcgAvb3JnLmVjbGlwc2UueHRleHQuYnVpbGQuU291cmNlMkdlbmVyYXRlZE1hcHBpbmdgwc1G7ZGGygwAAHhwdwQAAAAAeHg=</module2generated>
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/src.zip!/java/lang/Float.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="226">
-          <caret line="64" column="45" lean-forward="false" selection-start-line="64" selection-start-column="42" selection-end-line="64" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/image/ImageDimensions.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="0" lean-forward="true" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$KOTLIN_BUNDLED$/lib/kotlin-runtime-sources.jar!/kotlin/Unit.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="21" column="14" lean-forward="false" selection-start-line="21" selection-start-column="14" selection-end-line="21" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/error.log" />
-    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/util/fx/FileEditTab.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="354">
-          <caret line="46" column="0" lean-forward="true" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$KOTLIN_BUNDLED$/lib/kotlin-runtime-sources.jar!/kotlin/collections/Maps.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="143">
@@ -1390,13 +1386,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/readme.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="25" lean-forward="false" selection-start-line="7" selection-start-column="25" selection-end-line="7" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$KOTLIN_BUNDLED$/lib/kotlin-runtime-sources.jar!/kotlin/text/Charsets.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="589">
@@ -1408,7 +1397,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
           <caret line="578" column="31" lean-forward="false" selection-start-line="578" selection-start-column="31" selection-end-line="578" selection-end-column="31" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1430,14 +1418,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="493">
           <caret line="111" column="15" lean-forward="false" selection-start-line="111" selection-start-column="15" selection-end-line="111" selection-end-column="15" />
-          <folding>
-            <element signature="e#1024#1178#0" expanded="false" />
-            <element signature="n#!!block;n#PxAttr#0;n#!!block;n#PxAttr#0" expanded="false" />
-            <element signature="e#1326#1499#1" expanded="false" />
-            <element signature="n#!!block;n#PxAttr#1;n#!!block;n#PxAttr#0" expanded="false" />
-            <element signature="n#!!block;n#setAttribute#0;n#!!block;n#PxAttr#0" expanded="false" />
-            <element signature="n#!!block;n#save#0;n#!!block;n#PxAttr#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1445,7 +1425,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
           <caret line="23" column="32" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="89" selection-end-column="1" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1453,6 +1432,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
           <caret line="7" column="7" lean-forward="false" selection-start-line="7" selection-start-column="7" selection-end-line="7" selection-end-column="7" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1470,53 +1450,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="33" lean-forward="false" selection-start-line="3" selection-start-column="33" selection-end-line="3" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxPack.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="250" column="39" lean-forward="false" selection-start-line="250" selection-start-column="39" selection-end-line="250" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#12437#12526#0" expanded="false" />
-            <element signature="e#25106#25178#0" expanded="false" />
-            <element signature="e#34637#34696#0" expanded="false" />
-            <element signature="e#61195#61231#0" expanded="false" />
-            <element signature="e#61974#62010#0" expanded="false" />
-            <element signature="e#70131#70239#0" expanded="false" />
-            <element signature="e#88835#88930#0" expanded="false" />
-            <element signature="e#89869#89914#0" expanded="false" />
-            <marker date="1497399739776" expanded="false" signature="113186:113265" ph="{...}" />
-            <marker date="1497399739776" expanded="false" signature="113327:113435" ph="{...}" />
-            <marker date="1497399739776" expanded="false" signature="113493:113529" ph="{...}" />
-            <marker date="1497399739776" expanded="false" signature="113602:113642" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxPack.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="228" column="42" lean-forward="false" selection-start-line="228" selection-start-column="42" selection-end-line="228" selection-end-column="42" />
-          <folding>
-            <element signature="method#getEntities#0;class#PxPack#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxPack.kt" />
     <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/script/ScriptEditTab.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1530,53 +1464,168 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.kt">
+    <entry file="jar://$KOTLIN_BUNDLED$/lib/kotlin-runtime-sources.jar!/kotlin/util/Preconditions.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="53" column="18" lean-forward="false" selection-start-line="53" selection-start-column="18" selection-end-line="53" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/util/Array2D.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="320">
+          <caret line="62" column="0" lean-forward="true" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/util/ValidatedArray.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="29" column="43" lean-forward="false" selection-start-line="29" selection-start-column="43" selection-end-line="29" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/com/sun/javafx/application/LauncherImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1224">
+          <caret line="122" column="23" lean-forward="false" selection-start-line="122" selection-start-column="23" selection-end-line="122" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_112/javafx-src.zip!/javafx/application/Application.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2635">
+          <caret line="190" column="23" lean-forward="false" selection-start-line="190" selection-start-column="23" selection-end-line="190" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$KOTLIN_BUNDLED$/lib/kotlin-runtime-sources.jar!/kotlin/jvm/JvmClassMapping.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="143">
+          <caret line="94" column="29" lean-forward="false" selection-start-line="94" selection-start-column="29" selection-end-line="94" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$KOTLIN_BUNDLED$/lib/kotlin-runtime-sources.jar!/kotlin/reflect/KClass.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1792">
+          <caret line="26" column="17" lean-forward="false" selection-start-line="26" selection-start-column="17" selection-end-line="26" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/map/PxPack.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
+            <element signature="method#getEntities#0;class#PxPack#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/mapedit/MapEditTab.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="205" column="11" lean-forward="false" selection-start-line="205" selection-start-column="11" selection-end-line="205" selection-end-column="11" />
+          <folding>
+            <element signature="e#12437#12526#0" expanded="false" />
+            <element signature="e#25106#25178#0" expanded="false" />
+            <element signature="e#34637#34696#0" expanded="false" />
+            <element signature="e#61195#61231#0" expanded="false" />
+            <element signature="e#61974#62010#0" expanded="false" />
+            <element signature="e#70131#70239#0" expanded="false" />
+            <element signature="e#88835#88930#0" expanded="false" />
+            <element signature="e#89869#89914#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/readme.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="25" lean-forward="false" selection-start-line="7" selection-start-column="25" selection-end-line="7" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/messages.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="33" lean-forward="false" selection-start-line="3" selection-start-column="33" selection-end-line="3" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$KOTLIN_BUNDLED$/lib/kotlin-runtime-sources.jar!/kotlin/text/StringsJVM.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="80" column="18" lean-forward="false" selection-start-line="80" selection-start-column="18" selection-end-line="80" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/gamedata/GameData.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="31" column="40" lean-forward="false" selection-start-line="31" selection-start-column="40" selection-end-line="31" selection-end-column="40" />
+          <folding>
+            <element signature="n#!!block;n#init#0;n#!!block;n#GameData#0" expanded="false" />
+            <element signature="n#!!block;n#wipe#0;n#!!block;n#GameData#0" expanded="false" />
+            <element signature="n#!!block;n#checkInit#0;n#!!block;n#GameData#0" expanded="false" />
+            <element signature="n#!!block;n#FileList#0;n#!!block;n#GameData#0" expanded="false" />
+            <element signature="n#!!block;n#Companion#0;n#!!block;n#FileList#0;n#!!block;n#GameData#0" expanded="false" />
+            <element signature="n#!!block;n#fill#0;n#!!block;n#FileList#0;n#!!block;n#GameData#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/KeroEdit.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="149" column="32" lean-forward="true" selection-start-line="149" selection-start-column="32" selection-end-line="149" selection-end-column="32" />
+          <folding>
+            <element signature="n#!!block;n#Companion#0;n#!!block;n#KeroEdit#0" expanded="false" />
             <element signature="n#!!block;n#init#0;n#!!block;n#KeroEdit#0" expanded="false" />
             <element signature="n#!!block;n#start#0;n#!!block;n#KeroEdit#0" expanded="false" />
             <element signature="n#!!block;n#buildScene#0;n#!!block;n#start#0;n#!!block;n#KeroEdit#0" expanded="false" />
             <element signature="n#!!block;n#showLicense#0;n#!!block;n#start#0;n#!!block;n#KeroEdit#0" expanded="false" />
-            <element signature="e#7671#7994#2" expanded="false" />
             <element signature="n#!!block;n#stop#0;n#!!block;n#KeroEdit#0" expanded="false" />
-            <element signature="n#!!block;n#Companion#0;n#!!block;n#KeroEdit#0" expanded="false" />
             <element signature="n#!!block;n#initMenuBar#0;n#!!block;n#KeroEdit#0" expanded="false" />
             <element signature="n#!!block;n#initFileMenu#0;n#!!block;n#KeroEdit#0" expanded="false" />
-            <element signature="e#11106#11871#2" expanded="false" />
-            <element signature="e#12046#12308#2" expanded="false" />
-            <element signature="e#12674#12850#2" expanded="false" />
-            <element signature="e#13184#13337#2" expanded="false" />
-            <element signature="e#13638#13806#2" expanded="false" />
+            <element signature="e#11128#11893#2" expanded="false" />
+            <element signature="e#12068#12330#2" expanded="false" />
+            <element signature="e#12696#12872#2" expanded="false" />
+            <element signature="e#13206#13359#2" expanded="false" />
+            <element signature="e#13660#13828#2" expanded="false" />
             <element signature="n#!!block;n#initEditMenu#0;n#!!block;n#KeroEdit#0" expanded="false" />
-            <element signature="e#14921#15097#2" expanded="false" />
-            <element signature="e#15384#15560#2" expanded="false" />
+            <element signature="e#14943#15119#2" expanded="false" />
+            <element signature="e#15406#15582#2" expanded="false" />
             <element signature="n#!!block;n#initViewMenu#0;n#!!block;n#KeroEdit#0" expanded="false" />
             <element signature="n#!!block;n#buildZoomSubmenu#0;n#!!block;n#initViewMenu#0;n#!!block;n#KeroEdit#0" expanded="false" />
-            <element signature="e#17751#18171#2" expanded="false" />
+            <element signature="e#17773#18193#2" expanded="false" />
             <element signature="n#!!block;n#initActionsMenu#0;n#!!block;n#KeroEdit#0" expanded="false" />
-            <element signature="e#19039#19743#2" expanded="false" />
-            <element signature="e#19945#22231#2" expanded="false" />
-            <element signature="e#22889#23715#2" expanded="false" />
+            <element signature="e#19061#19738#2" expanded="false" />
+            <element signature="e#19940#22226#2" expanded="false" />
+            <element signature="e#22884#23710#2" expanded="false" />
             <element signature="n#!!block;n#initHelpMenu#0;n#!!block;n#KeroEdit#0" expanded="false" />
-            <element signature="e#24215#24878#2" expanded="false" />
+            <element signature="e#24210#24873#2" expanded="false" />
             <element signature="n#!!block;n#initMapList#0;n#!!block;n#KeroEdit#0" expanded="false" />
-            <element signature="e#25236#25541#2" expanded="false" />
-            <element signature="e#26441#28728#2" expanded="false" />
-            <element signature="e#29031#32091#2" expanded="false" />
-            <element signature="e#30012#31820#2" expanded="false" />
-            <element signature="e#32267#32475#2" expanded="false" />
-            <element signature="e#32511#32698#2" expanded="false" />
+            <element signature="e#25231#25536#2" expanded="false" />
+            <element signature="e#26436#28723#2" expanded="false" />
+            <element signature="e#29026#32086#2" expanded="false" />
+            <element signature="e#30007#31815#2" expanded="false" />
+            <element signature="e#32262#32470#2" expanded="false" />
+            <element signature="e#32506#32693#2" expanded="false" />
             <element signature="n#!!block;n#initTabPane#0;n#!!block;n#KeroEdit#0" expanded="false" />
             <element signature="n#!!block;n#closeTabs#0;n#!!block;n#KeroEdit#0" expanded="false" />
             <element signature="n#!!block;n#ModLoader#0;n#!!block;n#KeroEdit#0" expanded="false" />
             <element signature="n#!!block;n#wipeLoaded#0;n#!!block;n#ModLoader#0;n#!!block;n#KeroEdit#0" expanded="false" />
             <element signature="n#!!block;n#load#0;n#!!block;n#ModLoader#0;n#!!block;n#KeroEdit#0" expanded="false" />
             <element signature="n#!!block;n#createAssistFolder#0;n#!!block;n#ModLoader#0;n#!!block;n#KeroEdit#0" expanded="false" />
-            <element signature="e#38374#40500#2" expanded="false" />
+            <element signature="e#38369#40495#2" expanded="false" />
             <element signature="n#!!block;n#SettingsPane#0" expanded="false" />
-            <element signature="e#40657#40917#0" expanded="false" />
+            <element signature="e#40652#40912#0" expanded="false" />
             <element signature="n#!!block;n#initDisplayedLayers#0;n#!!block;n#SettingsPane#0" expanded="false" />
             <element signature="n#!!block;n#initSelectedLayer#0;n#!!block;n#SettingsPane#0" expanded="false" />
             <element signature="n#!!block;n#initDrawModes#0;n#!!block;n#SettingsPane#0" expanded="false" />
@@ -1593,54 +1642,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/keroedit/gamedata/GameData.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="33" column="0" lean-forward="false" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
-          <folding>
-            <element signature="e#1180#1254#0" expanded="false" />
-            <element signature="e#1337#1417#0" expanded="false" />
-            <element signature="e#1508#1596#0" expanded="false" />
-            <element signature="e#1974#2040#0" expanded="false" />
-            <element signature="e#2126#2192#0" expanded="false" />
-            <element signature="e#2282#2352#0" expanded="false" />
-            <element signature="e#2436#2500#0" expanded="false" />
-            <element signature="e#2592#2664#0" expanded="false" />
-            <element signature="n#!!block;n#init#0;n#!!block;n#GameData#0" expanded="false" />
-            <element signature="n#!!block;n#wipe#0;n#!!block;n#GameData#0" expanded="false" />
-            <element signature="n#!!block;n#fillFileList#0;n#!!block;n#GameData#0" expanded="false" />
-            <element signature="n#!!block;n#FileList#0;n#!!block;n#GameData#0" expanded="false" />
-            <element signature="n#!!block;n#Companion#0;n#!!block;n#FileList#0;n#!!block;n#GameData#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/util/ValidatedArray.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="24" column="57" lean-forward="false" selection-start-line="24" selection-start-column="57" selection-end-line="24" selection-end-column="57" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$KOTLIN_BUNDLED$/lib/kotlin-runtime-sources.jar!/kotlin/util/Preconditions.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="53" column="18" lean-forward="false" selection-start-line="53" selection-start-column="18" selection-end-line="53" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/fdeitylink/util/Array2D.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="62" column="0" lean-forward="false" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
-          <folding>
-            <element signature="e#2463#2874#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
   </component>
   <component name="masterDetails">
     <states>
@@ -1648,8 +1649,8 @@
         <settings>
           <artifact-editor>
             <show-content>
-              <type id="artifact" />
               <type id="library" />
+              <type id="artifact" />
             </show-content>
           </artifact-editor>
           <last-edited>KeroEdit:jar</last-edited>

@@ -13,6 +13,9 @@ import java.io.IOException
 
 import java.nio.file.NoSuchFileException
 
+import kotlin.reflect.KProperty
+import kotlin.reflect.jvm.javaField
+
 import javafx.collections.ObservableList
 import javafx.collections.ListChangeListener
 
@@ -51,25 +54,16 @@ object GameData {
         private set
 
     private var _modType: ModType? = null
-    val modType: ModType
-        get() {
-            checkInit("modType")
-            return _modType!!
-        }
+    val modType
+        get() = checkInit(this::_modType)!!
 
     private var _executable: Path? = null
-    val executable: Path
-        get() {
-            checkInit("executable")
-            return _executable!!
-        }
+    val executable
+        get() = checkInit(this::_executable)!!
 
     private var _resourceFolder: Path? = null
-    val resourceFolder: Path
-        get() {
-            checkInit("resourceFolder")
-            return _resourceFolder!!
-        }
+    val resourceFolder
+        get() = checkInit(this::_resourceFolder)!!
 
     /*
      * TODO:
@@ -81,40 +75,24 @@ object GameData {
 
     private val _bgms = FileList()
     val bgms: ObservableList<Path>
-        get() {
-            checkInit("bgms")
-            return _bgms
-        }
+        get() = checkInit(this::_bgms)
 
     private val _maps = FileList()
     val maps: ObservableList<Path>
-        get() {
-            checkInit("maps")
-            return _maps
-        }
+        get() = checkInit(this::_maps)
 
     private val _images = FileList()
     val images: ObservableList<Path>
-        get() {
-            checkInit("images")
-            return _images
-        }
+        get() = checkInit(this::_images)
 
     private val _sfx = FileList()
     val sfx: ObservableList<Path>
-        get() {
-            checkInit("sfx")
-            return _sfx
-        }
+        get() = checkInit(this::_sfx)
 
     private val _scripts = FileList()
     val scripts: ObservableList<Path>
-        get() {
-            checkInit("scripts")
-            return _scripts
-        }
+        get() = checkInit(this::_scripts)
 
-    @Throws(IOException::class)
     fun init(executable: Path) {
         wipe()
 
@@ -159,16 +137,16 @@ object GameData {
         }
 
         try {
-            fillFileList(_bgms, bgmFolder, bgmExtension)
+            _bgms.fill(bgmFolder, bgmExtension)
 
-            fillFileList(_maps, mapFolder, mapExtension)
+            _maps.fill(mapFolder, mapExtension)
 
             //TODO: Separate image lists (tilesets, spritesheets, etc.)
-            fillFileList(_images, imageFolder, imageExtension)
+            _images.fill(imageFolder, imageExtension)
 
-            fillFileList(_sfx, sfxFolder, sfxExtension)
+            _sfx.fill(sfxFolder, sfxExtension)
 
-            fillFileList(_scripts, scriptFolder, scriptExtension)
+            _scripts.fill(scriptFolder, scriptExtension)
         }
         catch (except: IOException) {
             wipe()
@@ -179,9 +157,8 @@ object GameData {
     }
 
     /**
-     * Wipes all data stored by this object. All [ObservableList]s
-     * stored by this object are cleared, and [isInitialized] is set
-     * to false.
+     * Wipes all data stored by this object. All [ObservableList]s stored by this object are cleared,
+     * and [isInitialized] is set to false.
      */
     fun wipe() {
         isInitialized = false
@@ -200,48 +177,24 @@ object GameData {
 
     //TODO: Put a similar method into Utils.kt that returns a List?
     /**
-     * Fills a given [FileList] with [Path] objects representing all of the files with the
-     * given extension that were present in the folder within [_resourceFolder] denoted by
-     * [pathFromResource].
-     */
-    private fun fillFileList(fileList: FileList, pathFromResource: String, extension: String) {
-        val basePath: Path = Paths.get(_resourceFolder.toString() + File.separatorChar + pathFromResource)
-
-        try {
-            Files.newDirectoryStream(basePath, '*' + extension).use {
-                for (p in it) {
-                    val fname = p.baseFilename(extension)
-                    if (fname.length <= PxPack.Head.FILENAME_MAX_LEN && !fname.contains(' ')) {
-                        /*
-                         * In order to prevent exceptions with regard to JavaFX objects using the
-                         * list, the item addition is done on the JavaFX thread, since it is expected
-                         * init() is called on a separate thread.
-                         */
-                        Platform.runLater { fileList.add(p.toAbsolutePath()) }
-                    }
-                }
-            }
-        }
-        catch (except: IOException) {
-            throw IOException(MessageFormat.format(Messages["GameData.DirStreamIOExcept.MESSAGE"], _executable), except)
-        }
-    }
-
-    /**
-     * Throws an [IllegalStateException] if [isInitialized] is false, otherwise returns normally
+     * Throws an [IllegalStateException] if [isInitialized] is false, otherwise returns the value of [prop]
      *
-     * @param retrievedProperty the name of the property attempting to be
-     * retrieved. It will be put into the message of the [IllegalStateException]
-     * if one is thrown.
+     * @param prop The property whose value is being requested. Returns its value if no [IllegalStateException]
+     * is thrown.
      */
-    private fun checkInit(retrievedProperty: String) =
-            check(isInitialized) { "GameData must be initialized before $retrievedProperty can be retrieved from it" }
+    private fun <T> checkInit(prop: KProperty<T>): T {
+        val exceptStr = "GameData must be initialized before ${prop.name.replaceFirst("_", "")} can be retrieved"
+        check(isInitialized) { exceptStr }
 
+        @Suppress("UNCHECKED_CAST")
+        return (prop.javaField!!.get(this) ?: throw IllegalStateException(exceptStr)) as T
+    }
 
     private class FileList : ValidatedObservableList<Path>(
             { "Paths added must have lengths <= ${PxPack.Head.FILENAME_MAX_LEN} and contain no spaces (path: ${it.toAbsolutePath()})" },
             { val fname = it.baseFilename(); fname.length <= PxPack.Head.FILENAME_MAX_LEN && !fname.contains(' ') }) {
 
+        //TODO: Throw IllegalStateException if list is modified when isInitialized is false
         companion object {
             val deleteListener = ListChangeListener <Path> {
                 if (isInitialized) {
@@ -278,6 +231,34 @@ object GameData {
 
         init {
             addListener(deleteListener)
+        }
+
+        /**
+         * Fills a given [FileList] with [Path] objects representing all of the files with the
+         * given extension that were present in the folder within [_resourceFolder] denoted by
+         * [pathFromResource].
+         */
+        fun fill(pathFromResource: String, extension: String) {
+            val basePath: Path = Paths.get(_resourceFolder.toString() + File.separatorChar + pathFromResource)
+
+            try {
+                Files.newDirectoryStream(basePath, '*' + extension).use {
+                    for (p in it) {
+                        val fname = p.baseFilename(extension)
+                        if (fname.length <= PxPack.Head.FILENAME_MAX_LEN && !fname.contains(' ')) {
+                            /*
+                             * In order to prevent exceptions with regard to JavaFX objects using the
+                             * list, the item addition is done on the JavaFX thread, since it is expected
+                             * init() is called on a separate thread.
+                             */
+                            Platform.runLater { add(p.toAbsolutePath()) }
+                        }
+                    }
+                }
+            }
+            catch (except: IOException) {
+                throw IOException(MessageFormat.format(Messages["GameData.DirStreamIOExcept.MESSAGE"], _executable), except)
+            }
         }
     }
 }
