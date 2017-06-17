@@ -564,9 +564,12 @@ class KeroEdit : Application() {
         enableOnLoadItems.add(menuItems[ActionsMenuItem.HACK_EXECUTABLE]!!)*/
 
         menuItems[ActionsMenuItem.WAFFLE]!!.setOnAction {
-            val errorAlert = FXUtil.createAlert(type = Alert.AlertType.ERROR,
-                                                title = Messages["KeroEdit.WaffleError.TITLE"],
-                                                message = Messages["KeroEdit.WaffleError.MESSAGE"])
+            val errorAlert by lazy(LazyThreadSafetyMode.NONE) {
+                FXUtil.createAlert(type = Alert.AlertType.ERROR,
+                                   title = Messages["KeroEdit.WaffleError.TITLE"],
+                                   message = Messages["KeroEdit.WaffleError.MESSAGE"])
+            }
+
             val printJob = PrinterJob.createPrinterJob()
             if (null == printJob) {
                 errorAlert.showAndWait()
@@ -839,7 +842,7 @@ class KeroEdit : Application() {
             }
 
             this.executable = executable.toAbsolutePath()
-            execService.submit(load)
+            execService.submit(this::load)
         }
 
         private fun createAssistFolder() {
@@ -895,7 +898,7 @@ class KeroEdit : Application() {
             }
         }
 
-        private val load = Runnable {
+        private fun load() {
             try {
                 GameData.init(executable)
                 Config.lastExeLoc = executable
