@@ -26,9 +26,7 @@
  * Make sure all Alert creations are accompanied by showAndWait() calls (some are missing)
  * Have any empty catch blocks log the exception with Logger.logThrowable()
  * Keep any MenuItems with unimplemented features disabled (like what I did for HackTab)
- * Use TornadoFX after converting to Kotlin?
- * Put kotlin-reflect.jar on the classpath (bundle into JAR?)
- *  - Is this still necessary as of Kotlin 1.1? (https://kotlinlang.org/docs/reference/whatsnew11.html#kotlinreflectfull)
+ * Use TornadoFX after finishing Kotlin conversion
  * Use Gradle (Kobalt?)
  * Turn members of Kotlin objects into top-level properties and functions?
  * Don't show tileset stage until after main window is showing (if it is set to be shown from the last session)
@@ -168,8 +166,7 @@ class KeroEdit : Application() {
     companion object {
         private lateinit var INSTANCE: KeroEdit
 
-        private val baseTitleString = MessageFormat.format(Messages["KeroEdit.APP_TITLE"],
-                                                           Messages["KeroEdit.VERSION"])
+        private val baseTitleString = MessageFormat.format(Messages["KeroEdit.APP_TITLE"],Messages["KeroEdit.VERSION"])
 
         var titleSuffix
             get() = INSTANCE.mainStage.title?.substring(baseTitleString.length) ?: ""
