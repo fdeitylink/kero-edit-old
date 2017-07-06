@@ -1,6 +1,8 @@
 package io.fdeitylink.util
 
 import kotlin.properties.ReadWriteProperty
+import kotlin.properties.ObservableProperty
+
 import kotlin.reflect.KProperty
 
 /**
@@ -40,9 +42,9 @@ import kotlin.reflect.KProperty
  * Turn into CustomNotNullVar class that takes a setter validator and a custom getter?
  * Delegate to Delegates.notNull?
  */
-class ValidatedNotNullVar<T: Any>(private val validator: (value: T) -> Boolean,
-                                  private val lazyMessage: () -> Any = { "Invalid value passed to set()" }
-                                 ): ReadWriteProperty<Any?, T> {
+class ValidatedNotNullVar<T : Any>(private val validator: (value: T) -> Boolean,
+                                   private val lazyMessage: () -> Any = { "Invalid value passed to set()" }
+) : ReadWriteProperty<Any?, T> {
     private var value: T? = null
 
     override operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
@@ -56,7 +58,7 @@ class ValidatedNotNullVar<T: Any>(private val validator: (value: T) -> Boolean,
     }
 }
 
-class ReInitializableVar<T>: ReadWriteProperty<Any?, T> {
+class ReInitializableVar<T> : ReadWriteProperty<Any?, T> {
     private var value: T? = null
 
     override fun getValue(thisRef: Any?, property: KProperty<*>): T {
@@ -67,3 +69,20 @@ class ReInitializableVar<T>: ReadWriteProperty<Any?, T> {
         this.value = value
     }
 }
+
+class ObservableValue<T>(initialValue: T) : ObservableProperty<T>(initialValue) {
+    private val listeners: MutableList<ChangeListener<T>> = mutableListOf()
+
+    fun addListener(listener: ChangeListener<T>) {
+        listeners.add(listener)
+    }
+
+    fun removeListener(listener: ChangeListener<T>) {
+        listeners.remove(listener)
+    }
+
+    override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) =
+            listeners.forEach { it(property, oldValue, newValue) }
+}
+
+typealias ChangeListener<T> = (property: KProperty<*>, oldValue: T, newValue: T) -> Unit

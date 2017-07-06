@@ -6,8 +6,6 @@
 
 package io.fdeitylink.util.fx
 
-import javafx.util.Callback
-
 import java.util.concurrent.Callable
 
 import javafx.scene.layout.Region
@@ -49,50 +47,40 @@ object FXUtil {
     /**
      * Returns a [Task] that calls [callable.call][Callable.call] in its [Task.call] method.
      */
-    fun <V> task(callable: Callable<V>): Task<V> {
-        //TODO: Take a () -> V
-        return object: Task<V>() {
-            @Throws(Exception::class)
-            override fun call() = callable.call()
-        }
-    }
+    fun <V> task(callable: Callable<V>) =
+            //TODO: Take a () -> V for callable
+            object : Task<V>() {
+                @Throws(Exception::class)
+                override fun call() = callable.call()
+            }
 
     /**
-     * Returns a [Service] that in its [Service.createTask] method
-     * returns a [Task] that calls [callable.call][Callable.call]
-     * in its [Task.call] method.
+     * Returns a [Service] that in its [Service.createTask] method returns a [Task] that calls
+     * [callable.call][Callable.call] in its [Task.call] method.
      */
-    fun <V> service(callable: Callable<V>): Service<V> {
-        //TODO: Take a () -> V
-        return object: Service<V>() {
-            override fun createTask(): Task<V> {
-                return object: Task<V>() {
-                    @Throws(Exception::class)
-                    override fun call() = callable.call()
+    fun <V> service(callable: Callable<V>) =
+            //TODO: Take a () -> V for callable
+            object : Service<V>() {
+                override fun createTask(): Task<V> {
+                    return object : Task<V>() {
+                        @Throws(Exception::class)
+                        override fun call() = callable.call()
+                    }
                 }
             }
-        }
-    }
 
     /**
-     * Returns a [String] representation of the given [Color]
-     * suitable for use with [Color.web] and [Color.valueOf].
-     * The official documentation for [Color.toString] does
-     * not specify that it can be used for the methods mentioned
-     * above, so this method should be used for such purposes as
-     * it will always be compatible.
-     *
-     * @param color the [Color] to get a [String] representation of
-     *
-     * @return a [String] representation of [color]
+     * Returns a [String] representation of the receiving [Color] suitable for use with
+     * [Color.web] and [Color.valueOf]. The official documentation for [Color.toString]
+     * does not specify that it can be used for the methods mentioned above, so this
+     * method should be used for such purposes as it will always be compatible.
      */
-    fun colorToString(color: Color): String {
-        return String.format("0x%02X%02X%02X%02X",
-                             (color.red * 255).toInt(),
-                             (color.green * 255).toInt(),
-                             (color.blue * 255).toInt(),
-                             (color.opacity * 255).toInt())
-    }
+    fun Color.toWeb() =
+            String.format("0x%02X%02X%02X%02X",
+                    (this.red * 255).toInt(),
+                    (this.green * 255).toInt(),
+                    (this.blue * 255).toInt(),
+                    (this.opacity * 255).toInt())
 
     /**
      * Creates and returns an [Alert] with the given properties
@@ -130,7 +118,7 @@ object FXUtil {
      */
     fun createDualTextFieldDialog(title: String?, headerText: String? = null,
                                   firstPrompt: String? = null, secondPrompt: String? = null
-                                 ): Dialog<Pair<String, String>> {
+    ): Dialog<Pair<String, String>> {
         //TODO: Add 'message' parameter that defaults to null?
 
         val dialog = Dialog<Pair <String, String>>()
@@ -153,11 +141,8 @@ object FXUtil {
 
         Platform.runLater(firstField::requestFocus)
 
-        dialog.resultConverter = Callback {
-            if (ButtonType.OK == it) {
-                return@Callback Pair<String, String>(firstField.text, secondField.text)
-            }
-            return@Callback Pair("", "")
+        dialog.setResultConverter {
+            return@setResultConverter if (ButtonType.OK == it) Pair(firstField.text, secondField.text) else Pair("", "")
         }
 
         return dialog
@@ -170,14 +155,14 @@ object FXUtil {
      * @param title the title text of the [Alert]
      * @param headerText the header text of the [Alert]. Defaults to null
      * @param message the content text of the [Alert]
-     * @param textAreaContent the content of the text box in the [Alert]
+     * @param textAreaContent the content of the text box in the [Alert]. Defaults to null
      * @param editable true if the user should be able to edit the content of the [TextArea],
      * false otherwise. Defaults to false
      *
      * @return the created [Alert]
      */
     fun createTextboxAlert(type: Alert.AlertType = Alert.AlertType.NONE, title: String?,
-                           headerText: String? = null, message: String?, textAreaContent: String?,
+                           headerText: String? = null, message: String?, textAreaContent: String? = null,
                            editable: Boolean = false): Alert {
         val alert = createAlert(type, title, headerText, message)
 
@@ -235,7 +220,7 @@ object FXUtil {
      */
     fun TextInputControl.setMaxLen(len: Int) {
         //TODO: Remove previous listeners set by this method
-        require(len >= 0) { "Attempt to set max length of TextInputControl to a negative value (len: $len)" }
+        require(len >= 0) { "length $len is negative" }
         textProperty().addListener { _, _, newValue ->
             if (newValue.length > len) {
                 text = newValue.substring(0, len)
@@ -269,9 +254,10 @@ object FXUtil {
     /**
      * Returns the receiving [Image] if it is null, its width or height
      * are 0, or [scale] is `1.0`, otherwise the result of scaling the
-     * receiving [Image] by [scale].
+     * receiving [Image] by [scale]. If the receiver is a nullable type,
+     * then the return value is nullable, otherwise it is non-nullable.
      */
-    fun <T: Image?> T.scale(scale: Double): T {
+    fun <T : Image?> T.scale(scale: Double): T {
         if (null == this || 1.0 == scale) {
             return this
         }

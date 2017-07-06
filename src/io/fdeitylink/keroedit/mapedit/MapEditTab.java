@@ -184,16 +184,16 @@ public final class MapEditTab extends FileEditTab {
     private static final SimpleDoubleProperty mapZoom;
     private static final SimpleDoubleProperty tilesetZoom;
 
-    private static final SimpleObjectProperty <Color> tilesetBgColor;
+    private static final SimpleObjectProperty<Color> tilesetBgColor;
 
-    private static final SimpleObjectProperty <EnumSet <Layer>> displayedLayers;
-    private static final SimpleObjectProperty <Layer> selectedLayer;
+    private static final SimpleObjectProperty<EnumSet<Layer>> displayedLayers;
+    private static final SimpleObjectProperty<Layer> selectedLayer;
 
-    private static final SimpleObjectProperty <DrawMode> drawMode;
+    private static final SimpleObjectProperty<DrawMode> drawMode;
 
-    private static final SimpleObjectProperty <EnumSet <ViewOption>> viewSettings;
+    private static final SimpleObjectProperty<EnumSet<ViewOption>> viewSettings;
 
-    private static final SimpleObjectProperty <EditMode> editMode;
+    private static final SimpleObjectProperty<EditMode> editMode;
 
     private static Image pxAttrImage;
     private static Image entityImage;
@@ -207,16 +207,16 @@ public final class MapEditTab extends FileEditTab {
         /* *********************************************** Properties *********************************************** */
         mapZoom = new SimpleDoubleProperty(Config.INSTANCE.getMapZoom());
         tilesetZoom = new SimpleDoubleProperty(Config.INSTANCE.getTilesetZoom());
-        tilesetBgColor = new SimpleObjectProperty <>(Config.tilesetBgColor);
+        tilesetBgColor = new SimpleObjectProperty<>(Config.tilesetBgColor);
 
-        displayedLayers = new SimpleObjectProperty <>(Config.displayedLayers);
-        selectedLayer = new SimpleObjectProperty <>(Config.INSTANCE.getSelectedLayer());
+        displayedLayers = new SimpleObjectProperty<>(Config.displayedLayers);
+        selectedLayer = new SimpleObjectProperty<>(Config.INSTANCE.getSelectedLayer());
 
-        drawMode = new SimpleObjectProperty <>(Config.drawMode);
+        drawMode = new SimpleObjectProperty<>(Config.drawMode);
 
-        viewSettings = new SimpleObjectProperty <>(Config.viewSettings);
+        viewSettings = new SimpleObjectProperty<>(Config.viewSettings);
 
-        editMode = new SimpleObjectProperty <>(Config.editMode);
+        editMode = new SimpleObjectProperty<>(Config.editMode);
 
         /* ********************************************** Tileset Stage ********************************************* */
         EMPTY_PANE = new Pane(); //null not accepted as scene root, so this is used when tileset stage is not shown
@@ -303,7 +303,7 @@ public final class MapEditTab extends FileEditTab {
         scriptEditTab = new ScriptEditTab(Paths.get(GameData.INSTANCE.getResourceFolder().toString() +
                                                     File.separatorChar + GameData.scriptFolder +
                                                     File.separatorChar + fname + GameData.scriptExtension), this);
-        propertyEditTab = new PropertyEditTab();
+        propertyEditTab = new PropertyEditTab(this, map);
 
         tabPane = new TabPane(tileEditTab, scriptEditTab, propertyEditTab);
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
@@ -332,7 +332,7 @@ public final class MapEditTab extends FileEditTab {
         tilesetBgColor.set(color);
     }
 
-    public static void setDisplayedLayers(final EnumSet <Layer> flags) {
+    public static void setDisplayedLayers(final EnumSet<Layer> flags) {
         //TODO: Observable value that fires change events when Enum is added to/removed from Set?
         //(similar to the thing for PxAttrs)
         displayedLayers.set(EnumSet.copyOf(flags));
@@ -346,7 +346,7 @@ public final class MapEditTab extends FileEditTab {
         drawMode.set(mode);
     }
 
-    public static void setViewSettings(final EnumSet <ViewOption> flags) {
+    public static void setViewSettings(final EnumSet<ViewOption> flags) {
         viewSettings.set(EnumSet.copyOf(flags));
     }
 
@@ -485,7 +485,7 @@ public final class MapEditTab extends FileEditTab {
 
     private final class TileEditTab extends FileEditTab {
         private final PxPack.Head head;
-        private final ArrayList <PxPack.Entity> entities;
+        private final ArrayList<PxPack.Entity> entities;
 
         private final TilesetPane tilesetPane;
         private final EntityPane entityPane;
@@ -582,14 +582,14 @@ public final class MapEditTab extends FileEditTab {
          * the tileset {@code Stage}
          *
          * @param sPane The {@code SplitPane} containing the {@code TilesetPane} to be swapped
-         *              between the main {@code Stage} and a secondary {@code Stage}
+         * between the main {@code Stage} and a secondary {@code Stage}
          */
         private void initTilesetStage(final SplitPane sPane) {
             /*
              * The tilesetPane in every MapEditTab will be removed from
              * sPane when tilesetStage is shown
              */
-            final EventHandler <? super WindowEvent> beforeShowingEvent = new EventHandler <WindowEvent>() {
+            final EventHandler<? super WindowEvent> beforeShowingEvent = new EventHandler<WindowEvent>() {
                 private Pane tmpPane = new Pane();
 
                 @Override
@@ -622,7 +622,7 @@ public final class MapEditTab extends FileEditTab {
              * The tilesetPane in every MapEditTab will be added back to sPane
              * when tilesetStage is hidden if the user is editing tiles, not entities.
              */
-            final EventHandler <? super WindowEvent> afterHiddenEvent = event -> {
+            final EventHandler<? super WindowEvent> afterHiddenEvent = event -> {
                 /*
                  * Read the static{} block at the top of this file. In it,
                  * tilesetStage's root is set to an empty Pane when it is closed.
@@ -692,10 +692,10 @@ public final class MapEditTab extends FileEditTab {
             private PxAttr[] pxAttrs;
 
             //TODO: Can these be made static?
-            private Service <Void> redrawTileTypes;
-            private Service <Void> drawSelectedTiles;
-            private Service <Void> loadTilesets;
-            private Service <Void> loadPxAttrs;
+            private Service<Void> redrawTileTypes;
+            private Service<Void> drawSelectedTiles;
+            private Service<Void> loadTilesets;
+            private Service<Void> loadPxAttrs;
 
             TilesetPane() {
                 initServices();
@@ -752,7 +752,7 @@ public final class MapEditTab extends FileEditTab {
 
                     final PxAttr pxAttr = pxAttrs[selectedLayer.get().ordinal()];
                     if (null != pxAttr) {
-                        final Array2D <Integer> attributes = pxAttr.getAttributes();
+                        final Array2D<Integer> attributes = pxAttr.getAttributes();
                         final PixelReader pxAttrImgReader = pxAttrImage.getPixelReader();
 
                         if (null != attributes && null != pxAttrImgReader) {
@@ -761,7 +761,7 @@ public final class MapEditTab extends FileEditTab {
                                                       (int)tileTypeCanvas.getHeight() * PXATTR_TO_TILE_RATIO);
                             final PixelWriter tileTypeImgWriter = tileTypeImg.getPixelWriter();
 
-                            final WritablePixelFormat <ByteBuffer> pxFormat = PixelFormat.getByteBgraInstance();
+                            final WritablePixelFormat<ByteBuffer> pxFormat = PixelFormat.getByteBgraInstance();
 
                             final byte[] attrTile = new byte[PXATTR_TILE_WIDTH * PXATTR_TILE_HEIGHT * 4];
                             for (int y = 0; y < attributes.getHeight(); ++y) {
@@ -794,7 +794,7 @@ public final class MapEditTab extends FileEditTab {
 
                     final int[][] selectedTilesRect = selectedTiles[layer];
 
-                    final WritablePixelFormat <ByteBuffer> pxFormat = PixelFormat.getByteBgraInstance();
+                    final WritablePixelFormat<ByteBuffer> pxFormat = PixelFormat.getByteBgraInstance();
 
                     final PixelReader tilesetReader = tilesetPane.tilesets[layer].getPixelReader();
 
@@ -854,7 +854,7 @@ public final class MapEditTab extends FileEditTab {
                     final String[] tilesetNames = head.getTilesetNames();
                     for (int i = 0; i < tilesetNames.length; ++i) {
                         try {
-                            final ReadOnlyObjectProperty <PxAttr> pxAttrProp = PxAttrManager.INSTANCE.getPxAttr(tilesetNames[i]);
+                            final ReadOnlyObjectProperty<PxAttr> pxAttrProp = PxAttrManager.INSTANCE.getPxAttr(tilesetNames[i]);
                             pxAttrProp.addListener(observable -> {
                                 redrawTileTypes.restart();
                                 mapPane.redrawTileLayer(selectedLayer.get().ordinal());
@@ -902,7 +902,7 @@ public final class MapEditTab extends FileEditTab {
 
                 tilesetBgColor.addListener((observable, oldValue, newValue) -> redrawTileset());
 
-                tilesetCanvas.setOnMousePressed(new EventHandler <MouseEvent>() {
+                tilesetCanvas.setOnMousePressed(new EventHandler<MouseEvent>() {
                     private PxAttrPopup pxAttrPopup;
 
                     @Override
@@ -952,7 +952,7 @@ public final class MapEditTab extends FileEditTab {
                     }
                 });
 
-                tilesetCanvas.setOnMouseDragged(new EventHandler <MouseEvent>() {
+                tilesetCanvas.setOnMouseDragged(new EventHandler<MouseEvent>() {
                     private int prevX;
                     private int prevY;
 
@@ -1082,7 +1082,7 @@ public final class MapEditTab extends FileEditTab {
 
                     /* *************************************** Attribute Label ************************************** */
                     final PxAttr pxAttr = pxAttrs[layer];
-                    final Array2D <Integer> attributes = null == pxAttr ? null : pxAttr.getAttributes();
+                    final Array2D<Integer> attributes = null == pxAttr ? null : pxAttr.getAttributes();
 
                     final Text attributeLabel = null == attributes ?
                                                 new Text("No attributes for this tileset") :
@@ -1156,13 +1156,13 @@ public final class MapEditTab extends FileEditTab {
         //TODO: Undocking (similar to tilesetStage)
         private final class EntityPane extends SplitPane {
             private final EntityEditorPane editorPane;
-            private final ListView <Integer> entityList;
+            private final ListView<Integer> entityList;
 
             EntityPane() {
                 editorPane = new EntityEditorPane();
 
-                entityList = new ListView <>();
-                entityList.setCellFactory(listView -> new ListCell <Integer>() {
+                entityList = new ListView<>();
+                entityList.setCellFactory(listView -> new ListCell<Integer>() {
                     private final ImageView entityImageView = new ImageView();
 
                     @Override
@@ -1269,7 +1269,7 @@ public final class MapEditTab extends FileEditTab {
         }
 
         private final class MapPane extends ScrollPane {
-            private final SimpleObjectProperty <Color> bgColor;
+            private final SimpleObjectProperty<Color> bgColor;
 
             private final PxPack.TileLayer[] tileLayers;
 
@@ -1327,7 +1327,7 @@ public final class MapEditTab extends FileEditTab {
                 }
                 stackPane.getChildren().addAll(entityCanvas, gridCanvas, cursorCanvas);
 
-                bgColor = new SimpleObjectProperty <>(head.getBgColor());
+                bgColor = new SimpleObjectProperty<>(head.getBgColor());
                 bgColor.addListener((observable, oldValue, newValue) -> FXUtil.INSTANCE.setBackgroundColor(stackPane, newValue));
                 FXUtil.INSTANCE.setBackgroundColor(stackPane, bgColor.get());
 
@@ -1400,7 +1400,7 @@ public final class MapEditTab extends FileEditTab {
                     redrawGridLayer();
                 });
 
-                cursorCanvas.setOnMouseMoved(new EventHandler <MouseEvent>() {
+                cursorCanvas.setOnMouseMoved(new EventHandler<MouseEvent>() {
                     private int prevX;
                     private int prevY;
 
@@ -1572,7 +1572,7 @@ public final class MapEditTab extends FileEditTab {
                     FXUtil.INSTANCE.createDualTextFieldDialog(title, currentSizeStr,
                                                               Messages.INSTANCE.get("MapEditTab.TileEditTab.Resize.NEW_WIDTH"),
                                                               Messages.INSTANCE.get("MapEditTab.TileEditTab.Resize.NEW_HEIGHT"))
-                                   .showAndWait().ifPresent(result -> {
+                            .showAndWait().ifPresent(result -> {
                         final String widthStr = result.component1();
                         final String heightStr = result.component2();
 
@@ -1588,7 +1588,7 @@ public final class MapEditTab extends FileEditTab {
                                                             Messages.INSTANCE.get("MapEditTab.TileEditTab.Resize.NumFormatExcept.TITLE"),
                                                             null,
                                                             Messages.INSTANCE.get("MapEditTab.TileEditTab.Resize.NumFormatExcept.MESSAGE"))
-                                               .showAndWait();
+                                        .showAndWait();
                                 return;
                             }
 
@@ -1597,7 +1597,7 @@ public final class MapEditTab extends FileEditTab {
                                                             Messages.INSTANCE.get("MapEditTab.TileEditTab.Resize.InvalidDimensions.TITLE"),
                                                             null,
                                                             Messages.INSTANCE.get("MapEditTab.TileEditTab.Resize.InvalidDimensions.MESSAGE"))
-                                               .showAndWait();
+                                        .showAndWait();
                                 return;
                             }
 
@@ -1620,7 +1620,7 @@ public final class MapEditTab extends FileEditTab {
                                                         Messages.INSTANCE.get("MapEditTab.TileEditTab.BgColor.OpacityError.TITLE"),
                                                         null,
                                                         Messages.INSTANCE.get("MapEditTab.TileEditTab.BgColor.OpacityError.MESSAGE"))
-                                           .showAndWait();
+                                    .showAndWait();
                         }
                         else {
                             head.setBgColor(cPicker.getValue());
@@ -1629,7 +1629,7 @@ public final class MapEditTab extends FileEditTab {
                         }
                     });
 
-                    final Dialog <Void> cPickerDialog = new Dialog <>();
+                    final Dialog<Void> cPickerDialog = new Dialog<>();
                     cPickerDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
                     cPickerDialog.initModality(Modality.WINDOW_MODAL);
                     cPickerDialog.getDialogPane().setContent(cPicker);
@@ -1644,8 +1644,8 @@ public final class MapEditTab extends FileEditTab {
              * Also draws its tile type if those are set to be visible.
              *
              * @param layer The layer the tile to redraw is in
-             * @param x     The x coordinate of the tile to redraw
-             * @param y     The y coordinate of the tile to redraw
+             * @param x The x coordinate of the tile to redraw
+             * @param y The y coordinate of the tile to redraw
              */
             private void redrawTile(final int layer, final int x, final int y) {
                 try {
@@ -1667,7 +1667,7 @@ public final class MapEditTab extends FileEditTab {
 
                         PixelReader pxAttrImgReader;
                         final Image tileTypeImg;
-                        Array2D <Integer> attributes;
+                        Array2D<Integer> attributes;
                         final boolean drawTileType;
 
                         if (viewSettings.get().contains(ViewOption.TILE_TYPES) && selectedLayer.get().ordinal() == layer) {
@@ -1748,7 +1748,7 @@ public final class MapEditTab extends FileEditTab {
                             return null;
                         }
 
-                        final WritablePixelFormat <ByteBuffer> pxFormat = PixelFormat.getByteBgraInstance();
+                        final WritablePixelFormat<ByteBuffer> pxFormat = PixelFormat.getByteBgraInstance();
 
                         final WritableImage layerImg = new WritableImage(tiles[0].length * TILE_WIDTH,
                                                                          tiles.length * TILE_HEIGHT);
@@ -1758,7 +1758,7 @@ public final class MapEditTab extends FileEditTab {
                         PixelReader pxAttrImgReader = null;
                         WritableImage tmpTileTypeImg = null;
                         PixelWriter tileTypeImgWriter = null;
-                        Array2D <Integer> attributes = null;
+                        Array2D<Integer> attributes = null;
                         byte[] attrTile = null;
 
                         boolean drawTileTypes = false;
@@ -1857,7 +1857,7 @@ public final class MapEditTab extends FileEditTab {
                         if (EditMode.ENTITY == editMode.get() || viewSettings.get().contains(ViewOption.ENTITY_SPRITES)) {
                             final PixelReader entitiesImgReader = entityImage.getPixelReader();
                             if (null != entitiesImgReader) {
-                                final WritablePixelFormat <ByteBuffer> pxFormat = PixelFormat.getByteBgraInstance();
+                                final WritablePixelFormat<ByteBuffer> pxFormat = PixelFormat.getByteBgraInstance();
 
                                 //TODO: Verify all of this is right and stuff
                                 //TODO: More elegant width/height solution?
@@ -2125,215 +2125,7 @@ public final class MapEditTab extends FileEditTab {
         }
     }
 
-    private final class PropertyEditTab extends FileEditTab {
-        private final PxPack.Head head;
-
-        PropertyEditTab() {
-            super(MapEditTab.this.getPath(), Messages.INSTANCE.get("MapEditTab.PropertyEditTab.TITLE"));
-            head = map.getHead();
-            setContent(initEditorPane());
-        }
-
-        @Override
-        public void undo() {
-            //does nothing
-        }
-
-        @Override
-        public void redo() {
-            //does nothing
-        }
-
-        @Override
-        public void save() {
-            //does nothing
-        }
-
-        @Override
-        protected void markChanged() {
-            super.markChanged();
-            MapEditTab.this.markChanged();
-        }
-
-        //Made public so the parent MapEditTab can call it in save()
-        @Override
-        public void markUnchanged() {
-            super.markUnchanged();
-        }
-
-        private GridPane initEditorPane() {
-            //TODO: For values that can be blank, put a "Clear" button next to them that sets the value to blank and selects a blank item
-
-            final GridPane gPane = new GridPane();
-            gPane.setPadding(new Insets(10, 10, 10, 10));
-            gPane.setVgap(10);
-            gPane.setHgap(20);
-
-            final Font font = Font.font(null, FontWeight.NORMAL, 12);
-
-            /* ******************************************* ComboBox Labels ****************************************** */
-            final ArrayList <Text> labels = new ArrayList <>(1 + PxPack.Head.NUM_REF_MAPS + 1 + PxPack.NUM_LAYERS);
-            for (int i = 0; i < PxPack.Head.NUM_REF_MAPS; ++i) {
-                labels.add(new Text("Mapname " + (i + 1)));
-            }
-            labels.add(new Text("Spritesheet"));
-            for (int i = 0; i < PxPack.NUM_LAYERS; ++i) {
-                labels.add(new Text("Tileset " + (i + 1)));
-            }
-
-            for (final Text label : labels) {
-                label.setFont(font);
-            }
-
-            /* ******************************************** Description ********************************************* */
-            final Text descriptionLabel = new Text("Description");
-            final TextField descriptionTextField = new TextField(head.getDescription());
-            FXUtil.INSTANCE.setMaxLen(descriptionTextField, PxPack.Head.DESCRIPTION_MAX_LEN);
-            descriptionTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-                head.setDescription(newValue);
-                markChanged();
-                tooltip.setText(map.getPath().toString() + '\n' +
-                                Messages.INSTANCE.get("MapEditTab.TOOLTIP_DESCRIPTION_LABEL") + newValue);
-            });
-
-            final ArrayList <ComboBox <Path>> fields = new ArrayList <>(labels.size());
-
-            /* ********************************************** Mapnames ********************************************** */
-            final String[] currentMapNames = head.getMapNames();
-
-            for (int i = 0; i < PxPack.Head.NUM_REF_MAPS; ++i) {
-                //TODO: Add option to leave value blank
-                final ComboBox <Path> cBox = new ComboBox <>(GameData.INSTANCE.getMaps());
-
-                //TODO: Can I make one Callback object that is used for multiple ComboBoxes?
-                cBox.setCellFactory(listView -> new ListCell <Path>() {
-                    @Override
-                    public void updateItem(final Path map, final boolean empty) {
-                        super.updateItem(map, empty);
-                        setText(empty ? null : UtilsKt.baseFilename(map, GameData.mapExtension));
-                    }
-                });
-
-                //TODO: Set the Button Cell of the ComboBox to have the filename as the label, not the full path
-
-                final Path map = Paths.get(GameData.INSTANCE.getResourceFolder().toString() +
-                                           File.separatorChar + GameData.mapFolder + File.separatorChar +
-                                           currentMapNames[i] + GameData.mapExtension);
-
-                final SingleSelectionModel <Path> selectModel = cBox.getSelectionModel();
-                selectModel.select(map);
-                final int index = i;
-                selectModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                    /*
-                     * newValue is null when the map list is cleared when
-                     * a new mod is loaded. Ideally this Tab object would
-                     * be destroyed when closed and newValue would never be
-                     * null, so just blame the JVM's rare use of The Reaper (GC)
-                     *
-                     * TODO:
-                     *  - Check what happens when a map is deleted in the list
-                     *    - What becomes the new selected item?
-                     *      - If it just selects a new item, what happens when the list empties?
-                     */
-                    //TODO: Remove listeners on tab close to avoid this issue?
-                    if (null != newValue) {
-                        head.setMapname(index, UtilsKt.baseFilename(newValue, GameData.mapExtension));
-                        markChanged();
-                    }
-                });
-
-                fields.add(cBox);
-            }
-
-            /* ********************************************* Spritesheet ******************************************** */
-            {
-                //TODO: Check if spritesheet can be blank - if so, put blank item into list (or button that clears selection or something)
-                final ComboBox <Path> cBox = new ComboBox <>(GameData.INSTANCE.getImages());
-
-                cBox.setCellFactory(comboBox -> new ListCell <Path>() {
-                    @Override
-                    public void updateItem(final Path spritesheet, final boolean empty) {
-                        super.updateItem(spritesheet, empty);
-                        setText(empty ? null : UtilsKt.baseFilename(spritesheet, GameData.imageExtension));
-                    }
-                });
-
-                final Path spritesheet = Paths.get(GameData.INSTANCE.getResourceFolder().toString() +
-                                                   File.separatorChar + GameData.imageFolder + File.separatorChar +
-                                                   head.getSpritesheetName() + GameData.imageExtension);
-
-                final SingleSelectionModel <Path> selectModel = cBox.getSelectionModel();
-                selectModel.select(spritesheet);
-                selectModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                    if (newValue != null) {
-                        head.setSpritesheetName(UtilsKt.baseFilename(newValue, GameData.imageExtension));
-                        markChanged();
-                        /*
-                         * TODO:
-                         * When I start pulling entity sprites directly from
-                         * spritesheets, redraw entities in TileEditTab.
-                         */
-                    }
-                });
-
-                fields.add(cBox);
-            }
-
-            /* ************************************************ Data ************************************************ */
-            //TODO: Data
-
-            /* *********************************************** Tilesets ********************************************** */
-            final String[] currentTilesetNames = head.getTilesetNames();
-            for (int i = 0; i < PxPack.NUM_LAYERS; ++i) {
-                final ComboBox <Path> cBox = new ComboBox <>(GameData.INSTANCE.getImages());
-
-                cBox.setCellFactory(comboBox -> new ListCell <Path>() {
-                    @Override
-                    public void updateItem(final Path tileset, final boolean empty) {
-                        super.updateItem(tileset, empty);
-                        setText(empty ? null : UtilsKt.baseFilename(tileset, GameData.imageExtension));
-                    }
-                });
-
-                final Path tileset = Paths.get(GameData.INSTANCE.getResourceFolder().toString() +
-                                               File.separatorChar + GameData.imageFolder + File.separator +
-                                               currentTilesetNames[i] + GameData.imageExtension);
-
-                final SingleSelectionModel <Path> selectModel = cBox.getSelectionModel();
-                selectModel.select(tileset);
-                final int index = i;
-                selectModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                    if (newValue != null) {
-                        head.setTilesetName(index, UtilsKt.baseFilename(newValue, GameData.imageExtension));
-                        markChanged();
-
-                        //TODO: Only reload affected tileset, not all of them
-                        tileEditTab.tilesetPane.loadTilesets.restart();
-                        tileEditTab.tilesetPane.loadPxAttrs.restart();
-                    }
-                });
-
-                fields.add(cBox); //TODO: Add option to leave second two tilesets blank
-            }
-
-            /* ****************************************** Visibility Types ****************************************** */
-            //TODO: Visibility types
-
-            /* ******************************************** Scroll Types ******************************************** */
-            //TODO: Scroll types
-
-            int y = 0;
-            gPane.addRow(y++, descriptionLabel, descriptionTextField);
-
-            for (int i = 0; i < labels.size(); ++i, ++y) {
-                gPane.addRow(y, labels.get(i), fields.get(i));
-            }
-
-            return gPane;
-        }
-    }
-
-    public enum DrawMode implements SafeEnum <DrawMode> {
+    public enum DrawMode implements SafeEnum<DrawMode> {
         DRAW,
         RECT,
         COPY,
@@ -2341,7 +2133,7 @@ public final class MapEditTab extends FileEditTab {
         REPLACE
     }
 
-    public enum ViewOption implements SafeEnum <ViewOption> {
+    public enum ViewOption implements SafeEnum<ViewOption> {
         TILE_TYPES,
         GRID,
         ENTITY_BOXES,
@@ -2349,12 +2141,12 @@ public final class MapEditTab extends FileEditTab {
         ENTITY_NAMES
     }
 
-    public enum EditMode implements SafeEnum <EditMode> {
+    public enum EditMode implements SafeEnum<EditMode> {
         TILE,
         ENTITY
     }
 
-    private enum MapPaneMenuItem implements SafeEnum <MapPaneMenuItem> {
+    private enum MapPaneMenuItem implements SafeEnum<MapPaneMenuItem> {
         RESIZE,
         BG_COLOR
     }

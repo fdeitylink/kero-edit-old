@@ -166,7 +166,7 @@ class KeroEdit : Application() {
     companion object {
         private lateinit var INSTANCE: KeroEdit
 
-        private val baseTitleString = MessageFormat.format(Messages["KeroEdit.APP_TITLE"],Messages["KeroEdit.VERSION"])
+        private val baseTitleString = MessageFormat.format(Messages["KeroEdit.APP_TITLE"], Messages["KeroEdit.VERSION"])
 
         var titleSuffix
             get() = INSTANCE.mainStage.title?.substring(baseTitleString.length) ?: ""
