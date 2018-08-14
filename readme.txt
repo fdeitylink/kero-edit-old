@@ -1,4 +1,4 @@
-OLD - See https://github.com/fdietylink/kero-edit for updates
+OLD - See https://github.com/fdeitylink/kero-edit for updates
 
 /*------------------------------------*\
 |-------------- KeroEdit --------------|
